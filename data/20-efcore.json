@@ -1,0 +1,281 @@
+{
+  "category": "Entity Framework & Data Access",
+  "slug": "efcore",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "efcore-001",
+      "difficulty": "Beginner",
+      "question": "How does EF Core compare with ADO.NET and Dapper?",
+      "answer": "ADO.NET is the low-level data access API where you write SQL and manage connections, commands, and readers manually, giving maximum control and minimum overhead. Dapper is a micro-ORM that maps query results to objects while still requiring you to write SQL, offering a good balance of performance and convenience. EF Core is a full ORM with change tracking, LINQ translation, migrations, and relationship management, trading some raw performance for productivity, so it suits complex domain models while Dapper or ADO.NET fit high-throughput or hand-tuned SQL scenarios.",
+      "tags": ["ef-core", "dapper", "ado-net"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/",
+        "https://learn.microsoft.com/dotnet/framework/data/adonet/"
+      ]
+    },
+    {
+      "id": "efcore-002",
+      "difficulty": "Beginner",
+      "question": "What is the correct lifetime and scoping for a DbContext?",
+      "answer": "A DbContext is not thread-safe and is designed to be short-lived, typically one instance per request, which is why it is registered with AddDbContext using the scoped lifetime. Sharing a context across concurrent threads or holding one for the whole application lifetime leads to change-tracking memory growth and concurrency bugs. In ASP.NET Core the scoped registration matches the request scope, and in background work you create a scope per unit of work with IServiceScopeFactory.",
+      "code": "builder.Services.AddDbContext<AppDbContext>(o =>\n    o.UseSqlServer(connectionString));",
+      "tags": ["dbcontext", "lifetime", "di"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "efcore-003",
+      "difficulty": "Beginner",
+      "question": "What is a DbSet and how does it relate to the model?",
+      "answer": "A DbSet<TEntity> represents a queryable collection of entities of type T and acts as the entry point for querying and saving those entities. It is exposed as a property on your DbContext, and LINQ queries against it are translated into SQL. Each entity in a DbSet has an associated entity state tracked by the change tracker, and DbSet also exposes methods like Add, Find, and Remove that operate on the set.",
+      "tags": ["dbset", "dbcontext", "entities"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/"
+      ]
+    },
+    {
+      "id": "efcore-004",
+      "difficulty": "Beginner",
+      "question": "How does LINQ to Entities translation work and what can prevent it?",
+      "answer": "EF Core translates LINQ query expressions into provider-specific SQL by walking the expression tree, so only operations the provider understands can be executed in the database. If a query uses a method or construct that cannot be translated, EF Core throws an InvalidOperationException at translation time rather than silently fetching all rows, except for the final projection which can be evaluated client-side. You keep queries translatable by using supported methods, avoiding custom delegates in Where clauses, and projecting to DTOs with Select.",
+      "code": "var names = await db.Products\n    .Where(p => p.Price > 10)\n    .Select(p => p.Name)\n    .ToListAsync();",
+      "tags": ["linq", "translation", "querying"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/how-query-works"
+      ]
+    },
+    {
+      "id": "efcore-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between tracking and no-tracking queries, and what does AsNoTracking do?",
+      "answer": "By default a query returns tracked entities, meaning the change tracker keeps a reference and snapshots so it can detect modifications and generate updates on SaveChanges. AsNoTracking tells EF Core to skip this bookkeeping, which reduces memory use and speeds up read-only queries, especially for large result sets. No-tracking entities are not updated by SaveChanges, and you can make a context default to no-tracking with QueryTrackingBehavior.NoTracking and opt back in with AsTracking.",
+      "code": "var products = await db.Products\n    .AsNoTracking()\n    .Where(p => p.Active)\n    .ToListAsync();",
+      "tags": ["asnotracking", "change-tracking", "performance"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/tracking"
+      ]
+    },
+    {
+      "id": "efcore-006",
+      "difficulty": "Beginner",
+      "question": "How do you load related data with eager, explicit, and lazy loading?",
+      "answer": "Eager loading uses Include and ThenInclude in the query to fetch related entities in the same round trip and is the most predictable option. Explicit loading keeps the entity untracked-relationship-free and loads navigation properties on demand with Entry(...).Collection(...).LoadAsync() or .Reference(...).LoadAsync(). Lazy loading requires the Microsoft.EntityFrameworkCore.Proxies package and virtual navigation properties, loading relationships transparently on first access but risking the N+1 problem.",
+      "code": "var order = await db.Orders\n    .Include(o => o.Lines)\n        .ThenInclude(l => l.Product)\n    .FirstAsync(o => o.Id == id);",
+      "tags": ["include", "eager-loading", "lazy-loading"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/related-data/"
+      ]
+    },
+    {
+      "id": "efcore-007",
+      "difficulty": "Beginner",
+      "question": "How do migrations work and what are the common commands?",
+      "answer": "Migrations are a code-based record of how the database schema evolves with your model, generated by the dotnet-ef tooling and stored as C# classes with Up and Down methods. You create one with dotnet ef migrations add <Name>, apply it with dotnet ef database update, and revert to a previous migration by passing its name to database update or removing the last unapplied one with migrations remove. You can generate a SQL script with dotnet ef migrations script for controlled deployment.",
+      "code": "dotnet ef migrations add AddOrdersTable\ndotnet ef database update\ndotnet ef migrations remove",
+      "tags": ["migrations", "tooling", "schema"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/managing-schemas/migrations/"
+      ]
+    },
+    {
+      "id": "efcore-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Fluent API and DataAnnotations for model configuration?",
+      "answer": "DataAnnotations configure the model with attributes on entity properties, which is concise but limited and mixes persistence concerns into the domain classes. The Fluent API configures the model imperatively in OnModelCreating, supports everything including relationships, keys, indexes, and shadow properties, and keeps entities clean. Most teams use Fluent API for relationships and constraints and DataAnnotations for simple validation, with Fluent API taking precedence when both are present.",
+      "code": "protected override void OnModelCreating(ModelBuilder b)\n{\n    b.Entity<Order>()\n        .HasKey(o => o.Id);\n    b.Entity<Order>()\n        .Property(o => o.Total)\n        .HasPrecision(18, 2);\n}",
+      "tags": ["fluent-api", "dataannotations", "model-configuration"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/modeling/"
+      ]
+    },
+    {
+      "id": "efcore-009",
+      "difficulty": "Beginner",
+      "question": "How does SaveChanges and change tracking work?",
+      "answer": "When you query tracked entities, the change tracker stores a snapshot, and on SaveChanges it compares current values to detect modifications and marks each entity as Added, Modified, Deleted, or Unchanged. SaveChanges generates the corresponding INSERT, UPDATE, and DELETE statements and wraps them in a transaction by default so the changes commit atomically. Detached or no-tracking entities are ignored, so you must attach them and set their state if you want them persisted.",
+      "code": "var p = await db.Products.FindAsync(id);\np!.Price = 9.99m;          // Modified\nawait db.SaveChangesAsync(); // generates UPDATE",
+      "tags": ["savechanges", "change-tracking", "persistence"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/change-tracking/"
+      ]
+    },
+    {
+      "id": "efcore-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between client and server evaluation in EF Core queries?",
+      "answer": "Server evaluation means the part of the query the provider understands is translated to SQL and executed in the database, which is efficient and reduces data transfer. Client evaluation happens when an expression cannot be translated; in EF Core 3.0 and later the middle of a query throws instead of silently evaluating on the client, and only the final Select projection may run in memory. To use untranslatable logic you should call AsEnumerable or AsAsyncEnumerable after a translatable portion to explicitly switch to client evaluation.",
+      "code": "var recent = await db.Orders\n    .Where(o => o.CreatedAt > cutoff)   // server\n    .AsEnumerable()                     // switch to client\n    .Select(o => MyLocalFormat(o));",
+      "tags": ["client-evaluation", "translation", "querying"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/client-eval"
+      ]
+    },
+    {
+      "id": "efcore-011",
+      "difficulty": "Intermediate",
+      "question": "What is the N+1 query problem and how do you avoid it in EF Core?",
+      "answer": "The N+1 problem occurs when code loads a list of N entities and then triggers one additional query per entity to fetch a related collection, producing N+1 round trips. It is most common with lazy loading or when a navigation property is accessed in a loop. Avoid it with eager loading via Include, projecting the needed data with Select, or using split or batched queries, and verify by logging SQL or inspecting the query count.",
+      "code": "// Bad: lazy loading triggers a query per customer\nforeach (var c in customers)\n    Console.WriteLine(c.Orders.Count);\n\n// Good: single query\nvar list = await db.Customers.Include(c => c.Orders).ToListAsync();",
+      "tags": ["n+1", "performance", "include"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/related-data/eager"
+      ]
+    },
+    {
+      "id": "efcore-012",
+      "difficulty": "Intermediate",
+      "question": "What are split queries and when should you use AsSplitQuery?",
+      "answer": "By default EF Core translates Include chains into a single SQL query with JOINs, which can produce a cartesian explosion when several collections are included, inflating the result set. AsSplitQuery emits one query per included collection, avoiding duplication at the cost of multiple round trips and a potential inconsistency if data changes between queries. Use split queries when you include multiple collections or load large related sets, and keep single queries when the result is small or consistency matters most.",
+      "code": "var blogs = await db.Blogs\n    .Include(b => b.Posts)\n    .Include(b => b.Contributors)\n    .AsSplitQuery()\n    .ToListAsync();",
+      "tags": ["split-queries", "performance", "include"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/single-split-queries"
+      ]
+    },
+    {
+      "id": "efcore-013",
+      "difficulty": "Intermediate",
+      "question": "How do you execute raw SQL safely and avoid SQL injection?",
+      "answer": "FromSqlRaw and ExecuteSqlRaw interpolate parameters you supply, and you must pass user input as parameters rather than concatenating it into the SQL string. FromSqlInterpolated and ExecuteSqlInterpolated take interpolated strings and turn the holes into parameters automatically, making them the safer choice, and ExecuteUpdate/ExecuteDelete cover most bulk scenarios without raw SQL. Always parameterize values and never build SQL by string concatenation from untrusted input.",
+      "code": "// Safe: parameterized\nvar name = userInput;\nvar users = await db.Users\n    .FromSqlInterpolated($\"SELECT * FROM Users WHERE Name = {name}\")\n    .ToListAsync();",
+      "tags": ["raw-sql", "sql-injection", "security"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/sql-queries"
+      ]
+    },
+    {
+      "id": "efcore-014",
+      "difficulty": "Intermediate",
+      "question": "How do you configure relationships in EF Core?",
+      "answer": "EF Core infers relationships from navigation properties and foreign keys by convention, and you refine them with the Fluent API. HasOne/WithMany configures one-to-many, HasOne/WithOne configures one-to-one, and many-to-many is configured with HasMany/WithMany using an implicit or explicit join entity. You can specify the foreign key with HasForeignKey and configure delete behavior with OnDelete.",
+      "code": "b.Entity<Order>()\n    .HasOne(o => o.Customer)\n    .WithMany(c => c.Orders)\n    .HasForeignKey(o => o.CustomerId)\n    .OnDelete(DeleteBehavior.Restrict);",
+      "tags": ["relationships", "fluent-api", "foreign-key"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/modeling/relationships"
+      ]
+    },
+    {
+      "id": "efcore-015",
+      "difficulty": "Intermediate",
+      "question": "How does cascade delete behave in EF Core and how do you control it?",
+      "answer": "Cascade delete removes dependent rows automatically when a principal is deleted, and EF Core configures it by convention for required relationships. You control it per relationship with OnDelete(DeleteBehavior.Cascade | Restrict | SetNull | NoAction | ClientSetNull). Restrict prevents deletion of a principal that still has dependents, and SetNull nulls the foreign key, which requires the key to be nullable. Note that database-level cascades and EF's in-memory cascade can differ, so the behavior should be configured deliberately.",
+      "code": "b.Entity<OrderLine>()\n    .HasOne(l => l.Order)\n    .WithMany(o => o.Lines)\n    .OnDelete(DeleteBehavior.Cascade);",
+      "tags": ["cascade-delete", "relationships", "delete-behavior"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/saving/cascade-delete"
+      ]
+    },
+    {
+      "id": "efcore-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle optimistic concurrency with a RowVersion token?",
+      "answer": "Optimistic concurrency assumes conflicts are rare and detects them at save time by comparing a concurrency token. You add a byte[] property marked [Timestamp] (or configured with IsRowVersion), and EF Core includes it in the WHERE clause of UPDATE and DELETE statements. If no row matches, EF Core throws DbUpdateConcurrencyException, which you catch to reload the current values and resolve the conflict, typically by retrying or informing the user.",
+      "code": "public class Product\n{\n    public int Id { get; set; }\n    [Timestamp] public byte[] RowVersion { get; set; } = default!;\n}\n\ntry { await db.SaveChangesAsync(); }\ncatch (DbUpdateConcurrencyException ex) { /* resolve */ }",
+      "tags": ["concurrency", "rowversion", "optimistic-locking"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/saving/concurrency"
+      ]
+    },
+    {
+      "id": "efcore-017",
+      "difficulty": "Intermediate",
+      "question": "How do transactions work in EF Core?",
+      "answer": "SaveChanges wraps all pending changes in a single transaction by default, so either every statement commits or none does. To span multiple SaveChanges calls or raw SQL commands you start an explicit transaction with Database.BeginTransactionAsync and commit or roll back it yourself. For distributed scenarios you can enlist in an ambient transaction, and you can also configure execution strategies so retries interact correctly with transactions.",
+      "code": "await using var tx = await db.Database.BeginTransactionAsync();\ntry\n{\n    db.Orders.Add(order);\n    await db.SaveChangesAsync();\n    await tx.CommitAsync();\n}\ncatch\n{\n    await tx.RollbackAsync();\n    throw;\n}",
+      "tags": ["transactions", "atomicity", "savechanges"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/saving/transactions"
+      ]
+    },
+    {
+      "id": "efcore-018",
+      "difficulty": "Intermediate",
+      "question": "How do global query filters work and when are they useful?",
+      "answer": "Global query filters apply a predicate to every query for an entity type, defined with HasQueryFilter in OnModelCreating. They are commonly used for soft deletes, multi-tenancy, and excluding inactive rows, and they are automatically applied to LINQ queries including those reached through Include. You can bypass a filter for a specific query with IgnoreQueryFilters, but note that filters are not applied to required navigation properties loaded implicitly or to raw SQL.",
+      "code": "b.Entity<Post>().HasQueryFilter(p => !p.IsDeleted);\n\n// bypass when needed\nvar all = await db.Posts.IgnoreQueryFilters().ToListAsync();",
+      "tags": ["query-filters", "soft-delete", "multi-tenancy"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/filters"
+      ]
+    },
+    {
+      "id": "efcore-019",
+      "difficulty": "Intermediate",
+      "question": "What are compiled queries and when do they help?",
+      "answer": "EF Core compiles the LINQ expression tree into SQL once and caches it per query shape, so repeated executions of the same shape reuse that work. EFQueryCompiledQueryCache reduces the overhead of the first translation, and EF.CompileAsyncQuery lets you precompile a query delegate that you invoke with the context and parameters. Compiled queries mainly help hot paths executed many times with different parameters, since the gain is small compared to actual database round-trip cost.",
+      "code": "private static readonly Func<AppDbContext, int, Task<Product?>> _byId =\n    EF.CompileAsyncQuery((AppDbContext db, int id) =>\n        db.Products.FirstOrDefault(p => p.Id == id));\n\nvar product = await _byId(db, 42);",
+      "tags": ["compiled-queries", "performance", "querying"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/performance/advanced-performance-topics"
+      ]
+    },
+    {
+      "id": "efcore-020",
+      "difficulty": "Intermediate",
+      "question": "How do ExecuteUpdate and ExecuteDelete differ from the traditional approach?",
+      "answer": "ExecuteUpdate and ExecuteDelete, introduced in EF Core 7, translate directly to UPDATE and DELETE statements and run immediately without loading entities into memory. This is far more efficient than fetching entities, modifying them, and calling SaveChanges, which requires tracking and multiple round trips. They bypass the change tracker, so tracked entities in memory become stale, and they cannot be combined with the normal SaveChanges batching or entity events.",
+      "code": "await db.Products\n    .Where(p => p.Discontinued)\n    .ExecuteDeleteAsync();\n\nawait db.Products\n    .Where(p => p.CategoryId == 3)\n    .ExecuteUpdateAsync(s => s.SetProperty(p => p.Price, p => p.Price * 1.1m));",
+      "tags": ["bulk-operations", "executeupdate", "performance"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/saving/execute-insert-update-delete"
+      ]
+    },
+    {
+      "id": "efcore-021",
+      "difficulty": "Advanced",
+      "question": "What are EF Core interceptors and what can they do?",
+      "answer": "Interceptors let you hook into EF Core operations such as SaveChanges, query execution, connection open/close, and transaction events by implementing interfaces like ISaveChangesInterceptor or IDbCommandInterceptor. They are registered with AddInterceptors on the context options and can inspect or modify commands, add audit fields, or log timing. Interceptors are more powerful and lower-level than change-tracking events because they can rewrite SQL and control execution, and multiple interceptors can be composed in order.",
+      "code": "public class AuditInterceptor : SaveChangesInterceptor\n{\n    public override ValueTask<InterceptionResult<int>> SavingChangesAsync(\n        DbContextEventData e, InterceptionResult<int> r, CancellationToken ct)\n    {\n        // stamp CreatedAt/UpdatedAt\n        return base.SavingChangesAsync(e, r, ct);\n    }\n}",
+      "tags": ["interceptors", "savechanges", "extensibility"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/logging-events-diagnostics/interceptors"
+      ]
+    },
+    {
+      "id": "efcore-022",
+      "difficulty": "Advanced",
+      "question": "What are owned entities and value converters, and how do they differ?",
+      "answer": "Owned entity types are configured with OwnsOne or OwnsMany and map a related CLR type as part of the owner, either in the same table (table splitting) or a separate table, giving them an identity tied to the owner. Value converters map a property's CLR type to a different provider type, for example storing an enum as a string or a strongly typed id as a GUID, using HasConversion. Owned types model structure and relationships, while value converters just change how a single column is persisted.",
+      "code": "b.Entity<Customer>().OwnsOne(c => c.Address);\n\nb.Entity<User>()\n    .Property(u => u.Status)\n    .HasConversion<string>();",
+      "tags": ["owned-entities", "value-converters", "modeling"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/modeling/owned-entities",
+        "https://learn.microsoft.com/ef/core/modeling/value-conversions"
+      ]
+    },
+    {
+      "id": "efcore-023",
+      "difficulty": "Advanced",
+      "question": "How does connection resiliency work with EnableRetryOnFailure?",
+      "answer": "EnableRetryOnFailure configures an execution strategy that automatically retries operations that fail with transient database errors such as temporary network drops or deadlocks, using a configurable retry count and delay. Because retries can re-execute a unit of work, you should wrap user-initiated transactions in strategy.ExecuteAsync so the whole transaction is retried safely. Retrying is not appropriate for non-idempotent operations without care, and you should combine it with logging to detect persistent failures.",
+      "code": "builder.Services.AddDbContext<AppDbContext>(o =>\n    o.UseSqlServer(conn,\n        sql => sql.EnableRetryOnFailure(\n            maxRetryCount: 5,\n            maxRetryDelay: TimeSpan.FromSeconds(10),\n            errorNumbersToAdd: null)));",
+      "tags": ["resiliency", "retry", "execution-strategy"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/miscellaneous/connection-resiliency"
+      ]
+    },
+    {
+      "id": "efcore-024",
+      "difficulty": "Advanced",
+      "question": "What performance best practices should you apply with EF Core?",
+      "answer": "Read-only queries should use AsNoTracking, and you should project only the columns and rows you need with Select rather than loading full entities. Avoid the N+1 problem with Include or projections, use AsSplitQuery when including multiple collections, and prefer ExecuteUpdate/ExecuteDelete for bulk changes. Keep DbContext instances short-lived, add indexes for frequently filtered and joined columns, enable compiled queries on hot paths, and measure with logging or a profiler instead of guessing.",
+      "tags": ["performance", "best-practices", "optimization"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/performance/"
+      ]
+    },
+    {
+      "id": "efcore-025",
+      "difficulty": "Advanced",
+      "question": "Should you use the repository and unit-of-work patterns with EF Core?",
+      "answer": "DbContext already implements both the unit-of-work pattern through its change tracker and SaveChanges and a repository-like abstraction through DbSet, so wrapping it in an extra generic repository often adds indirection without value. A custom repository can still be worthwhile to centralize complex queries, enforce domain invariants, or abstract persistence for testing and multiple data sources. If you use one, keep it thin, expose IQueryable sparingly to avoid leaking EF-specific behavior, and avoid sharing a DbContext across threads.",
+      "tags": ["repository", "unit-of-work", "architecture"],
+      "references": [
+        "https://learn.microsoft.com/ef/core/",
+        "https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"
+      ]
+    }
+  ]
+}

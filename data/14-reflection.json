@@ -1,0 +1,370 @@
+{
+  "category": "Reflection & Attributes",
+  "slug": "reflection",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "reflection-001",
+      "difficulty": "Beginner",
+      "question": "What is reflection in C#?",
+      "answer": "Reflection is the ability of a program to inspect and manipulate its own metadata and types at runtime. Using the System.Reflection namespace you can discover types, enumerate members, read attributes, create instances, and invoke methods or access fields and properties dynamically. It is powerful for frameworks, serializers, and dependency injection, but it is slower than direct calls and can break under trimming or AOT compilation.",
+      "tags": [
+        "reflection",
+        "overview"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/advanced-topics/reflection-and-attributes/"
+      ]
+    },
+    {
+      "id": "reflection-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between typeof, GetType, and nameof?",
+      "answer": "typeof(T) is a compile-time operator that returns the Type object for a type name known at compile time. GetType() is an instance method that returns the runtime type of a value, which may be a derived type. nameof returns the simple string name of a variable, type, or member and is resolved at compile time, so it is useful for argument exceptions and property-change notifications.",
+      "code": "Type t = typeof(string);\nType r = \"hello\".GetType();\nstring n = nameof(DateTime);",
+      "tags": [
+        "typeof",
+        "gettype",
+        "nameof"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/type-testing-and-cast",
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/nameof"
+      ]
+    },
+    {
+      "id": "reflection-003",
+      "difficulty": "Beginner",
+      "question": "What does the Type class represent?",
+      "answer": "The System.Type class is the entry point to reflection and represents a type declaration, including its name, namespace, base type, implemented interfaces, and members. You obtain a Type via typeof, GetType, or Type.GetType with an assembly-qualified name. Type also provides methods to create instances, query assignability, and access generic definitions.",
+      "tags": [
+        "type",
+        "reflection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.type"
+      ]
+    },
+    {
+      "id": "reflection-004",
+      "difficulty": "Beginner",
+      "question": "What are attributes in C#?",
+      "answer": "Attributes are declarative metadata that you attach to assemblies, types, members, parameters, and return values using square-bracket syntax. They derive from System.Attribute and are stored in metadata, where they can be read at runtime through reflection or consumed by the compiler. Common built-in attributes include Obsolete, Serializable, Conditional, DebuggerDisplay, CallerMemberName, which fills a parameter with the calling member's name, and JsonPropertyName, which maps a property to its JSON name.",
+      "tags": [
+        "attributes",
+        "metadata"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/advanced-topics/reflection-and-attributes/attribute-tutorial"
+      ]
+    },
+    {
+      "id": "reflection-005",
+      "difficulty": "Beginner",
+      "question": "What does the Obsolete attribute do?",
+      "answer": "Obsolete marks a type or member as deprecated so the compiler emits a warning, or an error when IsError is set to true, at each use. You can supply a message and the flag to guide callers toward a replacement. It is a compile-time aid only and does not prevent use through reflection or dynamic code.",
+      "code": "[Obsolete(\"Use NewMethod instead\", error: true)]\npublic void OldMethod() { }",
+      "tags": [
+        "obsolete",
+        "attributes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.obsoleteattribute"
+      ]
+    },
+    {
+      "id": "reflection-006",
+      "difficulty": "Beginner",
+      "question": "What is Activator.CreateInstance used for?",
+      "answer": "Activator.CreateInstance creates an instance of a type at runtime, either from a Type object or from an assembly-qualified name, optionally passing constructor arguments. It is convenient for plugin or factory scenarios where the concrete type is not known at compile time. Because it uses reflection it is slower than a direct constructor call, and it throws MissingMethodException if no matching constructor exists.",
+      "code": "var instance = Activator.CreateInstance(typeof(Foo), arg1, arg2);",
+      "tags": [
+        "activator",
+        "reflection",
+        "instantiation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.activator.createinstance"
+      ]
+    },
+    {
+      "id": "reflection-007",
+      "difficulty": "Beginner",
+      "question": "What is the Conditional attribute?",
+      "answer": "Conditional is a method attribute that tells the compiler to include calls to the method only when a specified preprocessor symbol is defined. It is most often used with DEBUG so that diagnostic or logging helpers compile away entirely in release builds. Methods marked Conditional must return void and cannot be used with out parameters or as overrides.",
+      "code": "[Conditional(\"DEBUG\")]\nvoid Log(string message) => Console.WriteLine(message);",
+      "tags": [
+        "conditional",
+        "attributes",
+        "debugging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.diagnostics.conditionalattribute"
+      ]
+    },
+    {
+      "id": "reflection-008",
+      "difficulty": "Beginner",
+      "question": "What does the Serializable attribute do in .NET?",
+      "answer": "Serializable indicates that a type can be serialized by classic binary or SOAP formatters, which was the default remoting and binary serialization mechanism. It has no effect on modern serializers such as System.Text.Json or XML serialization, which use public properties instead. Because BinaryFormatter is obsolete and unsafe, the attribute is now largely a legacy marker and should not be relied on for new code.",
+      "tags": [
+        "serializable",
+        "attributes",
+        "serialization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.serializableattribute"
+      ]
+    },
+    {
+      "id": "reflection-009",
+      "difficulty": "Beginner",
+      "question": "What is the nameof operator and why is it preferred over string literals?",
+      "answer": "nameof is a compile-time operator that returns the unqualified string name of a symbol such as a variable, type, member, or parameter. Because the compiler resolves it, the value stays correct after refactoring and produces a build error if the symbol is renamed or removed. It is commonly used in ArgumentNullException, property-change notifications, and logging to avoid magic strings.",
+      "code": "throw new ArgumentNullException(nameof(value));",
+      "tags": [
+        "nameof",
+        "refactoring"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/nameof"
+      ]
+    },
+    {
+      "id": "reflection-010",
+      "difficulty": "Beginner",
+      "question": "What is the dynamic keyword?",
+      "answer": "dynamic declares a variable whose operations are resolved at runtime by the Dynamic Language Runtime instead of by the compiler. It allows calls that the compiler cannot verify, such as invoking members of a COM object or a dynamic language, and failures surface as RuntimeBinderException at execution time. It is convenient but bypasses compile-time checking and adds runtime dispatch overhead. The ExpandoObject type is a dictionary-like object whose members can be added or removed at runtime and is commonly used together with dynamic.",
+      "code": "dynamic d = GetObject();\nd.DoSomething(42); // resolved at runtime",
+      "tags": [
+        "dynamic",
+        "dlr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/reference-types"
+      ]
+    },
+    {
+      "id": "reflection-011",
+      "difficulty": "Intermediate",
+      "question": "How do you get and invoke members with reflection?",
+      "answer": "You use GetMethod, GetProperty, GetField, and similar methods on Type, passing a name and optional BindingFlags to control visibility and static versus instance lookup. For overloaded methods you can pass parameter types to disambiguate. You then invoke with MethodInfo.Invoke for methods, PropertyInfo.SetValue or GetValue for properties, and wrap calls in try/catch because reflection surfaces the target's exceptions wrapped in TargetInvocationException.",
+      "code": "var method = typeof(Calculator).GetMethod(\"Add\",\n    BindingFlags.Public | BindingFlags.Instance);\nvar result = method.Invoke(calc, new object[] { 2, 3 });",
+      "tags": [
+        "getmethod",
+        "bindingflags",
+        "invoke"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.type.getmethod",
+        "https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo.invoke"
+      ]
+    },
+    {
+      "id": "reflection-012",
+      "difficulty": "Intermediate",
+      "question": "What are BindingFlags and why are they needed?",
+      "answer": "BindingFlags is a flags enumeration that selects which members a reflection lookup returns and how matching is performed. By default GetMethod and GetProperty consider only public members, so you must add flags like NonPublic to reach private or internal members and Instance or Static to choose the kind. Flags such as IgnoreCase, DeclaredOnly, and FlattenHierarchy further refine the search.",
+      "code": "var priv = typeof(Foo).GetField(\"_secret\",\n    BindingFlags.NonPublic | BindingFlags.Instance);",
+      "tags": [
+        "bindingflags",
+        "reflection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.reflection.bindingflags"
+      ]
+    },
+    {
+      "id": "reflection-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create and apply a custom attribute?",
+      "answer": "Define a class that derives from System.Attribute, conventionally with a name ending in Attribute, and provide constructors or settable properties for the data it carries. Then apply it with square brackets wherever the AttributeUsage allows. At runtime you retrieve instances with methods such as GetCustomAttribute or GetCustomAttributes, which construct attribute objects from the stored metadata.",
+      "code": "[AttributeUsage(AttributeTargets.Class)]\npublic sealed class PluginAttribute : Attribute\n{\n    public string Name { get; }\n    public PluginAttribute(string name) => Name = name;\n}",
+      "tags": [
+        "custom-attributes",
+        "attributes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/advanced-topics/reflection-and-attributes/attribute-tutorial"
+      ]
+    },
+    {
+      "id": "reflection-014",
+      "difficulty": "Intermediate",
+      "question": "What is AttributeUsage and what does it control?",
+      "answer": "AttributeUsage is itself an attribute applied to an attribute class to declare where the attribute may be used, whether it can be applied more than once, and whether derived types inherit it. The AttributeTargets flags restrict application to classes, methods, properties, parameters, and so on, AllowMultiple enables repetition, and Inherited controls propagation to derived types. Without it, an attribute defaults to all targets, single use, and inherited.",
+      "tags": [
+        "attributeusage",
+        "attributes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.attributeusageattribute"
+      ]
+    },
+    {
+      "id": "reflection-015",
+      "difficulty": "Intermediate",
+      "question": "How do you read attributes at runtime?",
+      "answer": "You call methods such as GetCustomAttribute<T>, GetCustomAttributes, or the Attribute.IsDefined helper on a Type or MemberInfo obtained through reflection. These methods materialize attribute instances by running their constructors and setting named properties from metadata, so the constructor logic executes each time you query. For performance-sensitive code, cache the results or use IsDefined when you only need to know whether the attribute is present.",
+      "code": "var attr = typeof(Foo).GetCustomAttribute<PluginAttribute>();\nif (attr is not null) Console.WriteLine(attr.Name);",
+      "tags": [
+        "attributes",
+        "getcustomattribute",
+        "reflection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.reflection.customattributeextensions"
+      ]
+    },
+    {
+      "id": "reflection-016",
+      "difficulty": "Intermediate",
+      "question": "What are the performance costs of reflection and how do you mitigate them?",
+      "answer": "Reflection is far slower than direct calls because member lookup, argument marshalling, and invocation all go through runtime machinery, and boxing occurs when value types are passed as object arguments. Mitigations include caching Type and MemberInfo objects, caching compiled delegates built with Delegate.CreateDelegate, using Expression trees compiled to delegates, and relying on source generators for AOT-friendly code. Avoiding reflection in hot loops and preferring generic or interface-based designs usually matters most.",
+      "tags": [
+        "reflection",
+        "performance",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/reflection-and-code-generation",
+        "https://learn.microsoft.com/dotnet/api/system.reflection.methodinfo.createdelegate"
+      ]
+    },
+    {
+      "id": "reflection-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between expression trees and reflection?",
+      "answer": "Expression trees represent code as data in the System.Linq.Expressions namespace and can be compiled into delegates at runtime with Compile, so after the one-time compilation cost they run at near-native speed. Reflection invokes members interpretively and is slower but works uniformly on any member without building an expression. Libraries often use reflection once to build an expression tree and then cache the compiled delegate for subsequent calls.",
+      "code": "Expression<Func<Foo, int>> e = f => f.Value;\nvar getter = e.Compile();\nint v = getter(foo);",
+      "tags": [
+        "expression-trees",
+        "reflection",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/advanced-topics/expression-trees/"
+      ]
+    },
+    {
+      "id": "reflection-018",
+      "difficulty": "Intermediate",
+      "question": "How do you load an assembly and what is AssemblyLoadContext?",
+      "answer": "Assembly.Load loads by an assembly name, Assembly.LoadFrom loads from a path and can resolve dependencies, and Assembly.LoadFile loads without resolving from the load context. AssemblyLoadContext, introduced in .NET Core, provides an isolated loading context with explicit control over resolving dependencies and allows unloading of assemblies via its Unload method. This isolation is important for plugins that must load, version, and later release their own dependencies. An assembly also exposes its modules through GetModules, since a multi-module assembly groups its types into one or more modules.",
+      "code": "var alc = new AssemblyLoadContext(\"plugin\", isCollectible: true);\nvar asm = alc.LoadFromAssemblyPath(path);",
+      "tags": [
+        "assembly",
+        "assemblyloadcontext",
+        "plugins"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.reflection.assembly.load",
+        "https://learn.microsoft.com/dotnet/api/system.runtime.loader.assemblyloadcontext"
+      ]
+    },
+    {
+      "id": "reflection-019",
+      "difficulty": "Intermediate",
+      "question": "What is an assembly-qualified name?",
+      "answer": "An assembly-qualified name uniquely identifies a type across assemblies by combining the type's full name with the display name of the assembly, including its version, culture, and public key token. It is the string form used by Type.GetType and by configuration when a type must be located without a compile-time reference. Using a partial name works only for types in mscorlib or the calling assembly, so fully qualifying is safer for external types.",
+      "code": "var t = Type.GetType(\n  \"System.Text.StringBuilder, System.Runtime\");",
+      "tags": [
+        "assembly-qualified-name",
+        "type.gettype"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.type.gettype"
+      ]
+    },
+    {
+      "id": "reflection-020",
+      "difficulty": "Intermediate",
+      "question": "How do you use reflection with generic types, such as MakeGenericType?",
+      "answer": "You obtain the open generic definition with typeof(List<>) and then call MakeGenericType with the type arguments to produce a closed constructed type, after which you can create instances or invoke members. To inspect generics, IsGenericType, IsGenericTypeDefinition, GetGenericArguments, and GetGenericTypeDefinition help navigate between open and closed forms. Constraint violations throw ArgumentException at the point of construction.",
+      "code": "var open = typeof(Dictionary<,>);\nvar closed = open.MakeGenericType(typeof(string), typeof(int));\nvar dict = Activator.CreateInstance(closed);",
+      "tags": [
+        "generics",
+        "makegenerictype",
+        "reflection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.type.makegenerictype"
+      ]
+    },
+    {
+      "id": "reflection-021",
+      "difficulty": "Advanced",
+      "question": "How do you check assignability and inheritance with IsAssignableFrom, is, and as?",
+      "answer": "The is operator performs a runtime type test that can also pattern-match and declare a variable, while as performs a safe cast that yields null on failure for reference or nullable types. Type.IsAssignableFrom answers whether an instance of one type could be assigned to a variable of another, which is useful when you only have Type objects from reflection. For interfaces and base classes, use IsAssignableFrom or the is pattern rather than comparing types for equality.",
+      "code": "if (typeof(IEnumerable).IsAssignableFrom(t)) { }\nif (obj is string s) { }\nvar str = obj as string;",
+      "tags": [
+        "isassignablefrom",
+        "is",
+        "as"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.type.isassignablefrom",
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/type-testing-and-cast"
+      ]
+    },
+    {
+      "id": "reflection-022",
+      "difficulty": "Advanced",
+      "question": "What is Reflection.Emit used for?",
+      "answer": "System.Reflection.Emit builds assemblies, types, and methods at runtime by emitting IL instructions into a dynamic assembly. It underpins advanced scenarios such as custom serializers, proxies, and mocking frameworks that generate strongly typed code for speed. Emit is complex and largely unavailable or restricted under Native AOT and trimming, so modern alternatives like source generators and expression trees are usually preferred.",
+      "tags": [
+        "reflection-emit",
+        "il",
+        "dynamic-assembly"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.reflection.emit"
+      ]
+    },
+    {
+      "id": "reflection-023",
+      "difficulty": "Advanced",
+      "question": "How do source generators compare with reflection?",
+      "answer": "Source generators run during compilation, inspect the user's code through the Roslyn API, and emit additional C# source that is compiled into the assembly. Because the generated code is ordinary compiled code, it works under trimming and Native AOT and avoids runtime reflection overhead. Reflection remains necessary for genuinely dynamic scenarios, but for repetitive, discoverable work such as JSON serialization contexts, logging, or mapping, generators are the modern recommendation.",
+      "tags": [
+        "source-generators",
+        "reflection",
+        "aot"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/roslyn-sdk/source-generators-overview",
+        "https://learn.microsoft.com/dotnet/standard/reflection-and-code-generation"
+      ]
+    },
+    {
+      "id": "reflection-024",
+      "difficulty": "Advanced",
+      "question": "Why does reflection break under trimming and Native AOT, and how do you address it?",
+      "answer": "The trimmer removes code that appears unused so it can shrink the published app, but it cannot always see members accessed only through reflection, so those members may be trimmed away and fail at runtime. Native AOT compiles ahead of time and has no JIT, so dynamically generated code from Reflection.Emit is unavailable. You mitigate this with DynamicallyAccessedMembers annotations, the RequiresUnreferencedCode and RequiresDynamicCode attributes, trimming roots or descriptors, and by preferring source generators that produce static code.",
+      "tags": [
+        "trimming",
+        "aot",
+        "reflection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/deploying/trimming/trimming-options",
+        "https://learn.microsoft.com/dotnet/core/deploying/native-aot/"
+      ]
+    },
+    {
+      "id": "reflection-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between dynamic and reflection?",
+      "answer": "dynamic resolves member access at runtime through the DLR, giving concise syntax that reads like static code and interoperates with COM and dynamic languages, but it loses compile-time checking, IntelliSense, and performance. Reflection exposes metadata explicitly and is more verbose but allows inspection, caching, and invocation of members that are not known at compile time, including private ones. Choose dynamic for ergonomic late binding and reflection when you need to discover or manipulate types generically; both require runtime validation and neither is friendly to trimming.",
+      "tags": [
+        "dynamic",
+        "reflection",
+        "dlr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/advanced-topics/interop/using-type-dynamic",
+        "https://learn.microsoft.com/dotnet/standard/reflection-and-code-generation"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "category": "Object-Oriented Programming",
+  "slug": "oop",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "oop-001",
+      "difficulty": "Beginner",
+      "question": "What are the four pillars of object-oriented programming?",
+      "answer": "Encapsulation hides internal state behind a public API. Abstraction models essential behavior and hides detail. Inheritance lets a type reuse and extend another. Polymorphism lets a single interface represent multiple concrete types. C# supports all four through access modifiers, abstract types, class inheritance, and virtual/interface dispatch.",
+      "tags": ["oop", "fundamentals"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/tutorials/oop"]
+    },
+    {
+      "id": "oop-002",
+      "difficulty": "Beginner",
+      "question": "What is a class and what is an object?",
+      "answer": "A class is a blueprint that defines fields, properties, methods, and events. An object (instance) is a concrete value created from the class with new, occupying memory and holding its own state. Classes are reference types.",
+      "code": "public class Person\n{\n    public string Name { get; set; } = \"\";\n}\nvar p = new Person { Name = \"Ada\" };",
+      "tags": ["class", "object"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/types/classes"]
+    },
+    {
+      "id": "oop-003",
+      "difficulty": "Beginner",
+      "question": "What is encapsulation and how is it implemented in C#?",
+      "answer": "Encapsulation protects an object's state by exposing controlled access through properties, methods, and access modifiers. Fields are typically private; public properties with get and set provide validation and allow the internal representation to change without breaking callers.",
+      "code": "private int _age;\npublic int Age\n{\n    get => _age;\n    set => _age = value >= 0 ? value : throw new ArgumentOutOfRangeException();\n}",
+      "tags": ["encapsulation", "properties"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/properties"]
+    },
+    {
+      "id": "oop-004",
+      "difficulty": "Beginner",
+      "question": "What is inheritance in C# and what are its limits?",
+      "answer": "Inheritance lets a derived class reuse and specialize a base class using the colon syntax. A class can inherit from only one base class, but it can implement many interfaces. Constructors are not inherited; the derived constructor calls a base constructor with base(...).",
+      "code": "public class Animal { public virtual void Speak() { } }\npublic class Dog : Animal\n{\n    public override void Speak() => Console.WriteLine(\"Woof\");\n}",
+      "tags": ["inheritance", "base-class"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/object-oriented/inheritance"]
+    },
+    {
+      "id": "oop-005",
+      "difficulty": "Beginner",
+      "question": "What is polymorphism and what are its two forms in C#?",
+      "answer": "Polymorphism lets code call the same member on different types and get behavior appropriate to the runtime type. Compile-time (static) polymorphism uses method overloading and generics. Runtime (dynamic) polymorphism uses virtual/override methods and interface dispatch resolved at execution time.",
+      "tags": ["polymorphism", "virtual"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/object-oriented/polymorphism"]
+    },
+    {
+      "id": "oop-006",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between virtual, override, and new?",
+      "answer": "virtual declares a member that derived classes may replace. override replaces a virtual or abstract member and participates in polymorphism. new hides an inherited member by name; calls through the base type still resolve to the base member, so new breaks polymorphic expectations and should be used deliberately.",
+      "code": "class A { public virtual void M() => Console.Write(\"A\"); }\nclass B : A { public override void M() => Console.Write(\"B\"); }\nclass C : A { public new void M() => Console.Write(\"C\"); }\nA b = new B(); b.M(); // B\nA c = new C(); c.M(); // A",
+      "tags": ["virtual", "override", "new"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/override"]
+    },
+    {
+      "id": "oop-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between abstract classes and interfaces?",
+      "answer": "An abstract class can hold state and implementation and is limited to single inheritance. An interface defines a contract and a type can implement many of them; since C# 8 interfaces can also have default implementations but no instance fields. Use an abstract class to share code and state, and interfaces to describe capabilities.",
+      "code": "public interface IShape { double Area(); }\npublic abstract class Shape : IShape\n{\n    public abstract double Area();\n    public string Name { get; set; } = \"\";\n}",
+      "tags": ["abstract", "interface"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/object-oriented/interfaces"]
+    },
+    {
+      "id": "oop-008",
+      "difficulty": "Beginner",
+      "question": "What is an abstract method and how does it differ from a virtual method?",
+      "answer": "An abstract method has no body and must be overridden in every concrete derived class; it can only appear in an abstract class. A virtual method provides a default body that derived classes may override. Both are polymorphic, but abstract forces an implementation.",
+      "code": "public abstract class Shape\n{\n    public abstract double Area();       // must override\n    public virtual string Label() => \"shape\"; // may override\n}",
+      "tags": ["abstract", "virtual"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/abstract"]
+    },
+    {
+      "id": "oop-009",
+      "difficulty": "Beginner",
+      "question": "What are the access modifiers in C#?",
+      "answer": "public is accessible everywhere. private is limited to the containing type. protected is accessible to the type and derived types. internal is limited to the same assembly. protected internal is the union of protected and internal. private protected is the intersection of private and protected (same assembly and derived).",
+      "tags": ["access-modifiers", "encapsulation"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/access-modifiers"]
+    },
+    {
+      "id": "oop-010",
+      "difficulty": "Beginner",
+      "question": "What is a constructor and what kinds exist in C#?",
+      "answer": "A constructor initializes a new instance and has the same name as the type with no return type. C# supports instance constructors, static constructors (run once per type), private constructors (for factories or singletons), and copy-style constructors. If you define none, the compiler provides a parameterless one.",
+      "code": "public class Point\n{\n    public int X { get; }\n    public Point(int x) => X = x;\n    static Point() { /* one-time setup */ }\n}",
+      "tags": ["constructor", "initialization"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/constructors"]
+    },
+    {
+      "id": "oop-011",
+      "difficulty": "Beginner",
+      "question": "What is a static constructor and when does it run?",
+      "answer": "A static constructor runs at most once, before the type is first used (any static member access or instance creation). It cannot take parameters, cannot be called directly, and runs before any instance constructor. Use it to initialize static fields that need logic or to load configuration once.",
+      "tags": ["static", "constructor"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-constructors"]
+    },
+    {
+      "id": "oop-012",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a field and a property?",
+      "answer": "A field is a data member stored directly in the object. A property is a member with get/set accessors that look like a field to callers but can contain logic. Properties support validation, computed values, different access levels per accessor, and are the recommended public API for exposing state.",
+      "code": "private int _count;\npublic int Count => _count;                 // read-only computed\npublic int Value { get; init; }             // init-only",
+      "tags": ["fields", "properties"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/properties"]
+    },
+    {
+      "id": "oop-013",
+      "difficulty": "Intermediate",
+      "question": "What are auto-implemented properties and init-only setters?",
+      "answer": "Auto-implemented properties let the compiler create the backing field, written as public string Name { get; set; }. An init accessor allows the property to be set only during object initialization, supporting immutable objects with object initializers.",
+      "code": "public string Name { get; init; } = \"\";\nvar p = new Person { Name = \"Ada\" }; // allowed\n// p.Name = \"Bob\";                   // error after init",
+      "tags": ["properties", "immutability"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/auto-implemented-properties"]
+    },
+    {
+      "id": "oop-014",
+      "difficulty": "Beginner",
+      "question": "What is the this keyword used for?",
+      "answer": "this refers to the current instance. It disambiguates a field from a parameter, passes the current object to other methods, supports extension methods as the first parameter modifier, and enables constructor chaining via this(...).",
+      "code": "public class C\n{\n    private readonly int _x;\n    public C() : this(0) { }\n    public C(int x) => this._x = x;\n}",
+      "tags": ["this", "instance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/this"]
+    },
+    {
+      "id": "oop-015",
+      "difficulty": "Beginner",
+      "question": "What is the base keyword used for?",
+      "answer": "base accesses members of the immediate base class. It is used to call a base constructor from a derived constructor, to call a base method that was overridden, or to access hidden base members. base is a compile-time construct resolved to the base type.",
+      "code": "public class Dog : Animal\n{\n    public Dog(string name) : base(name) { }\n    public override void Speak()\n    {\n        base.Speak();\n        Console.WriteLine(\"Woof\");\n    }\n}",
+      "tags": ["base", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/base"]
+    },
+    {
+      "id": "oop-016",
+      "difficulty": "Intermediate",
+      "question": "What is method overloading and how does it differ from overriding?",
+      "answer": "Overloading defines multiple methods with the same name but different parameter lists in the same type; the compiler picks the best match at compile time. Overriding replaces an inherited virtual method with the same signature and is resolved at runtime. Overloading is compile-time polymorphism; overriding is runtime polymorphism.",
+      "code": "void Log(string s) { }\nvoid Log(int i) { }        // overload\nclass Base { public virtual void Run() { } }\nclass Derived : Base { public override void Run() { } } // override",
+      "tags": ["overloading", "overriding"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/members"]
+    },
+    {
+      "id": "oop-017",
+      "difficulty": "Beginner",
+      "question": "What is a sealed class or method?",
+      "answer": "A sealed class cannot be inherited from, and a sealed override method cannot be overridden further. Sealing can improve clarity and may help the runtime with devirtualization. A sealed override is declared as public sealed override.",
+      "code": "public sealed class Config { }\npublic class Base { public virtual void M() { } }\npublic class Derived : Base { public sealed override void M() { } }",
+      "tags": ["sealed", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/sealed"]
+    },
+    {
+      "id": "oop-018",
+      "difficulty": "Intermediate",
+      "question": "What is a partial class?",
+      "answer": "A partial class splits a type definition across multiple files that the compiler merges. All parts must use the partial keyword and share the same name and namespace. It is useful for generated code, such as source generators or designer files, and for separating large types logically.",
+      "code": "// File1.cs\npublic partial class Order { public int Id { get; set; } }\n// File2.cs\npublic partial class Order { public decimal Total { get; set; } }",
+      "tags": ["partial", "code-generation"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/partial-classes-and-methods"]
+    },
+    {
+      "id": "oop-019",
+      "difficulty": "Intermediate",
+      "question": "What is a partial method?",
+      "answer": "A partial method splits a method declaration and its optional implementation across parts of a partial type. If no implementation is supplied the calls are removed by the compiler, so it has no runtime cost. C# 9 allows partial methods with accessibility and non-void return types when an implementation exists.",
+      "code": "public partial class Order\n{\n    partial void OnValidated();\n    public void Validate() { OnValidated(); }\n}",
+      "tags": ["partial", "methods"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/partial-method"]
+    },
+    {
+      "id": "oop-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between composition and inheritance?",
+      "answer": "Inheritance expresses an is-a relationship and couples derived types to base internals. Composition expresses a has-a relationship by holding another object and delegating behavior. Composition is often more flexible and testable because it avoids fragile base classes and supports runtime swapping of collaborators. Prefer composition unless a true is-a relationship exists.",
+      "tags": ["composition", "inheritance", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "oop-021",
+      "difficulty": "Beginner",
+      "question": "What is the object type and the System.Object methods?",
+      "answer": "object (alias System.Object) is the root of the type hierarchy. Every type derives from it. Its key members are ToString, Equals, GetHashCode, and GetType. You override ToString for readable output and override Equals and GetHashCode together when you define value equality.",
+      "code": "public override string ToString() => $\"Person({Name})\";\npublic override int GetHashCode() => HashCode.Combine(Name);",
+      "tags": ["object", "equality"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.object"]
+    },
+    {
+      "id": "oop-022",
+      "difficulty": "Intermediate",
+      "question": "How do you correctly implement value equality for a class?",
+      "answer": "Override Equals(object), implement IEquatable<T> for the typed Equals, override GetHashCode so equal objects share a hash, and overload == and != to match. Follow the equality contract: reflexive, symmetric, transitive, and consistent. For immutable data types consider records, which generate these for you.",
+      "code": "public sealed class Point : IEquatable<Point>\n{\n    public int X { get; init; }\n    public int Y { get; init; }\n    public bool Equals(Point? other) => other is not null && X == other.X && Y == other.Y;\n    public override bool Equals(object? o) => Equals(o as Point);\n    public override int GetHashCode() => HashCode.Combine(X, Y);\n}",
+      "tags": ["equality", "hashcode"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/statements-expressions-operators/how-to-define-value-equality-for-a-type"]
+    },
+    {
+      "id": "oop-023",
+      "difficulty": "Intermediate",
+      "question": "What is a destructor and what is finalization?",
+      "answer": "A destructor (~ClassName) runs when the garbage collector is about to reclaim the object, and is the C# syntax for overriding Finalize. Finalization is non-deterministic and costly. Prefer implementing IDisposable with using for deterministic cleanup and reserve finalizers for unmanaged resources, using the Dispose(bool) pattern with GC.SuppressFinalize.",
+      "code": "public class Handle : IDisposable\n{\n    private IntPtr _p;\n    public void Dispose() { _p = IntPtr.Zero; GC.SuppressFinalize(this); }\n    ~Handle() { /* release unmanaged */ }\n}",
+      "tags": ["finalizer", "dispose", "gc"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose"]
+    },
+    {
+      "id": "oop-024",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between an is-a and a has-a relationship in class design?",
+      "answer": "Is-a means one type is a specialization of another and is modeled with inheritance (a Car is-a Vehicle). Has-a means a type contains another as a part and is modeled with fields or properties (a Car has-a Engine). Choosing correctly avoids deep, brittle hierarchies and keeps types loosely coupled.",
+      "tags": ["design", "inheritance", "composition"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/choosing-between-class-and-struct"]
+    },
+    {
+      "id": "oop-025",
+      "difficulty": "Intermediate",
+      "question": "What is the Liskov Substitution Principle in the context of C#?",
+      "answer": "LSP states that objects of a derived type must be usable wherever the base type is expected without breaking correctness. Practically, an override must not strengthen preconditions, weaken postconditions, or throw new exceptions, and it should preserve the base contract. Violations usually signal that inheritance was the wrong choice and composition is better.",
+      "tags": ["solid", "lsp", "design"],
+      "references": ["https://learn.microsoft.com/archive/msdn-magazine/2014/may/csharp-best-practices-dangers-of-violating-solid-principles-in-csharp"]
+    }
+  ]
+}

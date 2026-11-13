@@ -1,0 +1,225 @@
+{
+  "category": "Delegates, Events & Lambdas",
+  "slug": "delegates",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "delegates-001",
+      "difficulty": "Beginner",
+      "question": "What is a delegate?",
+      "answer": "A delegate is a type-safe reference to a method with a specific signature. It is like a function pointer but type-safe and object-oriented. You declare a delegate type, create an instance pointing at a method, and invoke it. Delegates enable callbacks, events, and passing methods as values.",
+      "code": "public delegate int MathOp(int a, int b);\nMathOp add = (a, b) => a + b;\nConsole.WriteLine(add(2, 3)); // 5",
+      "tags": ["delegate", "callbacks"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/delegates-overview"]
+    },
+    {
+      "id": "delegates-002",
+      "difficulty": "Beginner",
+      "question": "What are Action, Func, and Predicate?",
+      "answer": "Action<T...> represents a method that returns void. Func<T..., TResult> represents a method that returns TResult. Predicate<T> represents a method returning bool and is equivalent to Func<T, bool>. They are built-in generic delegates that remove the need to declare custom delegate types.",
+      "code": "Action<string> log = s => Console.WriteLine(s);\nFunc<int, int, int> add = (a, b) => a + b;\nPredicate<int> isEven = n => n % 2 == 0;",
+      "tags": ["action", "func", "delegates"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.func-2"]
+    },
+    {
+      "id": "delegates-003",
+      "difficulty": "Beginner",
+      "question": "What is a multicast delegate?",
+      "answer": "A multicast delegate holds a list of methods through the + and - operators. Invoking it calls all methods in order. If the delegate returns a value, only the last method's result is returned. If a method throws, later methods are not called, so guard each handler.",
+      "code": "Action a = () => Console.Write(\"A\");\na += () => Console.Write(\"B\");\na(); // AB",
+      "tags": ["delegate", "multicast"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/delegates/how-to-combine-delegates-multicast-delegates"]
+    },
+    {
+      "id": "delegates-004",
+      "difficulty": "Beginner",
+      "question": "What is an event in C#?",
+      "answer": "An event is a member that lets a class notify subscribers when something happens. It is based on a delegate and can only be raised from within the declaring class, which protects the invocation list. Subscribers use += and -= to attach and detach handlers.",
+      "code": "public class Button\n{\n    public event EventHandler? Clicked;\n    public void Click() => Clicked?.Invoke(this, EventArgs.Empty);\n}",
+      "tags": ["event", "observer"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/events-overview"]
+    },
+    {
+      "id": "delegates-005",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a delegate and an event?",
+      "answer": "A delegate field can be invoked and reassigned by anyone who can access it. An event wraps a delegate so outside code can only add or remove handlers, not invoke or clear it. This encapsulation prevents external code from firing the event or overwriting the subscriber list.",
+      "tags": ["delegate", "event", "encapsulation"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/"]
+    },
+    {
+      "id": "delegates-006",
+      "difficulty": "Intermediate",
+      "question": "What is a lambda expression and what forms does it take?",
+      "answer": "A lambda expression is an anonymous function written as parameters => expression or parameters => { statements }. Expression lambdas are concise; statement lambdas allow multiple statements. Lambdas can be converted to delegates or expression trees depending on the target type.",
+      "code": "Func<int, int> square = x => x * x;\nAction<string> greet = name => { Console.WriteLine($\"Hi {name}\"); };",
+      "tags": ["lambda", "anonymous"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/lambda-expressions"]
+    },
+    {
+      "id": "delegates-007",
+      "difficulty": "Intermediate",
+      "question": "What is an anonymous method?",
+      "answer": "An anonymous method uses the delegate keyword to define an inline method without a name. It predates lambdas and can omit the parameter list when unused. Lambdas are preferred today, but anonymous methods remain valid and can ignore parameters with delegate { }.",
+      "code": "Func<int, int, int> add = delegate (int a, int b) { return a + b; };",
+      "tags": ["anonymous", "delegate"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/statements-expressions-operators/anonymous-methods"]
+    },
+    {
+      "id": "delegates-008",
+      "difficulty": "Intermediate",
+      "question": "What is a closure and how do captured variables behave?",
+      "answer": "A closure is a lambda or anonymous method that captures variables from its enclosing scope. Captured variables are hoisted into a compiler-generated object so they outlive the enclosing method frame. Capturing a loop variable before C# 5 caused classic bugs; foreach iteration variables are now per-iteration, but for-loop variables are still shared.",
+      "code": "var actions = new List<Action>();\nfor (int i = 0; i < 3; i++)\n{\n    int copy = i;\n    actions.Add(() => Console.Write(copy)); // 012\n}",
+      "tags": ["closure", "capture", "lambda"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/lambda-expressions#capture-of-outer-variables-and-variable-scope-in-lambda-and-anonymous-methods"]
+    },
+    {
+      "id": "delegates-009",
+      "difficulty": "Intermediate",
+      "question": "How do you unsubscribe from an event and why does it matter?",
+      "answer": "Use -= with the same handler reference to detach. Failing to unsubscribe keeps the publisher alive as long as it holds the delegate, and keeps the subscriber alive as long as the publisher lives, which leaks memory for long-lived publishers. Store the handler in a field when you need to detach it later.",
+      "code": "_timer.Tick += OnTick;\n// later\n_timer.Tick -= OnTick;",
+      "tags": ["event", "memory-leak"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events"]
+    },
+    {
+      "id": "delegates-010",
+      "difficulty": "Intermediate",
+      "question": "What is the EventHandler and EventHandler<TEventArgs> pattern?",
+      "answer": "The .NET convention is a method with signature (object? sender, TEventArgs e) returning void. EventHandler uses EventArgs; EventHandler<T> uses a custom EventArgs subclass carrying data. The sender is the source of the event and e carries event data. Custom EventArgs should be immutable and derive from EventArgs.",
+      "code": "public sealed class PriceChangedEventArgs : EventArgs\n{\n    public decimal OldPrice { get; init; }\n    public decimal NewPrice { get; init; }\n}\npublic event EventHandler<PriceChangedEventArgs>? PriceChanged;",
+      "tags": ["event", "eventargs", "conventions"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/events/"]
+    },
+    {
+      "id": "delegates-011",
+      "difficulty": "Intermediate",
+      "question": "How do you raise an event safely in a multithreaded context?",
+      "answer": "Copy the delegate to a local variable and test for null before invoking, or use the null-conditional operator with Invoke. The local copy avoids a race where a subscriber detaches between the null check and the invocation. Since C# 6, Event?.Invoke(sender, args) is the idiomatic safe form.",
+      "code": "var handler = PriceChanged;\nif (handler is not null) handler(this, args);\n// or simply\nPriceChanged?.Invoke(this, args);",
+      "tags": ["event", "threading", "race"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/how-to-raise-base-class-events"]
+    },
+    {
+      "id": "delegates-012",
+      "difficulty": "Advanced",
+      "question": "What is an expression tree?",
+      "answer": "An expression tree is a data structure that represents code as objects, built from System.Linq.Expressions.Expression. The compiler converts lambdas assigned to Expression<Func<...>> into trees instead of delegates. Providers such as Entity Framework translate the tree into SQL. Trees are immutable and can be visited, analyzed, and compiled to delegates.",
+      "code": "Expression<Func<Order, bool>> predicate = o => o.Total > 100;\nvar body = predicate.Body; // BinaryExpression",
+      "tags": ["expression-trees", "linq", "reflection"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/expression-trees"]
+    },
+    {
+      "id": "delegates-013",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a lambda and an expression tree?",
+      "answer": "A lambda compiled to a delegate becomes executable code. A lambda compiled to Expression<...> becomes data describing the code, which can be inspected and translated. The same syntax serves both; the target type decides. Expression trees cannot contain statements such as loops in the basic form.",
+      "code": "Func<int,int> f = x => x + 1;             // delegate\nExpression<Func<int,int>> e = x => x + 1; // tree",
+      "tags": ["lambda", "expression-trees"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/expression-trees/"]
+    },
+    {
+      "id": "delegates-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Func<T> and a custom delegate?",
+      "answer": "Func<T> is a built-in delegate that covers most cases and reduces boilerplate. A custom delegate gives a meaningful name that documents intent, supports XML documentation, and can have its own variance annotations. Use Func for generic plumbing and a named delegate when the signature carries domain meaning.",
+      "tags": ["func", "delegates", "api-design"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.func-1"]
+    },
+    {
+      "id": "delegates-015",
+      "difficulty": "Intermediate",
+      "question": "How does delegate equality and removal work with multiple handlers?",
+      "answer": "Delegates compare equal when they have the same target and method. The -= operator removes the last matching entry in the invocation list. Removing a handler that was never added is a no-op. This is why you must keep the exact same delegate instance or method reference to detach.",
+      "tags": ["delegate", "equality"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.delegate.remove"]
+    },
+    {
+      "id": "delegates-016",
+      "difficulty": "Advanced",
+      "question": "What is the performance cost of delegates and lambdas?",
+      "answer": "A delegate call is an indirect call, which may not inline and can cost more than a direct call. Lambdas that capture variables allocate a closure object, adding GC pressure. Caching a delegate in a static field avoids repeated allocation. In hot paths prefer direct calls or pass delegates that the JIT can devirtualize.",
+      "tags": ["delegate", "performance", "allocations"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/performance/"]
+    },
+    {
+      "id": "delegates-017",
+      "difficulty": "Intermediate",
+      "question": "What is a static lambda and when is it useful?",
+      "answer": "Since C# 9 you can write static lambdas with the static modifier, which forbids capturing any state from the enclosing scope. This prevents accidental closures and their allocations. Use static lambdas when the lambda does not need outer variables, especially in performance-sensitive code.",
+      "code": "items.Select(static x => x * 2);",
+      "tags": ["lambda", "static", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/lambda-expressions#static-lambdas"]
+    },
+    {
+      "id": "delegates-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between subscribing with a method group and a lambda?",
+      "answer": "A method group conversion creates a delegate targeting the method, and it can be detached with -= because it compares equal to another conversion of the same method. A lambda creates a new delegate each time, so you cannot reliably detach an equivalent lambda. Prefer method groups when you must unsubscribe.",
+      "code": "timer.Tick += OnTick;      // can be removed\n// timer.Tick += (s, e) => { }; // hard to remove",
+      "tags": ["delegate", "event", "method-group"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/delegates/"]
+    },
+    {
+      "id": "delegates-019",
+      "difficulty": "Advanced",
+      "question": "What is the difference between an event accessor and a field-like event?",
+      "answer": "A field-like event declares the event with just a delegate type and the compiler generates add and remove accessors and a backing field. You can write custom add and remove accessors to control subscription, for example to store handlers in a dictionary or to enforce thread safety. Custom accessors are also used in interfaces and explicit implementations.",
+      "code": "private EventHandler? _handlers;\npublic event EventHandler Custom\n{\n    add => _handlers += value;\n    remove => _handlers -= value;\n}",
+      "tags": ["event", "accessors"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/how-to-implement-custom-event-accessors"]
+    },
+    {
+      "id": "delegates-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a callback and a return value?",
+      "answer": "A return value hands control back to the caller once. A callback passes a delegate that the callee invokes later, possibly multiple times or after an asynchronous operation. Callbacks enable inversion of control and streaming but can complicate error handling and lifetime management.",
+      "tags": ["callback", "delegate", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/delegates-patterns"]
+    },
+    {
+      "id": "delegates-021",
+      "difficulty": "Intermediate",
+      "question": "How do you build a simple observer pattern with events?",
+      "answer": "Expose an event on the subject, raise it when state changes, and let observers subscribe with handlers. The subject does not know the concrete observer types, which decouples them. Ensure you unsubscribe to avoid leaks, and consider weak events or a message bus for long-lived subjects.",
+      "code": "stock.PriceChanged += (s, e) => Console.WriteLine(e.NewPrice);\nstock.UpdatePrice(120m);",
+      "tags": ["observer", "events", "patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/events/observer-design-pattern"]
+    },
+    {
+      "id": "delegates-022",
+      "difficulty": "Advanced",
+      "question": "What are weak events and why are they needed?",
+      "answer": "A normal event holds a strong reference to each handler's target, so a long-lived publisher keeps subscribers alive. Weak events hold weak references to subscribers so they can be collected when no longer used elsewhere. They prevent memory leaks in scenarios such as UI models subscribed to long-lived services.",
+      "tags": ["events", "weak-references", "memory-leak"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.weakreference"]
+    },
+    {
+      "id": "delegates-023",
+      "difficulty": "Intermediate",
+      "question": "What is a delegate's Target and Method property?",
+      "answer": "Delegate.Target is the instance the method is invoked on, or null for a static method. Delegate.Method is the MethodInfo of the method. Together they define delegate equality. These properties are useful for diagnostics and for matching handlers when detaching.",
+      "tags": ["delegate", "reflection"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.delegate.target"]
+    },
+    {
+      "id": "delegates-024",
+      "difficulty": "Intermediate",
+      "question": "How do you pass a method with parameters as a delegate using partial application?",
+      "answer": "C# has no built-in partial application, but you can wrap a method in a lambda that supplies some arguments and returns a delegate for the rest. This is a closure over the fixed arguments. It is a common way to adapt a method to a delegate signature.",
+      "code": "Func<int, int> AddFive = x => Add(5, x);\nint Add(int a, int b) => a + b;",
+      "tags": ["delegate", "closure", "functional"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/delegates-patterns"]
+    },
+    {
+      "id": "delegates-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between Invoke and dynamic invocation of a delegate?",
+      "answer": "Invoke calls the delegate directly and is type-checked and fast. Dynamic invocation through Delegate.DynamicInvoke uses object[] arguments and reflection, which is slower and loses compile-time safety, throwing at runtime on mismatch. Prefer the typed Invoke or casting to a known delegate type.",
+      "code": "Func<int,int> f = x => x + 1;\nf.Invoke(1);          // typed, fast\nf.DynamicInvoke(1);   // slow, object-based",
+      "tags": ["delegate", "invoke", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.delegate.dynamicinvoke"]
+    }
+  ]
+}

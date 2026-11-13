@@ -1,0 +1,228 @@
+{
+  "category": "C# Basics & Syntax",
+  "slug": "basics",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "basics-001",
+      "difficulty": "Beginner",
+      "question": "What is C# and what kind of language is it?",
+      "answer": "C# is a modern, object-oriented, statically typed language created by Anders Hejlsberg at Microsoft and first released in 2002. It runs on the .NET runtime (CLR), compiles to Intermediate Language (IL), and is designed for productivity, type safety, and versioning. It is multi-paradigm, supporting object-oriented, functional, generic, and (in recent versions) pattern-based styles.",
+      "tags": ["language", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/"]
+    },
+    {
+      "id": "basics-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between C# and .NET?",
+      "answer": "C# is a programming language; .NET is the platform and runtime that executes it. .NET provides the CLR (execution engine), the Base Class Library (BCL), and tooling. You can compile C# into IL that runs on .NET, but .NET also supports other languages such as F# and Visual Basic.",
+      "tags": ["language", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/"]
+    },
+    {
+      "id": "basics-003",
+      "difficulty": "Beginner",
+      "question": "What is the entry point of a C# program?",
+      "answer": "The entry point is the Main method, which the runtime calls first. It can be declared as static void Main(), static int Main(), or with a string[] args parameter, and in modern C# you can use top-level statements to omit the explicit Main method.",
+      "code": "public static void Main(string[] args)\n{\n    Console.WriteLine(\"Hello, C#\");\n}",
+      "tags": ["entry-point", "main"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/program-structure/main-command-line"]
+    },
+    {
+      "id": "basics-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Console.WriteLine and Console.Write?",
+      "answer": "Console.WriteLine writes the value followed by a line terminator; Console.Write writes the value without a trailing newline. Use Write when you want subsequent output to continue on the same line.",
+      "code": "Console.Write(\"A\");\nConsole.Write(\"B\"); // prints AB on one line\nConsole.WriteLine(\"C\"); // then newline",
+      "tags": ["console", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.console.writeline"]
+    },
+    {
+      "id": "basics-005",
+      "difficulty": "Beginner",
+      "question": "What are C# keywords and identifiers?",
+      "answer": "Keywords are reserved words with special meaning to the compiler, such as class, int, if, and return. Identifiers are the names you give to types, members, and variables; they cannot be keywords unless prefixed with @ (for example, @class).",
+      "tags": ["syntax", "keywords"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/"]
+    },
+    {
+      "id": "basics-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between var and an explicit type?",
+      "answer": "var tells the compiler to infer the type from the initializer at compile time, so the variable is still statically typed. There is no runtime penalty. Use explicit types when it improves readability, and note that var requires an initializer and cannot be used for fields without an initializer.",
+      "code": "var count = 10;        // inferred as int\nint total = 10;        // explicit\n// var x;             // error: needs initializer",
+      "tags": ["var", "type-inference"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/declarations#implicitly-typed-local-variables"]
+    },
+    {
+      "id": "basics-007",
+      "difficulty": "Beginner",
+      "question": "What is a namespace and why is it used?",
+      "answer": "A namespace groups related types into a logical scope and prevents name collisions. You reference members with a fully qualified name or bring them into scope with a using directive. Since C# 10 you can use file-scoped namespaces to reduce indentation.",
+      "code": "namespace MyApp.Data; // file-scoped\n\npublic class Customer { }",
+      "tags": ["namespaces", "organization"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/types/namespaces"]
+    },
+    {
+      "id": "basics-008",
+      "difficulty": "Beginner",
+      "question": "What are the C# comment styles?",
+      "answer": "C# supports single-line comments with //, multi-line comments with /* */, and XML documentation comments with ///. XML comments are compiled into documentation and are surfaced by IntelliSense.",
+      "code": "// single line\n/* multi\n   line */\n/// <summary>Adds two numbers.</summary>\nint Add(int a, int b) => a + b;",
+      "tags": ["comments", "documentation"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/xmldoc/"]
+    },
+    {
+      "id": "basics-009",
+      "difficulty": "Beginner",
+      "question": "What are the common numeric data types in C# and their sizes?",
+      "answer": "Integer types include sbyte (8-bit), byte (8-bit), short (16-bit), ushort (16-bit), int (32-bit), uint (32-bit), long (64-bit), and ulong (64-bit). Floating types are float (32-bit), double (64-bit), and decimal (128-bit, base-10). char is 16-bit Unicode.",
+      "code": "int i = 42;\nlong l = 9_000_000_000L;\ndouble d = 3.14;\ndecimal m = 19.99m;\nchar c = 'A';",
+      "tags": ["types", "numbers"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/integral-numeric-types"]
+    },
+    {
+      "id": "basics-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between float, double, and decimal?",
+      "answer": "float and double are IEEE-754 binary floating-point types with approximate precision; double is the default for real literals. decimal is a base-10 type with 28-29 significant digits and is preferred for money because it avoids binary rounding artifacts. decimal is slower and has a smaller range than double.",
+      "code": "double a = 0.1 + 0.2;      // 0.30000000000000004\ndecimal b = 0.1m + 0.2m;    // 0.3",
+      "tags": ["types", "precision", "decimal"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/floating-point-numeric-types"]
+    },
+    {
+      "id": "basics-011",
+      "difficulty": "Beginner",
+      "question": "What is the difference between implicit and explicit conversion?",
+      "answer": "An implicit conversion happens automatically when there is no data loss, such as int to long. An explicit conversion (a cast) is required when information could be lost, such as double to int, and you accept the risk of truncation or overflow.",
+      "code": "int i = 5;\nlong l = i;        // implicit\ndouble d = 5.9;\nint t = (int)d;    // explicit, t == 5",
+      "tags": ["conversion", "casting"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/types/casting-and-type-conversions"]
+    },
+    {
+      "id": "basics-012",
+      "difficulty": "Beginner",
+      "question": "What is boxing and unboxing?",
+      "answer": "Boxing converts a value type into an object (or interface) by allocating a heap object that wraps the value. Unboxing extracts the value from a boxed object with an explicit cast. Both have performance costs, so prefer generics to avoid them in hot paths.",
+      "code": "int x = 42;\nobject boxed = x;      // boxing\nint y = (int)boxed;    // unboxing",
+      "tags": ["boxing", "value-types", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/types/boxing-and-unboxing"]
+    },
+    {
+      "id": "basics-013",
+      "difficulty": "Beginner",
+      "question": "What are nullable value types?",
+      "answer": "A nullable value type, written T?, wraps a value type so it can also hold null. It is shorthand for Nullable<T>. You inspect the value with HasValue or Value, or use helpers such as GetValueOrDefault and the null-coalescing operators.",
+      "code": "int? age = null;\nif (age.HasValue)\n    Console.WriteLine(age.Value);\nint shown = age ?? 0;",
+      "tags": ["nullable", "value-types"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/nullable-value-types"]
+    },
+    {
+      "id": "basics-014",
+      "difficulty": "Beginner",
+      "question": "What is the difference between const and readonly?",
+      "answer": "const is a compile-time constant that must be initialized at declaration and is baked into callers at compile time. readonly is set at declaration or in a constructor, is evaluated at runtime, and can hold reference types whose contents may still change. Use static readonly for values that are fixed after initialization but not compile-time constants.",
+      "code": "public const double Pi = 3.14159;\npublic static readonly DateTime Start = DateTime.UtcNow;",
+      "tags": ["const", "readonly", "immutability"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/const"]
+    },
+    {
+      "id": "basics-015",
+      "difficulty": "Beginner",
+      "question": "What are the C# operators for arithmetic and how does integer division work?",
+      "answer": "C# provides +, -, *, /, and % (remainder). When both operands are integers, / performs integer division and discards the remainder; cast one operand to a floating type to get a fractional result. Division by zero throws for integers and yields Infinity or NaN for floating types.",
+      "code": "int a = 7 / 2;          // 3\ndouble b = 7 / 2.0;     // 3.5\nint r = 7 % 2;          // 1",
+      "tags": ["operators", "arithmetic"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/arithmetic-operators"]
+    },
+    {
+      "id": "basics-016",
+      "difficulty": "Beginner",
+      "question": "What are the C# logical and comparison operators?",
+      "answer": "Comparison operators are ==, !=, <, >, <=, and >=. Logical operators are && (short-circuit AND), || (short-circuit OR), ! (NOT), & and | (non-short-circuit bitwise/logical). Use && and || when you want to avoid evaluating the right operand unnecessarily.",
+      "code": "if (x > 0 && y > 0) { }\nif (name != null && name.Length > 0) { }",
+      "tags": ["operators", "logic"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/boolean-logical-operators"]
+    },
+    {
+      "id": "basics-017",
+      "difficulty": "Beginner",
+      "question": "What is the conditional (ternary) operator?",
+      "answer": "The ternary operator ?: evaluates a condition and returns one of two expressions. It is an expression, so it can be assigned or returned directly, unlike an if statement.",
+      "code": "string label = score >= 60 ? \"Pass\" : \"Fail\";",
+      "tags": ["operators", "ternary"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/conditional-operator"]
+    },
+    {
+      "id": "basics-018",
+      "difficulty": "Beginner",
+      "question": "What is the null-coalescing operator and the null-coalescing assignment operator?",
+      "answer": "?? returns the left operand if it is not null, otherwise the right operand. ??= assigns the right operand to the left variable only if the left is null. Both work with nullable value types and reference types.",
+      "code": "string name = input ?? \"Unknown\";\ninput ??= \"default\";",
+      "tags": ["operators", "null"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/null-coalescing-operator"]
+    },
+    {
+      "id": "basics-019",
+      "difficulty": "Beginner",
+      "question": "What is the null-conditional operator?",
+      "answer": "?. (and its indexer form ?[]) accesses a member only if the target is not null, returning null otherwise instead of throwing NullReferenceException. It short-circuits, so a chain like a?.b?.c stops at the first null.",
+      "code": "int? len = text?.Length;\nstring first = list?[0];",
+      "tags": ["operators", "null"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/member-access-operators#null-conditional-operators--and-"]
+    },
+    {
+      "id": "basics-020",
+      "difficulty": "Beginner",
+      "question": "What are the C# looping constructs?",
+      "answer": "C# offers for, foreach, while, and do-while. for is index-based, foreach iterates any type implementing IEnumerable/IEnumerable<T>, while checks the condition before each iteration, and do-while checks after, so it always runs at least once.",
+      "code": "for (int i = 0; i < 3; i++) Console.WriteLine(i);\nforeach (var c in \"abc\") Console.WriteLine(c);\nint n = 0;\nwhile (n < 3) n++;\ndo { n--; } while (n > 0);",
+      "tags": ["loops", "iteration"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/iteration-statements"]
+    },
+    {
+      "id": "basics-021",
+      "difficulty": "Beginner",
+      "question": "What do break, continue, goto, and return do in a loop?",
+      "answer": "break exits the nearest loop or switch. continue skips to the next iteration. return exits the enclosing method. goto jumps to a labeled statement and is discouraged in normal control flow. You can also break out of nested loops with a goto to a label after the loops.",
+      "code": "foreach (var x in items)\n{\n    if (x < 0) continue;\n    if (x == target) break;\n}",
+      "tags": ["loops", "control-flow"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/jump-statements"]
+    },
+    {
+      "id": "basics-022",
+      "difficulty": "Beginner",
+      "question": "What is the switch statement and how does pattern matching extend it?",
+      "answer": "A switch statement selects a block based on a value. Modern C# adds pattern matching: type patterns, constant patterns, relational patterns, property patterns, and when guards. Since C# 8, switch expressions produce a value and are often cleaner than statements.",
+      "code": "string Describe(object o) => o switch\n{\n    int n when n < 0 => \"negative\",\n    int => \"non-negative int\",\n    string s => $\"string of length {s.Length}\",\n    null => \"null\",\n    _ => \"other\"\n};",
+      "tags": ["switch", "pattern-matching"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/switch-expression"]
+    },
+    {
+      "id": "basics-023",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the == operator and the Equals method?",
+      "answer": "For value types, == and Equals compare values by default. For reference types, == compares references unless the type overloads ==, while Equals can be overridden to compare values. Types such as string override both so they compare content. Prefer Equals for polymorphic value comparison and object.ReferenceEquals to test identity.",
+      "code": "string a = \"hi\", b = \"hi\";\nbool eq = a == b;                 // true (content)\nbool same = ReferenceEquals(a, b); // may be false",
+      "tags": ["equality", "operators"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/statements-expressions-operators/equality-comparisons"]
+    },
+    {
+      "id": "basics-024",
+      "difficulty": "Beginner",
+      "question": "What is operator overloading in C#?",
+      "answer": "Operator overloading lets a type define how built-in operators behave for its instances using the operator keyword. You can overload most operators but not all, must declare them public static, and at least one operand must be the enclosing type. Overload == and != together, and override Equals and GetHashCode for consistency.",
+      "code": "public readonly struct Money\n{\n    public decimal Amount { get; }\n    public Money(decimal a) => Amount = a;\n    public static Money operator +(Money a, Money b) => new(a.Amount + b.Amount);\n}",
+      "tags": ["operators", "overloading"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/operator-overloading"]
+    },
+    {
+      "id": "basics-025",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a statement and an expression?",
+      "answer": "An expression produces a value (for example, a + b or a method call), while a statement performs an action (for example, an if or a declaration). Some constructs are expressions in modern C# that used to be statements, such as switch expressions, which makes them composable in larger expressions.",
+      "tags": ["syntax", "fundamentals"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/statements-expressions-operators/statements"]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "category": "File I/O & Serialization",
+  "slug": "io",
+  "icon": "file",
+  "questions": [
+    {
+      "id": "io-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between File and FileInfo?",
+      "answer": "File is a static class whose methods take a path and perform a one-off operation, such as File.Exists or File.ReadAllText. FileInfo is an instance class that represents a specific file, caches metadata like length and attributes, and exposes instance methods such as Open and Delete. Use File for single calls and FileInfo when you perform several operations on the same file.",
+      "tags": ["file", "fileinfo"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.file"]
+    },
+    {
+      "id": "io-002",
+      "difficulty": "Beginner",
+      "question": "What is the Stream class hierarchy in .NET?",
+      "answer": "Stream is the abstract base for byte-oriented I/O, with derived types like FileStream for files, MemoryStream for in-memory bytes, NetworkStream for sockets, and GZipStream for compression. StreamReader and StreamWriter wrap a stream to read and write text with a chosen encoding, and BinaryReader/BinaryWriter handle primitive binary values. All streams support synchronous and, usually, asynchronous read and write methods.",
+      "tags": ["stream", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.stream"]
+    },
+    {
+      "id": "io-003",
+      "difficulty": "Beginner",
+      "question": "Why should streams be disposed with using or await using?",
+      "answer": "Streams hold operating-system resources such as file handles and socket descriptors that are released only when the stream is disposed. using guarantees Dispose runs even if an exception is thrown, and await using does the same for IAsyncDisposable by awaiting DisposeAsync. Relying on finalization instead leaks handles until the GC runs, which can exhaust the limit under load.",
+      "code": "using var stream = File.OpenRead(\"data.bin\");\n// stream disposed at end of scope",
+      "tags": ["stream", "using", "disposal"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.stream.dispose"]
+    },
+    {
+      "id": "io-004",
+      "difficulty": "Beginner",
+      "question": "How do you read and write a text file asynchronously?",
+      "answer": "File.ReadAllTextAsync and File.WriteAllTextAsync read or write an entire file in one async call and are convenient for small files. For large files use a StreamReader with ReadLineAsync or ReadToEndAsync, or copy bytes with CopyToAsync, so you do not load everything into memory. Always await the returned task and pass a CancellationToken when the operation should be cancellable.",
+      "code": "string text = await File.ReadAllTextAsync(\"input.txt\");\nawait File.WriteAllTextAsync(\"output.txt\", text);",
+      "tags": ["async", "file", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.file.readalltextasync"]
+    },
+    {
+      "id": "io-005",
+      "difficulty": "Beginner",
+      "question": "Why is Path.Combine preferred over string concatenation for paths?",
+      "answer": "Path.Combine joins path segments with the correct directory separator for the current platform, so code works on both Windows and Linux. Manual concatenation can produce doubled or missing separators and fails when a later segment is rooted, in which case Path.Combine returns the rooted segment. Use Path.GetFileName, GetExtension, and GetDirectoryName to extract path parts safely.",
+      "code": "string full = Path.Combine(\"logs\", \"app\", \"today.txt\");\nstring name = Path.GetFileName(full);",
+      "tags": ["path", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.path.combine"]
+    },
+    {
+      "id": "io-006",
+      "difficulty": "Beginner",
+      "question": "How do you create and enumerate directories?",
+      "answer": "Directory.CreateDirectory creates a directory and all missing parents, and Directory.Exists checks for one. Directory.EnumerateFiles and EnumerateDirectories stream results lazily and are preferred over GetFiles and GetDirectories, which materialize the whole array. The Enumerate overloads accept search patterns and SearchOption.AllDirectories for recursion.",
+      "code": "Directory.CreateDirectory(\"logs\");\nforeach (var file in Directory.EnumerateFiles(\"logs\", \"*.txt\"))\n    Console.WriteLine(file);",
+      "tags": ["directory", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.directory"]
+    },
+    {
+      "id": "io-007",
+      "difficulty": "Beginner",
+      "question": "What does FileShare control when opening a file?",
+      "answer": "FileShare specifies what other operations are allowed on the same file while your handle is open, with values None, Read, Write, ReadWrite, and Delete. FileShare.None locks the file exclusively, while ReadWrite lets others open it concurrently. Choosing the wrong sharing mode causes IOException because another process already holds a conflicting handle.",
+      "code": "using var fs = new FileStream(\"data.bin\", FileMode.Open, FileAccess.Read, FileShare.Read);",
+      "tags": ["fileshare", "locking"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.fileshare"]
+    },
+    {
+      "id": "io-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between FileMode.Create and FileMode.Open?",
+      "answer": "FileMode controls how the file is opened: Open requires it to exist, Create creates or overwrites it, OpenOrCreate opens it or creates a new one, Append opens it for appending or creates it, and CreateNew fails if it already exists. Truncate opens an existing file and sets its length to zero. Pick the mode that matches whether existing data must be preserved.",
+      "tags": ["filemode", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.filemode"]
+    },
+    {
+      "id": "io-009",
+      "difficulty": "Beginner",
+      "question": "What is System.Text.Json and how do you serialize an object?",
+      "answer": "System.Text.Json is the built-in, high-performance JSON library in modern .NET. JsonSerializer.Serialize converts an object to a JSON string or UTF-8 bytes, and JsonSerializer.Deserialize parses JSON back into a type. By default it matches property names case-sensitively and uses PascalCase names, which you can change through JsonSerializerOptions.",
+      "code": "var json = JsonSerializer.Serialize(person);\nvar person2 = JsonSerializer.Deserialize<Person>(json);",
+      "tags": ["system-text-json", "serialization"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/overview"]
+    },
+    {
+      "id": "io-010",
+      "difficulty": "Beginner",
+      "question": "How do you handle nulls in System.Text.Json?",
+      "answer": "By default null properties are written to JSON and missing JSON members leave CLR properties at their default. JsonIgnoreCondition on a property, or DefaultIgnoreCondition on options, controls whether null values are written or ignored on serialization or deserialization. Use JsonIgnoreCondition.WhenWritingNull to omit null properties and keep payloads small.",
+      "code": "var options = new JsonSerializerOptions\n{\n    DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull\n};",
+      "tags": ["json", "nulls", "options"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonignorecondition"]
+    },
+    {
+      "id": "io-011",
+      "difficulty": "Intermediate",
+      "question": "How do JsonPropertyName and JsonIgnore affect serialization?",
+      "answer": "JsonPropertyName sets the JSON member name for a property, so C# PascalCase names can map to camelCase or other wire formats. JsonIgnore excludes a property from both serialization and deserialization, while JsonInclude can opt a non-public member in. These attributes give precise control without changing the CLR type.",
+      "code": "public class User\n{\n    [JsonPropertyName(\"user_name\")]\n    public string Name { get; set; }\n    [JsonIgnore]\n    public string Secret { get; set; }\n}",
+      "tags": ["json", "attributes"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonpropertynameattribute"]
+    },
+    {
+      "id": "io-012",
+      "difficulty": "Intermediate",
+      "question": "How does System.Text.Json support polymorphism?",
+      "answer": "Polymorphic serialization requires opting in with JsonDerivedType attributes on the base type, which add a type discriminator to the JSON. On deserialization the discriminator selects the derived type, and you can customize the discriminator name and value. Without this opt-in, serializing a derived instance through a base reference only writes base properties.",
+      "code": "[JsonDerivedType(typeof(Dog), \"dog\")]\n[JsonDerivedType(typeof(Cat), \"cat\")]\npublic abstract class Animal { }",
+      "tags": ["json", "polymorphism"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/polymorphism"]
+    },
+    {
+      "id": "io-013",
+      "difficulty": "Intermediate",
+      "question": "What are common deserialization pitfalls in System.Text.Json?",
+      "answer": "Property name matching is case-sensitive by default unless PropertyNameCaseInsensitive is set, and read-only properties are not populated unless they are collections or set by a constructor. Private setters and init-only members need constructor matching or JsonInclude. Trailing commas and comments are rejected unless JsonCommentHandling or AllowTrailingCommas are configured.",
+      "tags": ["json", "deserialization", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/how-to"]
+    },
+    {
+      "id": "io-014",
+      "difficulty": "Intermediate",
+      "question": "How do records work with System.Text.Json?",
+      "answer": "System.Text.Json supports records through their parameterized constructors, matching JSON properties to constructor parameters by name, so positional records deserialize correctly when names align. Immutable init-only properties are set during construction, and JsonPropertyName can adjust matching. This makes records a good fit for immutable data transfer objects.",
+      "code": "public record Person(string Name, int Age);\nvar p = JsonSerializer.Deserialize<Person>(json);",
+      "tags": ["records", "json"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/immutability"]
+    },
+    {
+      "id": "io-015",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom JsonConverter?",
+      "answer": "Derive from JsonConverter<T> and override Read and Write, then register the converter on JsonSerializerOptions.Converters or annotate the type or property with JsonConverterAttribute. Custom converters are useful for types whose default shape is undesirable, such as a strongly typed ID or a custom date format. Use Utf8JsonReader and Utf8JsonWriter inside Read and Write for best performance.",
+      "code": "public class MoneyConverter : JsonConverter<Money>\n{\n    public override Money Read(ref Utf8JsonReader r, Type t, JsonSerializerOptions o) => /* ... */;\n    public override void Write(Utf8JsonWriter w, Money v, JsonSerializerOptions o) => /* ... */;\n}",
+      "tags": ["json", "converter", "custom"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/converters-how-to"]
+    },
+    {
+      "id": "io-016",
+      "difficulty": "Intermediate",
+      "question": "How do you serialize enums as strings with System.Text.Json?",
+      "answer": "Add JsonStringEnumConverter to JsonSerializerOptions.Converters, or annotate the enum with [JsonConverter(typeof(JsonStringEnumConverter))], to write enum values as their names instead of numbers. String enums are more readable and resilient to reordering of members. The converter also accepts names during deserialization and can be case-insensitive via its constructor options.",
+      "code": "var options = new JsonSerializerOptions\n{\n    Converters = { new JsonStringEnumConverter() }\n};",
+      "tags": ["json", "enums"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.json.serialization.jsonstringenumconverter"]
+    },
+    {
+      "id": "io-017",
+      "difficulty": "Intermediate",
+      "question": "How does source generation improve System.Text.Json performance?",
+      "answer": "The System.Text.Json source generator emits serialization metadata at compile time, avoiding reflection and enabling trimming and Native AOT. You declare a partial JsonSerializerContext with [JsonSerializable] attributes, then serialize using that context. This reduces startup cost and works in ahead-of-time compiled apps where reflection-based serialization is unavailable.",
+      "code": "[JsonSerializable(typeof(Person))]\ninternal partial class AppJsonContext : JsonSerializerContext { }\nvar json = JsonSerializer.Serialize(person, AppJsonContext.Default.Person);",
+      "tags": ["json", "source-generation", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/source-generation"]
+    },
+    {
+      "id": "io-018",
+      "difficulty": "Intermediate",
+      "question": "What are XmlSerializer and DataContractSerializer and how do they differ?",
+      "answer": "XmlSerializer maps public members and XML attributes to control element and attribute names, and it supports only a subset of types but produces interoperable XML. DataContractSerializer uses opt-in [DataContract] and [DataMember] attributes, can serialize private members, and supports more complex graphs and versioning. Choose based on whether you need loose XML interop or richer contract control.",
+      "tags": ["xml", "serialization"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/introducing-xml-serialization"]
+    },
+    {
+      "id": "io-019",
+      "difficulty": "Intermediate",
+      "question": "Why is BinaryFormatter deprecated?",
+      "answer": "BinaryFormatter deserialization can execute arbitrary code from untrusted payloads, making it a serious security risk, and its format is not version-tolerant. Microsoft marked it obsolete and disabled it by default in .NET 8 and later, with the API eventually removed. Migrate to safer, explicit formats such as System.Text.Json, protobuf, or MessagePack.",
+      "tags": ["binary-serialization", "security", "deprecation"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/binaryformatter-security-guide"]
+    },
+    {
+      "id": "io-020",
+      "difficulty": "Intermediate",
+      "question": "How do you stream JSON with Utf8JsonReader and Utf8JsonWriter?",
+      "answer": "Utf8JsonReader is a forward-only, allocation-light reader over UTF-8 bytes that you advance token by token, and Utf8JsonWriter writes JSON incrementally to a buffer or stream. They let you process very large documents without building an object graph in memory. Both are low-level and require you to track state yourself, unlike JsonSerializer or JsonDocument.",
+      "code": "var reader = new Utf8JsonReader(utf8Bytes);\nwhile (reader.Read())\n{\n    // inspect reader.TokenType and value\n}",
+      "tags": ["json", "streaming", "utf8jsonreader"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.json.utf8jsonreader"]
+    },
+    {
+      "id": "io-021",
+      "difficulty": "Advanced",
+      "question": "How does Newtonsoft.Json compare to System.Text.Json?",
+      "answer": "System.Text.Json is built in, faster, uses UTF-8 natively, and supports trimming and AOT through source generation, but it has fewer features than Newtonsoft.Json. Newtonsoft.Json offers richer flexibility, such as dynamic handling with JObject, more converter options, and lenient parsing by default, at the cost of performance and an extra dependency. Choose System.Text.Json for new, performance-sensitive code and Newtonsoft when you need its specific features.",
+      "tags": ["json", "newtonsoft", "comparison"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/migrate-from-newtonsoft"]
+    },
+    {
+      "id": "io-022",
+      "difficulty": "Advanced",
+      "question": "How do you stream JSON with IAsyncEnumerable?",
+      "answer": "System.Text.Json can serialize and deserialize IAsyncEnumerable<T> with the streaming methods JsonSerializer.DeserializeAsyncEnumerable and the SerializeAsync overloads, emitting items incrementally. This keeps memory low when consuming a large array of objects from a network stream or API. Combine it with await foreach and a CancellationToken for responsive, cancellable processing.",
+      "code": "await foreach (var item in JsonSerializer.DeserializeAsyncEnumerable<Item>(stream, options))\n    Process(item);",
+      "tags": ["json", "iasyncenumerable", "streaming"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializer.deserializeasyncenumerable"]
+    },
+    {
+      "id": "io-023",
+      "difficulty": "Advanced",
+      "question": "What are memory-mapped files and when are they useful?",
+      "answer": "MemoryMappedFile maps a file or shared memory region into the process address space so it can be accessed as a byte buffer, letting the OS page data in and out on demand. This is efficient for very large files, random access, and inter-process communication via named shared memory. You access the data through MemoryMappedViewAccessor or a safe accessor and must dispose both the view and the file.",
+      "code": "using var mmf = MemoryMappedFile.CreateFromFile(\"big.dat\");\nusing var accessor = mmf.CreateViewAccessor();\nbyte b = accessor.ReadByte(0);",
+      "tags": ["memory-mapped-files", "io", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/io/memory-mapped-files"]
+    },
+    {
+      "id": "io-024",
+      "difficulty": "Advanced",
+      "question": "How do you compress and decompress streams with GZipStream?",
+      "answer": "GZipStream wraps another stream and compresses or decompresses data as it is read or written, so you can pipe a FileStream through it and then through a StreamReader for text. Set CompressionLevel to trade speed for size, and dispose the GZipStream after the inner stream so buffered data is flushed. BrotliStream is an alternative with better ratios for web content.",
+      "code": "using var file = File.Create(\"data.gz\");\nusing var gz = new GZipStream(file, CompressionLevel.Optimal);\nusing var writer = new StreamWriter(gz);\nwriter.Write(text);",
+      "tags": ["compression", "gzipstream", "streams"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.compression.gzipstream"]
+    },
+    {
+      "id": "io-025",
+      "difficulty": "Advanced",
+      "question": "What is buffering in file I/O and how do you manage temp files safely?",
+      "answer": "FileStream and StreamReader buffer data so reads and writes happen in larger blocks, reducing syscalls; the buffer size can be tuned and FileOptions.SequentialScan hints access patterns. For temporary files, Path.GetTempFileName creates a unique file but is limited in number and leaves files behind, so prefer Path.GetRandomFileName combined with Path.Combine into the temp directory, and always delete the file in a finally block. Dispose or Flush streams so buffered data reaches disk before deletion or reuse.",
+      "code": "string tmp = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());\ntry { await File.WriteAllTextAsync(tmp, data); }\nfinally { File.Delete(tmp); }",
+      "tags": ["buffering", "temp-files", "io"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.filestream"]
+    }
+  ]
+}
