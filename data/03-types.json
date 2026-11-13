@@ -1,0 +1,364 @@
+{
+  "category": "Value Types & Reference Types",
+  "slug": "types",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "types-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a value type and a reference type?",
+      "answer": "Value types hold their data directly and are copied on assignment, so each variable has its own copy. Reference types hold a reference to an object on the heap, so assignment copies the reference and multiple variables can point to the same object. Structs, enums, and primitives are value types; classes, interfaces, delegates, arrays, and strings are reference types.",
+      "code": "int a = 1; int b = a; b = 2;        // a still 1\nvar l1 = new List<int>(); var l2 = l1; l2.Add(9); // l1 has 9",
+      "tags": [
+        "value-types",
+        "reference-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/fundamentals/types/"
+      ]
+    },
+    {
+      "id": "types-002",
+      "difficulty": "Beginner",
+      "question": "Where are value types and reference types stored in memory?",
+      "answer": "Value types are usually stored inline: on the stack for local variables, or inside the containing object on the heap. Reference types store the object itself on the heap and a reference on the stack or in another object. A value type field inside a class lives on the heap with the object; a value type captured by a lambda may be hoisted to the heap.",
+      "tags": [
+        "memory",
+        "stack",
+        "heap"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "types-003",
+      "difficulty": "Beginner",
+      "question": "What is a struct and when should you use one?",
+      "answer": "A struct is a value type that can have fields, properties, methods, and constructors but no parameterless instance field initializers before C# 10, no inheritance from other types, and no finalizer. Use a struct for small, immutable data (roughly 16 bytes or less) that represents a single value and is short-lived. Structs are copied on assignment, which can be costly for large types.",
+      "code": "public readonly struct Point\n{\n    public int X { get; }\n    public int Y { get; }\n    public Point(int x, int y) => (X, Y) = (x, y);\n}",
+      "tags": [
+        "struct",
+        "value-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/struct"
+      ]
+    },
+    {
+      "id": "types-004",
+      "difficulty": "Intermediate",
+      "question": "What is a readonly struct and why does it matter?",
+      "answer": "A readonly struct marks all instance fields as readonly, guaranteeing immutability. It helps the compiler avoid defensive copies when the struct is used in readonly contexts and can enable better performance. Combined with readonly members, it prevents the hidden copy that the JIT otherwise makes for non-readonly structs.",
+      "code": "public readonly struct Temperature\n{\n    public double Celsius { get; }\n    public Temperature(double c) => Celsius = c;\n    public double Fahrenheit => Celsius * 9 / 5 + 32;\n}",
+      "tags": [
+        "readonly",
+        "struct",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/struct#readonly-struct"
+      ]
+    },
+    {
+      "id": "types-005",
+      "difficulty": "Intermediate",
+      "question": "What is a ref struct?",
+      "answer": "A ref struct can only live on the stack and cannot be boxed, stored in a field of a class, used in arrays, or captured by async/lambda closures. It exists for high-performance scenarios like Span<T> and ReadOnlySpan<T> that must not escape the stack. C# 13 relaxes some rules, for example allowing ref struct locals in async methods when safe.",
+      "code": "Span<int> buffer = stackalloc int[16];\nReadOnlySpan<char> slice = \"hello\".AsSpan(1, 3);",
+      "tags": [
+        "ref-struct",
+        "span",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/ref-struct"
+      ]
+    },
+    {
+      "id": "types-006",
+      "difficulty": "Beginner",
+      "question": "What is the default value of value types and reference types?",
+      "answer": "Value type fields default to a zeroed value: 0 for numeric types, false for bool, '\\0' for char, and a zeroed struct. Reference type fields default to null. Locals must be assigned before use unless they are fields, and C# 11 requires struct fields to be definitely assigned in constructors.",
+      "tags": [
+        "default-values",
+        "initialization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/default-values"
+      ]
+    },
+    {
+      "id": "types-007",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a struct and a class in terms of equality?",
+      "answer": "Structs use ValueType.Equals by default, which compares field values using reflection, and GetHashCode is also reflection-based, so both are slower than a custom implementation. Classes use reference equality by default. For performance, override Equals and GetHashCode in structs, or use readonly record struct which generates efficient value equality.",
+      "code": "public readonly record struct Money(decimal Amount, string Currency);\nvar a = new Money(5, \"USD\");\nvar b = new Money(5, \"USD\");\nConsole.WriteLine(a == b); // true",
+      "tags": [
+        "equality",
+        "struct",
+        "record"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"
+      ]
+    },
+    {
+      "id": "types-008",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Equals, ReferenceEquals, and == for objects?",
+      "answer": "ReferenceEquals always compares identity and cannot be overridden. Equals is virtual and can be overridden for value equality. == is a static operator that is overloadable per type. For reference types without an overloaded ==, == behaves like ReferenceEquals. Use the one that matches the semantic you need and keep them consistent.",
+      "tags": [
+        "equality",
+        "referenceequals"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.object.referenceequals"
+      ]
+    },
+    {
+      "id": "types-009",
+      "difficulty": "Beginner",
+      "question": "What is a nullable reference type?",
+      "answer": "Nullable reference types are an opt-in compile-time feature (enabled by <Nullable>enable</Nullable>) where string? means the reference may be null and string means it should not be. The compiler emits warnings to help avoid NullReferenceException. It does not add runtime checks; it is purely static analysis.",
+      "code": "#nullable enable\nstring? maybe = null;\nstring notNull = maybe ?? \"default\";",
+      "tags": [
+        "nullable",
+        "reference-types",
+        "static-analysis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/nullable-references"
+      ]
+    },
+    {
+      "id": "types-010",
+      "difficulty": "Intermediate",
+      "question": "What do the null-forgiving operator and the null-conditional operator do with nullable reference types?",
+      "answer": "The null-forgiving operator ! suppresses a nullable warning when you know a value is not null. The null-conditional operator ?. short-circuits member access on null. Combining them, x!.Length tells the compiler you assert x is not null. Use ! sparingly because it disables the safety net.",
+      "code": "string? name = GetName();\nint len = name!.Length;      // asserted not null\nint? safe = name?.Length;    // null if name is null",
+      "tags": [
+        "nullable",
+        "operators"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/null-forgiving"
+      ]
+    },
+    {
+      "id": "types-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between deep copy and shallow copy?",
+      "answer": "A shallow copy duplicates the top-level object but shares referenced child objects, which MemberwiseClone and record with-expressions produce. A deep copy recursively duplicates all nested objects so the copies are fully independent. Choose deep copy when mutation of nested state must not be shared.",
+      "code": "var a = new Order { Lines = new List<Line> { new() } };\nvar shallow = a with { };              // shares Lines list\nvar deep = a with { Lines = a.Lines.Select(l => l with { }).ToList() };",
+      "tags": [
+        "copy",
+        "clone",
+        "immutability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone"
+      ]
+    },
+    {
+      "id": "types-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the stack and the heap?",
+      "answer": "The stack is a LIFO region per thread used for method frames, locals, and value types; allocation and release are automatic and fast when a method returns. The heap stores objects managed by the garbage collector, is shared across threads, and is reclaimed by the GC. Stack overflow happens on deep recursion; heap pressure triggers GC.",
+      "tags": [
+        "memory",
+        "stack",
+        "heap"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "types-013",
+      "difficulty": "Intermediate",
+      "question": "What is a tuple and how does it differ from System.Tuple?",
+      "answer": "A value tuple, written (int Id, string Name), is a lightweight struct with named and positional elements and supports deconstruction and equality. System.Tuple is a reference type with properties Item1, Item2 and no built-in deconstruction or value equality. Prefer value tuples for transient groupings; define a class or record when the concept is meaningful and long-lived.",
+      "code": "(int Id, string Name) row = (1, \"Ada\");\nvar (id, name) = row;\nConsole.WriteLine(row == (1, \"Ada\")); // true",
+      "tags": [
+        "tuple",
+        "deconstruction"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/value-tuples"
+      ]
+    },
+    {
+      "id": "types-014",
+      "difficulty": "Beginner",
+      "question": "What is an enum and what is its underlying type?",
+      "answer": "An enum is a named set of integer constants, defaulting to int as the underlying type, though you can specify byte, sbyte, short, ushort, int, uint, long, or ulong. Enums are value types and improve readability and type safety. Use [Flags] with powers of two for bitmask combinations.",
+      "code": "[Flags]\npublic enum Permissions { None = 0, Read = 1, Write = 2, Execute = 4 }\nvar p = Permissions.Read | Permissions.Write;",
+      "tags": [
+        "enum",
+        "flags"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/enum"
+      ]
+    },
+    {
+      "id": "types-015",
+      "difficulty": "Intermediate",
+      "question": "What are the pitfalls of using mutable structs?",
+      "answer": "Because structs are copied by value, mutations can be lost. Mutating a struct returned from a property or stored in a readonly field changes a temporary copy, not the original. Mutable structs also cause defensive copies in readonly contexts and confuse equality. Prefer readonly structs and return new instances instead of mutating.",
+      "code": "struct Counter { public int N; public void Inc() => N++; }\nCounter Get() => new();\nGet().Inc(); // mutates a temporary, N stays 0",
+      "tags": [
+        "struct",
+        "immutability",
+        "pitfalls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/struct"
+      ]
+    },
+    {
+      "id": "types-016",
+      "difficulty": "Intermediate",
+      "question": "What is a record type and what does it generate?",
+      "answer": "A record is a reference type optimized for data. The compiler generates a constructor, init-only properties, value equality (Equals, GetHashCode, ==, !=), a readable ToString, and a with-expression for non-destructive mutation. record struct creates a value-type variant. Records support positional syntax for concise declarations.",
+      "code": "public record Person(string First, string Last);\nvar a = new Person(\"Ada\", \"Lovelace\");\nvar b = a with { Last = \"Byron\" };\nConsole.WriteLine(a == new Person(\"Ada\", \"Lovelace\")); // true",
+      "tags": [
+        "record",
+        "immutability",
+        "equality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"
+      ]
+    },
+    {
+      "id": "types-017",
+      "difficulty": "Intermediate",
+      "question": "What is a with-expression?",
+      "answer": "A with-expression creates a copy of a record or struct with specified properties changed, using non-destructive mutation. It calls the copy constructor or clone and then sets the listed members. It works with records, record structs, anonymous types, and any type that has a suitable clone method.",
+      "code": "var updated = original with { Status = Status.Closed, ClosedAt = DateTime.UtcNow };",
+      "tags": [
+        "record",
+        "with-expression"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/with-expression"
+      ]
+    },
+    {
+      "id": "types-018",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a reference conversion and a boxing conversion?",
+      "answer": "A reference conversion changes the static type without moving data because both types are reference types in the same hierarchy, for example string to object. A boxing conversion allocates a heap object and copies the value when a value type is treated as object or an interface. Reference conversions are cheap; boxing costs an allocation and a copy.",
+      "tags": [
+        "conversion",
+        "boxing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/types/boxing-and-unboxing"
+      ]
+    },
+    {
+      "id": "types-019",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the default literal and the default operator?",
+      "answer": "default(T) produces the default value of a type and default infers it from the target type. It is useful in generics where you cannot hardcode a value, and to initialize a variable with a type-appropriate zero. For nullable types default is null.",
+      "code": "T? first = default;\nint zero = default;   // 0\nstring? none = default; // null",
+      "tags": [
+        "default",
+        "generics"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/default"
+      ]
+    },
+    {
+      "id": "types-020",
+      "difficulty": "Advanced",
+      "question": "Why can structs implement interfaces but not inherit from other structs?",
+      "answer": "Structs cannot inherit because they have no vtable-based object header and are copied by value; inheritance would require reference semantics and shared layout. A struct can implement an interface, but storing it as that interface boxes it, and calling interface members on the boxed copy. This is why interface dispatch on structs is a performance concern.",
+      "tags": [
+        "struct",
+        "interfaces",
+        "boxing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/struct"
+      ]
+    },
+    {
+      "id": "types-021",
+      "difficulty": "Intermediate",
+      "question": "What is a Span<T> and what problems does it solve?",
+      "answer": "Span<T> is a ref struct that provides a type-safe view over contiguous memory, whether an array, stack allocation, or native buffer, without copying. It enables slicing and slicing-into-string scenarios with zero allocation. It cannot be stored on the heap, used across await, or captured, which keeps it safe.",
+      "code": "ReadOnlySpan<char> span = \"2026-11-13\".AsSpan();\nvar year = int.Parse(span[..4]);",
+      "tags": [
+        "span",
+        "performance",
+        "memory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.span-1"
+      ]
+    },
+    {
+      "id": "types-022",
+      "difficulty": "Intermediate",
+      "question": "What is Memory<T> and when do you use it instead of Span<T>?",
+      "answer": "Memory<T> is a heap-friendly view over memory that, unlike Span<T>, is a normal struct and can be stored in fields, used in async methods, and captured by closures. Convert it to Span<T> with .Span when you need synchronous access. Use Memory<T> when the buffer must outlive a single synchronous call.",
+      "code": "async Task<int> CountAsync(Memory<byte> buffer)\n{\n    await ReadAsync(buffer);\n    return buffer.Span.Length;\n}",
+      "tags": [
+        "memory",
+        "span",
+        "async"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.memory-1"
+      ]
+    },
+    {
+      "id": "types-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between covariance, contravariance, and invariance?",
+      "answer": "Covariance (out) lets a more derived type be used where a less derived one is expected, as with IEnumerable<Derived> to IEnumerable<Base>. Contravariance (in) lets a less derived type be used where a more derived one is expected, as with IComparer<Base> to IComparer<Derived>. Invariance allows only the exact type. These apply to generic interface and delegate type parameters.",
+      "code": "IEnumerable<object> objs = new List<string>();   // covariance\nIComparer<string> cmp = Comparer<object>.Default; // contravariance",
+      "tags": [
+        "variance",
+        "generics"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/covariance-contravariance/"
+      ]
+    },
+    {
+      "id": "types-024",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between implicit and explicit interface implementation?",
+      "answer": "Implicit implementation makes the member part of the public surface and callable directly. Explicit implementation, written as void IFoo.Bar(), is only reachable through the interface and avoids name conflicts when two interfaces declare the same member. It is also used to hide members from the class's public API.",
+      "code": "class C : IDisposable\n{\n    void IDisposable.Dispose() { }\n}\n// must call through interface: ((IDisposable)c).Dispose();",
+      "tags": [
+        "interfaces",
+        "implementation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/interfaces/explicit-interface-implementation"
+      ]
+    },
+    {
+      "id": "types-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a type's static type and its runtime type?",
+      "answer": "The static type is what the compiler knows from the declaration and determines which members are accessible at compile time. The runtime type is the actual object type and determines virtual and interface dispatch at execution time. Casting or pattern matching converts a static type to a more specific one, with a check that can fail at runtime.",
+      "code": "object o = \"text\";       // static type object\nif (o is string s)       // runtime type string\n    Console.WriteLine(s.Length);",
+      "tags": [
+        "types",
+        "polymorphism",
+        "dispatch"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/types/"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,351 @@
+{
+  "category": "Memory Management & Garbage Collection",
+  "slug": "memory",
+  "icon": "memory",
+  "questions": [
+    {
+      "id": "memory-001",
+      "difficulty": "Beginner",
+      "question": "How does the managed heap differ from the stack in .NET?",
+      "answer": "The stack is a per-thread LIFO region used for value-type locals, method parameters, and return addresses; it is fast and freed automatically when a frame returns. The heap is a process-wide region where reference-type objects are allocated and managed by the garbage collector. Stack memory is limited and short-lived, while heap memory is larger, shared, and reclaimed non-deterministically.",
+      "tags": [
+        "stack",
+        "heap",
+        "fundamentals"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "memory-002",
+      "difficulty": "Beginner",
+      "question": "What is the managed heap?",
+      "answer": "The managed heap is the region the CLR uses to allocate reference types, with memory handed out by a bump pointer from the allocation pointer. It is divided into the small object heap and the large object heap, and is compacted by the garbage collector. Because it is managed, you rarely free memory explicitly; the GC does it for you.",
+      "tags": [
+        "heap",
+        "gc",
+        "clr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "memory-003",
+      "difficulty": "Beginner",
+      "question": "What are the garbage collection generations 0, 1, and 2?",
+      "answer": "The GC uses three generations to exploit the fact that most objects die young. New objects go to generation 0, survivors are promoted to generation 1, and long-lived objects end up in generation 2. Collecting a lower generation is cheap and frequent, while a generation 2 (full) collection is expensive and rare.",
+      "tags": [
+        "gc",
+        "generations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/generations"
+      ]
+    },
+    {
+      "id": "memory-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between finalization and IDisposable?",
+      "answer": "A finalizer (destructor) is run by the GC finalizer thread on a non-deterministic schedule and is only a safety net for unmanaged resources. IDisposable.Dispose gives deterministic cleanup that runs when the caller invokes it, typically via using. Best practice is to implement Dispose for prompt release and keep a finalizer only when you directly hold unmanaged resources.",
+      "tags": [
+        "finalization",
+        "idisposable"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose"
+      ]
+    },
+    {
+      "id": "memory-005",
+      "difficulty": "Beginner",
+      "question": "What is the Dispose pattern?",
+      "answer": "The Dispose pattern is the recommended way to release both managed and unmanaged resources. A public Dispose() calls a protected virtual Dispose(bool disposing) that disposes managed objects when disposing is true and frees unmanaged resources in both cases. If a finalizer exists it should call Dispose(false), and Dispose should call GC.SuppressFinalize(this).",
+      "code": "public class ResourceHolder : IDisposable\n{\n    private bool _disposed;\n    protected virtual void Dispose(bool disposing)\n    {\n        if (_disposed) return;\n        if (disposing) { /* dispose managed */ }\n        /* free unmanaged */\n        _disposed = true;\n    }\n    public void Dispose()\n    {\n        Dispose(true);\n        GC.SuppressFinalize(this);\n    }\n}",
+      "tags": [
+        "dispose-pattern",
+        "idisposable"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose"
+      ]
+    },
+    {
+      "id": "memory-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between IDisposable and IAsyncDisposable?",
+      "answer": "IDisposable exposes a synchronous Dispose() for releasing resources. IAsyncDisposable exposes ValueTask DisposeAsync() for resources that must be released asynchronously, such as streams flushed over the network. Use await using with IAsyncDisposable and prefer it when disposal performs I/O.",
+      "tags": [
+        "idisposable",
+        "iasyncdisposable"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.iasyncdisposable"
+      ]
+    },
+    {
+      "id": "memory-007",
+      "difficulty": "Beginner",
+      "question": "How do using and await using work?",
+      "answer": "using ensures Dispose is called when control leaves the block, even if an exception is thrown, and it is compiled to a try/finally. await using does the same for IAsyncDisposable by awaiting DisposeAsync. C# 8 introduced using declarations so a single using var disposes at the end of the enclosing scope.",
+      "code": "using var stream = File.OpenRead(\"data.bin\");\nawait using var conn = new SqlConnection(cs);",
+      "tags": [
+        "using",
+        "disposal"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/statements/using"
+      ]
+    },
+    {
+      "id": "memory-008",
+      "difficulty": "Beginner",
+      "question": "How do structs and classes differ in memory layout?",
+      "answer": "A class instance lives on the heap and a variable holds a reference to it, so copying a variable copies the reference. A struct is a value type stored inline wherever the variable lives, so assigning it copies the whole value. Structs avoid heap allocation and GC pressure but should stay small and ideally immutable to avoid costly copies.",
+      "tags": [
+        "struct",
+        "class",
+        "value-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/struct"
+      ]
+    },
+    {
+      "id": "memory-009",
+      "difficulty": "Beginner",
+      "question": "What is boxing and why does it allocate?",
+      "answer": "Boxing wraps a value type in a heap-allocated object so it can be treated as a reference type, such as when storing an int in a non-generic collection or calling an interface method on a struct through a reference. Unboxing extracts the value back. Boxing allocates on the heap and adds GC pressure, so generics and spans are preferred to avoid it in hot paths.",
+      "code": "int x = 42;\nobject boxed = x;      // heap allocation\nint y = (int)boxed;    // unbox",
+      "tags": [
+        "boxing",
+        "allocations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/types/boxing-and-unboxing"
+      ]
+    },
+    {
+      "id": "memory-010",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid calling GC.Collect?",
+      "answer": "GC.Collect forces a collection that the GC would otherwise schedule itself, and a full (generation 2) collection can pause the application and disrupt the GC's tuning heuristics. It is rarely needed because the collector adapts to allocation patterns, and calling it frequently usually hurts throughput. Reserve explicit collection for specific scenarios like memory-leak diagnostics or after freeing large amounts of unmanaged-backed memory.",
+      "tags": [
+        "gc-collect",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.gc.collect"
+      ]
+    },
+    {
+      "id": "memory-011",
+      "difficulty": "Intermediate",
+      "question": "What are the GC modes and what is background GC?",
+      "answer": "The .NET GC runs in workstation mode (optimized for client responsiveness) or server mode (one heap and thread per core for throughput), selectable via project settings or runtime config. Background (concurrent) GC collects generation 2 on a dedicated thread while the app keeps running, reducing pause times. Server GC can also use background collection to keep throughput high with shorter pauses.",
+      "tags": [
+        "gc-modes",
+        "background-gc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/background-garbage-collection"
+      ]
+    },
+    {
+      "id": "memory-012",
+      "difficulty": "Intermediate",
+      "question": "What does GC.SuppressFinalize do and why call it in Dispose?",
+      "answer": "GC.SuppressFinalize tells the runtime not to call the object's finalizer because cleanup already happened via Dispose. This removes the object from the finalization queue, so it is collected in one pass instead of surviving to be finalized. It is standard to call it at the end of Dispose when the type has a finalizer.",
+      "code": "public void Dispose()\n{\n    Dispose(true);\n    GC.SuppressFinalize(this);\n}",
+      "tags": [
+        "gc",
+        "finalization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.gc.suppressfinalize"
+      ]
+    },
+    {
+      "id": "memory-013",
+      "difficulty": "Intermediate",
+      "question": "What are common causes of memory leaks in .NET?",
+      "answer": "Because the GC reclaims only unreachable objects, leaks occur when objects stay reachable unintentionally. Frequent causes include event handlers that are never unsubscribed, static fields or caches that hold references forever, long-lived collections that grow without bounds, and closures capturing more than intended. Tools like dotnet-counters, dotnet-dump, and Visual Studio diagnostic tools help find the retaining roots.",
+      "tags": [
+        "memory-leaks",
+        "events"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/diagnostics/"
+      ]
+    },
+    {
+      "id": "memory-014",
+      "difficulty": "Intermediate",
+      "question": "What is array and object pooling and when should you use it?",
+      "answer": "ArrayPool<T> and MemoryPool<T> lend reusable buffers to avoid repeated large allocations, and Microsoft.Extensions.ObjectPool reuses whole object instances. You rent a buffer, use it, and return it in a finally block, optionally clearing it to avoid leaking sensitive data. Pooling reduces GC pressure and LOH churn in allocation-heavy, high-throughput code.",
+      "code": "var pool = ArrayPool<byte>.Shared;\nvar buffer = pool.Rent(4096);\ntry { /* use buffer */ }\nfinally { pool.Return(buffer, clearArray: true); }",
+      "tags": [
+        "pooling",
+        "arraypool"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.buffers.arraypool-1"
+      ]
+    },
+    {
+      "id": "memory-015",
+      "difficulty": "Intermediate",
+      "question": "How do Span<T> and Memory<T> help reduce allocations?",
+      "answer": "Span<T> is a stack-only, ref struct that provides a type-safe view over contiguous memory (arrays, stack memory, or unmanaged memory) without copying. Memory<T> is a heap-friendly equivalent usable in async methods and fields because it is not a ref struct. Slicing with AsSpan or Slice creates views rather than new arrays, cutting allocations in parsing and buffer-processing code.",
+      "code": "ReadOnlySpan<char> span = \"hello world\".AsSpan();\nvar word = span.Slice(0, 5); // no allocation",
+      "tags": [
+        "span",
+        "memory",
+        "allocations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/memory-and-spans/"
+      ]
+    },
+    {
+      "id": "memory-016",
+      "difficulty": "Intermediate",
+      "question": "How does string interning affect memory?",
+      "answer": "The CLR keeps a pool of literal strings so identical literals share one instance, saving memory and enabling fast reference-equality checks. You can add runtime strings with String.Intern, but that pins them for the life of the process. Interning many unique runtime strings can therefore increase memory rather than reduce it, so use it carefully.",
+      "code": "var a = \"hello\";\nvar b = \"hello\";\nbool same = ReferenceEquals(a, b); // true (interned)",
+      "tags": [
+        "string-interning",
+        "memory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.string.intern"
+      ]
+    },
+    {
+      "id": "memory-017",
+      "difficulty": "Intermediate",
+      "question": "What is the generational hypothesis?",
+      "answer": "The generational hypothesis is the empirical observation that most objects die young and that older objects tend to stay alive. The GC exploits this by checking generation 0 frequently, where collection is cheap, and checking older generations rarely. This makes collections fast on average and avoids repeatedly scanning long-lived objects.",
+      "tags": [
+        "gc",
+        "generations",
+        "theory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "memory-018",
+      "difficulty": "Intermediate",
+      "question": "What are GC roots?",
+      "answer": "GC roots are the references the collector treats as definitely alive, such as local variables and parameters on thread stacks, static fields, CPU registers, and objects kept alive by GCHandles. The GC builds a reachable graph from these roots and reclaims everything unreachable. Understanding roots is key to diagnosing why an object is not collected.",
+      "tags": [
+        "gc-roots",
+        "gc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "memory-019",
+      "difficulty": "Intermediate",
+      "question": "What is SafeHandle and why is it preferred over IntPtr?",
+      "answer": "SafeHandle wraps an operating-system handle and guarantees it is released exactly once even if the finalizer runs during an exception or a partially completed operation. Because it is a critical finalizer object, the CLR ensures it is not aborted mid-cleanup. Prefer SafeHandle over raw IntPtr fields to make native-resource management reliable and to avoid handle leaks.",
+      "tags": [
+        "safehandle",
+        "interop"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.runtime.interopservices.safehandle"
+      ]
+    },
+    {
+      "id": "memory-020",
+      "difficulty": "Intermediate",
+      "question": "What is memory pressure and how do you manage it?",
+      "answer": "Memory pressure means the process is consuming enough memory that allocations or the GC become constrained. You can inform the runtime about large unmanaged allocations with GC.AddMemoryPressure and remove it with GC.RemoveMemoryPressure so the GC accounts for memory it cannot see. Monitor GC heap size, allocation rate, and generation 2 frequency to detect pressure early.",
+      "tags": [
+        "memory-pressure",
+        "gc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.gc.addmemorypressure"
+      ]
+    },
+    {
+      "id": "memory-021",
+      "difficulty": "Advanced",
+      "question": "What is a weak reference and when would you use WeakReference?",
+      "answer": "A weak reference points at an object without preventing its collection, so the GC can reclaim it when memory is needed. WeakReference and its generic form let you check TryGetTarget to see whether the object is still alive before using it. They suit caches of expensive objects that can be rebuilt, where you want to keep them only while memory allows.",
+      "code": "var weak = new WeakReference<byte[]>(new byte[1_000_000]);\nif (weak.TryGetTarget(out var data)) { /* still alive */ }",
+      "tags": [
+        "weakreference",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/weak-references"
+      ]
+    },
+    {
+      "id": "memory-022",
+      "difficulty": "Advanced",
+      "question": "What is GCHandle and what kinds of handles exist?",
+      "answer": "GCHandle lets you get an unmanaged-style handle to a managed object so native or unsafe code can hold a reference to it. Options include Normal, Pinned (which also fixes the address so it will not move), Weak, WeakTrackResurrection, and AddrOfPinnedObject to obtain a raw pointer. Handles must be freed with Free; a leaked pinned handle prevents compaction and can fragment the heap.",
+      "code": "var arr = new int[100];\nvar h = GCHandle.Alloc(arr, GCHandleType.Pinned);\nIntPtr ptr = h.AddrOfPinnedObject();\nh.Free();",
+      "tags": [
+        "gchandle",
+        "interop",
+        "pinning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.runtime.interopservices.gchandle"
+      ]
+    },
+    {
+      "id": "memory-023",
+      "difficulty": "Advanced",
+      "question": "What is stackalloc and what are its constraints?",
+      "answer": "stackalloc allocates a block of memory on the stack, avoiding heap allocation and GC, which is useful for small temporary buffers in hot paths. In modern C# it can target Span<T> or ReadOnlySpan<T> for type safety, and the memory is freed automatically when the method returns. The buffer size must be small enough to avoid a stack overflow, and the memory must not outlive the method, so it cannot be returned.",
+      "code": "Span<byte> buffer = stackalloc byte[256];\n// use buffer; released when method returns",
+      "tags": [
+        "stackalloc",
+        "span",
+        "unsafe"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/stackalloc"
+      ]
+    },
+    {
+      "id": "memory-024",
+      "difficulty": "Advanced",
+      "question": "What is the large object heap and why can it fragment?",
+      "answer": "Objects of 85,000 bytes or more are allocated on the large object heap (LOH), which the GC collects only during generation 2 collections. Because the LOH is not compacted by default, freed gaps between live objects can cause fragmentation and failed large allocations. You can reduce pressure by pooling large buffers, and compaction can be requested via GCSettings.LargeObjectHeapCompactionMode, but it is costly.",
+      "tags": [
+        "loh",
+        "fragmentation",
+        "gc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/large-object-heap"
+      ]
+    },
+    {
+      "id": "memory-025",
+      "difficulty": "Advanced",
+      "question": "Why is finalization non-deterministic and what problems does that cause?",
+      "answer": "Finalizers run on a dedicated finalizer thread whenever the GC decides, with no ordering or timing guarantees, and the object survives an extra collection cycle before it can be reclaimed. This makes finalization unsuitable for time-sensitive cleanup such as releasing locks or closing files, and a blocked finalizer thread can stall all finalization. Implement IDisposable for deterministic cleanup and keep finalizers as a fallback for unmanaged resources only.",
+      "tags": [
+        "finalization",
+        "gc",
+        "determinism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/unmanaged"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,226 @@
+{
+  "category": "Collections & Data Structures",
+  "slug": "collections",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "collections-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an array and a List<T>?",
+      "answer": "An array has a fixed length set at creation and offers the fastest indexed access with minimal overhead. A List<T> wraps an array and grows automatically by allocating a larger array and copying elements, offering Add, Remove, and other helpers at a small cost. Use an array when the size is fixed and a List<T> when the collection changes.",
+      "code": "int[] a = new int[3];\nvar list = new List<int> { 1, 2, 3 };\nlist.Add(4);",
+      "tags": ["array", "list"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/arrays/"]
+    },
+    {
+      "id": "collections-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an array and an ArrayList?",
+      "answer": "ArrayList is a non-generic collection that stores object references, so adding value types boxes them and retrieving them requires casts, which is slow and error-prone. Array and List<T> are type-safe and avoid boxing. ArrayList is legacy; prefer generic collections in new code.",
+      "tags": ["arraylist", "collections", "boxing"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.arraylist"]
+    },
+    {
+      "id": "collections-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between List<T>, Dictionary<TKey,TValue>, and HashSet<T>?",
+      "answer": "List<T> is an ordered sequence with index access and O(n) search. Dictionary<TKey,TValue> maps keys to values with near O(1) lookup by key and requires unique keys. HashSet<T> stores unique elements with near O(1) membership tests and set operations such as union and intersect. Choose by access pattern.",
+      "code": "var list = new List<int> { 3, 1, 2 };\nvar map = new Dictionary<string, int> { [\"a\"] = 1 };\nvar set = new HashSet<int> { 1, 2, 3 };",
+      "tags": ["list", "dictionary", "hashset"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/"]
+    },
+    {
+      "id": "collections-004",
+      "difficulty": "Intermediate",
+      "question": "How does Dictionary<TKey,TValue> resolve collisions internally?",
+      "answer": "Dictionary uses an array of buckets and an array of entries. A key's hash code, combined with the comparer, selects a bucket index. Collisions are resolved by chaining entries through a next index, so lookup walks the short chain comparing hashes then calling Equals. When the load factor is exceeded, it resizes and rehashes, so a good GetHashCode matters for performance.",
+      "tags": ["dictionary", "hashing", "internals"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2"]
+    },
+    {
+      "id": "collections-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between IEnumerable<T> and ICollection<T> and IList<T>?",
+      "answer": "IEnumerable<T> supports forward iteration only. ICollection<T> adds Count, Add, Remove, Contains, and Clear. IList<T> adds indexed access and Insert/RemoveAt. The interfaces form an inheritance chain, so a List<T> implements all three. Program to the least specific interface your caller needs.",
+      "code": "void Print(IEnumerable<int> items)\n{\n    foreach (var i in items) Console.WriteLine(i);\n}",
+      "tags": ["interfaces", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/selecting-a-collection-class"]
+    },
+    {
+      "id": "collections-006",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IReadOnlyList<T> and IList<T>?",
+      "answer": "IReadOnlyList<T> exposes Count and index access without mutation methods, signaling to callers that the collection should not be changed. IList<T> includes mutation methods. Passing an IReadOnlyList communicates intent and prevents accidental modification, though it does not prevent mutation if the caller casts back to the concrete type.",
+      "code": "IReadOnlyList<string> Names => _names;\nprivate readonly List<string> _names = new();",
+      "tags": ["readonly", "collections", "api-design"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.ireadonlylist-1"]
+    },
+    {
+      "id": "collections-007",
+      "difficulty": "Intermediate",
+      "question": "What is a LinkedList<T> and when is it better than List<T>?",
+      "answer": "LinkedList<T> is a doubly linked list where each node references the previous and next node. Insertion and removal at a known node are O(1) and there is no resizing, but there is no index access and traversal is cache-unfriendly. Use it when you do frequent insertions and removals in the middle and rarely index.",
+      "code": "var ll = new LinkedList<int>();\nvar node = ll.AddLast(1);\nll.AddAfter(node, 2);",
+      "tags": ["linkedlist", "data-structures"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.linkedlist-1"]
+    },
+    {
+      "id": "collections-008",
+      "difficulty": "Intermediate",
+      "question": "What is a Queue<T> and a Stack<T>?",
+      "answer": "Queue<T> is first-in-first-out: Enqueue adds to the back and Dequeue removes from the front. Stack<T> is last-in-first-out: Push adds to the top and Pop removes from the top. Both are generic, efficient, and used for scheduling and backtracking respectively.",
+      "code": "var q = new Queue<int>(); q.Enqueue(1); var first = q.Dequeue();\nvar s = new Stack<int>(); s.Push(1); var top = s.Pop();",
+      "tags": ["queue", "stack"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.queue-1"]
+    },
+    {
+      "id": "collections-009",
+      "difficulty": "Advanced",
+      "question": "What is a PriorityQueue<TElement,TPriority>?",
+      "answer": "PriorityQueue is a generic heap that dequeues the element with the smallest priority first. Enqueue takes an element and a priority; Dequeue returns the element with the lowest priority, breaking ties by insertion order for equal priorities. It is implemented as a binary heap with O(log n) enqueue and dequeue.",
+      "code": "var pq = new PriorityQueue<string, int>();\npq.Enqueue(\"low\", 10);\npq.Enqueue(\"high\", 1);\nConsole.WriteLine(pq.Dequeue()); // high",
+      "tags": ["priorityqueue", "heap", "algorithms"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.priorityqueue-2"]
+    },
+    {
+      "id": "collections-010",
+      "difficulty": "Intermediate",
+      "question": "What is a SortedDictionary<TKey,TValue> versus a SortedList<TKey,TValue>?",
+      "answer": "Both keep keys sorted and support O(log n) lookup. SortedDictionary is a red-black tree with O(log n) insertion and removal and lower memory for frequent updates. SortedList is a sorted array with O(log n) lookup via binary search but O(n) insertion and removal because it shifts elements. Prefer SortedDictionary when you mutate often and SortedList when you read often.",
+      "tags": ["sorted", "dictionary", "data-structures"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/sorted-collection-types"]
+    },
+    {
+      "id": "collections-011",
+      "difficulty": "Beginner",
+      "question": "How do you iterate a dictionary and access its keys and values?",
+      "answer": "A Dictionary<TKey,TValue> enumerates KeyValuePair<TKey,TValue>, and you can access Key and Value on each pair. You can also iterate Keys or Values directly. Use TryGetValue to avoid a double lookup when you need to test and read.",
+      "code": "foreach (var (key, value) in map)\n    Console.WriteLine($\"{key}={value}\");\nif (map.TryGetValue(\"a\", out var v)) Console.WriteLine(v);",
+      "tags": ["dictionary", "iteration"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.dictionary-2"]
+    },
+    {
+      "id": "collections-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a shallow copy of a collection and a deep copy?",
+      "answer": "A shallow copy creates a new collection with the same element references, so mutating an element affects both. A deep copy clones each element, so the collections are independent. Array.Clone and List<T> constructors make shallow copies. Use Select with a clone or a record with-expression for deep copies.",
+      "code": "var shallow = new List<Order>(orders);      // shares Order objects\nvar deep = orders.Select(o => o with { }).ToList();",
+      "tags": ["copy", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.array.clone"]
+    },
+    {
+      "id": "collections-013",
+      "difficulty": "Intermediate",
+      "question": "What is a jagged array and how does it differ from a multidimensional array?",
+      "answer": "A jagged array is an array of arrays, int[][], where each inner array can have a different length. A multidimensional array, int[,], is a single rectangular block with fixed dimensions. Jagged arrays are more flexible and often faster because each row is a separate array; rectangular arrays are more convenient for matrices.",
+      "code": "int[][] jagged = { new[] { 1 }, new[] { 2, 3 } };\nint[,] rect = new int[2, 3];",
+      "tags": ["arrays", "jagged", "multidimensional"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/arrays/jagged-arrays"]
+    },
+    {
+      "id": "collections-014",
+      "difficulty": "Intermediate",
+      "question": "What are the common collection interfaces in System.Collections.Generic?",
+      "answer": "IEnumerable<T> for iteration, ICollection<T> for mutable collections, IList<T> for indexed lists, IDictionary<TKey,TValue> for key-value maps, ISet<T> for set operations, and IReadOnlyCollection<T> and IReadOnlyList<T> for read-only views. Choosing the right interface keeps APIs flexible and testable.",
+      "tags": ["interfaces", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/selecting-a-collection-class"]
+    },
+    {
+      "id": "collections-015",
+      "difficulty": "Advanced",
+      "question": "What is an ImmutableArray<T> and when should you use it?",
+      "answer": "ImmutableArray<T> is a lightweight struct wrapper around an array that is fixed after creation. It is a value type, so it has value-copy semantics for the reference, and it requires the System.Collections.Immutable package. It is useful for read-mostly data and thread-safe sharing because it cannot change after construction.",
+      "code": "ImmutableArray<int> a = ImmutableArray.Create(1, 2, 3);\nvar b = a.Add(4); // returns a new array, a is unchanged",
+      "tags": ["immutable", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.immutable.immutablearray-1"]
+    },
+    {
+      "id": "collections-016",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the Collection<T> and ReadOnlyCollection<T> wrapper classes?",
+      "answer": "Collection<T> is a customizable base class for a collection that delegates storage to an inner IList<T> and exposes overridable hooks like InsertItem. ReadOnlyCollection<T> wraps an existing list and throws on mutation, giving callers a safe view without copying. Expose ReadOnlyCollection or IReadOnlyList to protect internal state.",
+      "code": "private readonly List<string> _items = new();\npublic ReadOnlyCollection<string> Items => _items.AsReadOnly();",
+      "tags": ["collections", "readonly", "api-design"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.objectmodel.readonlycollection-1"]
+    },
+    {
+      "id": "collections-017",
+      "difficulty": "Intermediate",
+      "question": "What is ConcurrentDictionary<TKey,TValue> and why use it?",
+      "answer": "ConcurrentDictionary is a thread-safe dictionary designed for concurrent reads and writes without external locking. It uses fine-grained locking per bucket and lock-free reads. Methods such as GetOrAdd, AddOrUpdate, and TryUpdate run atomically, but the value factory in GetOrAdd may run more than once under contention, so it must be side-effect free.",
+      "code": "var cache = new ConcurrentDictionary<int, string>();\nvar v = cache.GetOrAdd(1, k => $\"value-{k}\");",
+      "tags": ["concurrency", "dictionary", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2"]
+    },
+    {
+      "id": "collections-018",
+      "difficulty": "Intermediate",
+      "question": "What is a BlockingCollection<T> and a Channel<T>?",
+      "answer": "BlockingCollection<T> is a thread-safe, optionally bounded collection for producer-consumer patterns using blocking Add and Take. Channel<T> from System.Threading.Channels is a modern asynchronous alternative with bounded or unbounded capacity and async read/write, ideal for pipelines and async producers.",
+      "code": "var channel = Channel.CreateBounded<int>(100);\nawait channel.Writer.WriteAsync(1);\nvar item = await channel.Reader.ReadAsync();",
+      "tags": ["concurrency", "producer-consumer", "channels"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.channels.channel-1"]
+    },
+    {
+      "id": "collections-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a generic and a non-generic collection?",
+      "answer": "Generic collections such as List<T> and Dictionary<TKey,TValue> are type-safe, avoid boxing, and provide compile-time checks and better performance. Non-generic collections such as ArrayList and Hashtable store object and require casts and boxing. Use generic collections in almost all new code.",
+      "tags": ["generics", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/generics/"]
+    },
+    {
+      "id": "collections-020",
+      "difficulty": "Advanced",
+      "question": "How does HashSet<T> determine uniqueness?",
+      "answer": "HashSet<T> uses a hash table keyed by the element's hash code and comparer. It calls GetHashCode to find the bucket and Equals to confirm equality. Elements are unique per the comparer. You can supply a custom IEqualityComparer<T> for case-insensitive or domain-specific equality.",
+      "code": "var set = new HashSet<string>(StringComparer.OrdinalIgnoreCase);\nset.Add(\"Apple\");\nConsole.WriteLine(set.Contains(\"apple\")); // true",
+      "tags": ["hashset", "equality", "hashing"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.hashset-1"]
+    },
+    {
+      "id": "collections-021",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Add and AddRange on List<T>?",
+      "answer": "Add appends a single element and may trigger a resize if capacity is exceeded. AddRange appends a sequence in one operation and can resize once for the whole batch, which is more efficient than many Add calls. Preallocate capacity with the List<T> constructor when you know the size.",
+      "code": "var list = new List<int>(capacity: 1000);\nlist.Add(1);\nlist.AddRange(Enumerable.Range(2, 999));",
+      "tags": ["list", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1.addrange"]
+    },
+    {
+      "id": "collections-022",
+      "difficulty": "Intermediate",
+      "question": "What is an iterator and how do you implement one with yield?",
+      "answer": "An iterator is a method or property that returns IEnumerable or IEnumerator and uses yield return to produce values lazily. The compiler builds a state machine so elements are generated on demand, which supports infinite or streaming sequences with low memory. yield break ends the sequence early.",
+      "code": "IEnumerable<int> Fibonacci()\n{\n    int a = 0, b = 1;\n    while (true)\n    {\n        yield return a;\n        (a, b) = (b, a + b);\n    }\n}",
+      "tags": ["iterator", "yield", "lazy"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/iterators"]
+    },
+    {
+      "id": "collections-023",
+      "difficulty": "Advanced",
+      "question": "What are the memory and performance characteristics of List<T> growth?",
+      "answer": "List<T> starts with a small or zero capacity and doubles its internal array when full, allocating a new array and copying elements. Doubling gives amortized O(1) append. Growth creates garbage from discarded arrays, so pre-sizing with capacity avoids repeated allocations in hot paths. Count is the number of elements; Capacity is the allocated size.",
+      "tags": ["list", "performance", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1.capacity"]
+    },
+    {
+      "id": "collections-024",
+      "difficulty": "Intermediate",
+      "question": "How do you remove duplicates from a collection?",
+      "answer": "Use Distinct from LINQ to produce a sequence with unique elements, or add elements to a HashSet<T> and enumerate it. Distinct preserves the first occurrence order, while HashSet does not guarantee order. For complex types supply an IEqualityComparer<T>.",
+      "code": "var unique = items.Distinct().ToList();\nvar set = new HashSet<int>(items);",
+      "tags": ["linq", "distinct", "hashset"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.distinct"]
+    },
+    {
+      "id": "collections-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between IEnumerable<T> and IQueryable<T>?",
+      "answer": "IEnumerable<T> executes in memory in the process and uses delegates for LINQ operators. IQueryable<T> carries an expression tree that a provider such as Entity Framework can translate into a remote query, so filtering happens at the data source. Using IEnumerable over a queryable pulls all rows into memory, which can be a serious performance bug.",
+      "code": "IQueryable<Order> q = db.Orders.Where(o => o.Total > 100); // SQL WHERE\nIEnumerable<Order> e = q.AsEnumerable();                // filters in memory",
+      "tags": ["linq", "iqueryable", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/iqueryable-vs-ienumerable"]
+    }
+  ]
+}
