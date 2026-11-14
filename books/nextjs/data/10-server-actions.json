@@ -1,0 +1,344 @@
+{
+  "category": "Server Actions & Forms",
+  "slug": "server-actions",
+  "icon": "form",
+  "questions": [
+    {
+      "id": "server-actions-001",
+      "difficulty": "Beginner",
+      "question": "What is a Server Action?",
+      "answer": "A Server Action is an async function marked with 'use server' that runs on the server and can be called from the client. Next.js creates a secure reference so forms and event handlers can invoke it. It is ideal for mutations and form submissions. It removes the need for a separate API route in many cases.",
+      "code": "'use server';\nexport async function createPost(formData) { /* ... */ }",
+      "tags": [
+        "server-actions",
+        "mutations"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-002",
+      "difficulty": "Beginner",
+      "question": "How do you define a Server Action?",
+      "answer": "Add the 'use server' directive at the top of the file or function body. Then export an async function. The directive tells the compiler it is server-only. You can then import it into a form or Client Component.",
+      "code": "'use server';\nexport async function save(data) { await db.save(data); }",
+      "tags": [
+        "server-actions",
+        "use-server"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/directives/use-server"
+      ]
+    },
+    {
+      "id": "server-actions-003",
+      "difficulty": "Beginner",
+      "question": "How do you use a Server Action with a form?",
+      "answer": "Pass the action to the form's action attribute. The function receives FormData and can mutate data and revalidate. This works without client JavaScript in many cases. It is the idiomatic way to handle forms in the App Router.",
+      "code": "<form action={createPost}>\n  <input name=\"title\" />\n  <button type=\"submit\">Save</button>\n</form>",
+      "tags": [
+        "server-actions",
+        "forms"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-004",
+      "difficulty": "Beginner",
+      "question": "What is 'use server' used for?",
+      "answer": "The 'use server' directive marks a file or function as a Server Action. It can be placed at the top of a file to mark all exports, or inside an async function. It creates a server reference the client can call. It must only contain serializable arguments and return values.",
+      "tags": [
+        "use-server",
+        "directive"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/directives/use-server"
+      ]
+    },
+    {
+      "id": "server-actions-005",
+      "difficulty": "Beginner",
+      "question": "How do you read form data in a Server Action?",
+      "answer": "The action receives a FormData object when used as a form action. Use formData.get('field') to read values. Convert and validate types before use. Then perform the mutation.",
+      "code": "export async function save(formData) {\n  const title = formData.get('title');\n}",
+      "tags": [
+        "server-actions",
+        "formdata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-006",
+      "difficulty": "Beginner",
+      "question": "How do you revalidate data after a Server Action?",
+      "answer": "Call revalidatePath or revalidateTag after the mutation to refresh cached data. You can then redirect to the updated page. This keeps the UI in sync. Revalidation runs on the server after the action completes.",
+      "code": "'use server';\nawait db.post.create(data);\nrevalidatePath('/posts');",
+      "tags": [
+        "server-actions",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-007",
+      "difficulty": "Beginner",
+      "question": "Can a Server Action be called from a Client Component?",
+      "answer": "Yes, you can import a Server Action into a Client Component and call it in an event handler or pass it to a form. The call is sent to the server over a network request. Arguments and return values must be serializable. This lets client UI trigger server mutations.",
+      "tags": [
+        "server-actions",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-008",
+      "difficulty": "Beginner",
+      "question": "What happens if a Server Action throws an error?",
+      "answer": "The error is caught by the nearest error boundary on the client, or you handle it and return a value. In production, error messages are redacted for security. Use useActionState to display validation errors. Handle expected failures explicitly.",
+      "tags": [
+        "errors",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-009",
+      "difficulty": "Beginner",
+      "question": "How do you redirect after a Server Action?",
+      "answer": "Call redirect() from next/navigation after the mutation and revalidation. It must be called outside a try/catch that would swallow the thrown redirect. The browser navigates to the new route. This is common after creating or deleting a record.",
+      "code": "'use server';\nawait db.post.create(data);\nredirect('/posts');",
+      "tags": [
+        "redirect",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/redirect"
+      ]
+    },
+    {
+      "id": "server-actions-010",
+      "difficulty": "Beginner",
+      "question": "What is a common use case for Server Actions?",
+      "answer": "Form submissions and mutations such as creating, updating, or deleting records. They also handle login, logout, and toggling likes. Because they run on the server, they can access the database and session securely. They replace many API routes.",
+      "tags": [
+        "server-actions",
+        "mutations"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-011",
+      "difficulty": "Intermediate",
+      "question": "How do you show pending state for a Server Action?",
+      "answer": "Use the useFormStatus hook in a child of the form to read pending state, or useActionState to get a pending flag. Disable the submit button while pending. This gives feedback during the round trip. React 19 provides these hooks.",
+      "code": "'use client';\nconst { pending } = useFormStatus();\n<button disabled={pending}>Save</button>",
+      "tags": [
+        "pending",
+        "server-actions"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/hooks/useFormStatus"
+      ]
+    },
+    {
+      "id": "server-actions-012",
+      "difficulty": "Intermediate",
+      "question": "How do you handle validation errors from a Server Action?",
+      "answer": "Use the useActionState hook, which takes the action and an initial state and returns the state, a wrapped action, and pending. The action returns validation errors as state. This keeps errors on the client without throwing. Zod is commonly used to validate input.",
+      "code": "'use client';\nconst [state, formAction] = useActionState(save, {});",
+      "tags": [
+        "validation",
+        "server-actions"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useActionState"
+      ]
+    },
+    {
+      "id": "server-actions-013",
+      "difficulty": "Intermediate",
+      "question": "How do you secure a Server Action?",
+      "answer": "Always verify authentication and authorization inside the action, because actions are public endpoints. Never trust arguments from the client. Validate and sanitize input. Server Actions should enforce the same rules as an API route.",
+      "tags": [
+        "security",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-014",
+      "difficulty": "Intermediate",
+      "question": "What are progressive enhancement benefits of Server Actions?",
+      "answer": "Forms using Server Actions work even before JavaScript loads, since the browser submits the form normally. This improves resilience and accessibility. React then enhances the experience when hydrated. It is a key advantage over client-only form handling.",
+      "tags": [
+        "progressive-enhancement",
+        "forms"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-015",
+      "difficulty": "Intermediate",
+      "question": "How do you pass extra arguments to a Server Action?",
+      "answer": "Use the bind method to pre-bind arguments, such as an id, or pass hidden inputs in the form. Binding is useful when mapping over a list. Arguments must be serializable. This avoids separate actions per item.",
+      "code": "const deleteWithId = deletePost.bind(null, post.id);",
+      "tags": [
+        "server-actions",
+        "bind"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-016",
+      "difficulty": "Intermediate",
+      "question": "How do Server Actions compare with API Routes for mutations?",
+      "answer": "Server Actions remove the need to define and call an endpoint for internal mutations, reducing boilerplate. API Routes remain useful for external clients, webhooks, and non-React callers. Actions are not a replacement for a public API. Use each where it fits.",
+      "tags": [
+        "server-actions",
+        "api-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle optimistic updates with Server Actions?",
+      "answer": "Use the useOptimistic hook to show the expected result immediately while the action runs. Reconcile with the server response when it arrives. This makes the UI feel instant. It is common for likes, comments, and toggles.",
+      "code": "const [optimistic, addOptimistic] = useOptimistic(items, reducer);",
+      "tags": [
+        "optimistic",
+        "server-actions"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useOptimistic"
+      ]
+    },
+    {
+      "id": "server-actions-018",
+      "difficulty": "Intermediate",
+      "question": "How do you call a Server Action from a non-form event?",
+      "answer": "Import the action and call it in an onClick or other handler, or use startTransition for pending UI. The call is asynchronous and returns a promise. Handle errors and pending state. This fits buttons and interactive controls.",
+      "code": "'use client';\n<button onClick={() => likePost(id)}>Like</button>",
+      "tags": [
+        "server-actions",
+        "events"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-019",
+      "difficulty": "Intermediate",
+      "question": "How do Server Actions interact with caching?",
+      "answer": "Server Actions themselves are not cached; they run on each call. After a mutation you invalidate related caches with revalidatePath or revalidateTag. This ensures the next read reflects the change. Think of actions as write operations and caches as read optimizations.",
+      "tags": [
+        "caching",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-020",
+      "difficulty": "Intermediate",
+      "question": "What are the limitations of Server Actions?",
+      "answer": "They require a server environment and only work with serializable arguments and return values. They cannot be used for streaming responses or for non-React clients. Long-running work can hit timeouts. For public APIs or webhooks, use Route Handlers.",
+      "tags": [
+        "limitations",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-021",
+      "difficulty": "Advanced",
+      "question": "How are Server Action arguments serialized and secured?",
+      "answer": "Arguments and return values are serialized with React's format and sent over an encrypted reference. Next.js also encrypts closed-over variables so clients cannot tamper with them. Despite this, you must still validate input and authorize, since the action is reachable publicly. Encryption protects integrity, not business rules.",
+      "tags": [
+        "security",
+        "serialization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a multi-step form with Server Actions?",
+      "answer": "Store step state on the client and submit each step to a Server Action, or keep draft data in a session. Validate each step on the server and return field errors. Persist partial data only when safe. This keeps sensitive validation server-side.",
+      "tags": [
+        "forms",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-023",
+      "difficulty": "Advanced",
+      "question": "How do Server Actions handle file uploads?",
+      "answer": "A form action can read File entries from FormData and stream them to storage. Validate type and size server-side. For large files consider a direct-to-storage upload with a signed URL. Avoid buffering huge files in memory.",
+      "code": "const file = formData.get('file');\nawait upload(file);",
+      "tags": [
+        "uploads",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-024",
+      "difficulty": "Advanced",
+      "question": "How do you rate limit and prevent abuse of Server Actions?",
+      "answer": "Since actions are public endpoints, apply rate limiting and input validation. Check authentication and authorization on every call. Avoid exposing expensive operations without limits. Use the same defenses you would for an API route.",
+      "tags": [
+        "security",
+        "rate-limiting"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-actions-025",
+      "difficulty": "Advanced",
+      "question": "How do Server Actions fit into progressive enhancement and accessibility?",
+      "answer": "Because they back native form submissions, they work without JavaScript and support browser features like autofill and history. This improves accessibility and resilience on slow networks. React enhances them after hydration for pending states and optimistic UI. Design forms to work both ways.",
+      "tags": [
+        "accessibility",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    }
+  ]
+}

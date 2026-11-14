@@ -1,0 +1,344 @@
+{
+  "category": "Configuration & Environment",
+  "slug": "configuration",
+  "icon": "settings",
+  "questions": [
+    {
+      "id": "configuration-001",
+      "difficulty": "Beginner",
+      "question": "What is next.config.js used for?",
+      "answer": "next.config.js configures a Next.js project, covering redirects, rewrites, headers, images, environment variables, and experimental flags. You export a config object or a function receiving the phase. It is evaluated on the server at build and start. Next.js 15 also supports next.config.ts.",
+      "tags": [
+        "configuration",
+        "next-config"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js"
+      ]
+    },
+    {
+      "id": "configuration-002",
+      "difficulty": "Beginner",
+      "question": "How do you set environment variables in Next.js?",
+      "answer": "Put them in a .env.local file for local development, and set them in your hosting platform for production. Next.js loads .env, .env.local, and environment-specific files automatically. Only variables prefixed with NEXT_PUBLIC_ are exposed to the browser. Never commit secrets.",
+      "tags": [
+        "environment",
+        "variables"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-003",
+      "difficulty": "Beginner",
+      "question": "What does NEXT_PUBLIC_ do?",
+      "answer": "The NEXT_PUBLIC_ prefix inlines the variable into the client bundle so it is available in the browser. This means it is public and must not contain secrets. Server-only variables omit the prefix. Use it only for non-sensitive config like public URLs.",
+      "code": "NEXT_PUBLIC_API_URL=https://api.example.com",
+      "tags": [
+        "environment",
+        "public"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-004",
+      "difficulty": "Beginner",
+      "question": "How do you add redirects in Next.js?",
+      "answer": "Use the redirects async function in next.config.js, returning source, destination, and permanent fields. Next.js applies them before routing. Use permanent true for 308 and false for 307. They are useful for moved URLs.",
+      "code": "module.exports = { async redirects() {\n  return [{ source: '/old', destination: '/new', permanent: true }];\n} };",
+      "tags": [
+        "redirects",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/redirects"
+      ]
+    },
+    {
+      "id": "configuration-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between redirects and rewrites?",
+      "answer": "Redirects change the browser URL and return a 3xx, while rewrites serve different content under the same URL. Redirects suit moved pages; rewrites suit proxying or masking. Both are configured in next.config.js or middleware. Choose based on whether the URL should change.",
+      "tags": [
+        "redirects",
+        "rewrites"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/rewrites"
+      ]
+    },
+    {
+      "id": "configuration-006",
+      "difficulty": "Beginner",
+      "question": "How do you add custom headers?",
+      "answer": "Use the headers async function in next.config.js to set headers for matching paths. This is useful for security headers like CSP and HSTS. Headers apply to matched routes. You can also set them in middleware.",
+      "code": "async headers() {\n  return [{ source: '/(.*)', headers: [{ key: 'X-Frame-Options', value: 'DENY' }] }];\n}",
+      "tags": [
+        "headers",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/headers"
+      ]
+    },
+    {
+      "id": "configuration-007",
+      "difficulty": "Beginner",
+      "question": "What is the basePath option?",
+      "answer": "basePath prefixes all routes with a subpath, such as /docs. It is useful when hosting under a subdirectory. Links and assets account for it automatically. It does not apply to public files by default.",
+      "code": "module.exports = { basePath: '/docs' };",
+      "tags": [
+        "base-path",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/basePath"
+      ]
+    },
+    {
+      "id": "configuration-008",
+      "difficulty": "Beginner",
+      "question": "How do you configure image domains?",
+      "answer": "Add remotePatterns to the images config to allow external hostnames for next/image. This restricts optimization to trusted domains. Without it, remote images error. It also supports path and protocol patterns.",
+      "code": "images: { remotePatterns: [{ hostname: 'cdn.example.com' }] }",
+      "tags": [
+        "images",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/images"
+      ]
+    },
+    {
+      "id": "configuration-009",
+      "difficulty": "Beginner",
+      "question": "What are build-time vs runtime environment variables?",
+      "answer": "Variables read during next build are inlined at build time, so changing them requires a rebuild. Server-only variables read at runtime are resolved when the server starts. NEXT_PUBLIC_ variables are always inlined. Know which applies to avoid stale values.",
+      "tags": [
+        "environment",
+        "build"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-010",
+      "difficulty": "Beginner",
+      "question": "How do you change the default port?",
+      "answer": "Run next dev -p 3001 or set PORT in the environment for next start. The dev server defaults to port 3000. You can also pass the port in scripts. This is useful when the default port is busy.",
+      "code": "next dev -p 3001",
+      "tags": [
+        "cli",
+        "port"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/cli/next"
+      ]
+    },
+    {
+      "id": "configuration-011",
+      "difficulty": "Intermediate",
+      "question": "How do you enable typed routes?",
+      "answer": "Set experimental.typedRoutes to true in next.config.js. Next.js then generates types so Link hrefs are checked against existing routes. This catches broken links at compile time. It requires TypeScript.",
+      "tags": [
+        "typed-routes",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/typescript"
+      ]
+    },
+    {
+      "id": "configuration-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure Turbopack?",
+      "answer": "Turbopack is the default bundler for next dev in Next.js 15 and can be enabled for builds with the --turbopack flag. You configure it under turbopack in next.config.js. It is faster than webpack for development. Some plugins may need migration.",
+      "code": "next dev --turbopack",
+      "tags": [
+        "turbopack",
+        "bundler"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/turbopack"
+      ]
+    },
+    {
+      "id": "configuration-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use a custom webpack config?",
+      "answer": "Provide a webpack function in next.config.js to extend the default config. This is common for aliases, loaders, and plugins. Keep changes minimal and check compatibility with Turbopack. Prefer built-in options when they exist.",
+      "code": "webpack(config) {\n  config.resolve.alias['@'] = path.resolve('./src');\n  return config;\n}",
+      "tags": [
+        "webpack",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/webpack"
+      ]
+    },
+    {
+      "id": "configuration-014",
+      "difficulty": "Intermediate",
+      "question": "How do you set up path aliases?",
+      "answer": "Add paths and baseUrl to tsconfig.json for TypeScript, and mirror them in jsconfig.json or the webpack config if needed. Next.js reads tsconfig paths automatically. This avoids long relative imports. Use a consistent alias like @/*.",
+      "code": "\"paths\": { \"@/*\": [\"./src/*\"] }",
+      "tags": [
+        "aliases",
+        "typescript"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/typescript"
+      ]
+    },
+    {
+      "id": "configuration-015",
+      "difficulty": "Intermediate",
+      "question": "How do you disable a config default safely?",
+      "answer": "Change one option at a time and test, since options like images.unoptimized or typescript.ignoreBuildErrors trade safety for convenience. Document why you disabled something. Prefer fixing the root cause. Blanket disabling hides problems.",
+      "tags": [
+        "configuration",
+        "best-practices"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js"
+      ]
+    },
+    {
+      "id": "configuration-016",
+      "difficulty": "Intermediate",
+      "question": "How do you add a custom response header globally?",
+      "answer": "Use the headers function with a source of /(.*) to apply to all routes, or set it in middleware. Global headers are useful for security policies. Test that they do not break embedded content. Keep the list minimal.",
+      "tags": [
+        "headers",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/headers"
+      ]
+    },
+    {
+      "id": "configuration-017",
+      "difficulty": "Intermediate",
+      "question": "How do you manage multiple environments?",
+      "answer": "Use .env.development, .env.production, and .env.local files, and set variables per environment in your host. Load order determines precedence, with .env.local overriding. Keep secrets out of committed files. Document required variables.",
+      "tags": [
+        "environment",
+        "config"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-018",
+      "difficulty": "Intermediate",
+      "question": "What is the output option for standalone builds?",
+      "answer": "Setting output: 'standalone' produces a self-contained build with only the files needed at runtime, ideal for Docker. It reduces image size. You copy the standalone folder and static assets. It simplifies deployment.",
+      "code": "module.exports = { output: 'standalone' };",
+      "tags": [
+        "output",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/output"
+      ]
+    },
+    {
+      "id": "configuration-019",
+      "difficulty": "Intermediate",
+      "question": "How do you configure trailing slashes and case?",
+      "answer": "Use trailingSlash to control whether URLs end with a slash, and Next.js handles redirects to the canonical form. Consistent URLs help SEO. Choose one convention project-wide. Avoid mixing forms.",
+      "tags": [
+        "configuration",
+        "urls"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/trailingSlash"
+      ]
+    },
+    {
+      "id": "configuration-020",
+      "difficulty": "Intermediate",
+      "question": "How do you validate environment variables at startup?",
+      "answer": "Parse process.env with a schema library at module load so missing or invalid variables fail fast. Export the validated object for use across the app. This prevents confusing runtime errors. It documents required config.",
+      "code": "export const env = z.object({ API_KEY: z.string() }).parse(process.env);",
+      "tags": [
+        "environment",
+        "validation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-021",
+      "difficulty": "Advanced",
+      "question": "How do you configure multiple domains and cross-origin behavior?",
+      "answer": "Set allowedDevOrigins for dev and configure images.remotePatterns for asset domains. For cross-origin requests set CORS headers in middleware or next.config.js. Consider cookie domain and sameSite for auth. Document each domain's purpose.",
+      "tags": [
+        "configuration",
+        "cors"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js"
+      ]
+    },
+    {
+      "id": "configuration-022",
+      "difficulty": "Advanced",
+      "question": "How do you enable Partial Prerendering in config?",
+      "answer": "Set experimental.ppr to true in next.config.js, or use the incremental option to enable it per route. Then structure routes with Suspense to define dynamic holes. It is experimental and evolving. Test carefully before production.",
+      "code": "experimental: { ppr: true }",
+      "tags": [
+        "ppr",
+        "experimental"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/ppr"
+      ]
+    },
+    {
+      "id": "configuration-023",
+      "difficulty": "Advanced",
+      "question": "How do you customize the build with a plugin or preset?",
+      "answer": "Use the official plugin API or a preset library that wraps your config. Keep customizations in one place and document them. Avoid deep webpack surgery unless necessary. Verify compatibility with the current Next.js version.",
+      "tags": [
+        "plugins",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js"
+      ]
+    },
+    {
+      "id": "configuration-024",
+      "difficulty": "Advanced",
+      "question": "How do you securely manage secrets across environments?",
+      "answer": "Store secrets in your platform's secret manager and inject them as server-only environment variables. Never prefix them with NEXT_PUBLIC_ or commit them. Rotate them regularly and scope access. Audit usage to prevent leaks.",
+      "tags": [
+        "security",
+        "secrets"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-025",
+      "difficulty": "Advanced",
+      "question": "How do you keep config maintainable as the app grows?",
+      "answer": "Split config into focused modules and compose them in next.config.js. Document non-obvious options and defaults. Review experimental flags and remove stale ones. Prefer conventions over heavy customization. This keeps the config readable.",
+      "tags": [
+        "configuration",
+        "maintainability"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js"
+      ]
+    }
+  ]
+}

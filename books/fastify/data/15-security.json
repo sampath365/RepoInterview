@@ -1,0 +1,337 @@
+{
+  "category": "Security Best Practices",
+  "slug": "security",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "security-001",
+      "difficulty": "Beginner",
+      "question": "What is Helmet and how does it help Fastify apps?",
+      "answer": "Helmet is a collection of middleware that sets security-related HTTP headers such as Content-Security-Policy and X-Content-Type-Options. In Fastify you use @fastify/helmet to apply them. These headers mitigate clickjacking, MIME sniffing, and other browser-based attacks. They are a cheap, effective baseline.",
+      "tags": [
+        "security",
+        "headers"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-helmet",
+        "https://helmetjs.github.io/"
+      ],
+      "code": "await app.register(require('@fastify/helmet'))"
+    },
+    {
+      "id": "security-002",
+      "difficulty": "Beginner",
+      "question": "Why is input validation a security control?",
+      "answer": "Validating and constraining input rejects malformed or malicious data before it reaches business logic or storage. Schemas also prevent unexpected fields from being processed. This reduces injection and data-integrity risks. Validation is your first line of defence.",
+      "tags": [
+        "security",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "security-003",
+      "difficulty": "Beginner",
+      "question": "How do you enable CORS in Fastify?",
+      "answer": "You register @fastify/cors and configure allowed origins, methods, and headers. Avoid using a wildcard origin when credentials are involved. Restricting origins prevents untrusted sites from reading responses. Configure it per environment.",
+      "tags": [
+        "security",
+        "cors"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-cors",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS"
+      ]
+    },
+    {
+      "id": "security-004",
+      "difficulty": "Beginner",
+      "question": "What is rate limiting and why add it?",
+      "answer": "Rate limiting caps how many requests a client can make in a window, protecting against brute force and abuse. In Fastify you use @fastify/rate-limit. Exceeding the limit returns 429. Tune limits per route and key.",
+      "tags": [
+        "security",
+        "rate-limiting"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-rate-limit"
+      ]
+    },
+    {
+      "id": "security-005",
+      "difficulty": "Beginner",
+      "question": "Why should error responses avoid internal details?",
+      "answer": "Stack traces and database errors reveal implementation details that help attackers. Return a generic message with a correlation id and log the detail server-side. This keeps debugging possible without exposing internals. Only show details in development.",
+      "tags": [
+        "security",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "security-006",
+      "difficulty": "Beginner",
+      "question": "How do you limit request body size?",
+      "answer": "You set bodyLimit in the server or route options to cap payload bytes, rejecting oversized requests with 413. This protects memory and prevents denial-of-service via huge payloads. Choose limits that match your API. Per-route limits allow flexibility.",
+      "tags": [
+        "security",
+        "body-limit"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#bodylimit"
+      ]
+    },
+    {
+      "id": "security-007",
+      "difficulty": "Beginner",
+      "question": "What is the principle of least privilege?",
+      "answer": "Grant each component only the permissions it needs to do its job. For databases this means a limited user, and for tokens minimal scopes. This limits the impact of a compromise. Apply it to services, credentials, and users alike.",
+      "tags": [
+        "security",
+        "principles"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Authorization_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "id": "security-008",
+      "difficulty": "Beginner",
+      "question": "Why keep dependencies up to date?",
+      "answer": "Outdated packages contain known vulnerabilities that attackers can exploit. Regularly update dependencies and run audits to find issues. Pin versions and review changelogs before upgrading. Patching is one of the highest-value security activities.",
+      "tags": [
+        "security",
+        "dependencies"
+      ],
+      "references": [
+        "https://docs.npmjs.com/auditing-package-dependencies-for-security-vulnerabilities"
+      ]
+    },
+    {
+      "id": "security-009",
+      "difficulty": "Beginner",
+      "question": "How do you prevent SQL injection?",
+      "answer": "You use parameterised queries or an ORM that does so, never concatenating user input into SQL. This keeps data separate from the statement. Combined with input validation, it closes the most common injection vector. Review any dynamic SQL carefully.",
+      "tags": [
+        "security",
+        "injection"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "id": "security-010",
+      "difficulty": "Beginner",
+      "question": "What is HTTPS and why is it mandatory?",
+      "answer": "HTTPS encrypts traffic between client and server using TLS, protecting confidentiality and integrity. Without it, credentials and tokens can be intercepted. Terminate TLS at a trusted proxy or directly in Node. Redirect HTTP to HTTPS.",
+      "tags": [
+        "security",
+        "tls"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
+      ]
+    },
+    {
+      "id": "security-011",
+      "difficulty": "Intermediate",
+      "question": "How do you configure Content-Security-Policy?",
+      "answer": "You set a Content-Security-Policy header via @fastify/helmet, restricting where scripts, styles, and other resources can load from. Start restrictive and relax only as needed. Report-only mode helps test policies safely. CSP is a strong defence against XSS.",
+      "tags": [
+        "security",
+        "csp"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP",
+        "https://helmetjs.github.io/"
+      ]
+    },
+    {
+      "id": "security-012",
+      "difficulty": "Intermediate",
+      "question": "How do you protect against cross-site scripting in an API?",
+      "answer": "You return JSON with the correct content type and avoid reflecting untrusted input into HTML. Set security headers and encode output where HTML is produced. For any server-rendered content, escape it. APIs reduce but do not eliminate XSS risk.",
+      "tags": [
+        "security",
+        "xss"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Types_of_attacks"
+      ]
+    },
+    {
+      "id": "security-013",
+      "difficulty": "Intermediate",
+      "question": "How does trustProxy relate to security?",
+      "answer": "Enabling trustProxy when not behind a trusted proxy lets clients spoof their IP and protocol via headers, defeating rate limiting and logging. Set it to the exact number of hops or trusted addresses. Verify request.ip in staging. Treat it as a security boundary.",
+      "tags": [
+        "security",
+        "trust-proxy"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#trustproxy"
+      ]
+    },
+    {
+      "id": "security-014",
+      "difficulty": "Intermediate",
+      "question": "How do you secure cookies?",
+      "answer": "You set HttpOnly to block script access, Secure to require HTTPS, and SameSite to limit cross-site sending. Sign or encrypt cookies that carry state. Scope the path and set an expiry. These attributes prevent theft and CSRF.",
+      "tags": [
+        "security",
+        "cookies"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies"
+      ]
+    },
+    {
+      "id": "security-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid leaking secrets in logs?",
+      "answer": "You redact sensitive fields with Pino's redact option and never log raw request bodies with credentials. Avoid logging tokens or passwords anywhere. Review log output in staging. Redaction is a required control for compliance.",
+      "tags": [
+        "security",
+        "logging"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/redaction"
+      ]
+    },
+    {
+      "id": "security-016",
+      "difficulty": "Intermediate",
+      "question": "What is the role of response schemas in security?",
+      "answer": "Response schemas act as allow-lists, so only declared fields are serialised, preventing accidental leaks of internal data. This defence-in-depth complements careful query design. It also documents the output contract. Apply them to sensitive endpoints.",
+      "tags": [
+        "security",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "security-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle file uploads securely?",
+      "answer": "You limit size and allowed types, store files outside the web root, and never trust the client-provided filename. Scan uploads if they will be processed. Serve them with a safe content type. The @fastify/multipart plugin handles parsing.",
+      "tags": [
+        "security",
+        "uploads"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-multipart"
+      ]
+    },
+    {
+      "id": "security-018",
+      "difficulty": "Intermediate",
+      "question": "How do you protect sensitive endpoints with authorization?",
+      "answer": "You apply an auth hook scoped to the protected plugin and check permissions against the resource before acting. Deny by default and verify ownership, not just authentication. Test with tokens of different roles. Authorization must be enforced server-side.",
+      "tags": [
+        "security",
+        "authorization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "security-019",
+      "difficulty": "Intermediate",
+      "question": "What is a denial-of-service risk in Node.js servers?",
+      "answer": "Unbounded request sizes, expensive synchronous work, and regex backtracking can exhaust CPU or memory and take down the process. Set body and timeout limits, avoid blocking the event loop, and cap concurrency. Rate limiting and timeouts mitigate abuse.",
+      "tags": [
+        "security",
+        "dos"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    },
+    {
+      "id": "security-020",
+      "difficulty": "Intermediate",
+      "question": "How do you run Node.js with reduced privileges?",
+      "answer": "You avoid running as root, drop capabilities, and use a minimal container image with a non-root user. Limit filesystem and network access to what is needed. This reduces the impact of a compromise. Combine with read-only filesystems where possible.",
+      "tags": [
+        "security",
+        "hardening"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    },
+    {
+      "id": "security-021",
+      "difficulty": "Advanced",
+      "question": "How do you design defence in depth for a Fastify API?",
+      "answer": "You layer controls: TLS, authentication, authorization, input validation, response schemas, rate limiting, security headers, and least-privilege credentials. Each layer assumes the others may fail. Log and monitor for anomalies across layers. No single control is sufficient alone.",
+      "tags": [
+        "security",
+        "architecture"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "security-022",
+      "difficulty": "Advanced",
+      "question": "How do you prevent regular expression denial of service?",
+      "answer": "You avoid user-controlled patterns, use libraries with linear-time matching like RE2 for untrusted input, and bound input length. Catastrophic backtracking can hang the event loop with a tiny input. Test patterns with adversarial strings. Prefer simple, anchored expressions.",
+      "tags": [
+        "security",
+        "dos"
+      ],
+      "references": [
+        "https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS"
+      ]
+    },
+    {
+      "id": "security-023",
+      "difficulty": "Advanced",
+      "question": "How do you manage secrets across environments securely?",
+      "answer": "You store secrets in a dedicated manager, inject them at runtime, rotate them regularly, and scope them per service. Never commit them or bake them into images. Audit access to secrets. This limits exposure if a system is breached.",
+      "tags": [
+        "security",
+        "secrets"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    },
+    {
+      "id": "security-024",
+      "difficulty": "Advanced",
+      "question": "How do you secure a Node.js process against prototype pollution?",
+      "answer": "You avoid merging untrusted objects into prototypes, validate and strip unknown keys, and use Object.create(null) for dictionaries. Libraries like secure-json-parse or JSON schema with additionalProperties false help. Prototype pollution can lead to privilege escalation. Keep dependencies patched.",
+      "tags": [
+        "security",
+        "prototype-pollution"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Prototype_Pollution_Prevention_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "id": "security-025",
+      "difficulty": "Advanced",
+      "question": "How do you add security monitoring and alerting to an API?",
+      "answer": "You log authentication failures, authorization denials, rate-limit hits, and unusual error rates with structured logs, then alert on thresholds. Correlate events by request id and user. Feed logs to a SIEM where available. Detection complements prevention.",
+      "tags": [
+        "security",
+        "monitoring"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html"
+      ]
+    }
+  ]
+}

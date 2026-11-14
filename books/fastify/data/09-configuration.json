@@ -1,0 +1,340 @@
+{
+  "category": "Configuration & Environment",
+  "slug": "configuration",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "configuration-001",
+      "difficulty": "Beginner",
+      "question": "How do you pass configuration to a Fastify server?",
+      "answer": "You pass an options object to the Fastify factory, setting things like logger, trustProxy, and bodyLimit. Plugin-specific configuration is passed through register options. Application settings usually come from environment variables or files loaded at startup. Keeping configuration explicit makes the app easy to reason about.",
+      "tags": [
+        "configuration",
+        "setup"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ],
+      "code": "const fastify = require('fastify')({\n  logger: true,\n  trustProxy: true\n})"
+    },
+    {
+      "id": "configuration-002",
+      "difficulty": "Beginner",
+      "question": "What is the recommended way to manage environment variables?",
+      "answer": "Load them from the environment at startup and validate them once, then inject them into plugins as options. Tools like dotenv load a .env file in development, but production should set real environment variables. Never hardcode secrets in source. Validating early fails fast on misconfiguration.",
+      "tags": [
+        "environment",
+        "configuration"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processenv",
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "configuration-003",
+      "difficulty": "Beginner",
+      "question": "Why should you validate configuration at startup?",
+      "answer": "Invalid configuration causes confusing runtime failures deep in request handling, so validating once at boot surfaces problems immediately. A schema or explicit checks can enforce required values and types. This fail-fast approach saves debugging time. It also documents which settings exist.",
+      "tags": [
+        "configuration",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "configuration-004",
+      "difficulty": "Beginner",
+      "question": "How do you read a value from process.env in Node.js?",
+      "answer": "You access process.env.MY_VAR, which returns a string or undefined. Remember all values are strings, so parse numbers and booleans explicitly. Provide defaults for optional settings. Avoid reading process.env scattered throughout the codebase.",
+      "tags": [
+        "environment",
+        "nodejs"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processenv"
+      ],
+      "code": "const port = Number(process.env.PORT || 3000)"
+    },
+    {
+      "id": "configuration-005",
+      "difficulty": "Beginner",
+      "question": "What is a .env file and how is it used?",
+      "answer": "A .env file stores key-value pairs for local development, loaded by a tool like dotenv into process.env. It keeps local secrets out of code and lets developers share a template. It should not be committed if it holds secrets. Production typically uses the platform's environment settings instead.",
+      "tags": [
+        "environment",
+        "dotenv"
+      ],
+      "references": [
+        "https://github.com/motdotla/dotenv"
+      ]
+    },
+    {
+      "id": "configuration-006",
+      "difficulty": "Beginner",
+      "question": "How do you pass options to a registered plugin?",
+      "answer": "You pass them as the second argument to register, and the plugin receives them as its second parameter. Prefix and other Fastify options can be mixed in the same object. This is how you configure plugins per scope. Keep option names documented.",
+      "tags": [
+        "plugins",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ],
+      "code": "await fastify.register(myPlugin, { connectionString: process.env.DB_URL })"
+    },
+    {
+      "id": "configuration-007",
+      "difficulty": "Beginner",
+      "question": "Why is hardcoding secrets a bad practice?",
+      "answer": "Hardcoded secrets end up in version control and leak through repositories, logs, and backups. They also make rotating credentials hard. Environment variables or a secrets manager keep them out of code. This is a basic security requirement.",
+      "tags": [
+        "security",
+        "configuration"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Web_Storage_API"
+      ]
+    },
+    {
+      "id": "configuration-008",
+      "difficulty": "Beginner",
+      "question": "How do you set a default value for an optional setting?",
+      "answer": "You use the logical OR or nullish coalescing operator to fall back to a default when the environment value is missing. This keeps the app running with sensible defaults. Document which settings have defaults. Prefer explicit defaults over hidden behaviour.",
+      "tags": [
+        "configuration",
+        "defaults"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Nullish_coalescing"
+      ],
+      "code": "const logLevel = process.env.LOG_LEVEL ?? 'info'"
+    },
+    {
+      "id": "configuration-009",
+      "difficulty": "Beginner",
+      "question": "What configuration does Fastify accept in its factory options?",
+      "answer": "The factory accepts logger, trustProxy, bodyLimit, connectionTimeout, requestTimeout, ignoreTrailingSlash, and many more. These control core server behaviour rather than plugin features. You can also supply a custom router or Ajv instance. Reading the server reference shows the full set.",
+      "tags": [
+        "configuration",
+        "server"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "configuration-010",
+      "difficulty": "Beginner",
+      "question": "How do you keep configuration separate from business logic?",
+      "answer": "You create a configuration module that loads and validates settings, then export a plain object. Plugins receive settings through options rather than importing the module directly. This decouples code from the environment and improves testability. It also centralises validation.",
+      "tags": [
+        "configuration",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "configuration-011",
+      "difficulty": "Intermediate",
+      "question": "How do you validate environment variables with a schema?",
+      "answer": "You can use a validation library to parse and check process.env against a schema at startup, throwing if anything is missing or malformed. Fastify's own schema tooling or a standalone library both work. The validated object is then injected into plugins. This turns configuration errors into clear startup failures.",
+      "tags": [
+        "configuration",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "configuration-012",
+      "difficulty": "Intermediate",
+      "question": "How do you use the env-schema or @fastify/env plugin?",
+      "answer": "The @fastify/env plugin reads environment variables, validates them against a JSON Schema, and decorates the instance with the result. You configure it with the schema and it fails fast on invalid input. Your code then reads fastify.config. This keeps configuration typed and validated.",
+      "tags": [
+        "configuration",
+        "env-schema"
+      ],
+      "references": [
+        "https://github.com/fastify/env-schema",
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ],
+      "code": "await fastify.register(require('@fastify/env'), {\n  schema: {\n    type: 'object',\n    required: ['PORT'],\n    properties: { PORT: { type: 'string' } }\n  }\n})"
+    },
+    {
+      "id": "configuration-013",
+      "difficulty": "Intermediate",
+      "question": "How do you configure different settings per environment?",
+      "answer": "You use environment variables as the single source of truth and provide different values per deployment, such as development, staging, and production. Avoid branching on NODE_ENV deep in code; inject settings instead. This keeps behaviour explicit. It also lets tests set their own values.",
+      "tags": [
+        "configuration",
+        "environments"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processenv"
+      ]
+    },
+    {
+      "id": "configuration-014",
+      "difficulty": "Intermediate",
+      "question": "How do you share configuration with all plugins?",
+      "answer": "You load and validate configuration once, then wrap a plugin with fastify-plugin that decorates the instance with the config object. Child scopes can then read fastify.config. This avoids passing the same options everywhere. It also keeps the config read-only by convention.",
+      "tags": [
+        "configuration",
+        "decorators"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "configuration-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle secrets from a secrets manager?",
+      "answer": "You fetch secrets at startup from the manager, such as AWS Secrets Manager or Vault, before registering plugins that need them. Cache them in memory for the process lifetime and refresh only if required. Never log secret values. Inject them through plugin options just like other config.",
+      "tags": [
+        "security",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "configuration-016",
+      "difficulty": "Intermediate",
+      "question": "What is the role of NODE_ENV and how should you use it?",
+      "answer": "NODE_ENV conventionally indicates the runtime environment, such as production or development, and some libraries change behaviour based on it. Use it sparingly to toggle developer-only features like pretty logs. Do not use it as a substitute for explicit configuration. Set it correctly in production.",
+      "tags": [
+        "configuration",
+        "nodejs"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processenv"
+      ]
+    },
+    {
+      "id": "configuration-017",
+      "difficulty": "Intermediate",
+      "question": "How do you make configuration injectable for tests?",
+      "answer": "You export a function that builds the Fastify instance from a config object, so tests pass their own settings. This avoids reading process.env inside plugins. It also lets tests point at ephemeral ports or test databases. Dependency injection keeps tests fast and isolated.",
+      "tags": [
+        "configuration",
+        "testing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "configuration-018",
+      "difficulty": "Intermediate",
+      "question": "How do you configure CORS from environment settings?",
+      "answer": "You register @fastify/cors and pass an origin list loaded from configuration. This lets each environment allow different front-end origins. Avoid using a wildcard origin with credentials. Keeping it configurable supports multiple deployment targets.",
+      "tags": [
+        "configuration",
+        "cors"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-cors"
+      ],
+      "code": "await fastify.register(require('@fastify/cors'), {\n  origin: config.allowedOrigins\n})"
+    },
+    {
+      "id": "configuration-019",
+      "difficulty": "Intermediate",
+      "question": "How do you set server timeouts through configuration?",
+      "answer": "Fastify exposes connectionTimeout, keepAliveTimeout, and requestTimeout in the factory options, which you can populate from configuration. Tuning these prevents slow clients from holding resources. Set values appropriate to your proxies and load balancers. Document the chosen values.",
+      "tags": [
+        "configuration",
+        "timeouts"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#requesttimeout"
+      ]
+    },
+    {
+      "id": "configuration-020",
+      "difficulty": "Intermediate",
+      "question": "How do you manage feature flags in a Fastify app?",
+      "answer": "You load flags from configuration or a remote service and expose them through a decorator or plugin. Routes and hooks read the flag to decide behaviour. This allows gradual rollouts without redeploying. Keep flag checks centralised for easy cleanup.",
+      "tags": [
+        "configuration",
+        "feature-flags"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "configuration-021",
+      "difficulty": "Advanced",
+      "question": "How would you design a configuration layer for a large multi-service codebase?",
+      "answer": "Create a shared configuration package that defines the schema and loads values from the environment, then have each service import and validate it. Inject the resulting object into Fastify via a plugin so services stay decoupled. Version the schema and treat changes as contracts. This gives consistency and fail-fast validation across services.",
+      "tags": [
+        "configuration",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "configuration-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle configuration reloads without restarting?",
+      "answer": "Most settings should be fixed at boot for predictability, but dynamic values like feature flags or rate limits can be read from a store that you refresh periodically. A plugin can poll or subscribe to changes and update the decorated config. Avoid mutating core server options at runtime, as they are not designed for that. Keep hot-reloadable state separate from boot-time config.",
+      "tags": [
+        "configuration",
+        "reload"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "configuration-023",
+      "difficulty": "Advanced",
+      "question": "What are the security risks of misconfigured trustProxy and how do you set it safely?",
+      "answer": "Enabling trustProxy when not behind a trusted proxy lets clients spoof IP and protocol via headers, defeating rate limits and logging. Behind a known proxy, set it to the specific hop count or trusted addresses rather than true. Validate that request.ip matches expectations in staging. Treat it as a security boundary.",
+      "tags": [
+        "security",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#trustproxy"
+      ]
+    },
+    {
+      "id": "configuration-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid configuration drift between environments?",
+      "answer": "Define a single schema for all settings and validate it everywhere, so any environment missing a value fails at boot. Store non-secret defaults in code and secrets in the platform, not in per-environment files. Automate deployment checks that compare required keys. This makes environments reproducible.",
+      "tags": [
+        "configuration",
+        "operations"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "configuration-025",
+      "difficulty": "Advanced",
+      "question": "How do you test configuration validation logic itself?",
+      "answer": "Write unit tests that pass valid and invalid objects to your config loader and assert it returns or throws as expected. Because the loader is a pure function, tests need no server. Cover missing required keys, wrong types, and boundary values. This protects the fail-fast guarantee.",
+      "tags": [
+        "configuration",
+        "testing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    }
+  ]
+}

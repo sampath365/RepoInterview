@@ -1,0 +1,346 @@
+{
+  "category": "Metadata & SEO",
+  "slug": "metadata",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "metadata-001",
+      "difficulty": "Beginner",
+      "question": "How do you set page metadata in the App Router?",
+      "answer": "Export a metadata object or a generateMetadata function from a page or layout. Next.js renders the appropriate head tags. This replaces the Head component from the Pages Router. It supports title, description, open graph, and more.",
+      "code": "export const metadata = { title: 'About', description: 'About us' };",
+      "tags": [
+        "metadata",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-002",
+      "difficulty": "Beginner",
+      "question": "What is generateMetadata used for?",
+      "answer": "generateMetadata is an async function that returns metadata based on dynamic data such as route params. It is useful when the title depends on fetched content. It can fetch data like a page does. Next.js deduplicates the fetch with the page's own fetch.",
+      "code": "export async function generateMetadata({ params }) {\n  const { slug } = await params;\n  return { title: slug };\n}",
+      "tags": [
+        "metadata",
+        "dynamic"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-003",
+      "difficulty": "Beginner",
+      "question": "How does the metadata title template work?",
+      "answer": "Set a title template in a parent layout, such as '%s | My Site', and child pages provide the title string. Next.js fills the placeholder. This keeps titles consistent across pages. A page can override with an absolute title.",
+      "code": "export const metadata = { title: { template: '%s | Site', default: 'Site' } };",
+      "tags": [
+        "metadata",
+        "titles"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-004",
+      "difficulty": "Beginner",
+      "question": "How do you add Open Graph tags?",
+      "answer": "Include an openGraph object in metadata with title, description, images, and url. Next.js renders the og: meta tags. This controls how links appear when shared. Provide an absolute image URL.",
+      "code": "openGraph: { title: 'Home', images: ['/og.png'] }",
+      "tags": [
+        "open-graph",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-005",
+      "difficulty": "Beginner",
+      "question": "How do you set a favicon?",
+      "answer": "Place an icon or favicon file in the app directory, such as app/icon.png or app/favicon.ico. Next.js generates the link tags automatically. You can add multiple sizes and an apple-icon. This avoids manual head configuration.",
+      "tags": [
+        "favicon",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/app-icons"
+      ]
+    },
+    {
+      "id": "metadata-006",
+      "difficulty": "Beginner",
+      "question": "How do you set the viewport in Next.js?",
+      "answer": "Export a viewport object from a layout, or use the generateViewport function. This sets the viewport and theme-color meta tags. In Next.js 14 and later viewport is separate from metadata. It controls mobile rendering.",
+      "code": "export const viewport = { width: 'device-width', initialScale: 1 };",
+      "tags": [
+        "viewport",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-viewport"
+      ]
+    },
+    {
+      "id": "metadata-007",
+      "difficulty": "Beginner",
+      "question": "What is robots.txt and how do you add it?",
+      "answer": "robots.txt tells crawlers which paths they may index. In the App Router add app/robots.ts exporting a function that returns rules. Next.js generates the file at build time. This keeps SEO rules in code.",
+      "code": "export default function robots() {\n  return { rules: { userAgent: '*', allow: '/' } };\n}",
+      "tags": [
+        "robots",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/robots"
+      ]
+    },
+    {
+      "id": "metadata-008",
+      "difficulty": "Beginner",
+      "question": "How do you add a sitemap?",
+      "answer": "Create app/sitemap.ts that exports a function returning an array of URLs with metadata. Next.js serves it as /sitemap.xml. For large sites you can generate multiple sitemaps. This helps search engines discover pages.",
+      "code": "export default function sitemap() {\n  return [{ url: 'https://site.com', lastModified: new Date() }];\n}",
+      "tags": [
+        "sitemap",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap"
+      ]
+    },
+    {
+      "id": "metadata-009",
+      "difficulty": "Beginner",
+      "question": "What are metadata defaults and inheritance?",
+      "answer": "Metadata is evaluated from the root layout down and merged, with the closest definition taking precedence for conflicting fields. Some fields like openGraph replace rather than merge. Understanding inheritance avoids surprising tags. Use templates for consistent titles.",
+      "tags": [
+        "metadata",
+        "inheritance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-010",
+      "difficulty": "Beginner",
+      "question": "How do you add a canonical URL?",
+      "answer": "Set the alternates.canonical field in metadata to the preferred URL. This tells search engines which URL is authoritative. It prevents duplicate content issues. Use absolute URLs.",
+      "code": "alternates: { canonical: 'https://site.com/page' }",
+      "tags": [
+        "canonical",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-011",
+      "difficulty": "Intermediate",
+      "question": "How do you generate dynamic Open Graph images?",
+      "answer": "Use the ImageResponse API in an opengraph-image.tsx file to render an image from JSX. It returns a PNG at request time. You can pass dynamic content like titles. This gives per-page social images without design tooling.",
+      "code": "import { ImageResponse } from 'next/og';\nexport const size = { width: 1200, height: 630 };",
+      "tags": [
+        "open-graph",
+        "image-response"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/image-response"
+      ]
+    },
+    {
+      "id": "metadata-012",
+      "difficulty": "Intermediate",
+      "question": "How does metadata interact with streaming and dynamic rendering?",
+      "answer": "generateMetadata runs before the page renders and can block streaming until it resolves. Keep it fast and use cached fetches. Because it runs on the server, it can read cookies for personalized metadata. Slow metadata delays the response.",
+      "tags": [
+        "metadata",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-013",
+      "difficulty": "Intermediate",
+      "question": "How do you add structured data (JSON-LD)?",
+      "answer": "Render a script tag with type application/ld+json containing your JSON-LD object in the page. This is not part of the metadata API, so you place it in the component. It helps search engines understand content. Keep it valid and accurate.",
+      "code": "<script type=\"application/ld+json\"\n  dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }} />",
+      "tags": [
+        "json-ld",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-014",
+      "difficulty": "Intermediate",
+      "question": "How do you set per-page robots directives?",
+      "answer": "Set the robots field in metadata, such as index false or nofollow, for pages that should not be indexed. This renders the meta robots tag. Combine with robots.txt for site-wide rules. Use it for staging or private pages.",
+      "code": "robots: { index: false, follow: false }",
+      "tags": [
+        "robots",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle metadata for dynamic routes?",
+      "answer": "Use generateMetadata to read params and fetch the record, then return its title and description. Next.js deduplicates the fetch with the page. Handle missing records by returning sensible defaults. This keeps dynamic pages SEO-friendly.",
+      "tags": [
+        "metadata",
+        "dynamic-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-016",
+      "difficulty": "Intermediate",
+      "question": "How do you set the base URL for metadata?",
+      "answer": "Configure metadataBase in the root layout so relative URLs in openGraph and alternates resolve to absolute URLs. This avoids warnings and broken social images. It is especially important for Open Graph. Set it from an environment variable.",
+      "code": "export const metadata = { metadataBase: new URL('https://site.com') };",
+      "tags": [
+        "metadata-base",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-017",
+      "difficulty": "Intermediate",
+      "question": "How do you add Twitter card metadata?",
+      "answer": "Include a twitter object in metadata with card, title, description, and images. Next.js renders the twitter: tags. Use summary_large_image for large previews. Twitter falls back to Open Graph in some cases.",
+      "code": "twitter: { card: 'summary_large_image', title: 'Home' }",
+      "tags": [
+        "twitter-card",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-018",
+      "difficulty": "Intermediate",
+      "question": "How do you manage multiple sitemaps?",
+      "answer": "Use generateSitemaps to produce a sitemap index with multiple files for large sites. Each entry corresponds to a chunk of URLs. Next.js serves the index and files. This scales beyond the per-file URL limit.",
+      "tags": [
+        "sitemap",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap"
+      ]
+    },
+    {
+      "id": "metadata-019",
+      "difficulty": "Intermediate",
+      "question": "How do you add hreflang alternates?",
+      "answer": "Set alternates.languages in metadata to map locales to URLs. This tells search engines about localized versions. Combine with the i18n routing strategy. It helps serve the right language to users.",
+      "code": "alternates: { languages: { en: '/en', fr: '/fr' } }",
+      "tags": [
+        "i18n",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-020",
+      "difficulty": "Intermediate",
+      "question": "How do you verify SEO with Next.js tooling?",
+      "answer": "Inspect the rendered head with view-source or a crawler tool, check the sitemap and robots output, and use Lighthouse for Core Web Vitals. Metadata can be validated in tests. Monitor with Search Console. Regular checks catch regressions.",
+      "tags": [
+        "seo",
+        "tooling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-021",
+      "difficulty": "Advanced",
+      "question": "How does metadata resolution work across nested layouts?",
+      "answer": "Next.js walks from the root layout to the page, merging metadata objects. Scalar fields are overridden by the closest definition, while some fields like openGraph are shallow-replaced. Titles can use a template defined higher up. This cascade lets you set sensible defaults and override per page.",
+      "tags": [
+        "metadata",
+        "inheritance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-022",
+      "difficulty": "Advanced",
+      "question": "How do you generate a sitemap from a database at scale?",
+      "answer": "Fetch all URLs in batches and return them from sitemap.ts, or use generateSitemaps to split into multiple files. Cache the generation to avoid heavy queries per request. Include lastModified and changeFrequency. Keep each file within the URL limit.",
+      "tags": [
+        "sitemap",
+        "scaling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/metadata/sitemap"
+      ]
+    },
+    {
+      "id": "metadata-023",
+      "difficulty": "Advanced",
+      "question": "How do you render dynamic OG images with custom fonts?",
+      "answer": "Pass a font buffer to ImageResponse and use it in the styles. Fetch or embed the font at build time to avoid runtime latency. Cache the response with appropriate headers. This keeps social images on-brand.",
+      "tags": [
+        "open-graph",
+        "fonts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/image-response"
+      ]
+    },
+    {
+      "id": "metadata-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid leaking private data through metadata?",
+      "answer": "Do not include secrets or internal ids in titles, descriptions, or JSON-LD. Remember metadata is rendered into the public HTML. Review generateMetadata for accidental data exposure. Treat metadata as public content.",
+      "tags": [
+        "security",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "metadata-025",
+      "difficulty": "Advanced",
+      "question": "How do you test and monitor metadata in production?",
+      "answer": "Write tests that render pages and assert on the head output, and monitor crawl errors and index coverage. Use structured data validators for JSON-LD. Track Core Web Vitals to catch SEO regressions. Automate checks in CI where possible.",
+      "tags": [
+        "testing",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    }
+  ]
+}

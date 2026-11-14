@@ -1,0 +1,345 @@
+{
+  "category": "TypeScript with Fastify",
+  "slug": "typescript",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "typescript-001",
+      "difficulty": "Beginner",
+      "question": "Does Fastify ship with TypeScript types?",
+      "answer": "Yes, Fastify includes its own TypeScript definitions, so you get types without installing @types packages. You import the factory and get typed instances, requests, and replies. This makes Fastify a good fit for TypeScript projects. Types cover routes, hooks, decorators, and plugins.",
+      "tags": [
+        "typescript",
+        "types"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-002",
+      "difficulty": "Beginner",
+      "question": "How do you type a basic route handler?",
+      "answer": "You can let TypeScript infer types from the handler parameters, or annotate them with FastifyRequest and FastifyReply. The route method is generic over body, query, params, and headers. Inference is usually enough for simple handlers. Explicit generics help when you validate input.",
+      "tags": [
+        "typescript",
+        "routes"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ],
+      "code": "import { FastifyInstance } from 'fastify'\n\napp.get('/ping', async (req, reply) => {\n  return { pong: true }\n})"
+    },
+    {
+      "id": "typescript-003",
+      "difficulty": "Beginner",
+      "question": "How do you type request body and params?",
+      "answer": "You pass a generic to the route definition describing Body, Querystring, Params, and Headers. Fastify then types request.body, request.query, and request.params accordingly. You can also derive types from your JSON schemas. This gives compile-time safety for inputs.",
+      "tags": [
+        "typescript",
+        "generics"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#generics"
+      ],
+      "code": "app.post<{ Body: { name: string } }>('/users', async (req) => {\n  return { name: req.body.name }\n})"
+    },
+    {
+      "id": "typescript-004",
+      "difficulty": "Beginner",
+      "question": "How do you type a plugin in TypeScript?",
+      "answer": "You use FastifyPluginAsync or FastifyPluginCallback with a generic for options. This types the instance and options the plugin receives. Exporting the wrapped plugin keeps types intact. It ensures register calls are checked.",
+      "tags": [
+        "typescript",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#plugins"
+      ],
+      "code": "const plugin: FastifyPluginAsync = async (app, opts) => {\n  app.get('/x', async () => ({}))\n}"
+    },
+    {
+      "id": "typescript-005",
+      "difficulty": "Beginner",
+      "question": "How do you enable strict mode for a Fastify TypeScript project?",
+      "answer": "You set strict to true in tsconfig and target a modern module system like NodeNext. Fastify's types work best with strict mode because they rely on precise generics. Strict mode catches null and any issues early. It is the recommended baseline.",
+      "tags": [
+        "typescript",
+        "tsconfig"
+      ],
+      "references": [
+        "https://www.typescriptlang.org/tsconfig#strict"
+      ]
+    },
+    {
+      "id": "typescript-006",
+      "difficulty": "Beginner",
+      "question": "What module settings does Fastify recommend for TypeScript?",
+      "answer": "The docs recommend module and moduleResolution set to NodeNext, target ES2022 or later, and esModuleInterop enabled. These align with modern Node ESM and CommonJS interop. Matching the runtime module system avoids import surprises. Node.js 20 supports both ESM and CommonJS.",
+      "tags": [
+        "typescript",
+        "tsconfig"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/",
+        "https://nodejs.org/api/esm.html"
+      ]
+    },
+    {
+      "id": "typescript-007",
+      "difficulty": "Beginner",
+      "question": "How do you import Fastify in TypeScript?",
+      "answer": "You can use an ESM import with esModuleInterop, for example import Fastify from 'fastify', or a namespace import. Then call Fastify() to create the instance. The types follow automatically. Keep the import style consistent with your module setting.",
+      "tags": [
+        "typescript",
+        "imports"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ],
+      "code": "import Fastify from 'fastify'\nconst app = Fastify({ logger: true })"
+    },
+    {
+      "id": "typescript-008",
+      "difficulty": "Beginner",
+      "question": "How do you type a route's reply payload?",
+      "answer": "You add a Reply generic to the route describing the response body per status code. This types the value you return or send. Combined with response schemas it keeps output consistent. It catches accidental shape changes at compile time.",
+      "tags": [
+        "typescript",
+        "routes"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#generics"
+      ]
+    },
+    {
+      "id": "typescript-009",
+      "difficulty": "Beginner",
+      "question": "How do you declare a custom request property in TypeScript?",
+      "answer": "You augment the FastifyRequest interface in a module declaration, adding your property with its type. You also decorate request at runtime so the property exists. This pairs compile-time and runtime. It removes the need for casts in handlers.",
+      "tags": [
+        "typescript",
+        "decorators"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#decorators"
+      ],
+      "code": "declare module 'fastify' {\n  interface FastifyRequest { user?: { id: string } }\n}"
+    },
+    {
+      "id": "typescript-010",
+      "difficulty": "Beginner",
+      "question": "How do you run a TypeScript Fastify app in development?",
+      "answer": "You use a loader such as tsx or ts-node with watch mode, or compile with tsc and run the output. Modern setups favour tsx for speed. Node.js 20 can also run TypeScript via a loader. Keep build and dev scripts separate.",
+      "tags": [
+        "typescript",
+        "tooling"
+      ],
+      "references": [
+        "https://nodejs.org/api/typescript.html",
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-011",
+      "difficulty": "Intermediate",
+      "question": "How do you derive TypeScript types from JSON schemas?",
+      "answer": "You can use a library like json-schema-to-ts with the as const modifier on your schema to infer request and response types. Fastify's TypeBox integration offers a type provider that keeps schemas and types in sync. This avoids duplicating shapes by hand. It gives strong typing with runtime validation.",
+      "tags": [
+        "typescript",
+        "schemas"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#type-providers",
+        "https://github.com/sinclairzx81/typebox"
+      ]
+    },
+    {
+      "id": "typescript-012",
+      "difficulty": "Intermediate",
+      "question": "What is a Fastify type provider and how do you use one?",
+      "answer": "A type provider connects a schema library to Fastify's type system, so schemas drive both validation and static types. You set the provider in a module augmentation with withTypeProvider. Then route definitions infer types from the schemas. TypeBox and json-schema-to-ts are common providers.",
+      "tags": [
+        "typescript",
+        "type-providers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#type-providers"
+      ],
+      "code": "app.withTypeProvider<TypeBoxTypeProvider>()\n  .post('/user', { schema: { body: UserSchema } }, handler)"
+    },
+    {
+      "id": "typescript-013",
+      "difficulty": "Intermediate",
+      "question": "How do you type decorators on the Fastify instance?",
+      "answer": "You augment the FastifyInstance interface with your decorator's name and type. Fastify's own declare module pattern is used for this. Then fastify.yourDecorator is typed everywhere. Without augmentation TypeScript reports the property does not exist.",
+      "tags": [
+        "typescript",
+        "decorators"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#decorators"
+      ],
+      "code": "declare module 'fastify' {\n  interface FastifyInstance { db: DbClient }\n}"
+    },
+    {
+      "id": "typescript-014",
+      "difficulty": "Intermediate",
+      "question": "How do you type options passed to a plugin?",
+      "answer": "You declare the options type and pass it as a generic to FastifyPluginAsync or FastifyPluginCallback. The register call then type-checks the options object. This catches mismatched names at compile time. It documents the plugin's configuration surface.",
+      "tags": [
+        "typescript",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#plugins"
+      ],
+      "code": "interface MyOpts { url: string }\nconst plugin: FastifyPluginAsync<MyOpts> = async (app, opts) => {}"
+    },
+    {
+      "id": "typescript-015",
+      "difficulty": "Intermediate",
+      "question": "How do you type hooks in TypeScript?",
+      "answer": "Hooks infer their parameters from the hook name, so async (request, reply) is typed automatically. For custom properties you rely on your interface augmentations. This keeps hook code type-safe without explicit annotations. You can still annotate for clarity.",
+      "tags": [
+        "typescript",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle the reply.send return type correctly?",
+      "answer": "When you call reply.send inside a handler, return reply or return reply.send(...) so the handler's return type matches. Fastify's types expect the handler to return void or the payload, and returning reply satisfies both. This avoids type errors about mixed returns. It also clarifies that you handled the response.",
+      "tags": [
+        "typescript",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-017",
+      "difficulty": "Intermediate",
+      "question": "How do you type error handlers in TypeScript?",
+      "answer": "setErrorHandler infers the error, request, and reply parameters, and you can narrow the error with a custom type guard or class check. You can also generic the error type. Returning reply keeps the signature valid. This keeps error formatting typed.",
+      "tags": [
+        "typescript",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-018",
+      "difficulty": "Intermediate",
+      "question": "How do you organise types shared across the app?",
+      "answer": "You keep a types module with interface augmentations for FastifyInstance and FastifyRequest, plus domain types. Import it once so augmentations apply globally. Avoid scattering declare module blocks. Centralising types keeps the surface consistent.",
+      "tags": [
+        "typescript",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use Fastify with ESM and TypeScript together?",
+      "answer": "Set module and moduleResolution to NodeNext, add .js extensions in relative imports, and rely on the package type field. Fastify works with both ESM and CommonJS. This setup matches how Node resolves modules at runtime. Testing the build catches resolution mistakes early.",
+      "tags": [
+        "typescript",
+        "esm"
+      ],
+      "references": [
+        "https://nodejs.org/api/esm.html",
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-020",
+      "difficulty": "Intermediate",
+      "question": "How do you type a custom reply method?",
+      "answer": "You augment FastifyReply with the method signature, then decorate reply at runtime. The two together make reply.myMethod typed and callable. Keep the signature aligned with what the implementation sends. This is the same pattern as request decorators.",
+      "tags": [
+        "typescript",
+        "decorators"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#decorators"
+      ]
+    },
+    {
+      "id": "typescript-021",
+      "difficulty": "Advanced",
+      "question": "How do you make a plugin work with any type provider?",
+      "answer": "You write the plugin generically over the type provider using the appropriate generics, so it does not hardcode a schema library. This lets consumers attach TypeBox or another provider. The Fastify docs show the pattern for library authors. It keeps the plugin broadly reusable.",
+      "tags": [
+        "typescript",
+        "type-providers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#type-providers"
+      ]
+    },
+    {
+      "id": "typescript-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of the any type in Fastify handlers?",
+      "answer": "Using any disables checks and hides mismatches between schemas and code, which can lead to runtime bugs. Prefer precise generics or inferred types from schemas. If you must escape, narrow with unknown and a guard. This preserves the value of TypeScript.",
+      "tags": [
+        "typescript",
+        "best-practices"
+      ],
+      "references": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#any"
+      ]
+    },
+    {
+      "id": "typescript-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep schemas and TypeScript types from drifting apart?",
+      "answer": "You derive types from schemas using a type provider, so there is a single source of truth. This removes hand-written interfaces that can diverge. Add a build-time check that the app compiles against the schemas. Drift then becomes a compile error.",
+      "tags": [
+        "typescript",
+        "schemas"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#type-providers"
+      ]
+    },
+    {
+      "id": "typescript-024",
+      "difficulty": "Advanced",
+      "question": "How do you type the fastify.server and low-level Node objects?",
+      "answer": "fastify.server is typed as Node's http.Server, and request.raw and reply.raw map to IncomingMessage and ServerResponse. You use the @types/node package for these types. This gives type-safe access to Node internals when needed. Keep raw usage limited and well-typed.",
+      "tags": [
+        "typescript",
+        "nodejs"
+      ],
+      "references": [
+        "https://nodejs.org/api/http.html",
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "typescript-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle strictNullChecks with optional request fields?",
+      "answer": "Optional properties like request.user are typed as possibly undefined, so you must narrow or assert before use. A guard in a preHandler that throws on missing data lets handlers treat the value as present. This pattern keeps strict mode happy. It also makes assumptions explicit.",
+      "tags": [
+        "typescript",
+        "strict"
+      ],
+      "references": [
+        "https://www.typescriptlang.org/tsconfig#strictNullChecks"
+      ]
+    }
+  ]
+}

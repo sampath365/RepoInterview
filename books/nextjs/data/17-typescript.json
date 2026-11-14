@@ -1,0 +1,347 @@
+{
+  "category": "TypeScript with Next.js",
+  "slug": "typescript",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "typescript-001",
+      "difficulty": "Beginner",
+      "question": "Does Next.js support TypeScript out of the box?",
+      "answer": "Yes, create-next-app can scaffold a TypeScript project, and Next.js auto-detects TypeScript when you add a .ts or .tsx file. It creates a tsconfig.json and next-env.d.ts on first run. Type checking runs during next build. You install @types/react and @types/node.",
+      "tags": [
+        "typescript",
+        "setup"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-002",
+      "difficulty": "Beginner",
+      "question": "What types do pages and layouts receive?",
+      "answer": "Pages receive params and searchParams, and layouts receive params and children. In Next.js 15 params and searchParams are promises, so their types reflect that. You define them inline or with generated types. Typing them correctly prevents runtime surprises.",
+      "code": "type Props = { params: Promise<{ slug: string }> };",
+      "tags": [
+        "typescript",
+        "params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ]
+    },
+    {
+      "id": "typescript-003",
+      "difficulty": "Beginner",
+      "question": "How do you type a Route Handler?",
+      "answer": "Type the request as Request or NextRequest and the context with params. Return a Response or NextResponse. You can import NextRequest for access to nextUrl and cookies. This gives typed access to query and body.",
+      "code": "export async function GET(req: NextRequest) {\n  return Response.json({ ok: true });\n}",
+      "tags": [
+        "typescript",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-004",
+      "difficulty": "Beginner",
+      "question": "What is next-env.d.ts?",
+      "answer": "next-env.d.ts is a generated file that references Next.js and React types for the compiler. It should not be edited or committed changes made to it manually. Next.js regenerates it. It ensures JSX and image imports are typed.",
+      "tags": [
+        "typescript",
+        "generated"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-005",
+      "difficulty": "Beginner",
+      "question": "How do you type component props?",
+      "answer": "Define a props type or interface and annotate the component parameter. Use React.ReactNode for children. Prefer explicit types over any. This gives autocomplete and catches mistakes.",
+      "code": "type ButtonProps = { label: string; onClick?: () => void };\nexport function Button({ label }: ButtonProps) { /* ... */ }",
+      "tags": [
+        "typescript",
+        "props"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-006",
+      "difficulty": "Beginner",
+      "question": "How do you type a Server Action?",
+      "answer": "Type its parameters and return value like any async function. When used as a form action it receives FormData. Return a serializable value. Mark the file or function with 'use server'.",
+      "code": "'use server';\nexport async function save(formData: FormData): Promise<void> { /* ... */ }",
+      "tags": [
+        "typescript",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "typescript-007",
+      "difficulty": "Beginner",
+      "question": "What is the strict mode in tsconfig?",
+      "answer": "strict enables a group of strict type checks, including noImplicitAny and strictNullChecks. Next.js enables strict by default in new projects. It catches more bugs at compile time. Keep it on for safer code.",
+      "tags": [
+        "typescript",
+        "strict"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-008",
+      "difficulty": "Beginner",
+      "question": "How do you type environment variables?",
+      "answer": "Declare them in a .d.ts file with an interface augmenting ProcessEnv, or use a library like zod to validate at runtime. Only NEXT_PUBLIC_ variables are available on the client. Typing prevents typos and missing values.",
+      "code": "declare namespace NodeJS {\n  interface ProcessEnv { DATABASE_URL: string }\n}",
+      "tags": [
+        "typescript",
+        "env"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "typescript-009",
+      "difficulty": "Beginner",
+      "question": "How do you type metadata?",
+      "answer": "Import the Metadata type from next and annotate the exported metadata object or the generateMetadata return. This gives autocomplete for supported fields. It catches invalid keys. Types keep SEO config correct.",
+      "code": "import type { Metadata } from 'next';\nexport const metadata: Metadata = { title: 'Home' };",
+      "tags": [
+        "typescript",
+        "metadata"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-metadata"
+      ]
+    },
+    {
+      "id": "typescript-010",
+      "difficulty": "Beginner",
+      "question": "How do you handle a third-party library without types?",
+      "answer": "Install @types/package if available, or write a small declaration file. Avoid using any widely. You can also use a library that ships its own types. Keep declarations minimal and accurate.",
+      "code": "// types/legacy.d.ts\ndeclare module 'legacy' {\n  export function run(): void;\n}",
+      "tags": [
+        "typescript",
+        "types"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-011",
+      "difficulty": "Intermediate",
+      "question": "How do you type dynamic route params with generateStaticParams?",
+      "answer": "The return type of generateStaticParams should match the params type of the page. TypeScript infers it from the route. Keep the shapes consistent to avoid errors. This links static generation to the page's params.",
+      "code": "export function generateStaticParams() {\n  return [{ slug: 'a' }];\n}",
+      "tags": [
+        "typescript",
+        "dynamic-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-static-params"
+      ]
+    },
+    {
+      "id": "typescript-012",
+      "difficulty": "Intermediate",
+      "question": "How do you type the useSearchParams hook?",
+      "answer": "useSearchParams returns a read-only URLSearchParams object, so values are strings or null. Parse and validate before use. Use a schema to convert to typed values. There is no built-in generics for query shape.",
+      "code": "const page = Number(searchParams.get('page') ?? 1);",
+      "tags": [
+        "typescript",
+        "search-params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ]
+    },
+    {
+      "id": "typescript-013",
+      "difficulty": "Intermediate",
+      "question": "How do you share types between server and client?",
+      "answer": "Put shared types in a module that does not import server-only code and import it from both sides. Types are erased at build time, so they do not leak runtime code. Avoid importing values from server modules into the client. This keeps the boundary safe.",
+      "tags": [
+        "typescript",
+        "sharing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-014",
+      "difficulty": "Intermediate",
+      "question": "How do you type fetch responses?",
+      "answer": "Assert or validate the parsed JSON to a type, ideally with a schema library at the boundary. fetch returns unknown data, so validating avoids trusting the shape. You can use a generic helper to type json parsing. This catches API changes early.",
+      "code": "const data = (await res.json()) as Post[];",
+      "tags": [
+        "typescript",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ]
+    },
+    {
+      "id": "typescript-015",
+      "difficulty": "Intermediate",
+      "question": "How do you type React Server Components?",
+      "answer": "Type them like any async component returning JSX. Their props come from the parent, often params. They cannot use client hooks, so no hook types apply. This keeps server code type-safe.",
+      "tags": [
+        "typescript",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "typescript-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between type and interface for props?",
+      "answer": "Both describe object shapes; interface supports declaration merging while type can express unions and intersections. For component props either works. Many teams prefer type for unions and interface for extendable objects. Consistency matters more than the choice.",
+      "tags": [
+        "typescript",
+        "props"
+      ],
+      "references": [
+        "https://www.typescriptlang.org/docs/handbook/2/everyday-types.html"
+      ]
+    },
+    {
+      "id": "typescript-017",
+      "difficulty": "Intermediate",
+      "question": "How do you type context values?",
+      "answer": "Create the context with a type, often allowing undefined, then check for it in the consumer hook. Provide a typed custom hook that throws when the value is missing. This gives safe, ergonomic access. Avoid defaulting to any.",
+      "code": "const Ctx = createContext<Theme | undefined>(undefined);",
+      "tags": [
+        "typescript",
+        "context"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-018",
+      "difficulty": "Intermediate",
+      "question": "How do you type event handlers in React?",
+      "answer": "Use the appropriate React event type, such as React.ChangeEvent<HTMLInputElement> or React.MouseEvent. Inline handlers often infer correctly. Explicit types help for shared handlers. This prevents accessing the wrong properties.",
+      "code": "function onChange(e: React.ChangeEvent<HTMLInputElement>) { /* ... */ }",
+      "tags": [
+        "typescript",
+        "events"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-019",
+      "difficulty": "Intermediate",
+      "question": "How do you enforce type checking in CI?",
+      "answer": "Run tsc --noEmit in CI to type-check without emitting files. Next.js also type-checks during build. Add linting with eslint and typescript-eslint. Fail the pipeline on errors. This catches type regressions early.",
+      "code": "npx tsc --noEmit",
+      "tags": [
+        "typescript",
+        "ci"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-020",
+      "difficulty": "Intermediate",
+      "question": "How do you type a generic data-fetching helper?",
+      "answer": "Make the helper generic over the response type and validate the data before returning it. This gives callers typed results. Combine with a schema to guarantee the shape. Generics keep the helper reusable.",
+      "code": "async function getJson<T>(url: string): Promise<T> { /* ... */ }",
+      "tags": [
+        "typescript",
+        "generics"
+      ],
+      "references": [
+        "https://www.typescriptlang.org/docs/handbook/2/generics.html"
+      ]
+    },
+    {
+      "id": "typescript-021",
+      "difficulty": "Advanced",
+      "question": "How do you validate runtime data while keeping static types?",
+      "answer": "Use a schema library like Zod to parse unknown input and infer the TypeScript type from the schema. This gives one source of truth for both validation and types. Validate at every boundary such as API input and fetch responses. It prevents type lies about untrusted data.",
+      "code": "const Post = z.object({ id: z.string() });\ntype Post = z.infer<typeof Post>;",
+      "tags": [
+        "typescript",
+        "validation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-022",
+      "difficulty": "Advanced",
+      "question": "How do you type-augment the Next.js types for custom globals?",
+      "answer": "Create a declaration file that augments NextRequest, ProcessEnv, or module types. Keep augmentations minimal and documented. This lets you attach typed custom fields. Overusing augmentation hides real types.",
+      "tags": [
+        "typescript",
+        "augmentation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle serialization type constraints across the RSC boundary?",
+      "answer": "Only serializable values can cross from Server to Client Components, so type props accordingly and avoid functions and class instances. TypeScript cannot fully enforce serializability, so document and validate. Use plain data shapes. This avoids runtime errors.",
+      "tags": [
+        "typescript",
+        "serialization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "typescript-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep types in sync with a backend API?",
+      "answer": "Generate types from an OpenAPI schema or GraphQL codegen, and validate responses at runtime. Regenerate in CI so drift is caught. Avoid hand-maintained duplicate types. This keeps client and server contracts aligned.",
+      "tags": [
+        "typescript",
+        "codegen"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "typescript-025",
+      "difficulty": "Advanced",
+      "question": "How do you migrate a JavaScript Next.js app to TypeScript incrementally?",
+      "answer": "Enable allowJs and checkJs, rename files gradually, and add types to new code first. Use strict mode progressively with per-file overrides. Fix errors module by module. This avoids a risky big-bang migration.",
+      "tags": [
+        "typescript",
+        "migration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    }
+  ]
+}

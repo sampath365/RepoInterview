@@ -1,0 +1,343 @@
+{
+  "category": "Request & Reply Objects",
+  "slug": "request-reply",
+  "icon": "text",
+  "questions": [
+    {
+      "id": "request-reply-001",
+      "difficulty": "Beginner",
+      "question": "What properties does the Fastify request object expose?",
+      "answer": "The request object exposes method, url, headers, params, query, body, id, ip, hostname, and protocol, among others. It also carries the logger, the raw Node request, and any decorators you added. These give handlers everything needed to process a call. It is a Fastify-specific wrapper around the Node IncomingMessage.",
+      "tags": [
+        "request",
+        "api"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/"
+      ]
+    },
+    {
+      "id": "request-reply-002",
+      "difficulty": "Beginner",
+      "question": "What methods does the reply object provide?",
+      "answer": "reply provides code, header, headers, type, send, json, redirect, and callNotFound, plus serialization helpers. These let you shape the status, headers, and body. Calling send finalises the response. It wraps the Node ServerResponse.",
+      "tags": [
+        "reply",
+        "api"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "request-reply-003",
+      "difficulty": "Beginner",
+      "question": "How do you set a response header?",
+      "answer": "You call reply.header with a name and value, which can be chained. Setting multiple headers is done with reply.headers and an object. Headers set before send are included in the response. Fastify also manages content type and length for you.",
+      "tags": [
+        "reply",
+        "headers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#header"
+      ],
+      "code": "reply.header('X-Request-Id', request.id)\nreply.header('Cache-Control', 'no-store')"
+    },
+    {
+      "id": "request-reply-004",
+      "difficulty": "Beginner",
+      "question": "How do you read a specific request header?",
+      "answer": "Headers are available on request.headers, keyed by lowercase name. You can read them directly or validate them with a schema. Node lowercases header names automatically. Use request.headers['content-type'] for example.",
+      "tags": [
+        "request",
+        "headers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/"
+      ]
+    },
+    {
+      "id": "request-reply-005",
+      "difficulty": "Beginner",
+      "question": "What is request.id and how is it generated?",
+      "answer": "request.id is a unique identifier Fastify assigns to each request, by default an incrementing integer. It appears in log lines so you can correlate them. You can customise generation with genReqId. It is central to request tracing.",
+      "tags": [
+        "request",
+        "logging"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/"
+      ]
+    },
+    {
+      "id": "request-reply-006",
+      "difficulty": "Beginner",
+      "question": "How do you get the client IP address?",
+      "answer": "request.ip returns the client's IP, and request.ips returns the chain when behind proxies and trustProxy is enabled. You must enable trustProxy for Fastify to read forwarded headers safely. Without it, request.ip is the direct connection address. Configure trustProxy carefully to avoid spoofing.",
+      "tags": [
+        "request",
+        "networking"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/",
+        "https://fastify.dev/docs/latest/Reference/Server/#trustproxy"
+      ]
+    },
+    {
+      "id": "request-reply-007",
+      "difficulty": "Beginner",
+      "question": "How do you determine the request protocol and host?",
+      "answer": "request.protocol returns http or https, and request.hostname returns the host from the Host header. request.host combines host and port. These rely on trustProxy when behind a proxy. They are useful for building absolute URLs.",
+      "tags": [
+        "request",
+        "url"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/"
+      ]
+    },
+    {
+      "id": "request-reply-008",
+      "difficulty": "Beginner",
+      "question": "How do you set the status code and send a body together?",
+      "answer": "You chain reply.code(status).send(payload) or set the code and return the payload. Both approaches send the body with that status. Chaining reads clearly for simple handlers. Returning a value is idiomatic in async handlers.",
+      "tags": [
+        "reply",
+        "status"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ],
+      "code": "reply.code(201).send({ id: newId })"
+    },
+    {
+      "id": "request-reply-009",
+      "difficulty": "Beginner",
+      "question": "What is request.raw and when do you need it?",
+      "answer": "request.raw is the underlying Node IncomingMessage, exposing the raw stream and low-level properties. You need it for advanced streaming or when integrating libraries that expect the Node request. Most application code uses the Fastify wrapper instead. Use it sparingly to keep handlers portable.",
+      "tags": [
+        "request",
+        "nodejs"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/",
+        "https://nodejs.org/api/http.html"
+      ]
+    },
+    {
+      "id": "request-reply-010",
+      "difficulty": "Beginner",
+      "question": "How do you remove or override a header before sending?",
+      "answer": "You use reply.header to overwrite a value, or reply.removeHeader to delete one set earlier. Headers must be changed before the response is sent. This is useful in onSend hooks that adjust caching or security headers. Setting them early keeps the flow predictable.",
+      "tags": [
+        "reply",
+        "headers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#removeheader"
+      ]
+    },
+    {
+      "id": "request-reply-011",
+      "difficulty": "Intermediate",
+      "question": "How do you share state from a hook to the handler?",
+      "answer": "You attach data to the request object in a hook, then read it in the handler or a later hook. This works because the same request object flows through the lifecycle. For type safety you decorate request with the expected shape. It is the standard way to pass an authenticated user.",
+      "tags": [
+        "request",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "request-reply-012",
+      "difficulty": "Intermediate",
+      "question": "What is reply.raw and how does it differ from reply?",
+      "answer": "reply.raw is the Node ServerResponse, giving direct control over headers, status, and the writable stream. Writing to it bypasses Fastify's serialization and lifecycle finishing. Use it for streaming, WebSocket upgrades, or low-level control. Mixing raw writes with reply.send can cause errors.",
+      "tags": [
+        "reply",
+        "nodejs"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/",
+        "https://nodejs.org/api/http.html"
+      ]
+    },
+    {
+      "id": "request-reply-013",
+      "difficulty": "Intermediate",
+      "question": "How do you send a file as a response?",
+      "answer": "You register @fastify/static to serve files from a directory, or stream a file with reply.sendFile or a readable stream. For one-off files you create a read stream and return it with the correct content type. Streaming avoids loading the whole file into memory. Set caching headers for static assets.",
+      "tags": [
+        "reply",
+        "static"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-static",
+        "https://fastify.dev/docs/latest/Reference/Reply/#streams"
+      ]
+    },
+    {
+      "id": "request-reply-014",
+      "difficulty": "Intermediate",
+      "question": "How do you detect when the client disconnects?",
+      "answer": "You listen for the close or aborted events on request.raw or the socket. On disconnect you should cancel outstanding work such as database queries. This prevents wasted resources on abandoned requests. Combine it with timeouts for robustness.",
+      "tags": [
+        "request",
+        "events"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/",
+        "https://nodejs.org/api/http.html"
+      ]
+    },
+    {
+      "id": "request-reply-015",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of reply.callNotFound?",
+      "answer": "reply.callNotFound invokes the not-found handler from within a route, useful when a resource does not exist. It lets you reuse the central 404 behaviour instead of sending a bespoke response. The handler runs in the current scope. It keeps 404 formatting consistent.",
+      "tags": [
+        "reply",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#callnotfound"
+      ]
+    },
+    {
+      "id": "request-reply-016",
+      "difficulty": "Intermediate",
+      "question": "How do you set cookies on the reply?",
+      "answer": "You register @fastify/cookie and then use reply.setCookie with a name, value, and options, and read them via request.cookies. The plugin handles signing, parsing, and attributes like HttpOnly and SameSite. Always set security attributes appropriately. Raw Set-Cookie headers are possible but easy to get wrong.",
+      "tags": [
+        "cookies",
+        "reply"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-cookie"
+      ],
+      "code": "reply.setCookie('token', value, {\n  path: '/', httpOnly: true, sameSite: 'lax'\n})"
+    },
+    {
+      "id": "request-reply-017",
+      "difficulty": "Intermediate",
+      "question": "How do you access the parsed body and what if it is missing?",
+      "answer": "request.body holds the parsed payload, and it is undefined when no body was sent or no parser handled the content type. A schema with required body fields rejects empty requests early. Check content type when debugging missing bodies. Registering a parser is needed for non-JSON types.",
+      "tags": [
+        "request",
+        "body"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/ContentTypeParser/"
+      ]
+    },
+    {
+      "id": "request-reply-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of request.log?",
+      "answer": "request.log is a child logger bound to the request id and other context, so its messages are correlated with that request. Use it instead of the app logger inside handlers. This makes debugging multi-request flows far easier. It inherits the app logger's configuration.",
+      "tags": [
+        "logging",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "request-reply-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle HEAD and OPTIONS requests automatically?",
+      "answer": "Fastify exposes HEAD for GET routes by default and can answer OPTIONS for CORS when @fastify/cors is registered. The framework strips the body for HEAD responses. OPTIONS preflight is handled by the CORS plugin. This keeps HTTP semantics correct with little effort.",
+      "tags": [
+        "http",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#exposeheadroutes",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/OPTIONS"
+      ]
+    },
+    {
+      "id": "request-reply-020",
+      "difficulty": "Intermediate",
+      "question": "How do you set the response as an attachment download?",
+      "answer": "You set the Content-Disposition header to attachment with a filename, then send the content. This prompts the browser to download rather than display. Combine with the correct content type for the file. It is a common pattern for report exports.",
+      "tags": [
+        "reply",
+        "headers"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition"
+      ],
+      "code": "reply.header('Content-Disposition', 'attachment; filename=\"report.csv\"')"
+    },
+    {
+      "id": "request-reply-021",
+      "difficulty": "Advanced",
+      "question": "How does Fastify manage request and reply object allocation for performance?",
+      "answer": "Fastify creates request and reply wrappers around the Node objects and reuses prototype methods to reduce allocation. Decorators are applied per instance rather than copied per request. This keeps per-request overhead low. Understanding this explains why decorating is preferred over per-request property creation.",
+      "tags": [
+        "performance",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/"
+      ]
+    },
+    {
+      "id": "request-reply-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of writing directly to reply.raw?",
+      "answer": "Writing to reply.raw bypasses Fastify's hooks, serialization, and content-length handling, so onSend and serialization will not run. You must manage headers and status yourself and avoid also calling reply.send. It is powerful but easy to misuse. Prefer the high-level API unless you truly need raw control.",
+      "tags": [
+        "reply",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "request-reply-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement long-polling with the request and reply objects?",
+      "answer": "You hold the reply open and send it when data becomes available, listening for client disconnect to clean up. Set a timeout to avoid leaking connections. Because Fastify does not buffer indefinitely, you manage the reply lifetime explicitly. Consider server-sent events or WebSockets for better ergonomics.",
+      "tags": [
+        "reply",
+        "real-time"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "request-reply-024",
+      "difficulty": "Advanced",
+      "question": "How does trustProxy affect request.ip, protocol, and host?",
+      "answer": "When trustProxy is enabled, Fastify reads X-Forwarded-For, X-Forwarded-Proto, and X-Forwarded-Host to populate ip, protocol, and host. You should enable it only when behind a trusted proxy, or clients can spoof these values. Fastify lets you pass a number, list, or function to define trusted hops. Misconfiguration is a common security issue.",
+      "tags": [
+        "request",
+        "security"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#trustproxy"
+      ]
+    },
+    {
+      "id": "request-reply-025",
+      "difficulty": "Advanced",
+      "question": "How do you add type-safe custom properties to the request object?",
+      "answer": "You decorate request with a default value and augment the FastifyRequest interface in TypeScript so the property is typed. The decorator makes it available at runtime, and the interface augmentation makes it visible to the compiler. Do both in a shared plugin. This avoids casts throughout your handlers.",
+      "tags": [
+        "typescript",
+        "decorators"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#decorators"
+      ],
+      "code": "declare module 'fastify' {\n  interface FastifyRequest { user?: { id: string } }\n}"
+    }
+  ]
+}

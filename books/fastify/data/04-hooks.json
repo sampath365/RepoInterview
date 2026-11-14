@@ -1,0 +1,338 @@
+{
+  "category": "Hooks & Lifecycle",
+  "slug": "hooks",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "hooks-001",
+      "difficulty": "Beginner",
+      "question": "What are hooks in Fastify?",
+      "answer": "Hooks are functions you register on an instance to run at specific points in the request or application lifecycle. They let you add cross-cutting behaviour like authentication, logging, or validation without editing every handler. Request hooks run in a defined order, and application hooks run during startup and shutdown. They are scoped to the encapsulation context where registered.",
+      "tags": [
+        "hooks",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-002",
+      "difficulty": "Beginner",
+      "question": "What are the main request lifecycle hooks in order?",
+      "answer": "The request hooks run in this order: onRequest, preParsing, preValidation, preHandler, then the handler, then preSerialization, then onSend, and finally onResponse. onError runs if an error occurs. Knowing this order is essential for placing logic correctly. For example, authentication belongs in onRequest or preHandler.",
+      "tags": [
+        "hooks",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-003",
+      "difficulty": "Beginner",
+      "question": "What are application lifecycle hooks?",
+      "answer": "onReady runs once the app has booted and can accept requests, and onClose runs during shutdown. onListen fires after the server starts listening. onRoute runs for every route registration. These hooks manage resources and setup that is not per-request.",
+      "tags": [
+        "hooks",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onready"
+      ]
+    },
+    {
+      "id": "hooks-004",
+      "difficulty": "Beginner",
+      "question": "What is the onRequest hook used for?",
+      "answer": "onRequest runs before body parsing and is the earliest per-request hook after routing. It is ideal for authentication, request IDs, and logging context because it runs before expensive work. You can short-circuit by sending a reply. Keep it fast to avoid delaying every request.",
+      "tags": [
+        "hooks",
+        "onrequest"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onrequest"
+      ],
+      "code": "fastify.addHook('onRequest', async (request) => {\n  request.startTime = Date.now()\n})"
+    },
+    {
+      "id": "hooks-005",
+      "difficulty": "Beginner",
+      "question": "What is the preHandler hook used for?",
+      "answer": "preHandler runs after validation and before the route handler, so request.body, params, and query are already available and validated. It is the usual place for authorisation checks that depend on validated input. You can also use it to load data the handler needs. Sending a reply from it short-circuits the handler.",
+      "tags": [
+        "hooks",
+        "prehandler"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#prehandler"
+      ]
+    },
+    {
+      "id": "hooks-006",
+      "difficulty": "Beginner",
+      "question": "What is the onSend hook used for?",
+      "answer": "onSend runs just before the payload is serialised and sent, letting you inspect or modify the response body. You receive the payload and must return it, either the same or a transformed value. It is useful for wrapping responses or adding headers. Because it runs late, it sees the final payload.",
+      "tags": [
+        "hooks",
+        "onsend"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onsend"
+      ]
+    },
+    {
+      "id": "hooks-007",
+      "difficulty": "Beginner",
+      "question": "What is the onResponse hook used for?",
+      "answer": "onResponse runs after the response has been sent to the client. It is useful for metrics, audit logging, and cleanup because it runs once per request regardless of success or failure. You should not modify the response here since it is already sent. Keep it non-blocking to avoid delaying resource release.",
+      "tags": [
+        "hooks",
+        "onresponse"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onresponse"
+      ]
+    },
+    {
+      "id": "hooks-008",
+      "difficulty": "Beginner",
+      "question": "What is the onError hook used for?",
+      "answer": "onError runs when an error is thrown or passed to the handler, before the error response is finalised. It is the place to log errors with request context or map internal errors to public messages. You can add properties to the reply or error. It runs for errors across the lifecycle.",
+      "tags": [
+        "hooks",
+        "onerror"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onerror"
+      ]
+    },
+    {
+      "id": "hooks-009",
+      "difficulty": "Beginner",
+      "question": "How do you register a hook?",
+      "answer": "You call fastify.addHook with the hook name and an async function or callback. The hook is scoped to the instance where you add it, so adding it inside a plugin limits its reach. Multiple hooks of the same name run in registration order. Route-level hooks can also be passed in the route options.",
+      "tags": [
+        "hooks",
+        "addhook"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ],
+      "code": "fastify.addHook('preHandler', async (request, reply) => {\n  await authenticate(request)\n})"
+    },
+    {
+      "id": "hooks-010",
+      "difficulty": "Beginner",
+      "question": "What is the onClose hook used for?",
+      "answer": "onClose runs when fastify.close is called, allowing plugins to release resources such as database pools or timers. It runs for each scope during shutdown. Using it ensures graceful teardown. It pairs naturally with onReady for setup.",
+      "tags": [
+        "hooks",
+        "onclose"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onclose"
+      ],
+      "code": "fastify.addHook('onClose', async (instance) => {\n  await instance.db.destroy()\n})"
+    },
+    {
+      "id": "hooks-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between onRequest and preValidation?",
+      "answer": "onRequest runs before the body is parsed, so request.body is not yet available. preValidation runs after parsing but before schema validation, so you can inspect the raw body and modify it. Use onRequest for authentication that does not need the body, and preValidation when you must transform the payload before validation. Both can short-circuit the request.",
+      "tags": [
+        "hooks",
+        "prevalidation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-012",
+      "difficulty": "Intermediate",
+      "question": "How does the preParsing hook differ from preValidation?",
+      "answer": "preParsing runs before Fastify parses the request body and receives the raw stream, so it can be used to decompress or inspect payloads. preValidation runs after parsing and before validation, working with the parsed body. preParsing is for content-level transformations, while preValidation is for shaping data before schema checks. Choosing the right stage avoids double parsing.",
+      "tags": [
+        "hooks",
+        "preparsing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#preparsing"
+      ]
+    },
+    {
+      "id": "hooks-013",
+      "difficulty": "Intermediate",
+      "question": "How do you stop a request from a hook?",
+      "answer": "You call reply.send with a payload or throw an error inside the hook to short-circuit the chain. Returning normally continues to the next hook. For auth failures, sending a 401 from onRequest prevents body parsing entirely. This is more efficient than rejecting later.",
+      "tags": [
+        "hooks",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ],
+      "code": "fastify.addHook('onRequest', async (request, reply) => {\n  if (!request.headers.authorization) {\n    reply.code(401).send({ error: 'Unauthorized' })\n  }\n})"
+    },
+    {
+      "id": "hooks-014",
+      "difficulty": "Intermediate",
+      "question": "What is the preSerialization hook and when is it useful?",
+      "answer": "preSerialization runs after the handler returns but before the payload is serialised, so it can transform the final data structure. It is useful for enveloping responses or stripping fields. The return value replaces the payload. If the payload is a stream or string, the hook is skipped.",
+      "tags": [
+        "hooks",
+        "preserialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#preserialization"
+      ]
+    },
+    {
+      "id": "hooks-015",
+      "difficulty": "Intermediate",
+      "question": "How do hooks interact with route-level configuration?",
+      "answer": "Route options can include hooks like onRequest and preHandler that run only for that route, in addition to instance-level hooks. Instance hooks run first, then route hooks of the same stage. You can read route config inside hooks to make decisions. This layering keeps global and local concerns separate.",
+      "tags": [
+        "hooks",
+        "routes"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-016",
+      "difficulty": "Intermediate",
+      "question": "What is the onRoute hook used for?",
+      "answer": "onRoute fires for every route as it is registered, giving you the route options before the router compiles them. You can inspect, modify, or enforce conventions such as requiring a schema or adding tags. It is commonly used by plugins to augment routes globally. It runs at boot, not per request.",
+      "tags": [
+        "hooks",
+        "onroute"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onroute"
+      ],
+      "code": "fastify.addHook('onRoute', (routeOptions) => {\n  routeOptions.schema = routeOptions.schema || {}\n})"
+    },
+    {
+      "id": "hooks-017",
+      "difficulty": "Intermediate",
+      "question": "How do you add a request ID to every request?",
+      "answer": "You use request.id, which Fastify generates automatically, or set genReqId in the server options to customise it. To propagate a client-supplied ID, read a header in onRequest and assign request.id. The logger includes this ID in every log line. This makes tracing requests across services easier.",
+      "tags": [
+        "hooks",
+        "request-id"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#genreqid"
+      ]
+    },
+    {
+      "id": "hooks-018",
+      "difficulty": "Advanced",
+      "question": "What is the onReady hook and when does it run?",
+      "answer": "onReady runs after all plugins have loaded and the instance is ready to serve, but before listen completes. It is used for setup that depends on other plugins, such as warming caches or verifying connections. Because it runs once at boot, it should not contain per-request logic. Errors there abort startup.",
+      "tags": [
+        "hooks",
+        "onready"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onready"
+      ]
+    },
+    {
+      "id": "hooks-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors thrown inside hooks?",
+      "answer": "An error thrown in any request hook is routed to the error handler and onError hooks, producing an error response. Async hooks should throw or reject rather than swallowing errors. You can attach a statusCode to the error to control the response code. This keeps hook failures consistent with handler failures.",
+      "tags": [
+        "hooks",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-020",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the onListen hook?",
+      "answer": "onListen runs once the server has bound its socket and is ready to accept connections. It is useful for logging the actual address and port, especially when listening on port zero. It runs after onReady. It should not perform blocking work that delays serving.",
+      "tags": [
+        "hooks",
+        "onlisten"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onlisten"
+      ],
+      "code": "fastify.addHook('onListen', async () => {\n  fastify.log.info('server listening')\n})"
+    },
+    {
+      "id": "hooks-021",
+      "difficulty": "Intermediate",
+      "question": "How do you share data between hooks and the handler?",
+      "answer": "You attach properties to the request object, either directly or via a decorator, so later hooks and the handler can read them. This is the standard way to pass the authenticated user or a database transaction. Avoid attaching large objects unnecessarily. Decorating request documents the expected shape.",
+      "tags": [
+        "hooks",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "hooks-022",
+      "difficulty": "Advanced",
+      "question": "Can you explain the exact ordering of request hooks including error paths?",
+      "answer": "Fastify runs onRequest, then preParsing, preValidation, preHandler, the handler, preSerialization, onSend, and finally onResponse. If any stage throws, the remaining stages are skipped and the error flows to onError and the error handler, then onSend and onResponse still run. This guarantees onResponse runs once per request even on failure. onError runs before the response is sent, so it can still modify the error payload.",
+      "tags": [
+        "hooks",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-023",
+      "difficulty": "Advanced",
+      "question": "How do async hooks and the done callback differ in execution?",
+      "answer": "Async hooks return a promise, and Fastify waits for it to settle before proceeding. Callback-style hooks receive a done function that you must call, optionally with an error. Mixing styles incorrectly, such as forgetting to call done, stalls the request. Prefer async hooks for readability unless you are integrating callback-based code.",
+      "tags": [
+        "hooks",
+        "async"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-024",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of adding many global hooks?",
+      "answer": "Every global hook runs for every request, so heavy or synchronous work multiplies across traffic. Cheap hooks like reading a header are fine, but database calls in onRequest add latency to all routes. Scope expensive hooks to the plugins or routes that need them. Profile with real traffic to catch regressions.",
+      "tags": [
+        "hooks",
+        "performance"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "hooks-025",
+      "difficulty": "Advanced",
+      "question": "How do you implement request-scoped transactions using hooks?",
+      "answer": "Open a transaction in a preHandler, attach it to the request via a decorator, and commit in an onResponse or onSend hook based on whether an error occurred. On failure, roll back instead of committing. Keep the logic in a shared plugin so all routes using the database participate. This ties the transaction lifetime to the request.",
+      "tags": [
+        "hooks",
+        "database"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    }
+  ]
+}

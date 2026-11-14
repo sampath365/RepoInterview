@@ -1,0 +1,341 @@
+{
+  "category": "Data Fetching",
+  "slug": "data-fetching",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "data-fetching-001",
+      "difficulty": "Beginner",
+      "question": "How do you fetch data in the App Router?",
+      "answer": "Make the component async and await the fetch directly in the body. Next.js lets Server Components fetch data without useEffect. The result is rendered on the server and streamed. For client-side fetching you use a library or useEffect.",
+      "code": "export default async function Page() {\n  const res = await fetch('https://api.example.com/posts');\n  const posts = await res.json();\n  return <ul>{posts.map((p) => <li key={p.id}>{p.title}</li>)}</ul>;\n}",
+      "tags": [
+        "fetching",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ]
+    },
+    {
+      "id": "data-fetching-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between server and client data fetching?",
+      "answer": "Server fetching runs on the server, can access secrets and databases, and sends only rendered output to the browser. Client fetching runs in the browser after load, useful for user-triggered or real-time data. Server fetching is preferred for initial content. Client fetching suits polling and interactive updates.",
+      "tags": [
+        "fetching",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ]
+    },
+    {
+      "id": "data-fetching-003",
+      "difficulty": "Beginner",
+      "question": "What is the fetch API used in Next.js?",
+      "answer": "Next.js extends the Web fetch API, so you use the same fetch you know from the browser and Node. It adds caching and revalidation options through the second argument. On the server you can call it directly in components. This keeps data fetching code familiar and portable.",
+      "code": "const res = await fetch(url, { cache: 'no-store' });",
+      "tags": [
+        "fetch",
+        "web-api"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/fetch"
+      ]
+    },
+    {
+      "id": "data-fetching-004",
+      "difficulty": "Beginner",
+      "question": "How do you handle loading states while data fetches?",
+      "answer": "Add a loading.tsx file to show a fallback while the segment renders. You can also wrap slow parts in Suspense with a fallback prop. Next.js streams the resolved content when ready. This gives immediate feedback during server fetches.",
+      "tags": [
+        "loading",
+        "suspense"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+      ]
+    },
+    {
+      "id": "data-fetching-005",
+      "difficulty": "Beginner",
+      "question": "How do you handle errors when fetching data?",
+      "answer": "Wrap fetches in try/catch and return fallback UI or call notFound() when appropriate. Use error.tsx boundaries to catch rendering errors in a segment. For missing records call notFound() to show the 404 page. Always handle network failures gracefully.",
+      "tags": [
+        "errors",
+        "fetching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/error"
+      ]
+    },
+    {
+      "id": "data-fetching-006",
+      "difficulty": "Beginner",
+      "question": "What is a data-fetching library like SWR used for?",
+      "answer": "SWR is a React hook library for client-side data fetching with caching, revalidation, and deduplication. It fits Client Components that need to refetch on focus or interval. For server data you can fetch directly in Server Components. SWR is optional and complements the App Router.",
+      "code": "'use client';\nconst { data } = useSWR('/api/user', fetcher);",
+      "tags": [
+        "swr",
+        "client-fetching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/client-side"
+      ]
+    },
+    {
+      "id": "data-fetching-007",
+      "difficulty": "Beginner",
+      "question": "Can you fetch data in a Client Component?",
+      "answer": "Yes, Client Components can fetch data, typically in useEffect or with a library like SWR or React Query. This runs in the browser after the component mounts. It is suitable for data that depends on client state. For initial page content, prefer server fetching.",
+      "tags": [
+        "client-components",
+        "fetching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/client-side"
+      ]
+    },
+    {
+      "id": "data-fetching-008",
+      "difficulty": "Beginner",
+      "question": "What is request deduplication in Next.js?",
+      "answer": "Next.js automatically deduplicates identical fetch requests with the same URL and options during a single render pass. This means multiple components can fetch the same data without extra network calls. It relies on the fetch cache. This simplifies passing data down without prop drilling.",
+      "tags": [
+        "deduplication",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/fetch"
+      ]
+    },
+    {
+      "id": "data-fetching-009",
+      "difficulty": "Beginner",
+      "question": "How do you fetch data based on route params?",
+      "answer": "Read the params prop in an async Server Component and use it to build the fetch URL. Since params is async in Next.js 15, you await it first. Then fetch and render the matching record. Call notFound() when the record does not exist.",
+      "code": "export default async function Page({ params }) {\n  const { id } = await params;\n  const post = await getPost(id);\n}",
+      "tags": [
+        "params",
+        "fetching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ]
+    },
+    {
+      "id": "data-fetching-010",
+      "difficulty": "Beginner",
+      "question": "What is the recommended pattern for sequential vs parallel fetches?",
+      "answer": "Sequential fetches await one after another when the next depends on the previous. Parallel fetches start together with Promise.all when they are independent. Parallel fetching reduces total latency. Only sequence when there is a real dependency.",
+      "code": "const [user, posts] = await Promise.all([getUser(), getPosts()]);",
+      "tags": [
+        "parallel",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-011",
+      "difficulty": "Intermediate",
+      "question": "How does caching work for fetch by default in Next.js 15?",
+      "answer": "In Next.js 15 fetch requests are no longer cached by default, whereas in 14 they were cached with force-cache. You opt in to caching with cache: 'force-cache' or next: { revalidate: n }. GET Route Handlers are also uncached by default now. This makes dynamic behavior the default and caching explicit.",
+      "tags": [
+        "caching",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/blog/next-15"
+      ]
+    },
+    {
+      "id": "data-fetching-012",
+      "difficulty": "Intermediate",
+      "question": "How do you revalidate fetched data?",
+      "answer": "Pass next: { revalidate: seconds } to fetch for time-based revalidation. Use revalidatePath or revalidateTag to invalidate on demand from a Server Action or Route Handler. Tags let you target groups of fetches. This keeps content fresh without rebuilding.",
+      "code": "await fetch(url, { next: { revalidate: 60, tags: ['posts'] } });",
+      "tags": [
+        "revalidation",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/revalidatePath"
+      ]
+    },
+    {
+      "id": "data-fetching-013",
+      "difficulty": "Intermediate",
+      "question": "How do you fetch data in parallel and avoid waterfalls?",
+      "answer": "Start independent fetches with Promise.all instead of awaiting them one by one. You can also initiate a fetch and pass the unresolved promise to a child, which awaits it inside Suspense. This avoids request waterfalls. Both patterns cut total latency.",
+      "tags": [
+        "parallel",
+        "waterfall"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-014",
+      "difficulty": "Intermediate",
+      "question": "How do you share fetched data across components?",
+      "answer": "Fetch in a common Server Component and pass the data down as props, or rely on fetch deduplication when the same URL is requested. For client state, use React context or a data library cache. Server Components avoid prop drilling by fetching where needed with dedup. Choose based on how widely the data is used.",
+      "tags": [
+        "deduplication",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-015",
+      "difficulty": "Intermediate",
+      "question": "When should you use a Route Handler for data instead of fetching directly?",
+      "answer": "Use a Route Handler when a client needs an HTTP endpoint, when third parties call your API, or when you need webhooks. For server-rendered content you can usually fetch directly in Server Components. Route Handlers add a network hop for internal server calls. Prefer direct fetching unless an API surface is required.",
+      "tags": [
+        "route-handlers",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ]
+    },
+    {
+      "id": "data-fetching-016",
+      "difficulty": "Intermediate",
+      "question": "How do you stream data as it becomes available?",
+      "answer": "Wrap slow components in Suspense and let them await data inside. Next.js streams the resolved HTML to the browser progressively. The loading.tsx file does this at the segment level. Streaming improves perceived performance for slow data.",
+      "tags": [
+        "streaming",
+        "suspense"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "data-fetching-017",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data from a Server Component to a Client Component for fetching?",
+      "answer": "Pass the initial data as props and let the client component manage refetching. You can also pass a promise and read it with the use() hook in the client. This avoids an extra request on mount. It combines server rendering with client interactivity.",
+      "tags": [
+        "composition",
+        "use-hook"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-018",
+      "difficulty": "Intermediate",
+      "question": "What is a common data fetching anti-pattern?",
+      "answer": "Sequential awaits for independent data create waterfalls that add latency. Fetching in Client Components when server rendering would do is another. Also avoid duplicating fetches with different cache options that defeat deduplication. Use parallel fetching and server components to avoid these.",
+      "tags": [
+        "anti-patterns",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle authentication in data fetching?",
+      "answer": "Read the session or token on the server via cookies or headers, then include credentials when fetching internal APIs. Keep tokens in httpOnly cookies so they are not exposed to client scripts. Verify the session in Server Components and Server Actions. Never trust client-supplied identity.",
+      "tags": [
+        "auth",
+        "fetching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "data-fetching-020",
+      "difficulty": "Intermediate",
+      "question": "How does the use() hook help with data fetching?",
+      "answer": "The React use() hook reads a promise in a Client Component and suspends until it resolves. You can pass a server-created promise to the client and read it with use(). It works with Suspense boundaries for streaming. This bridges server-initiated fetches into client rendering.",
+      "code": "'use client';\nconst data = use(promise);",
+      "tags": [
+        "use-hook",
+        "client-fetching"
+      ],
+      "references": [
+        "https://react.dev/reference/react/use"
+      ]
+    },
+    {
+      "id": "data-fetching-021",
+      "difficulty": "Advanced",
+      "question": "How does Next.js deduplicate and cache fetch calls internally?",
+      "answer": "Next.js tracks fetch calls per request and deduplicates identical ones by URL and options. Cached entries are stored and can be revalidated by time or tag. In Next.js 15 caching is opt-in, so only explicit caches are stored. Deduplication still applies within a render pass regardless of caching.",
+      "tags": [
+        "deduplication",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/fetch"
+      ]
+    },
+    {
+      "id": "data-fetching-022",
+      "difficulty": "Advanced",
+      "question": "How do you fetch data with a database client directly?",
+      "answer": "You can call an ORM or database client directly in a Server Component because it runs on the server. Cache or memoize the client instance to avoid reconnects, and mark the module server-only. Wrap queries in React cache to deduplicate within a render. This removes the need for an internal API layer.",
+      "code": "import 'server-only';\nexport const getPosts = cache(async () => db.post.findMany());",
+      "tags": [
+        "database",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement request memoization with React cache?",
+      "answer": "Wrap a data function in React's cache so repeated calls within a single render share one result. This is useful for database queries that are not fetch calls. It complements fetch deduplication. The cache is per-request and does not persist across requests.",
+      "code": "import { cache } from 'react';\nexport const getUser = cache(async (id) => db.user.find(id));",
+      "tags": [
+        "cache",
+        "memoization"
+      ],
+      "references": [
+        "https://react.dev/reference/react/cache"
+      ]
+    },
+    {
+      "id": "data-fetching-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle pagination in server data fetching?",
+      "answer": "Read page and page size from searchParams, then fetch the corresponding slice on the server. Render pagination links that update the query string. Keep the data fetching on the server for each page. This gives crawlable, shareable paginated URLs.",
+      "tags": [
+        "pagination",
+        "search-params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "data-fetching-025",
+      "difficulty": "Advanced",
+      "question": "How do you combine caching, streaming, and revalidation for fresh data?",
+      "answer": "Cache long-lived data with tags, stream slower sections inside Suspense, and call revalidateTag from a Server Action after mutations. This serves cached content fast while updating it on change. Mix static and dynamic data by caching some fetches and leaving others uncached. The result is fast pages with fresh data where it matters.",
+      "tags": [
+        "caching",
+        "streaming"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    }
+  ]
+}

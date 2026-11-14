@@ -1,0 +1,342 @@
+{
+  "category": "Ecosystem & Integrations",
+  "slug": "ecosystem",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "ecosystem-001",
+      "difficulty": "Beginner",
+      "question": "What are Fastify's official plugins?",
+      "answer": "Fastify maintains a set of official plugins under the @fastify scope, covering concerns like CORS, cookies, JWT, static files, multipart, and compression. They are versioned with Fastify and tested against it. Using them reduces custom code. Browse them in the Fastify GitHub organisation.",
+      "tags": [
+        "ecosystem",
+        "plugins"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify#ecosystem",
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "ecosystem-002",
+      "difficulty": "Beginner",
+      "question": "How do you find a plugin for a specific need?",
+      "answer": "You check the official plugins list first, then the broader ecosystem on npm under the fastify- prefix. Review maintenance activity and compatibility with your Fastify version. Prefer well-tested, actively maintained packages. Reading the plugin's README reveals its options.",
+      "tags": [
+        "ecosystem",
+        "plugins"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify#ecosystem"
+      ]
+    },
+    {
+      "id": "ecosystem-003",
+      "difficulty": "Beginner",
+      "question": "How do you integrate a template engine with Fastify?",
+      "answer": "You register @fastify/view with the engine and options, then call reply.view in handlers. It supports many engines like EJS, Pug, and Handlebars. Configure the views directory and default engine. This lets you render HTML alongside JSON APIs.",
+      "tags": [
+        "ecosystem",
+        "templating"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-view"
+      ],
+      "code": "await app.register(require('@fastify/view'), {\n  engine: 'ejs',\n  root: './views'\n})"
+    },
+    {
+      "id": "ecosystem-004",
+      "difficulty": "Beginner",
+      "question": "How do you serve static files with Fastify?",
+      "answer": "You register @fastify/static with a root directory and optional prefix, and it serves files with caching and range support. You can also send individual files with reply.sendFile. Set appropriate cache headers for assets. This avoids hand-rolling file serving.",
+      "tags": [
+        "ecosystem",
+        "static"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-static"
+      ],
+      "code": "await app.register(require('@fastify/static'), {\n  root: path.join(__dirname, 'public'),\n  prefix: '/assets/'\n})"
+    },
+    {
+      "id": "ecosystem-005",
+      "difficulty": "Beginner",
+      "question": "What is @fastify/sensible used for?",
+      "answer": "@fastify/sensible adds convenience helpers like reply.notFound, httpErrors, and a set of assertions to Fastify. It standardises error responses across an app. It is optional but popular for consistency. It decorates reply and the instance with utilities.",
+      "tags": [
+        "ecosystem",
+        "utilities"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-sensible"
+      ]
+    },
+    {
+      "id": "ecosystem-006",
+      "difficulty": "Beginner",
+      "question": "How do you add CORS with an official plugin?",
+      "answer": "You register @fastify/cors and configure origins, methods, and credentials. It handles preflight OPTIONS requests automatically. Restrict origins rather than using a wildcard with credentials. This is one of the most commonly used plugins.",
+      "tags": [
+        "ecosystem",
+        "cors"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-cors"
+      ]
+    },
+    {
+      "id": "ecosystem-007",
+      "difficulty": "Beginner",
+      "question": "How do you handle file uploads with an official plugin?",
+      "answer": "You register @fastify/multipart, then read parts as streams or buffers from the request. It enforces size and count limits you configure. Validate types and store files safely. It integrates with Fastify's content type parsing.",
+      "tags": [
+        "ecosystem",
+        "multipart"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-multipart"
+      ]
+    },
+    {
+      "id": "ecosystem-008",
+      "difficulty": "Beginner",
+      "question": "How do you add cookies support?",
+      "answer": "You register @fastify/cookie, which parses incoming cookies into request.cookies and adds reply.setCookie and reply.clearCookie. It supports signing and security attributes. Combine with JWT or sessions for authentication. Always set HttpOnly and SameSite where appropriate.",
+      "tags": [
+        "ecosystem",
+        "cookies"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-cookie"
+      ]
+    },
+    {
+      "id": "ecosystem-009",
+      "difficulty": "Beginner",
+      "question": "What is @fastify/rate-limit?",
+      "answer": "It is the official rate limiting plugin, applying per-route or global limits keyed by IP or a custom function. Exceeding the limit returns 429. You can store counters in Redis for multi-instance deployments. It protects against abuse and brute force.",
+      "tags": [
+        "ecosystem",
+        "rate-limiting"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-rate-limit"
+      ]
+    },
+    {
+      "id": "ecosystem-010",
+      "difficulty": "Beginner",
+      "question": "How do you add compression to responses?",
+      "answer": "You register @fastify/compress, which negotiates gzip, deflate, or brotli based on the Accept-Encoding header. It compresses large responses to save bandwidth. Configure thresholds so small payloads are not compressed. It works transparently with your routes.",
+      "tags": [
+        "ecosystem",
+        "compression"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-compress"
+      ]
+    },
+    {
+      "id": "ecosystem-011",
+      "difficulty": "Intermediate",
+      "question": "How do you add request logging or tracing plugins?",
+      "answer": "Fastify logs by default with Pino, but you can add plugins such as @fastify/request-context to carry per-request state, or OpenTelemetry instrumentation to emit spans. These plugins hook into the lifecycle so they run for every request. They integrate without changing handlers. Use them to enrich observability beyond plain logs.",
+      "tags": [
+        "ecosystem",
+        "observability"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-request-context",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "ecosystem-012",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate OpenAPI documentation with Fastify?",
+      "answer": "You use @fastify/swagger to generate an OpenAPI document from your route schemas and @fastify/swagger-ui to serve it. Because schemas already describe routes, the docs stay in sync. You can customise the info and servers. This gives interactive API documentation with little extra work.",
+      "tags": [
+        "ecosystem",
+        "openapi"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-swagger",
+        "https://github.com/fastify/fastify-swagger-ui"
+      ],
+      "code": "await app.register(require('@fastify/swagger'))\nawait app.register(require('@fastify/swagger-ui'), {\n  routePrefix: '/docs'\n})"
+    },
+    {
+      "id": "ecosystem-013",
+      "difficulty": "Intermediate",
+      "question": "How do you add health checks with @fastify/under-pressure?",
+      "answer": "You register @fastify/under-pressure to monitor event loop delay and memory, and it can automatically return 503 when thresholds are exceeded. It also exposes a health route. This protects the service during overload. Configure thresholds to match your limits.",
+      "tags": [
+        "ecosystem",
+        "health"
+      ],
+      "references": [
+        "https://github.com/fastify/under-pressure"
+      ]
+    },
+    {
+      "id": "ecosystem-014",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate an ORM like Prisma or Drizzle?",
+      "answer": "You wrap the client in a plugin that decorates the instance and disconnects on close, so routes use it through fastify. Both libraries are framework-agnostic, so integration is a thin plugin. Use migrations for schema changes. This keeps a single client for the process.",
+      "tags": [
+        "ecosystem",
+        "orm"
+      ],
+      "references": [
+        "https://www.prisma.io/docs/guides/database/using-prisma-with-fastify"
+      ]
+    },
+    {
+      "id": "ecosystem-015",
+      "difficulty": "Intermediate",
+      "question": "How do you add Redis to a Fastify app?",
+      "answer": "You register @fastify/redis, which decorates the instance with a client, or wrap ioredis in your own plugin. Use it for caching, sessions, rate limiting, and pub/sub. Close the client on shutdown. Always set connection error handling.",
+      "tags": [
+        "ecosystem",
+        "redis"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-redis"
+      ]
+    },
+    {
+      "id": "ecosystem-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use an HTTP client for outbound calls?",
+      "answer": "You use undici, Node's built-in fetch, or a library like got, wrapped in a plugin so it is injectable and reusable. Configure timeouts, retries, and connection pooling. Never call external services without timeouts. This keeps outbound calls resilient.",
+      "tags": [
+        "ecosystem",
+        "http-client"
+      ],
+      "references": [
+        "https://nodejs.org/api/globals.html#fetch",
+        "https://undici.nodejs.org/"
+      ]
+    },
+    {
+      "id": "ecosystem-017",
+      "difficulty": "Intermediate",
+      "question": "How do you add authentication helpers with @fastify/auth?",
+      "answer": "The @fastify/auth plugin lets you compose multiple authentication strategies into one hook, running them in order until one succeeds. It decouples strategy implementations from their use. This is useful when an API accepts several credential types. Combine with @fastify/jwt or sessions.",
+      "tags": [
+        "ecosystem",
+        "authentication"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-auth"
+      ]
+    },
+    {
+      "id": "ecosystem-018",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate GraphQL with Fastify?",
+      "answer": "You use a library like Mercurius, a Fastify-native GraphQL adapter, registering it with your schema and resolvers. It integrates with Fastify's hooks, validation, and logging. It supports subscriptions over WebSockets. This keeps GraphQL consistent with your HTTP stack.",
+      "tags": [
+        "ecosystem",
+        "graphql"
+      ],
+      "references": [
+        "https://github.com/mercurius-js/mercurius"
+      ]
+    },
+    {
+      "id": "ecosystem-019",
+      "difficulty": "Intermediate",
+      "question": "How do you add metrics with @fastify/metrics or Prometheus?",
+      "answer": "You register a metrics plugin that exposes a /metrics endpoint in Prometheus format, tracking request counts and durations. Point your monitoring system at it and alert on thresholds. Avoid high-cardinality labels. This makes performance observable.",
+      "tags": [
+        "ecosystem",
+        "metrics"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-metrics",
+        "https://prometheus.io/docs/introduction/overview/"
+      ]
+    },
+    {
+      "id": "ecosystem-020",
+      "difficulty": "Intermediate",
+      "question": "How do you add scheduled jobs to a Fastify app?",
+      "answer": "You use a job scheduler like @fastify/schedule backed by toad-scheduler, registering jobs in a plugin and stopping them on close. Keep long jobs out of the request path. Handle failures and logging. This integrates background work with the app lifecycle.",
+      "tags": [
+        "ecosystem",
+        "jobs"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-schedule"
+      ]
+    },
+    {
+      "id": "ecosystem-021",
+      "difficulty": "Advanced",
+      "question": "How do you use TypeBox or JSON Schema tooling with Fastify?",
+      "answer": "TypeBox lets you build JSON Schemas that also infer TypeScript types, and you wire it through a Fastify type provider. This keeps validation and types in sync. You can also use json-schema-to-ts for the same purpose. It reduces duplication between schema and code.",
+      "tags": [
+        "ecosystem",
+        "schemas"
+      ],
+      "references": [
+        "https://github.com/sinclairzx81/typebox",
+        "https://fastify.dev/docs/latest/Reference/TypeScript/#type-providers"
+      ]
+    },
+    {
+      "id": "ecosystem-022",
+      "difficulty": "Advanced",
+      "question": "How do you evaluate and vet a third-party Fastify plugin?",
+      "answer": "You check maintenance activity, test coverage, open issues, and compatibility with your Fastify version, and read the source for how it uses encapsulation and hooks. Prefer official plugins when available. Consider whether a small in-house plugin would be safer. Supply-chain diligence matters for production.",
+      "tags": [
+        "ecosystem",
+        "plugins"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify#ecosystem"
+      ]
+    },
+    {
+      "id": "ecosystem-023",
+      "difficulty": "Advanced",
+      "question": "How do you build a reusable internal plugin across services?",
+      "answer": "You package it as a fastify-plugin with declared metadata, typed options, and tests against a fresh instance, then publish it to your private registry. Document its options and lifecycle behaviour. Version it with semantic versioning. This shares proven functionality without duplication.",
+      "tags": [
+        "ecosystem",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "ecosystem-024",
+      "difficulty": "Advanced",
+      "question": "How do you integrate message queues like RabbitMQ or Kafka?",
+      "answer": "You wrap the client in a plugin that connects at startup, decorates the instance, and closes on shutdown, exposing producers to routes and running consumers as background tasks. Make consumers idempotent and handle retries and dead letters. Keep broker credentials in secrets. This decouples services reliably.",
+      "tags": [
+        "ecosystem",
+        "messaging"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "ecosystem-025",
+      "difficulty": "Advanced",
+      "question": "How do you keep many ecosystem plugins compatible during a Fastify major upgrade?",
+      "answer": "You upgrade Fastify and the official plugins together, checking each plugin's supported version range, then run your full test suite to catch behavioural changes. Fastify-plugin metadata surfaces mismatches at boot. Update one dependency group at a time. This staged approach keeps upgrades manageable.",
+      "tags": [
+        "ecosystem",
+        "upgrades"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify#ecosystem",
+        "https://fastify.dev/docs/latest/Guides/Migration-Guide-V5/"
+      ]
+    }
+  ]
+}

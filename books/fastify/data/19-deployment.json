@@ -1,0 +1,335 @@
+{
+  "category": "Deployment & Production",
+  "slug": "deployment",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "deployment-001",
+      "difficulty": "Beginner",
+      "question": "How do you run a Fastify app in production?",
+      "answer": "You build or run the app as a Node.js process under a supervisor like systemd, Docker, or a platform runtime, and expose it behind a reverse proxy or load balancer. Enable logging and set the correct host and port. Run multiple instances for resilience. Keep the process non-root.",
+      "tags": [
+        "deployment",
+        "operations"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    },
+    {
+      "id": "deployment-002",
+      "difficulty": "Beginner",
+      "question": "Why use a reverse proxy in front of Fastify?",
+      "answer": "A reverse proxy like nginx or a cloud load balancer handles TLS termination, compression, and connection buffering, and can route to multiple app instances. It shields the app from slow clients. Fastify then focuses on application logic. Configure trustProxy so the app sees real client info.",
+      "tags": [
+        "deployment",
+        "proxy"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#trustproxy"
+      ]
+    },
+    {
+      "id": "deployment-003",
+      "difficulty": "Beginner",
+      "question": "How do you configure host and port for production?",
+      "answer": "You bind to 0.0.0.0 or the container's interface and read the port from the environment, often defaulting to a platform-provided value. Binding to localhost only would make the app unreachable. Always allow the port to be injected. This keeps deployments portable.",
+      "tags": [
+        "deployment",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#listen"
+      ],
+      "code": "await app.listen({\n  port: Number(process.env.PORT) || 3000,\n  host: '0.0.0.0'\n})"
+    },
+    {
+      "id": "deployment-004",
+      "difficulty": "Beginner",
+      "question": "How do you handle graceful shutdown in production?",
+      "answer": "You listen for SIGTERM, stop accepting new connections, let in-flight requests finish, run onClose hooks, and exit. This avoids dropping requests during deploys. Set a timeout to force exit if shutdown hangs. Most platforms send SIGTERM before killing the process.",
+      "tags": [
+        "deployment",
+        "shutdown"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#close"
+      ],
+      "code": "process.on('SIGTERM', async () => {\n  await app.close()\n  process.exit(0)\n})"
+    },
+    {
+      "id": "deployment-005",
+      "difficulty": "Beginner",
+      "question": "Why is a health check endpoint important?",
+      "answer": "A health check lets load balancers and orchestrators know whether the instance can serve traffic. It should report readiness, not just liveness, so unhealthy instances are removed. Keep it cheap and unauthenticated. Some setups expose separate liveness and readiness endpoints.",
+      "tags": [
+        "deployment",
+        "health"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+      ]
+    },
+    {
+      "id": "deployment-006",
+      "difficulty": "Beginner",
+      "question": "How do you containerise a Fastify app?",
+      "answer": "You write a Dockerfile that installs production dependencies, copies the built code, runs as a non-root user, and starts Node. Use a slim base image and a multi-stage build. Expose the port and set the start command. Keep the image small for fast deploys.",
+      "tags": [
+        "deployment",
+        "docker"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/nodejs-with-docker"
+      ]
+    },
+    {
+      "id": "deployment-007",
+      "difficulty": "Beginner",
+      "question": "What environment variables should you set in production?",
+      "answer": "You set NODE_ENV=production, the port, log level, database URL, and any secrets, all supplied by the platform rather than committed. Validate them at startup. Never bake secrets into images. This keeps configuration explicit and safe.",
+      "tags": [
+        "deployment",
+        "configuration"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processenv"
+      ]
+    },
+    {
+      "id": "deployment-008",
+      "difficulty": "Beginner",
+      "question": "How do you enable HTTPS in production?",
+      "answer": "You usually terminate TLS at the proxy or load balancer and forward plain HTTP to Fastify, or provide TLS options to the Fastify factory for direct termination. Either way, redirect HTTP to HTTPS. Manage certificates with your platform or a tool like certbot. Never serve credentials over plain HTTP.",
+      "tags": [
+        "deployment",
+        "tls"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
+      ]
+    },
+    {
+      "id": "deployment-009",
+      "difficulty": "Beginner",
+      "question": "Why monitor your Fastify app in production?",
+      "answer": "Monitoring surfaces errors, latency, and resource saturation before users complain. Collect logs, metrics, and traces. Alert on meaningful thresholds. Observability is essential for running reliably.",
+      "tags": [
+        "deployment",
+        "monitoring"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "deployment-010",
+      "difficulty": "Beginner",
+      "question": "How do you log in production?",
+      "answer": "You emit structured JSON logs to stdout and let the platform collect and ship them. Set an appropriate level, typically info, and redact secrets. Do not write log files locally in ephemeral containers. This integrates with standard observability tooling.",
+      "tags": [
+        "deployment",
+        "logging"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "deployment-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement zero-downtime deployments?",
+      "answer": "You deploy new instances alongside old ones, wait for them to pass health checks, then shift traffic and drain the old ones gracefully. Database migrations must be backward compatible during the overlap. Load balancers or orchestrators automate the shift. This avoids dropped requests.",
+      "tags": [
+        "deployment",
+        "zero-downtime"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+      ]
+    },
+    {
+      "id": "deployment-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure Fastify behind a load balancer?",
+      "answer": "You enable trustProxy with the correct hop count so client IP and protocol are accurate, and align keep-alive and timeout settings between the balancer and the app. Health checks should hit a readiness endpoint. This ensures correct routing and logging. Misconfigured trustProxy is a common issue.",
+      "tags": [
+        "deployment",
+        "proxy"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#trustproxy"
+      ]
+    },
+    {
+      "id": "deployment-013",
+      "difficulty": "Intermediate",
+      "question": "How do you manage database migrations during deployment?",
+      "answer": "You run migrations as a separate step before the new version starts serving, keeping changes backward compatible so both versions work during rollout. Track applied versions in the database. Never edit a migration that already ran. This supports safe rolling updates.",
+      "tags": [
+        "deployment",
+        "migrations"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Database"
+      ]
+    },
+    {
+      "id": "deployment-014",
+      "difficulty": "Intermediate",
+      "question": "How do you set up readiness and liveness probes?",
+      "answer": "A liveness probe checks the process is running, while a readiness probe checks it can serve, including dependencies like the database. Return 200 when ready and 503 otherwise. Keep probes fast and side-effect free. Orchestrators use them to restart or remove instances.",
+      "tags": [
+        "deployment",
+        "health"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ]
+    },
+    {
+      "id": "deployment-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle configuration and secrets in containers?",
+      "answer": "You inject configuration and secrets at runtime through environment variables or mounted secrets, never baking them into the image. Validate at startup and fail fast on missing values. Rotate secrets without rebuilding. This keeps images portable and secure.",
+      "tags": [
+        "deployment",
+        "secrets"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    },
+    {
+      "id": "deployment-016",
+      "difficulty": "Intermediate",
+      "question": "How do you scale a Fastify deployment?",
+      "answer": "You run multiple stateless instances behind a load balancer and scale the count based on CPU or request metrics. Keep session state external so any instance can serve any request. Use autoscaling where available. This handles traffic growth and instance failures.",
+      "tags": [
+        "deployment",
+        "scaling"
+      ],
+      "references": [
+        "https://nodejs.org/api/cluster.html"
+      ]
+    },
+    {
+      "id": "deployment-017",
+      "difficulty": "Intermediate",
+      "question": "How do you roll back a bad deployment?",
+      "answer": "You keep the previous image or version ready and shift traffic back when health checks or metrics indicate problems. Database changes must be reversible or backward compatible. Automate rollback triggers. Fast rollback limits user impact.",
+      "tags": [
+        "deployment",
+        "rollback"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+      ]
+    },
+    {
+      "id": "deployment-018",
+      "difficulty": "Intermediate",
+      "question": "How do you manage memory limits in production?",
+      "answer": "You set a container memory limit and a matching Node heap size, and monitor usage for leaks. Configure the max-old-space-size flag to align with the limit. Restart or scale out before hitting the ceiling. This prevents out-of-memory kills.",
+      "tags": [
+        "deployment",
+        "memory"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/diagnostics/memory"
+      ]
+    },
+    {
+      "id": "deployment-019",
+      "difficulty": "Intermediate",
+      "question": "How do you protect the app during traffic spikes?",
+      "answer": "You use a load balancer with connection limits, apply rate limiting, and ensure timeouts so slow clients do not exhaust resources. Autoscale where possible. Cache to absorb repeated load. This keeps the service responsive under surges.",
+      "tags": [
+        "deployment",
+        "reliability"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-rate-limit"
+      ]
+    },
+    {
+      "id": "deployment-020",
+      "difficulty": "Intermediate",
+      "question": "How do you version and release the API?",
+      "answer": "You version routes with prefixes or constraints and keep old versions available during a deprecation window. Document changes and communicate timelines. Use response schemas per version to control output. This lets clients migrate without breakage.",
+      "tags": [
+        "deployment",
+        "versioning"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/#version"
+      ]
+    },
+    {
+      "id": "deployment-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a CI/CD pipeline for a Fastify service?",
+      "answer": "The pipeline installs dependencies, runs linting and tests, builds the artifact or image, runs security scans, applies migrations, and deploys with health checks and rollback. Each stage gates the next. Keep it reproducible and fast. Automation reduces human error in releases.",
+      "tags": [
+        "deployment",
+        "ci-cd"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    },
+    {
+      "id": "deployment-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement observability with metrics, logs, and traces?",
+      "answer": "You export metrics such as request rate and latency, emit structured logs with correlation ids, and propagate trace context across services. Correlate the three using shared ids. Alert on symptoms that affect users. This gives a complete picture for debugging and capacity planning.",
+      "tags": [
+        "deployment",
+        "observability"
+      ],
+      "references": [
+        "https://opentelemetry.io/docs/languages/js/",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "deployment-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle multi-region deployment and data residency?",
+      "answer": "You deploy instances in each region close to users and route traffic accordingly, while keeping data in the region required by policy. Replicate only what is allowed and handle cross-region consistency carefully. Health checks and failover routes maintain availability. This balances latency, compliance, and resilience.",
+      "tags": [
+        "deployment",
+        "architecture"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
+      ]
+    },
+    {
+      "id": "deployment-024",
+      "difficulty": "Advanced",
+      "question": "How do you prepare for and recover from an outage?",
+      "answer": "You define recovery objectives, run drills, and have runbooks for common failures such as database loss or a bad release. Use health checks, autoscaling, and rollback to contain impact. Capture post-incident learnings and add tests. Preparedness shortens outages.",
+      "tags": [
+        "deployment",
+        "reliability"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ]
+    },
+    {
+      "id": "deployment-025",
+      "difficulty": "Advanced",
+      "question": "How do you secure the production runtime?",
+      "answer": "You run as a non-root user with a read-only filesystem where possible, restrict network access, pin dependency versions, and scan images for vulnerabilities. Apply least privilege to credentials and update regularly. Combine with runtime monitoring. This reduces the attack surface of the deployed service.",
+      "tags": [
+        "deployment",
+        "security"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/getting-started/security-best-practices"
+      ]
+    }
+  ]
+}

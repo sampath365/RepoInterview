@@ -1,0 +1,337 @@
+{
+  "category": "Authentication & Authorization",
+  "slug": "authentication",
+  "icon": "lock",
+  "questions": [
+    {
+      "id": "authentication-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between authentication and authorization?",
+      "answer": "Authentication verifies who a user is, while authorization decides what they are allowed to do. Authentication usually happens at login; authorization is checked on every protected action. You need both for secure apps. Never conflate the two.",
+      "tags": [
+        "auth",
+        "concepts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-002",
+      "difficulty": "Beginner",
+      "question": "How do you store a session in Next.js?",
+      "answer": "Store a signed or encrypted session token in an httpOnly, secure cookie. The server reads and verifies it on each request. Avoid storing tokens in localStorage for auth because of XSS risk. Cookies sent automatically also work with server rendering.",
+      "tags": [
+        "sessions",
+        "cookies"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-003",
+      "difficulty": "Beginner",
+      "question": "What is an httpOnly cookie?",
+      "answer": "An httpOnly cookie cannot be read by client JavaScript, which protects it from XSS theft. You set it on the server with the httpOnly flag. Combine with secure and sameSite for stronger protection. It is the recommended place for session tokens.",
+      "code": "cookies().set('session', token, { httpOnly: true, secure: true });",
+      "tags": [
+        "cookies",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-004",
+      "difficulty": "Beginner",
+      "question": "How do you protect a page in the App Router?",
+      "answer": "Check the session in a Server Component or layout and redirect to login when unauthenticated. You can also gate routes in middleware as a first pass. Always re-check in the data layer. This layered approach prevents bypasses.",
+      "code": "const session = await getSession();\nif (!session) redirect('/login');",
+      "tags": [
+        "auth",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-005",
+      "difficulty": "Beginner",
+      "question": "What is a JWT and how is it used for auth?",
+      "answer": "A JSON Web Token is a signed token containing claims about the user. The server verifies the signature to trust the claims without a database lookup. JWTs can be stored in cookies for sessions. Always verify, never just decode.",
+      "tags": [
+        "jwt",
+        "tokens"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-006",
+      "difficulty": "Beginner",
+      "question": "Why should you not store tokens in localStorage?",
+      "answer": "localStorage is accessible to any script on the page, so a cross-site scripting flaw can steal the token. httpOnly cookies are not readable by JavaScript. Cookies also work during server rendering. Prefer cookies for auth tokens.",
+      "tags": [
+        "security",
+        "tokens"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-007",
+      "difficulty": "Beginner",
+      "question": "How do you log a user out?",
+      "answer": "Clear the session cookie on the server, then redirect to the login or home page. For token-based sessions also invalidate the token server-side if possible. Clearing the cookie alone is enough for cookie sessions. Always do it on the server for httpOnly cookies.",
+      "code": "'use server';\n(await cookies()).delete('session');\nredirect('/login');",
+      "tags": [
+        "logout",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-008",
+      "difficulty": "Beginner",
+      "question": "What is an auth library like Auth.js?",
+      "answer": "Auth.js (formerly NextAuth.js) handles OAuth providers, credentials, sessions, and callbacks for you. It integrates with the App Router and provides helpers to read the session. Using a library avoids common auth mistakes. It supports many providers out of the box.",
+      "tags": [
+        "auth-js",
+        "libraries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-009",
+      "difficulty": "Beginner",
+      "question": "What is OAuth?",
+      "answer": "OAuth is a standard for delegated authorization, letting users sign in via a provider like Google or GitHub without sharing their password. The provider issues tokens after consent. Your app trusts the provider's verification. It is common for social login.",
+      "tags": [
+        "oauth",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-010",
+      "difficulty": "Beginner",
+      "question": "How do you read the session in a Server Component?",
+      "answer": "Use your auth helper, which reads and verifies the cookie, to get the session. In Auth.js you call the auth() function. Then render user-specific content. Reading cookies makes the route dynamic.",
+      "code": "import { auth } from '@/auth';\nconst session = await auth();",
+      "tags": [
+        "sessions",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a credentials login flow?",
+      "answer": "Collect credentials in a form, submit to a Server Action or route handler, verify the password hash, and create a session cookie. Hash passwords with bcrypt or argon2. Never store plaintext passwords. Rate limit login attempts to slow brute force.",
+      "tags": [
+        "credentials",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-012",
+      "difficulty": "Intermediate",
+      "question": "How do you do role-based authorization?",
+      "answer": "Store the user's role in the session and check it before protected actions and data access. Enforce checks in the data layer, not only the UI. Return 403 for authenticated but unauthorized users. Keep role logic centralized.",
+      "tags": [
+        "rbac",
+        "authorization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-013",
+      "difficulty": "Intermediate",
+      "question": "How does middleware help with auth?",
+      "answer": "Middleware can redirect unauthenticated users away from protected routes using a cookie check, before the route renders. It runs at the edge for low latency. But it cannot do database checks in the default runtime. Always re-verify in the route.",
+      "tags": [
+        "middleware",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-014",
+      "difficulty": "Intermediate",
+      "question": "What is CSRF and how do you prevent it?",
+      "answer": "CSRF tricks a logged-in user's browser into making unwanted requests. SameSite cookies and checking the Origin header mitigate it. Server Actions include built-in protections. For custom routes verify the request origin. Never rely on cookies alone for state-changing requests.",
+      "tags": [
+        "csrf",
+        "security"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Attacks/CSRF"
+      ]
+    },
+    {
+      "id": "authentication-015",
+      "difficulty": "Intermediate",
+      "question": "How do you refresh an expired session?",
+      "answer": "Use a refresh token or sliding session that extends the cookie lifetime on activity. Rotate tokens and store refresh tokens securely. Detect expiry on the server and reissue. Avoid long-lived access tokens.",
+      "tags": [
+        "sessions",
+        "tokens"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-016",
+      "difficulty": "Intermediate",
+      "question": "How do you share session data with Client Components?",
+      "answer": "Read the session on the server and pass needed fields as props, or expose it through a context provider wrapped in the root layout. Do not pass the raw token to the client. Pass only what the UI needs. This keeps secrets server-side.",
+      "tags": [
+        "sessions",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-017",
+      "difficulty": "Intermediate",
+      "question": "How do you protect Server Actions and Route Handlers?",
+      "answer": "Verify the session and authorization inside each action or handler, because they are public endpoints. Never trust client-provided user ids. Return 401 or 403 appropriately. Middleware is not enough on its own.",
+      "tags": [
+        "authorization",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-018",
+      "difficulty": "Intermediate",
+      "question": "How do you implement passwordless login?",
+      "answer": "Send a one-time magic link or code by email, verify it server-side, then create a session. Expire the token quickly and make it single-use. This avoids passwords entirely. It relies on email security.",
+      "tags": [
+        "passwordless",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle multi-factor authentication?",
+      "answer": "After the first factor, require a second factor such as a TOTP code or passkey before creating the full session. Store the MFA status in the session. Enforce it for sensitive actions. Provide recovery codes.",
+      "tags": [
+        "mfa",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-020",
+      "difficulty": "Intermediate",
+      "question": "How do you secure cookies properly?",
+      "answer": "Set httpOnly, secure, and sameSite flags, and scope the path and domain. Use a strong signed or encrypted session value. Set an appropriate max age. These settings block common cookie attacks.",
+      "code": "cookies().set('session', token, {\n  httpOnly: true, secure: true, sameSite: 'lax',\n});",
+      "tags": [
+        "cookies",
+        "security"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies"
+      ]
+    },
+    {
+      "id": "authentication-021",
+      "difficulty": "Advanced",
+      "question": "How does session-based auth differ from JWT-based auth?",
+      "answer": "Session-based auth stores state on the server and gives the client an opaque session id, allowing instant revocation but requiring a session store. JWT auth is stateless and scales easily but revocation is harder and tokens can grow large. Many apps combine a short-lived JWT with a server-side refresh token. Choose based on revocation and scaling needs.",
+      "tags": [
+        "sessions",
+        "jwt"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement token rotation securely?",
+      "answer": "Issue a short-lived access token and a long-lived refresh token, and rotate the refresh token on each use. Detect reuse of an old refresh token and revoke the family to stop theft. Store refresh tokens hashed server-side. This limits the damage of a leaked token.",
+      "tags": [
+        "tokens",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-023",
+      "difficulty": "Advanced",
+      "question": "How do you enforce authorization in the data access layer?",
+      "answer": "Wrap database access in functions that require the current user and check ownership or role before returning data. Centralize these checks so no route forgets them. This prevents insecure direct object reference bugs. It is the strongest place to enforce rules.",
+      "tags": [
+        "authorization",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-024",
+      "difficulty": "Advanced",
+      "question": "How do you integrate an external identity provider with Next.js?",
+      "answer": "Use an OAuth or OIDC library to handle the authorization code flow, validate the id token, and map claims to a session. Store the session in a cookie. Refresh tokens as needed. Verify issuer and audience to prevent token misuse.",
+      "tags": [
+        "oidc",
+        "oauth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "authentication-025",
+      "difficulty": "Advanced",
+      "question": "What are common authentication pitfalls in Next.js apps?",
+      "answer": "Trusting middleware alone, exposing tokens to the client, forgetting to re-authorize in actions, and caching personalized responses are common mistakes. Others include weak session secrets and missing CSRF or rate limiting. Address each with server-side checks and secure cookies. Defense in depth is essential.",
+      "tags": [
+        "security",
+        "pitfalls"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,337 @@
+{
+  "category": "WebSockets & Real-Time",
+  "slug": "websockets",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "websockets-001",
+      "difficulty": "Beginner",
+      "question": "What is a WebSocket and how does it differ from HTTP?",
+      "answer": "A WebSocket is a persistent, full-duplex connection that lets the server and client send messages at any time. HTTP is request-response, so the server cannot push without tricks like polling. WebSockets suit chat, live updates, and collaboration. They start with an HTTP upgrade handshake.",
+      "tags": [
+        "websockets",
+        "overview"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    },
+    {
+      "id": "websockets-002",
+      "difficulty": "Beginner",
+      "question": "How do you add WebSocket support to Fastify?",
+      "answer": "You register @fastify/websocket, which adds a websocket route method and integrates the ws library with Fastify's lifecycle and hooks. You then define routes with the websocket option. It shares the same server and encapsulation. This keeps real-time code alongside your HTTP routes.",
+      "tags": [
+        "websockets",
+        "plugins"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ],
+      "code": "await app.register(require('@fastify/websocket'))\n\napp.get('/ws', { websocket: true }, (socket, req) => {\n  socket.on('message', (msg) => socket.send(msg))\n})"
+    },
+    {
+      "id": "websockets-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between WebSockets and server-sent events?",
+      "answer": "Server-sent events provide one-way server-to-client streaming over HTTP, while WebSockets are bidirectional. SSE is simpler, works with plain HTTP, and reconnects automatically. Choose SSE for notifications and WebSockets for interactive, two-way flows.",
+      "tags": [
+        "websockets",
+        "sse"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events"
+      ]
+    },
+    {
+      "id": "websockets-004",
+      "difficulty": "Beginner",
+      "question": "How do you send a message to a WebSocket client?",
+      "answer": "You call socket.send with a string or buffer on the connection object. The client receives it via its message event. Ensure the socket is open before sending. Handle errors from send callbacks.",
+      "tags": [
+        "websockets",
+        "messaging"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ],
+      "code": "socket.send(JSON.stringify({ type: 'update', data }))"
+    },
+    {
+      "id": "websockets-005",
+      "difficulty": "Beginner",
+      "question": "How do you handle a client disconnecting?",
+      "answer": "You listen for the close event on the socket and clean up any associated state, such as removing the client from a broadcast list. Failing to clean up leaks memory. Also handle the error event. This keeps the server healthy over long uptimes.",
+      "tags": [
+        "websockets",
+        "lifecycle"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ]
+    },
+    {
+      "id": "websockets-006",
+      "difficulty": "Beginner",
+      "question": "Why should you validate WebSocket messages?",
+      "answer": "WebSocket payloads are untrusted input just like HTTP bodies, so you should validate their shape before acting on them. Invalid messages should be rejected or ignored. This prevents crashes and injection issues. Reuse your schema tooling where possible.",
+      "tags": [
+        "websockets",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "websockets-007",
+      "difficulty": "Beginner",
+      "question": "How do you authenticate a WebSocket connection?",
+      "answer": "Browsers cannot set custom headers on the WebSocket handshake, so you authenticate using a token in the query string or a cookie, or by sending an auth message after connecting. Validate before subscribing the client to any data. Prefer cookies or a post-connect message to keep tokens out of URLs.",
+      "tags": [
+        "websockets",
+        "authentication"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    },
+    {
+      "id": "websockets-008",
+      "difficulty": "Beginner",
+      "question": "What is a broadcast and how is it implemented?",
+      "answer": "A broadcast sends a message to many connected clients at once. You keep a set of active sockets and iterate over them on each event. Remove disconnected sockets to avoid errors. For large scale, a pub/sub system distributes messages across instances.",
+      "tags": [
+        "websockets",
+        "broadcast"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ]
+    },
+    {
+      "id": "websockets-009",
+      "difficulty": "Beginner",
+      "question": "How do you send JSON over a WebSocket?",
+      "answer": "You serialise the object with JSON.stringify before sending and parse it on receipt. The protocol carries text or binary frames, not objects. Agreeing on a message envelope helps routing. Validate the parsed structure.",
+      "tags": [
+        "websockets",
+        "messaging"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    },
+    {
+      "id": "websockets-010",
+      "difficulty": "Beginner",
+      "question": "How do you close a WebSocket connection from the server?",
+      "answer": "You call socket.close with a code and reason. This performs a clean closing handshake. Clean up state in the close handler. Avoid abrupt termination unless necessary.",
+      "tags": [
+        "websockets",
+        "lifecycle"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/close"
+      ]
+    },
+    {
+      "id": "websockets-011",
+      "difficulty": "Intermediate",
+      "question": "How do you scale WebSockets across multiple server instances?",
+      "answer": "You use a pub/sub backbone such as Redis so a message published on one instance reaches clients connected to others. Each instance subscribes and forwards to its local sockets. Avoid sticky sessions if you use pub/sub. This makes real-time horizontally scalable.",
+      "tags": [
+        "websockets",
+        "scaling"
+      ],
+      "references": [
+        "https://redis.io/docs/latest/develop/interact/pubsub/",
+        "https://github.com/fastify/fastify-websocket"
+      ]
+    },
+    {
+      "id": "websockets-012",
+      "difficulty": "Intermediate",
+      "question": "How do you implement rooms or channels?",
+      "answer": "You group sockets by a key such as a room id in a map, adding on join and removing on leave. Messages are broadcast only to the room's members. Persist membership if it must survive restarts. Combine with pub/sub for multi-instance rooms.",
+      "tags": [
+        "websockets",
+        "rooms"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ]
+    },
+    {
+      "id": "websockets-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle backpressure on a WebSocket?",
+      "answer": "You check the buffered amount before sending and pause or drop messages when the client is slow. ws exposes the bufferedAmount property. Ignoring it can grow memory unbounded. Apply your own queue with a cap.",
+      "tags": [
+        "websockets",
+        "backpressure"
+      ],
+      "references": [
+        "https://nodejs.org/api/stream.html"
+      ]
+    },
+    {
+      "id": "websockets-014",
+      "difficulty": "Intermediate",
+      "question": "How do you add heartbeat or ping-pong to detect dead connections?",
+      "answer": "You periodically send a ping and expect a pong, terminating sockets that do not respond. This detects half-open connections that would otherwise linger. The ws library supports ping. Clear intervals on close to avoid leaks.",
+      "tags": [
+        "websockets",
+        "heartbeat"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket"
+      ]
+    },
+    {
+      "id": "websockets-015",
+      "difficulty": "Intermediate",
+      "question": "How do WebSocket routes interact with Fastify hooks?",
+      "answer": "With @fastify/websocket, the standard hooks run during the upgrade request, so you can authenticate in onRequest or preValidation before the socket is established. This reuses your existing security pipeline. Route options and encapsulation still apply. It keeps real-time routes consistent with HTTP routes.",
+      "tags": [
+        "websockets",
+        "hooks"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket",
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "websockets-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test a WebSocket endpoint?",
+      "answer": "You start the server on an ephemeral port and connect with a WebSocket client, then send and assert on received messages. Test authentication rejection and disconnect cleanup. Use the same message contracts as production. Close connections in teardown.",
+      "tags": [
+        "websockets",
+        "testing"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ]
+    },
+    {
+      "id": "websockets-017",
+      "difficulty": "Intermediate",
+      "question": "How do you send binary data over a WebSocket?",
+      "answer": "You send a Buffer or typed array, and the client receives a Blob or ArrayBuffer depending on its binaryType. Set the binary type on the client to handle it. Prefer a defined framing for structured binary. Text is simpler for JSON.",
+      "tags": [
+        "websockets",
+        "binary"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    },
+    {
+      "id": "websockets-018",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent memory leaks from WebSocket state?",
+      "answer": "You remove sockets from collections on close and error, clear intervals, and avoid unbounded per-connection buffers. Attach all listeners with matching removals. Monitor connection counts. Long-lived connections make leaks costly.",
+      "tags": [
+        "websockets",
+        "memory"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/diagnostics/memory"
+      ]
+    },
+    {
+      "id": "websockets-019",
+      "difficulty": "Intermediate",
+      "question": "What is the WebSocket subprotocol and when do you use it?",
+      "answer": "The Sec-WebSocket-Protocol header negotiates an application-level protocol between client and server. You use it when both sides must agree on a format, such as graphql-ws. The server selects a supported value during the handshake. It keeps protocol choices explicit.",
+      "tags": [
+        "websockets",
+        "protocol"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSocket/protocol"
+      ]
+    },
+    {
+      "id": "websockets-020",
+      "difficulty": "Intermediate",
+      "question": "How do you gracefully shut down WebSocket connections?",
+      "answer": "During shutdown you stop accepting new connections, send close frames to clients, and wait briefly before terminating. This lets clients reconnect elsewhere. Clear timers and unsubscribe from pub/sub. Integrate it with Fastify's onClose hook.",
+      "tags": [
+        "websockets",
+        "lifecycle"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-websocket"
+      ]
+    },
+    {
+      "id": "websockets-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a scalable real-time architecture with Fastify?",
+      "answer": "You run stateless Fastify instances behind a load balancer, keep connection state in a shared store, and use a pub/sub bus for cross-instance delivery. Authentication happens at the handshake, and messages are validated and rate-limited. This separates connection handling from message distribution. It scales horizontally like your HTTP tier.",
+      "tags": [
+        "websockets",
+        "architecture"
+      ],
+      "references": [
+        "https://redis.io/docs/latest/develop/interact/pubsub/"
+      ]
+    },
+    {
+      "id": "websockets-022",
+      "difficulty": "Advanced",
+      "question": "How do you rate-limit and protect WebSocket endpoints?",
+      "answer": "You limit connection attempts per IP, cap messages per connection per window, and enforce a maximum payload size. Reject or close abusive clients. Combine with authentication so anonymous clients cannot flood. This prevents resource exhaustion.",
+      "tags": [
+        "websockets",
+        "security"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-rate-limit"
+      ]
+    },
+    {
+      "id": "websockets-023",
+      "difficulty": "Advanced",
+      "question": "How do you guarantee message ordering and delivery?",
+      "answer": "WebSockets guarantee ordering within a single connection but not across reconnects. For reliable delivery you add sequence numbers and acknowledgements, and replay missed messages on reconnect. Persist critical messages. Treat real-time channels as best-effort unless you add these guarantees.",
+      "tags": [
+        "websockets",
+        "reliability"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    },
+    {
+      "id": "websockets-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle authentication token expiry on a long-lived socket?",
+      "answer": "You associate the token's expiry with the connection and close or require re-authentication when it passes. Alternatively, send a refresh message over the socket. Never assume the token remains valid for the socket's lifetime. This limits the impact of a stolen token.",
+      "tags": [
+        "websockets",
+        "authentication"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    },
+    {
+      "id": "websockets-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of WebSockets versus HTTP streaming and polling?",
+      "answer": "WebSockets give low-latency bidirectional communication but add state, scaling complexity, and proxy concerns. HTTP streaming and SSE are simpler and firewall-friendly but one-way. Polling is easiest but wasteful. Choose based on interaction needs and infrastructure constraints.",
+      "tags": [
+        "websockets",
+        "comparison"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events",
+        "https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API"
+      ]
+    }
+  ]
+}

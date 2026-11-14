@@ -1,0 +1,344 @@
+{
+  "category": "Images, Fonts & Assets",
+  "slug": "assets",
+  "icon": "image",
+  "questions": [
+    {
+      "id": "assets-001",
+      "difficulty": "Beginner",
+      "question": "What is next/image used for?",
+      "answer": "next/image is a component that optimizes images by resizing, serving modern formats, and lazy loading. It reserves space to prevent layout shift and generates responsive srcsets. You pass width and height or use fill for responsive containers. It improves Core Web Vitals over a plain img.",
+      "code": "import Image from 'next/image';\n<Image src=\"/hero.png\" alt=\"Hero\" width={800} height={400} />",
+      "tags": [
+        "next-image",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-002",
+      "difficulty": "Beginner",
+      "question": "Why do images need width and height in next/image?",
+      "answer": "Providing width and height lets Next.js reserve space and generate the correct aspect ratio, preventing layout shift. For images that fill a container, use fill with a positioned parent. Alternatively use a static import that includes dimensions. This keeps the layout stable while loading.",
+      "tags": [
+        "next-image",
+        "layout-shift"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-003",
+      "difficulty": "Beginner",
+      "question": "What is next/font used for?",
+      "answer": "next/font self-hosts fonts and optimizes them at build time, removing network requests to third parties. It supports Google Fonts and local fonts with automatic subsetting. It also prevents layout shift by using size-adjust. This improves performance and privacy.",
+      "code": "import { Inter } from 'next/font/google';\nconst inter = Inter({ subsets: ['latin'] });",
+      "tags": [
+        "next-font",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "assets-004",
+      "difficulty": "Beginner",
+      "question": "How do you apply a font in the App Router?",
+      "answer": "Load the font with next/font and attach its className or variable to an element, typically the html or body in the root layout. This makes it available throughout the app. You can also expose it as a CSS variable. The font is applied at render time without extra requests.",
+      "code": "<html className={inter.className}>\n  <body>{children}</body>\n</html>",
+      "tags": [
+        "next-font",
+        "layout"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "assets-005",
+      "difficulty": "Beginner",
+      "question": "What does the fill prop do on next/image?",
+      "answer": "fill makes the image expand to fill its nearest positioned parent instead of using fixed dimensions. The parent must have position relative and a defined size. It is used for background and cover images. The image is absolutely positioned to fill the box.",
+      "code": "<div style={{ position: 'relative', width: 300, height: 200 }}>\n  <Image src=\"/a.png\" alt=\"\" fill />\n</div>",
+      "tags": [
+        "next-image",
+        "fill"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-006",
+      "difficulty": "Beginner",
+      "question": "What is lazy loading for images?",
+      "answer": "Lazy loading defers loading offscreen images until they are near the viewport, saving bandwidth and speeding initial load. next/image lazy loads by default. Set priority on above-the-fold images to load them eagerly. This balances speed and bandwidth.",
+      "tags": [
+        "lazy-loading",
+        "next-image"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-007",
+      "difficulty": "Beginner",
+      "question": "How do you use a static image import?",
+      "answer": "Import the image file and pass the imported object to next/image. Next.js infers width and height automatically, so you omit them. This also provides a blur placeholder. Static imports are the simplest way to get correct sizing.",
+      "code": "import logo from './logo.png';\n<Image src={logo} alt=\"Logo\" />",
+      "tags": [
+        "static-import",
+        "next-image"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-008",
+      "difficulty": "Beginner",
+      "question": "Where do public assets live?",
+      "answer": "Static assets that should be served as-is go in the public directory at the project root. Files there are available at the root URL, so public/logo.png is served at /logo.png. Do not import them as modules. Use this for favicons and robots.txt.",
+      "tags": [
+        "public",
+        "assets"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/static-assets"
+      ]
+    },
+    {
+      "id": "assets-009",
+      "difficulty": "Beginner",
+      "question": "What image formats does next/image support?",
+      "answer": "next/image supports common formats and can serve modern ones like WebP and AVIF automatically when the browser supports them. You can configure allowed formats in next.config.js. It also supports SVG and animated GIFs with settings. Modern formats reduce file size.",
+      "tags": [
+        "next-image",
+        "formats"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-010",
+      "difficulty": "Beginner",
+      "question": "How do you serve an SVG icon?",
+      "answer": "You can import an SVG as a component with a tool like SVGR, or serve it from public and use an img. Inline SVGs allow styling with currentColor. Choose based on whether you need to style the SVG. Keep icons small.",
+      "tags": [
+        "svg",
+        "assets"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/static-assets"
+      ]
+    },
+    {
+      "id": "assets-011",
+      "difficulty": "Intermediate",
+      "question": "How does the Next.js image optimizer work?",
+      "answer": "The optimizer resizes images on demand and caches the results, serving them through an optimized endpoint. You configure allowed remote domains in next.config.js. In production it caches transformed images at the edge or server. It reduces bytes sent to clients.",
+      "tags": [
+        "image-optimization",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-012",
+      "difficulty": "Intermediate",
+      "question": "How do you allow remote images with next/image?",
+      "answer": "Add the hostname to images.remotePatterns in next.config.js. This restricts which external domains can be optimized. For fully custom loading use a loader function. This prevents abuse of the optimizer as an open proxy.",
+      "code": "images: { remotePatterns: [{ hostname: 'images.example.com' }] }",
+      "tags": [
+        "remote-images",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-013",
+      "difficulty": "Intermediate",
+      "question": "How do you set a blur placeholder?",
+      "answer": "Use the placeholder=\"blur\" prop with a blurDataURL, or import a static image which generates one automatically. This shows a soft preview while the image loads. It improves perceived performance. Keep the blur data URL small.",
+      "code": "<Image src={src} alt=\"\" placeholder=\"blur\" blurDataURL={data} />",
+      "tags": [
+        "placeholder",
+        "next-image"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-014",
+      "difficulty": "Intermediate",
+      "question": "How do you prioritize above-the-fold images?",
+      "answer": "Add the priority prop to images visible on first paint so they load eagerly and preload. Leave the rest lazy loaded. This improves Largest Contentful Paint. Avoid marking many images priority.",
+      "code": "<Image src=\"/hero.png\" alt=\"\" width={1200} height={600} priority />",
+      "tags": [
+        "lcp",
+        "next-image"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use next/font with a CSS variable?",
+      "answer": "Pass variable to the font loader and attach the generated variable class to the root element, then reference the variable in CSS or Tailwind. This lets multiple fonts coexist. It is common with Tailwind's font family configuration.",
+      "code": "const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });",
+      "tags": [
+        "next-font",
+        "css-variables"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "assets-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle different image sizes responsively?",
+      "answer": "Provide the sizes prop so the browser picks the right srcset entry for the viewport. This avoids downloading oversized images. For fill images, sizes tells the optimizer the expected display width. Correct sizes improve performance.",
+      "code": "<Image src={src} alt=\"\" fill sizes=\"(max-width: 768px) 100vw, 50vw\" />",
+      "tags": [
+        "responsive",
+        "next-image"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a static import and a remote URL?",
+      "answer": "A static import bundles the file and gives known dimensions and a blur placeholder. A remote URL needs width and height and a configured remote pattern. Static imports are simpler and safer. Remote URLs suit user-generated or CMS images.",
+      "tags": [
+        "static-import",
+        "remote-images"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-018",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize video assets?",
+      "answer": "next/image does not handle video, so use the video element with a poster image and lazy load where possible. Serve modern formats and set preload metadata. For heavy use, stream through a video platform. Keep the poster optimized with next/image.",
+      "tags": [
+        "video",
+        "assets"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "assets-019",
+      "difficulty": "Intermediate",
+      "question": "How do you cache and version static assets?",
+      "answer": "Files in public are served with caching headers, and Next.js fingerprints built assets for long-term caching. Use content hashing for your own assets when possible. Avoid renaming public files without cache busting. This balances caching and updates.",
+      "tags": [
+        "caching",
+        "assets"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/static-assets"
+      ]
+    },
+    {
+      "id": "assets-020",
+      "difficulty": "Intermediate",
+      "question": "How do you serve fonts from a local file?",
+      "answer": "Use next/font/local with the path to the font file and metadata such as weight and style. Next.js self-hosts and optimizes it. This is useful for licensed fonts not on Google Fonts. It keeps the font on your domain.",
+      "code": "import localFont from 'next/font/local';\nconst myFont = localFont({ src: './my-font.woff2' });",
+      "tags": [
+        "next-font",
+        "local-fonts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "assets-021",
+      "difficulty": "Advanced",
+      "question": "How does the image optimizer avoid layout shift and improve LCP?",
+      "answer": "It reserves space using known dimensions or aspect ratio and serves correctly sized modern formats. With priority, above-the-fold images are preloaded to improve LCP. Combined with sizes, the browser downloads the optimal file. These choices directly target Core Web Vitals.",
+      "tags": [
+        "performance",
+        "next-image"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-022",
+      "difficulty": "Advanced",
+      "question": "How do you build a custom image loader?",
+      "answer": "Set a custom loader in next.config.js or per image to generate the src URL for your CDN. The loader receives src, width, and quality and returns a URL. This integrates third-party image services. It replaces the default optimizer.",
+      "code": "const loader = ({ src, width }) => `https://cdn.example.com/${src}?w=${width}`;",
+      "tags": [
+        "image-loader",
+        "cdn"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-023",
+      "difficulty": "Advanced",
+      "question": "How do you prevent abuse of the image optimization endpoint?",
+      "answer": "Restrict remotePatterns to trusted domains and set a maximum quality and size. Use a CDN or a signed loader for user-uploaded images. Monitor usage and rate limit where possible. Without limits the optimizer can be used to proxy arbitrary images.",
+      "tags": [
+        "security",
+        "image-optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "assets-024",
+      "difficulty": "Advanced",
+      "question": "How do font subsets and preloading improve performance?",
+      "answer": "Subsetting includes only the glyphs you need, shrinking the font file. next/font preloads fonts used above the fold and inlines the CSS, reducing round trips. It also sets size-adjust to avoid layout shift. Together these cut render-blocking font requests.",
+      "tags": [
+        "performance",
+        "next-font"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "assets-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose between next/image and a plain img tag?",
+      "answer": "Use next/image when you need optimization, responsive sizing, and layout stability for raster images. Use a plain img for SVGs you want inline, tiny icons, or when optimization is unnecessary. next/image adds overhead for very small assets. Match the tool to the asset.",
+      "tags": [
+        "next-image",
+        "trade-offs"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    }
+  ]
+}

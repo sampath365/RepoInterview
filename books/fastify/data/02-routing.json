@@ -1,0 +1,350 @@
+{
+  "category": "Routing & HTTP Methods",
+  "slug": "routing",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "routing-001",
+      "difficulty": "Beginner",
+      "question": "How do you define routes for different HTTP methods in Fastify?",
+      "answer": "Fastify exposes shorthand methods like get, post, put, patch, delete, head, and options on the instance. Each takes a URL and a handler, or an options object for more control. Internally they all delegate to the generic route method. This gives concise code for the common cases while keeping the full API available.",
+      "tags": [
+        "routing",
+        "methods"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ],
+      "code": "fastify.get('/items', listItems)\nfastify.post('/items', createItem)\nfastify.delete('/items/:id', deleteItem)"
+    },
+    {
+      "id": "routing-002",
+      "difficulty": "Beginner",
+      "question": "How do you read path parameters in Fastify?",
+      "answer": "Path parameters are declared with a colon, such as /users/:id, and are available on request.params. Fastify supports multiple parameters in one path and they are decoded for you. You can constrain or validate them with a schema. Accessing params is synchronous and typed when you supply types.",
+      "tags": [
+        "params",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ],
+      "code": "fastify.get('/users/:userId/posts/:postId', async (request) => {\n  const { userId, postId } = request.params\n  return { userId, postId }\n})"
+    },
+    {
+      "id": "routing-003",
+      "difficulty": "Beginner",
+      "question": "How do you read query string parameters?",
+      "answer": "Query string values are parsed into request.query as an object, with repeated keys becoming arrays. Fastify uses a fast parser and supports custom query parsers if needed. Because query values are always strings from the URL, you should validate and coerce them with a schema. Never trust them without validation.",
+      "tags": [
+        "query",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/"
+      ],
+      "code": "fastify.get('/search', async (request) => {\n  const { q, limit = 10 } = request.query\n  return { q, limit }\n})"
+    },
+    {
+      "id": "routing-004",
+      "difficulty": "Beginner",
+      "question": "How do you register a route for all HTTP methods at once?",
+      "answer": "You pass method as an array, or the string ALL, to fastify.route to handle any method on a path. A wildcard route can then branch on request.method internally. This is useful for proxies or catch-all endpoints. Keep it rare because explicit methods are clearer and safer.",
+      "tags": [
+        "routing",
+        "methods"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ],
+      "code": "fastify.route({\n  method: ['GET', 'POST'],\n  url: '/any',\n  handler: async (request) => ({ method: request.method })\n})"
+    },
+    {
+      "id": "routing-005",
+      "difficulty": "Beginner",
+      "question": "What is a wildcard route in Fastify?",
+      "answer": "A wildcard route uses an asterisk to match the remainder of the path, for example /files/*. The matched portion is available as request.params['*']. Wildcards are handy for static file servers or catch-all handlers. Place more specific routes before wildcards so they match first.",
+      "tags": [
+        "routing",
+        "wildcard"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ],
+      "code": "fastify.get('/files/*', async (request) => ({\n  path: request.params['*']\n}))"
+    },
+    {
+      "id": "routing-006",
+      "difficulty": "Beginner",
+      "question": "How do you set the HTTP status code of a response?",
+      "answer": "You call reply.code with the numeric status before sending the payload, for example reply.code(201).send(created). If you do not set one, Fastify uses 200, or 204 when the body is empty for certain cases. Setting the code early keeps the handler readable. Status codes communicate intent to clients and caches.",
+      "tags": [
+        "reply",
+        "status"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ],
+      "code": "fastify.post('/items', async (request, reply) => {\n  const item = await save(request.body)\n  reply.code(201)\n  return item\n})"
+    },
+    {
+      "id": "routing-007",
+      "difficulty": "Beginner",
+      "question": "How do you send a plain text response?",
+      "answer": "You set the content type with reply.type('text/plain') and send a string, or return a string after setting the type. Fastify's default serializer for strings sends text/html if no type is set, so being explicit avoids surprises. For JSON you simply return an object. Always set the type when returning non-JSON payloads.",
+      "tags": [
+        "reply",
+        "content-type"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ],
+      "code": "fastify.get('/ping', (request, reply) => {\n  reply.type('text/plain').send('pong')\n})"
+    },
+    {
+      "id": "routing-008",
+      "difficulty": "Beginner",
+      "question": "What happens if no route matches an incoming request?",
+      "answer": "Fastify invokes the not-found handler, which by default returns a 404 with a JSON error body. You can override it with setNotFoundHandler to customise the payload or logging. The handler runs within the encapsulation scope where it was registered. This gives you control over the shape of 404 responses.",
+      "tags": [
+        "404",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#setnotfoundhandler"
+      ]
+    },
+    {
+      "id": "routing-009",
+      "difficulty": "Beginner",
+      "question": "Can a single path be registered with multiple methods in one call?",
+      "answer": "Yes, fastify.route accepts an array for method, registering the same handler for each listed method. This reduces duplication when the logic is identical. If the logic differs, register separate routes instead. Fastify rejects duplicate method and path combinations at boot time.",
+      "tags": [
+        "routing",
+        "methods"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ]
+    },
+    {
+      "id": "routing-010",
+      "difficulty": "Beginner",
+      "question": "How do you redirect a client to another URL?",
+      "answer": "Call reply.redirect with a status code and target, or just the target to use 302. Fastify sets the Location header for you. Use 301 or 308 for permanent redirects and 302 or 307 for temporary ones. Be deliberate with permanence because browsers cache it.",
+      "tags": [
+        "redirect",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#redirect"
+      ],
+      "code": "fastify.get('/old', (request, reply) => {\n  reply.redirect(301, '/new')\n})"
+    },
+    {
+      "id": "routing-011",
+      "difficulty": "Intermediate",
+      "question": "How do route prefixes work and how are they created?",
+      "answer": "Prefixes come from registering routes inside a plugin that is registered with a prefix option, for example register(routes, { prefix: '/api' }). Fastify prepends the prefix to every route in that scope. Nested plugins stack prefixes, so /api plus /v1 yields /api/v1. This keeps versioned or grouped routes tidy without repeating strings.",
+      "tags": [
+        "prefix",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/#route-prefixing"
+      ],
+      "code": "fastify.register(async (instance) => {\n  instance.get('/users', listUsers)\n}, { prefix: '/api' })\n// GET /api/users"
+    },
+    {
+      "id": "routing-012",
+      "difficulty": "Intermediate",
+      "question": "What are route constraints and what can they be based on?",
+      "answer": "Route constraints let multiple routes share a URL but match on request attributes such as host, version, or a custom header. You supply a constraints object in the route options, and Fastify selects the route whose constraints all match. This is how you serve different content by host or API version. It avoids duplicating paths in conditional logic.",
+      "tags": [
+        "constraints",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/#constraints"
+      ],
+      "code": "fastify.route({\n  method: 'GET',\n  url: '/',\n  constraints: { host: 'api.example.com' },\n  handler: async () => ({ api: true })\n})"
+    },
+    {
+      "id": "routing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you access the raw request body and how is JSON parsed?",
+      "answer": "Fastify parses JSON bodies by default and exposes them on request.body. For non-JSON types you can register a content type parser to handle the payload. The parser can be async and can enforce size limits. If a body is required but missing or malformed, Fastify responds with an error before your handler runs.",
+      "tags": [
+        "body",
+        "parsing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/ContentTypeParser/"
+      ]
+    },
+    {
+      "id": "routing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you limit the size of request bodies?",
+      "answer": "You set bodyLimit in the server options or per route to cap the payload size in bytes. Requests exceeding the limit are rejected with a 413 status before the handler runs. The default is one megabyte. Setting a sensible limit protects memory and mitigates abuse.",
+      "tags": [
+        "body-limit",
+        "security"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#bodylimit"
+      ],
+      "code": "const fastify = require('fastify')({\n  bodyLimit: 1048576 // 1 MiB\n})"
+    },
+    {
+      "id": "routing-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a static route and a parametric route precedence?",
+      "answer": "Fastify's router gives static segments higher priority than parametric ones, so /users/me wins over /users/:id even if registered later. Parametric routes match in the order the router builds them, with more specific paths taking precedence. Understanding precedence prevents surprising matches. When in doubt, test with a request to confirm which handler fires.",
+      "tags": [
+        "routing",
+        "precedence"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ]
+    },
+    {
+      "id": "routing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you register a route that streams a response?",
+      "answer": "You can pipe a readable stream to reply.raw or return a stream from the handler for Fastify to send. For server-sent events you write to reply.raw and set the appropriate headers and flush. Streaming avoids buffering large payloads in memory. Remember to handle client disconnects to stop the source.",
+      "tags": [
+        "streaming",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#streams"
+      ],
+      "code": "fastify.get('/stream', (request, reply) => {\n  reply.type('text/plain')\n  return fs.createReadStream('./big.txt')\n})"
+    },
+    {
+      "id": "routing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you add per-route hooks or configuration?",
+      "answer": "You pass onRequest, preHandler, and other hooks inside the route options, and they run only for that route. You can also attach arbitrary data under config that hooks read later, such as rate limits or required roles. This keeps cross-cutting behaviour declarative and local to the route. It complements global hooks registered on the instance.",
+      "tags": [
+        "hooks",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ],
+      "code": "fastify.get('/admin', {\n  config: { role: 'admin' },\n  preHandler: requireRole\n}, adminHandler)"
+    },
+    {
+      "id": "routing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle URL-encoded form bodies?",
+      "answer": "Fastify does not parse application/x-www-form-urlencoded by default in v4 and later, so you add the @fastify/formbody plugin. It registers a content type parser that populates request.body with the parsed fields. This keeps the core lean while supporting HTML forms. Install it once before routes that need it.",
+      "tags": [
+        "forms",
+        "plugins"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-formbody",
+        "https://fastify.dev/docs/latest/Reference/ContentTypeParser/"
+      ],
+      "code": "await fastify.register(require('@fastify/formbody'))"
+    },
+    {
+      "id": "routing-019",
+      "difficulty": "Intermediate",
+      "question": "What is the default route option for exposing HEAD routes?",
+      "answer": "The server option exposeHeadRoutes defaults to true, automatically creating a HEAD route for each GET route. The HEAD handler reuses the GET handler but omits the body. Setting it to false means you must define HEAD routes yourself if you need them. This default keeps responses compliant without extra code.",
+      "tags": [
+        "head",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#exposeheadroutes"
+      ]
+    },
+    {
+      "id": "routing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you organise versioned API routes?",
+      "answer": "The idiomatic approach is to register each version as a plugin with a prefix such as /v1 or /v2, sharing services through fastify-plugin. Alternatively, use version constraints so the same path routes by the Accept-Version header. Prefix plugins are easier to document and cache. Choose one strategy and apply it consistently.",
+      "tags": [
+        "versioning",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/#version"
+      ],
+      "code": "await fastify.register(v1Routes, { prefix: '/v1' })\nawait fastify.register(v2Routes, { prefix: '/v2' })"
+    },
+    {
+      "id": "routing-021",
+      "difficulty": "Advanced",
+      "question": "How does Fastify's radix-tree router resolve routes so quickly?",
+      "answer": "Fastify builds a radix tree where each node is a static path segment, and matching walks the tree instead of testing regexes per request. Parametric and wildcard nodes are handled as special branches with known precedence. The compiled matcher returns the handler and its metadata directly. This structure keeps matching close to constant time regardless of route count.",
+      "tags": [
+        "router",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ]
+    },
+    {
+      "id": "routing-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement content negotiation for JSON and XML responses?",
+      "answer": "You inspect the Accept header in a preHandler or the handler and select a serializer accordingly. Define multiple response schemas keyed by status and content type, or manually serialise XML when requested. Fastify's reply.type plus a custom serializer covers the XML case. Keep the negotiation logic in one hook so routes stay clean.",
+      "tags": [
+        "content-negotiation",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Content_negotiation"
+      ]
+    },
+    {
+      "id": "routing-023",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of catch-all routes with encapsulation and prefixes?",
+      "answer": "A wildcard registered at the root can shadow more specific routes in child scopes if precedence is not considered. Because prefixes are resolved at boot, a wildcard under a prefix only matches within that prefix. Also, not-found handling and 405 responses interact with wildcards, so a catch-all can mask method mismatches. Test precedence explicitly and prefer specific routes plus a not-found handler.",
+      "tags": [
+        "wildcard",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ]
+    },
+    {
+      "id": "routing-024",
+      "difficulty": "Advanced",
+      "question": "How does Fastify respond when a path exists but the method does not match?",
+      "answer": "The router recognises the path and returns a 404 by default rather than a 405, unless you handle it. You can detect method mismatches in a custom not-found handler by checking known routes for the URL. Some teams return 405 with an Allow header for clarity. Fastify leaves this decision to you for flexibility.",
+      "tags": [
+        "http",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#setnotfoundhandler",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/405"
+      ]
+    },
+    {
+      "id": "routing-025",
+      "difficulty": "Advanced",
+      "question": "What considerations apply to very large route tables in Fastify?",
+      "answer": "The radix tree keeps matching efficient, but boot time and memory grow with route count and schema compilation. Reusing schema components with $ref reduces duplication and compilation cost. Splitting routes across prefixed plugins improves organisation and can isolate hot paths. Monitor boot time and avoid registering routes dynamically per request.",
+      "tags": [
+        "performance",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    }
+  ]
+}

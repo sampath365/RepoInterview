@@ -1,0 +1,334 @@
+{
+  "category": "Performance Optimization",
+  "slug": "performance",
+  "icon": "gauge",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "What are Core Web Vitals?",
+      "answer": "Core Web Vitals are Google's metrics for user experience: LCP measures loading, INP measures interactivity, and CLS measures visual stability. They influence search ranking and reflect real user experience. Next.js features like image and font optimization target them. Aim to keep LCP under 2.5s, INP under 200ms, and CLS under 0.1.",
+      "tags": [
+        "core-web-vitals",
+        "metrics"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "How do you measure performance in Next.js?",
+      "answer": "Use Lighthouse, the Chrome DevTools performance panel, and field data from tools like Vercel Analytics or CrUX. Next.js has a useReportWebVitals hook to send metrics. Measure in production, since dev mode is unoptimized. Combine lab and field data for a full picture.",
+      "tags": [
+        "measurement",
+        "metrics"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-report-web-vitals"
+      ]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "How do you reduce JavaScript bundle size?",
+      "answer": "Keep 'use client' boundaries low, dynamically import heavy components, and avoid large dependencies. Next.js code-splits per route automatically. Analyze the bundle to find bloat. Smaller bundles improve load and interactivity.",
+      "tags": [
+        "bundle-size",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "What is lazy loading in Next.js?",
+      "answer": "next/dynamic lets you load components on demand, optionally with server-side rendering disabled. This defers JavaScript until needed. It is useful for modals, charts, and editors. Lazy loading cuts initial bundle size.",
+      "code": "const Chart = dynamic(() => import('./Chart'), { ssr: false });",
+      "tags": [
+        "lazy-loading",
+        "dynamic-import"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading"
+      ]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "How do images affect performance?",
+      "answer": "Large, unsized images hurt LCP and cause layout shift. next/image resizes, serves modern formats, and reserves space. Mark hero images priority. This improves load speed and stability.",
+      "tags": [
+        "images",
+        "lcp"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/image"
+      ]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "How do fonts affect performance?",
+      "answer": "Web fonts can block rendering and cause layout shift when they swap. next/font self-hosts and preloads fonts and uses size-adjust to match fallbacks. This removes third-party requests and reduces shift. Fewer font weights also help.",
+      "tags": [
+        "fonts",
+        "cls"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "Why does dev mode feel slower than production?",
+      "answer": "Dev mode compiles on demand, skips minification, and includes extra checks and hot reloading. Production builds are optimized and cached. Always measure performance on a production build. This is expected behavior, not a bug.",
+      "tags": [
+        "dev",
+        "production"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "What is code splitting?",
+      "answer": "Code splitting breaks the JavaScript bundle into chunks loaded only when needed. Next.js splits by route and supports manual splitting with dynamic imports. It reduces the code shipped on first load. This speeds up initial rendering.",
+      "tags": [
+        "code-splitting",
+        "bundle-size"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading"
+      ]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "How does server rendering help performance?",
+      "answer": "Server rendering sends meaningful HTML before JavaScript runs, improving first paint and LCP. It also lets search engines index content. The trade-off is server compute per request. Combining static generation and streaming gets the best of both.",
+      "tags": [
+        "ssr",
+        "lcp"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-side-rendering"
+      ]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "What is prefetching and how does it help?",
+      "answer": "Link prefetches routes that enter the viewport, so navigation is near-instant. It loads code and data ahead of the click. Prefetching trades some bandwidth for speed. Disable it on links to rarely visited pages.",
+      "tags": [
+        "prefetching",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/link"
+      ]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you analyze and reduce the client bundle?",
+      "answer": "Use the bundle analyzer to visualize chunks, then remove or dynamically import heavy dependencies. Keep client boundaries low and prefer server components. Replace large libraries with smaller ones or tree-shakeable imports. Re-measure after each change.",
+      "tags": [
+        "bundle-size",
+        "analysis"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/package-bundling"
+      ]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "How do you improve Largest Contentful Paint?",
+      "answer": "Optimize the largest element, usually a hero image or heading, by preloading it with priority, serving modern formats, and avoiding render-blocking resources. Stream HTML so the shell arrives fast. Use a CDN. These steps bring LCP under the target.",
+      "tags": [
+        "lcp",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce Interaction to Next Paint?",
+      "answer": "Keep the main thread free by shipping less JavaScript, breaking long tasks, and deferring non-critical work. Use startTransition for heavy updates and memoize expensive renders. Avoid large synchronous computations on interaction. Faster interactions raise INP scores.",
+      "tags": [
+        "inp",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "How do you minimize layout shift?",
+      "answer": "Reserve space for images, ads, and dynamic content with explicit dimensions or aspect ratios. Use next/font to avoid font swap shift. Avoid inserting content above existing content. This keeps CLS low.",
+      "tags": [
+        "cls",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "How does streaming improve perceived performance?",
+      "answer": "Streaming sends the shell and fast sections immediately while slow parts resolve, so users see content sooner. It reduces time to first byte and lets the browser fetch assets early. Wrap slow components in Suspense. This improves perceived speed without changing total work.",
+      "tags": [
+        "streaming",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize third-party scripts?",
+      "answer": "Use the next/script component with an appropriate strategy such as afterInteractive or lazyOnload. Load analytics and widgets only when needed. Self-host where possible. This keeps third-party code from blocking rendering.",
+      "code": "import Script from 'next/script';\n<Script src=\"/analytics.js\" strategy=\"afterInteractive\" />",
+      "tags": [
+        "third-party",
+        "scripts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/script"
+      ]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How does caching improve performance?",
+      "answer": "Caching serves precomputed responses from the CDN or data cache, avoiding repeated work. Static pages and revalidated data load instantly. The client router cache makes navigation fast. Balance caching with freshness requirements.",
+      "tags": [
+        "caching",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize database queries in Server Components?",
+      "answer": "Select only needed columns, add indexes, and batch or join to avoid N+1 queries. Wrap queries in cache to deduplicate within a request. Move heavy work off the request path where possible. Fast queries keep server rendering quick.",
+      "tags": [
+        "database",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/patterns"
+      ]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use Suspense to improve perceived load?",
+      "answer": "Wrap slower components in Suspense with a meaningful fallback so the rest of the page renders immediately. This streams content progressively. It also lets you show skeletons instead of blank areas. Combined with loading.tsx it covers segment-level loading.",
+      "tags": [
+        "suspense",
+        "streaming"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "What is the effect of the client router cache on navigation speed?",
+      "answer": "The client router cache keeps visited segments in memory for instant back and forward navigation. In Next.js 15 its stale time is reduced for dynamic data, trading some speed for freshness. You can tune it with staleTimes. Prefetching fills it ahead of time.",
+      "tags": [
+        "router-cache",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How does Partial Prerendering improve both speed and freshness?",
+      "answer": "PPR serves a static shell instantly from the edge while streaming dynamic holes as they resolve. This gives fast first paint without sacrificing per-request data. It avoids making the whole page dynamic. It is the direction Next.js is moving for mixed content.",
+      "tags": [
+        "ppr",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/ppr"
+      ]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "How do you profile a React render to find bottlenecks?",
+      "answer": "Use the React DevTools profiler to record renders and identify components that re-render often or take long. Look for unnecessary state at high levels and missing memoization. Move state down and split contexts. Fixing the biggest offenders yields the largest gains.",
+      "tags": [
+        "profiling",
+        "react"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Profiler"
+      ]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How do you reduce server response time (TTFB)?",
+      "answer": "Use static generation or caching where possible, move work to the edge, and parallelize data fetches. Stream HTML so the first byte arrives sooner. Optimize slow queries and external calls. TTFB directly affects LCP.",
+      "tags": [
+        "ttfb",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you optimize a content-heavy site at scale?",
+      "answer": "Combine static generation with ISR for most pages, stream personalized sections, and use a CDN. Optimize images and fonts, and keep client JavaScript minimal. Tag caches for targeted revalidation. This keeps pages fast while staying fresh.",
+      "tags": [
+        "scaling",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you set a performance budget and enforce it?",
+      "answer": "Define budgets for bundle size, LCP, INP, and CLS, then measure them in CI with Lighthouse or bundle analysis. Fail the build when budgets are exceeded. Track field data over time. Budgets prevent gradual regressions.",
+      "tags": [
+        "performance-budget",
+        "ci"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    }
+  ]
+}

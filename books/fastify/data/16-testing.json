@@ -1,0 +1,337 @@
+{
+  "category": "Testing Fastify Apps",
+  "slug": "testing",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What is fastify.inject and why is it useful?",
+      "answer": "inject dispatches a fake HTTP request through the full Fastify lifecycle without binding a network port. It returns a response object with status, headers, and body. This makes tests fast, deterministic, and parallel-safe. It is the primary way to test Fastify apps.",
+      "tags": [
+        "testing",
+        "inject"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ],
+      "code": "const res = await app.inject({\n  method: 'GET',\n  url: '/users/1'\n})\nassert.equal(res.statusCode, 200)"
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "How do you structure a Fastify app for testability?",
+      "answer": "You export a build function that creates and configures the instance, so tests can build an app with test settings. Keep the listen call in a separate entry file. This lets tests inject without starting a real server. It also supports different configurations per test.",
+      "tags": [
+        "testing",
+        "structure"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ],
+      "code": "function build(opts = {}) {\n  const app = Fastify(opts)\n  app.register(routes)\n  return app\n}"
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "How do you make a request with a JSON body in a test?",
+      "answer": "You pass a payload object or string to inject along with the content type header. Fastify parses it as it would a real request. This exercises content type parsing and validation. Assert on the parsed response body.",
+      "tags": [
+        "testing",
+        "inject"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ],
+      "code": "await app.inject({\n  method: 'POST',\n  url: '/users',\n  payload: { name: 'Ada' }\n})"
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "How do you test a route that requires authentication?",
+      "answer": "You generate a valid token with your test secret and set the Authorization header on the injected request. Test both the authorised and unauthorised cases. Use a test-only secret. This verifies the security boundary.",
+      "tags": [
+        "testing",
+        "authentication"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "Why should tests call app.ready or close?",
+      "answer": "Calling ready ensures plugins are loaded before injecting, and close releases resources afterwards. Some setups auto-ready on inject, but explicit ready avoids ordering surprises. Closing prevents leaked handles that keep the test runner alive. It makes tests reliable.",
+      "tags": [
+        "testing",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "How do you assert on JSON responses?",
+      "answer": "You parse res.json() or res.payload and compare fields, or check res.statusCode and headers. Asserting on the parsed object is clearer than on raw strings. Use deep equality for whole objects. Focus assertions on contract-relevant fields.",
+      "tags": [
+        "testing",
+        "assertions"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit and integration tests?",
+      "answer": "Unit tests exercise a small piece in isolation, while integration tests run the app or several parts together. For Fastify, inject-based tests are lightweight integration tests. You need both: units for logic and integrations for wiring. Balance speed and confidence.",
+      "tags": [
+        "testing",
+        "types"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "How do you test a plugin in isolation?",
+      "answer": "You create a fresh Fastify instance, register the plugin, and inject requests against it. This verifies the plugin works without the rest of the app. Use dependency injection for external services. It catches missing decorators early.",
+      "tags": [
+        "testing",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "How do you test validation failures?",
+      "answer": "You send invalid input and assert a 400 status with the expected error details. This confirms schemas reject bad data. Cover missing fields, wrong types, and boundary values. It locks in the input contract.",
+      "tags": [
+        "testing",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "How do you run Fastify tests with Node's built-in test runner?",
+      "answer": "You use node:test with node:assert and run node --test, injecting requests against a built app. Node 20 ships a stable test runner, so no extra framework is required. It supports subtests and coverage. This keeps dependencies minimal.",
+      "tags": [
+        "testing",
+        "node-test"
+      ],
+      "references": [
+        "https://nodejs.org/api/test.html"
+      ],
+      "code": "import { test } from 'node:test'\nimport assert from 'node:assert'\n\ntest('GET /', async () => {\n  const res = await app.inject('/')\n  assert.equal(res.statusCode, 200)\n})"
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you mock external services in Fastify tests?",
+      "answer": "You register a test double in place of the real plugin, such as a fake HTTP client or database, by overriding the plugin during build. Because dependencies are injected, swapping is clean. Keep doubles minimal and faithful to the real interface. This isolates your code under test.",
+      "tags": [
+        "testing",
+        "mocking"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test hooks in isolation?",
+      "answer": "You register the hook and a route that records whether the hook ran, then inject and assert the side effect. This verifies ordering and short-circuit behaviour. Test error paths where the hook throws. Hooks are easier to test through inject than directly.",
+      "tags": [
+        "testing",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you structure test fixtures and setup?",
+      "answer": "You build the app in a beforeEach or helper, seed a test database, and tear down after each test. Shared helpers keep tests concise. Reset state between tests to avoid order dependence. Fast, isolated tests are the goal.",
+      "tags": [
+        "testing",
+        "fixtures"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test streaming responses?",
+      "answer": "You inject a request and read the raw payload or stream from the response. Assert on the concatenated body and headers. For large streams, verify incrementally. This checks that streaming works end to end.",
+      "tags": [
+        "testing",
+        "streaming"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do you measure test coverage for a Fastify app?",
+      "answer": "You run your test command with coverage enabled, using c8 or Node's built-in coverage, and review the report for untested branches. Focus on covering error paths and security checks, not just happy paths. Set a threshold in CI. Coverage guides, not replaces, good tests.",
+      "tags": [
+        "testing",
+        "coverage"
+      ],
+      "references": [
+        "https://nodejs.org/api/test.html"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test an app that uses a real database?",
+      "answer": "You run an ephemeral database in a container or in-memory, apply migrations, and seed data per suite. Use inject to exercise routes against it. Reset between tests for isolation. This catches SQL and integration issues mocks would miss.",
+      "tags": [
+        "testing",
+        "database"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test error handling and custom error handlers?",
+      "answer": "You trigger each error path, such as a thrown error or a not-found route, and assert the status and body from your error handler. Verify that internal details are hidden. Cover validation, 404, and 500 cases. This protects the error contract.",
+      "tags": [
+        "testing",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of fastify.inject's light mode?",
+      "answer": "Injecting with light mode true skips some lifecycle steps for speed when you only need the handler result. It is useful for high-volume tests. The trade-off is that fewer hooks run. Use full mode when testing hooks and serialization.",
+      "tags": [
+        "testing",
+        "inject"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test TypeScript Fastify code?",
+      "answer": "You write tests in TypeScript, run them through a loader like tsx, and rely on types for request and response shapes. Type-check tests in CI with tsc --noEmit. This catches type regressions. Keep tests close to the code they cover.",
+      "tags": [
+        "testing",
+        "typescript"
+      ],
+      "references": [
+        "https://nodejs.org/api/typescript.html"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid flaky tests in a Fastify suite?",
+      "answer": "You avoid real timers and network calls, seed deterministic data, and never depend on test order. Use fake timers where needed and clean up resources in teardown. Isolate state per test. Determinism is the key to reliable suites.",
+      "tags": [
+        "testing",
+        "reliability"
+      ],
+      "references": [
+        "https://nodejs.org/api/test.html"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a testing strategy across the testing pyramid?",
+      "answer": "You write many fast unit tests for pure logic, fewer inject-based integration tests for routes and wiring, and a small number of end-to-end tests over a real server. This balances speed and confidence. Push detail down to cheaper layers. Keep e2e tests for critical flows only.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "How do you test performance-sensitive code paths?",
+      "answer": "You benchmark with tools like autocannon against a built server, measuring throughput and latency under load. Keep benchmarks out of the unit suite and run them on stable hardware. Track regressions over time. Profile to find the real bottleneck before optimising.",
+      "tags": [
+        "testing",
+        "performance"
+      ],
+      "references": [
+        "https://github.com/fastify/autocannon",
+        "https://fastify.dev/benchmarks/"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you test that response schemas do not leak fields?",
+      "answer": "You send a payload containing an internal field and assert it is absent from the response, proving the schema filters it. Cover sensitive fields explicitly. This guards against accidental exposure as the model changes. Pair with a schema in the route.",
+      "tags": [
+        "testing",
+        "security"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "How do you write contract tests for an API?",
+      "answer": "You define the expected request and response shapes and assert them against the running app, often validating responses against the same JSON Schema used in routes. This ensures the implementation matches the contract. Run them in CI on every change. Contract tests catch breaking changes early.",
+      "tags": [
+        "testing",
+        "contracts"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "How do you test graceful shutdown behaviour?",
+      "answer": "You start the server, send a slow request, call close, and assert that in-flight requests complete and onClose hooks run. This verifies resources are released and no requests are dropped. Test that new connections are refused during shutdown. Reliable shutdown prevents data loss in deployments.",
+      "tags": [
+        "testing",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    }
+  ]
+}

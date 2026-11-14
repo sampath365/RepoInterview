@@ -1,0 +1,336 @@
+{
+  "category": "Database Integration",
+  "slug": "database",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "database-001",
+      "difficulty": "Beginner",
+      "question": "How do you connect a database in a Fastify app?",
+      "answer": "You create a plugin that establishes a connection or pool and decorates the instance with it, wrapping the plugin with fastify-plugin so routes can use it. Register an onClose hook to close the pool. This centralises connection management. Routes then use fastify.db.",
+      "tags": [
+        "database",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ],
+      "code": "module.exports = fp(async (app) => {\n  const pool = new Pool({ connectionString: process.env.DB_URL })\n  app.decorate('db', pool)\n  app.addHook('onClose', () => pool.end())\n})"
+    },
+    {
+      "id": "database-002",
+      "difficulty": "Beginner",
+      "question": "Why use a connection pool instead of a single connection?",
+      "answer": "A pool reuses a fixed number of connections across requests, avoiding the cost of opening one per request. It also bounds concurrency to protect the database. Pools handle reconnection and idle cleanup. This is the standard approach for web services.",
+      "tags": [
+        "database",
+        "pooling"
+      ],
+      "references": [
+        "https://nodejs.org/api/async_context.html"
+      ]
+    },
+    {
+      "id": "database-003",
+      "difficulty": "Beginner",
+      "question": "What is a database transaction?",
+      "answer": "A transaction groups several statements so they either all succeed or all fail, preserving consistency. You begin it, run statements, then commit or roll back on error. Transactions matter for multi-step writes like transferring funds. Keep them short to avoid holding locks.",
+      "tags": [
+        "database",
+        "transactions"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/ACID"
+      ]
+    },
+    {
+      "id": "database-004",
+      "difficulty": "Beginner",
+      "question": "How do you run a simple query in a handler?",
+      "answer": "You call the pooled client's query method with a parameterised statement and await the result. Parameterisation prevents SQL injection. Return the mapped rows. Keep query logic in a service or repository layer for reuse.",
+      "tags": [
+        "database",
+        "queries"
+      ],
+      "references": [
+        "https://node-postgres.com/features/queries"
+      ],
+      "code": "const { rows } = await app.db.query(\n  'SELECT id, name FROM users WHERE id = $1',\n  [id]\n)\nreturn rows[0]"
+    },
+    {
+      "id": "database-005",
+      "difficulty": "Beginner",
+      "question": "Why must you use parameterised queries?",
+      "answer": "Parameterised queries send values separately from SQL, so user input cannot change the statement structure. This prevents SQL injection, the most common database attack. String concatenation is unsafe. Every driver supports parameters, so there is no excuse to skip them.",
+      "tags": [
+        "database",
+        "security"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/SQL_Injection_Prevention_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "id": "database-006",
+      "difficulty": "Beginner",
+      "question": "How do you close database connections on shutdown?",
+      "answer": "You register an onClose hook that ends the pool or closes the client, so Fastify releases resources during graceful shutdown. Without it, the process may hang or leak connections. This pairs with graceful shutdown handling. It keeps deployments clean.",
+      "tags": [
+        "database",
+        "lifecycle"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onclose"
+      ]
+    },
+    {
+      "id": "database-007",
+      "difficulty": "Beginner",
+      "question": "What is an ORM and how does it fit with Fastify?",
+      "answer": "An ORM maps tables to objects and generates SQL, while Fastify handles HTTP concerns. You can integrate an ORM like Prisma or TypeORM through a plugin. Many teams prefer a query builder or raw SQL for control. The choice is independent of Fastify itself.",
+      "tags": [
+        "database",
+        "orm"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "database-008",
+      "difficulty": "Beginner",
+      "question": "How do you handle a database connection failure at startup?",
+      "answer": "If the connection fails during plugin registration, the error rejects boot and the server does not start, which is usually desired. You can add retries with backoff for transient outages. Logging the failure aids diagnosis. Fail-fast avoids serving errors on every request.",
+      "tags": [
+        "database",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "database-009",
+      "difficulty": "Beginner",
+      "question": "What is a migration and why do you need one?",
+      "answer": "A migration is a versioned script that changes the database schema, such as adding a table or column. Migrations keep schema changes reproducible across environments. You run them as part of deployment. They are essential for coordinated releases.",
+      "tags": [
+        "database",
+        "migrations"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Database"
+      ]
+    },
+    {
+      "id": "database-010",
+      "difficulty": "Beginner",
+      "question": "How do you prevent N+1 query problems?",
+      "answer": "You fetch related data in a single query using joins or batched lookups instead of one query per row. N+1 issues multiply database round trips and slow responses. Data loaders or eager loading help. Profile queries to catch them early.",
+      "tags": [
+        "database",
+        "performance"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/ACID"
+      ]
+    },
+    {
+      "id": "database-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a transaction per request in Fastify?",
+      "answer": "You open a transaction in a preHandler hook, attach the client to the request via a decorator, and commit in onSend or onResponse depending on whether an error occurred, rolling back on failure. This ties the transaction to the request lifecycle. Keep the scope narrow to avoid long locks. It is the recommended pattern for multi-step writes.",
+      "tags": [
+        "database",
+        "transactions"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "database-012",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate Prisma with Fastify?",
+      "answer": "You wrap a PrismaClient in a fastify-plugin that decorates the instance and disconnects on close. Routes call fastify.prisma.model.findMany. Prisma also offers a Fastify integration. This keeps a single client for the process. Use migrations to manage the schema.",
+      "tags": [
+        "database",
+        "prisma"
+      ],
+      "references": [
+        "https://www.prisma.io/docs/guides/database/using-prisma-with-fastify"
+      ],
+      "code": "const prisma = new PrismaClient()\napp.decorate('prisma', prisma)\napp.addHook('onClose', () => prisma.$disconnect())"
+    },
+    {
+      "id": "database-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle database errors and map them to HTTP statuses?",
+      "answer": "You catch driver errors in a repository layer and translate known codes, like unique constraint violations, into domain errors with appropriate statusCode. The error handler formats the response. This keeps persistence details internal. It centralises mapping logic.",
+      "tags": [
+        "database",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "database-014",
+      "difficulty": "Intermediate",
+      "question": "How do you paginate query results efficiently?",
+      "answer": "You use keyset pagination with a stable sort key rather than large offsets, which avoids scanning skipped rows. Return a cursor for the next page. Limit page size to protect the database. This keeps large result sets responsive.",
+      "tags": [
+        "database",
+        "pagination"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/URL/searchParams"
+      ]
+    },
+    {
+      "id": "database-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use connection pooling with node-postgres?",
+      "answer": "You create a Pool with a connection string and size, then use pool.query for simple queries or checkout a client for transactions. Always release clients back to the pool. Configure idle and connection timeouts. The pool manages concurrency safely.",
+      "tags": [
+        "database",
+        "pooling"
+      ],
+      "references": [
+        "https://node-postgres.com/apis/pool"
+      ],
+      "code": "const pool = new Pool({ max: 10, idleTimeoutMillis: 30000 })"
+    },
+    {
+      "id": "database-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that uses a database?",
+      "answer": "You run tests against a real ephemeral database, such as a container or in-memory instance, applying migrations before the suite. Avoid mocking the driver because that tests your mock, not your SQL. Wrap each test in a transaction or reset data between cases. This gives realistic confidence.",
+      "tags": [
+        "database",
+        "testing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "database-017",
+      "difficulty": "Intermediate",
+      "question": "How do you cache query results?",
+      "answer": "You store frequently read, rarely changing data in a cache like Redis with a TTL, checking it before hitting the database. Invalidate on writes to avoid stale reads. Cache keys should include all query parameters. This reduces database load.",
+      "tags": [
+        "database",
+        "caching"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching"
+      ]
+    },
+    {
+      "id": "database-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle soft deletes?",
+      "answer": "You add a deleted_at timestamp and filter queries to exclude deleted rows, rather than removing them. This preserves history and supports recovery. Index the column and apply the filter consistently. Some queries, like audits, still need the deleted rows.",
+      "tags": [
+        "database",
+        "modeling"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Database"
+      ]
+    },
+    {
+      "id": "database-019",
+      "difficulty": "Intermediate",
+      "question": "How do you configure database connection settings from the environment?",
+      "answer": "You load host, port, credentials, and pool size from environment variables, validate them at startup, and pass them to the pool plugin. Never hardcode credentials. Different environments use different values. This keeps the app portable.",
+      "tags": [
+        "database",
+        "configuration"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processenv"
+      ]
+    },
+    {
+      "id": "database-020",
+      "difficulty": "Intermediate",
+      "question": "What is the repository pattern and why use it?",
+      "answer": "A repository encapsulates database access behind an interface, so handlers depend on domain methods rather than SQL. This isolates persistence details and simplifies testing and swapping stores. It also keeps query logic in one place. Use it when the domain is non-trivial.",
+      "tags": [
+        "database",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "database-021",
+      "difficulty": "Advanced",
+      "question": "How do you manage schema migrations in a CI/CD pipeline?",
+      "answer": "You run migrations as a distinct deployment step before starting the new app version, using a tool that tracks applied versions. Migrations should be backward compatible so old and new code can run during rollout. Never edit an applied migration. This enables safe, zero-downtime releases.",
+      "tags": [
+        "database",
+        "migrations"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Database"
+      ]
+    },
+    {
+      "id": "database-022",
+      "difficulty": "Advanced",
+      "question": "How do you avoid long-running transactions blocking the database?",
+      "answer": "Keep transactions short, avoid user input waits inside them, and use the lowest isolation level that is correct. Batch large operations and consider optimistic concurrency instead of locking rows for long periods. Monitor lock waits. This keeps throughput healthy under load.",
+      "tags": [
+        "database",
+        "transactions"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/ACID"
+      ]
+    },
+    {
+      "id": "database-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement optimistic concurrency control?",
+      "answer": "You add a version column and include it in the WHERE clause of updates, checking that exactly one row changed. If none changed, another writer won, so you retry or return a conflict. This avoids holding locks. It works well for low-contention updates.",
+      "tags": [
+        "database",
+        "concurrency"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/ACID"
+      ]
+    },
+    {
+      "id": "database-024",
+      "difficulty": "Advanced",
+      "question": "How do you scale database reads with replicas?",
+      "answer": "You route read queries to replicas and writes to the primary, accepting that replicas may lag. For read-after-write consistency you either read from the primary for a short window or use a sticky session. Health-check replicas and fail over carefully. This offloads read traffic from the primary.",
+      "tags": [
+        "database",
+        "scaling"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Database"
+      ]
+    },
+    {
+      "id": "database-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle connection pool exhaustion under high load?",
+      "answer": "You size the pool to match database limits, set acquisition and statement timeouts so requests fail fast instead of queueing forever, and return 503 when the pool is saturated. Monitor pool metrics and reduce query time to free connections sooner. Never create unbounded connections. This protects both the app and the database.",
+      "tags": [
+        "database",
+        "reliability"
+      ],
+      "references": [
+        "https://node-postgres.com/apis/pool"
+      ]
+    }
+  ]
+}

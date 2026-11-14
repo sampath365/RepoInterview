@@ -1,0 +1,340 @@
+{
+  "category": "Plugins & Encapsulation",
+  "slug": "plugins",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "plugins-001",
+      "difficulty": "Beginner",
+      "question": "What is a Fastify plugin?",
+      "answer": "A plugin is a function that receives the Fastify instance, an options object, and a done callback, and adds functionality such as routes, decorators, or hooks. Plugins are registered with fastify.register and are the primary unit of composition. They create a new encapsulation context by default. This makes features reusable and isolated.",
+      "tags": [
+        "plugins",
+        "basics"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ],
+      "code": "async function myPlugin(fastify, opts) {\n  fastify.decorate('hello', () => 'world')\n}\nawait fastify.register(myPlugin, { foo: 'bar' })"
+    },
+    {
+      "id": "plugins-002",
+      "difficulty": "Beginner",
+      "question": "How do you register a plugin in Fastify?",
+      "answer": "You call fastify.register with the plugin function or module and an optional options object. Registration queues the plugin; it actually loads during boot when ready or listen is called. Plugins load in the order registered. The options are passed to the plugin as its second argument.",
+      "tags": [
+        "plugins",
+        "register"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-003",
+      "difficulty": "Beginner",
+      "question": "What does fastify-plugin do?",
+      "answer": "fastify-plugin is a helper that marks a plugin so it does not create its own encapsulation context. Instead, the plugin's decorators, hooks, and routes are added to the parent scope. It also lets you declare metadata like a name, dependencies, and supported Fastify versions. Use it for shared infrastructure that the whole app should see.",
+      "tags": [
+        "fastify-plugin",
+        "encapsulation"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-plugin",
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ],
+      "code": "const fp = require('fastify-plugin')\n\nmodule.exports = fp(async function db(fastify) {\n  fastify.decorate('db', await connect())\n}, { name: 'db' })"
+    },
+    {
+      "id": "plugins-004",
+      "difficulty": "Beginner",
+      "question": "What are the three arguments a plugin function can receive?",
+      "answer": "A plugin receives the encapsulated Fastify instance, an options object, and an optional done callback. The instance is a child context you use to add routes and decorators. The options come from register. The done callback is used in callback style; with async functions you can omit it and just await.",
+      "tags": [
+        "plugins",
+        "api"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between registering a plugin and requiring a module?",
+      "answer": "Requiring just loads the module into memory; registering runs its plugin function against an instance during boot. Only registered plugins participate in the encapsulation and lifecycle. This is why Fastify plugins must be registered even though you import them normally. Registration is what wires the plugin into the app.",
+      "tags": [
+        "plugins",
+        "register"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-006",
+      "difficulty": "Beginner",
+      "question": "How do you pass options to a plugin?",
+      "answer": "You pass an object as the second argument to register, and it arrives as the opts parameter of the plugin function. Options are commonly used for prefixes, connection strings, or feature flags. You can also set a prefix alongside other options in the same object. Keep options serialisable and validated when they come from configuration.",
+      "tags": [
+        "plugins",
+        "options"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ],
+      "code": "await fastify.register(routes, { prefix: '/api', featureX: true })"
+    },
+    {
+      "id": "plugins-007",
+      "difficulty": "Beginner",
+      "question": "How do you add a property to the Fastify instance?",
+      "answer": "You call fastify.decorate with a name and value inside a plugin, which attaches it to that scope and its children. Decorators are how you expose helpers like database clients or utilities. Using fastify-plugin shares them app-wide. Attempting to decorate an existing name throws to prevent accidental overrides.",
+      "tags": [
+        "decorators",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ],
+      "code": "fastify.decorate('utils', { slugify })\n// later: fastify.utils.slugify('Hello World')"
+    },
+    {
+      "id": "plugins-008",
+      "difficulty": "Beginner",
+      "question": "Why does Fastify throw when you decorate the same name twice?",
+      "answer": "Duplicate decorators would silently shadow each other and cause hard-to-find bugs, so Fastify throws an error instead. If you must replace a decorator, pass the dependencies option or use the correct scope. This strictness enforces clarity about where a property comes from. It is a deliberate safety feature.",
+      "tags": [
+        "decorators",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "plugins-009",
+      "difficulty": "Beginner",
+      "question": "How are official Fastify plugins usually named?",
+      "answer": "Official plugins are published under the @fastify scope, such as @fastify/cors and @fastify/jwt. Community plugins typically use a fastify- prefix. This convention makes official packages easy to recognise. Installing them is a normal npm dependency.",
+      "tags": [
+        "ecosystem",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/",
+        "https://github.com/fastify/fastify#ecosystem"
+      ]
+    },
+    {
+      "id": "plugins-010",
+      "difficulty": "Beginner",
+      "question": "Can a plugin register other plugins?",
+      "answer": "Yes, plugins can call register on the instance they receive, creating nested scopes. The parent plugin waits for its children to load before finishing. This composition is how feature modules bundle their own dependencies. It keeps each module self-contained.",
+      "tags": [
+        "plugins",
+        "composition"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-011",
+      "difficulty": "Intermediate",
+      "question": "Can you explain encapsulation with a concrete example?",
+      "answer": "If a plugin decorates the instance with db and registers a route, those additions live only inside that plugin's scope. A sibling plugin registered afterwards cannot see db and will throw if it references it. Wrapping the plugin with fastify-plugin moves the decorator to the parent so siblings can use it. This example shows why shared infrastructure uses fastify-plugin and features do not.",
+      "tags": [
+        "encapsulation",
+        "fastify-plugin"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    },
+    {
+      "id": "plugins-012",
+      "difficulty": "Intermediate",
+      "question": "What is the plugin metadata you can declare with fastify-plugin?",
+      "answer": "You can set name, dependencies, and fastify version ranges in the metadata object. dependencies makes Fastify verify that named plugins were registered first. The fastify field checks the runtime version is compatible. This metadata turns ordering mistakes into clear boot-time errors.",
+      "tags": [
+        "fastify-plugin",
+        "metadata"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-plugin"
+      ],
+      "code": "module.exports = fp(plugin, {\n  name: 'my-plugin',\n  dependencies: ['db'],\n  fastify: '5.x'\n})"
+    },
+    {
+      "id": "plugins-013",
+      "difficulty": "Intermediate",
+      "question": "How do you ensure one plugin loads before another?",
+      "answer": "You register them in the desired order, and use the dependencies metadata with fastify-plugin to enforce that a prerequisite exists. Avvio loads plugins sequentially, so later registrations see earlier decorators when scopes are shared. Dependencies produce an error if the required plugin is missing. This makes ordering explicit rather than implicit.",
+      "tags": [
+        "plugins",
+        "ordering"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the root instance and an encapsulated instance for hooks?",
+      "answer": "Hooks registered on the root run for every request in the tree. Hooks registered inside a plugin run only for routes within that plugin's scope and its children. This lets you apply authentication to one feature without affecting public routes. Encapsulation makes hook scope predictable.",
+      "tags": [
+        "hooks",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "plugins-015",
+      "difficulty": "Intermediate",
+      "question": "How do you share code across multiple routes without global pollution?",
+      "answer": "Create a plugin that decorates the shared helpers and wrap it with fastify-plugin, then register it once at the root. Routes in child scopes inherit the decorators. This shares code app-wide while keeping feature-specific additions encapsulated. It is the recommended pattern for database clients and utilities.",
+      "tags": [
+        "decorators",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "plugins-016",
+      "difficulty": "Intermediate",
+      "question": "How do you write a plugin that can be published as an npm package?",
+      "answer": "Export a fastify-plugin-wrapped function that declares name, dependencies, and fastify version metadata, and document its options. Test it with a fresh Fastify instance to confirm it works in isolation. Avoid depending on app-specific decorators unless declared as dependencies. This makes the plugin reusable and predictable.",
+      "tags": [
+        "plugins",
+        "packaging"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "plugins-017",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the skip-override symbol?",
+      "answer": "fastify-plugin works by setting a symbol that tells Fastify to skip creating a new encapsulation context for that plugin. You normally do not set it manually; you use fastify-plugin instead. Knowing this clarifies why wrapped plugins leak their decorators to the parent. It is an internal mechanism exposed through the helper.",
+      "tags": [
+        "internals",
+        "fastify-plugin"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-018",
+      "difficulty": "Intermediate",
+      "question": "How do plugins interact with the server's ready and close lifecycle?",
+      "answer": "Each plugin can register onClose hooks to release resources when the server shuts down. Plugins load during ready, so anything they set up is available before requests. Close runs onClose hooks in reverse registration order. This pairing makes startup and teardown symmetric.",
+      "tags": [
+        "lifecycle",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onclose"
+      ]
+    },
+    {
+      "id": "plugins-019",
+      "difficulty": "Intermediate",
+      "question": "How do you make a plugin's options typed in TypeScript?",
+      "answer": "You declare the options as a generic on FastifyPluginAsync and pass the type as the second type argument, or augment FastifyPluginOptions. Fastify then type-checks the register call and the opts parameter. This catches mismatched option names at compile time. It is the standard way to publish typed plugins.",
+      "tags": [
+        "typescript",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ],
+      "code": "const plugin: FastifyPluginAsync<{ prefix: string }> =\n  async (fastify, opts) => { /* ... */ }"
+    },
+    {
+      "id": "plugins-020",
+      "difficulty": "Intermediate",
+      "question": "What happens if a plugin throws during registration?",
+      "answer": "The error propagates through the boot sequence and rejects ready or listen, so the server never starts serving requests. Fastify logs the failure with the plugin context. Fixing the plugin is required before startup succeeds. This fail-fast behaviour prevents running with a half-configured app.",
+      "tags": [
+        "errors",
+        "boot"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-021",
+      "difficulty": "Advanced",
+      "question": "How does encapsulation interact with a plugin registered with a prefix?",
+      "answer": "A prefix only changes the URL of routes inside that scope; it does not change encapsulation. Decorators and hooks remain private to the scope regardless of prefix. Nested prefixes accumulate for URLs but not for visibility. Understanding this separation is key to structuring large apps.",
+      "tags": [
+        "encapsulation",
+        "prefix"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    },
+    {
+      "id": "plugins-022",
+      "difficulty": "Advanced",
+      "question": "How would you build a plugin that conditionally enables features based on environment?",
+      "answer": "Accept configuration through options, and branch inside the plugin to register only the relevant routes or hooks. Wrap shared pieces with fastify-plugin so they are visible where needed. Avoid reading process.env deep inside plugins; inject config instead. This keeps the plugin testable in different environments.",
+      "tags": [
+        "plugins",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "plugins-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of one giant plugin versus many small plugins?",
+      "answer": "Many small plugins improve separation of concerns, testability, and encapsulation, at the cost of more registration wiring and a longer boot sequence. One large plugin is quick to start and simple to follow but becomes hard to reuse and reason about. Most production apps favour small, focused plugins composed at the root. The key is clear boundaries and declared dependencies.",
+      "tags": [
+        "architecture",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "plugins-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid circular dependencies between plugins?",
+      "answer": "Structure plugins in layers where lower layers provide primitives and higher layers consume them, and declare dependencies explicitly with fastify-plugin. Never have two plugins decorate each other directly; extract the shared piece into a third plugin. Avvio's sequential loading plus dependencies surfaces cycles as boot errors. This layered approach keeps the graph acyclic.",
+      "tags": [
+        "plugins",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "plugins-025",
+      "difficulty": "Advanced",
+      "question": "How does Fastify handle plugin option inheritance and overrides?",
+      "answer": "Options passed to register apply to that plugin and its children unless a child overrides them. Prefixes accumulate, while other options are passed only to the plugin that received them. There is no automatic merging of arbitrary options across scopes. Explicitly forward the options you want children to see.",
+      "tags": [
+        "plugins",
+        "options"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    }
+  ]
+}

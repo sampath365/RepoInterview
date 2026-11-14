@@ -1,0 +1,338 @@
+{
+  "category": "Caching & Revalidation",
+  "slug": "caching",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "caching-001",
+      "difficulty": "Beginner",
+      "question": "What caching layers exist in Next.js?",
+      "answer": "Next.js has several caches: the request memoization cache, the Data Cache for fetch results, the Full Route Cache for prerendered output, and the client Router Cache. Each serves a different purpose. In Next.js 15 several are opt-in rather than automatic. Knowing them helps you reason about freshness.",
+      "tags": [
+        "caching",
+        "architecture"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-002",
+      "difficulty": "Beginner",
+      "question": "What is the Data Cache?",
+      "answer": "The Data Cache stores the results of fetch requests on the server so repeated requests reuse them. In Next.js 15 you opt in with cache: 'force-cache' or a revalidate value. Entries persist across requests until revalidated or evicted. It reduces calls to slow data sources.",
+      "tags": [
+        "data-cache",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-003",
+      "difficulty": "Beginner",
+      "question": "What is the Full Route Cache?",
+      "answer": "The Full Route Cache stores the prerendered HTML and payload for static routes at build time. It is served quickly from the CDN until revalidated. Routes using dynamic APIs are not stored here. It is what makes static pages fast.",
+      "tags": [
+        "full-route-cache",
+        "static"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-004",
+      "difficulty": "Beginner",
+      "question": "What is request memoization?",
+      "answer": "Request memoization deduplicates identical fetch calls within a single render pass. If two components request the same URL, only one network call happens. It lasts only for that request, not across requests. It does not require enabling caching.",
+      "tags": [
+        "memoization",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-005",
+      "difficulty": "Beginner",
+      "question": "How do you opt out of caching for a fetch?",
+      "answer": "Pass cache: 'no-store' to fetch to always get fresh data. This also makes the route dynamic. Alternatively set the route segment dynamic to 'force-dynamic'. Use this for data that must never be stale.",
+      "code": "const res = await fetch(url, { cache: 'no-store' });",
+      "tags": [
+        "no-store",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/fetch"
+      ]
+    },
+    {
+      "id": "caching-006",
+      "difficulty": "Beginner",
+      "question": "What does the revalidate option do on fetch?",
+      "answer": "next: { revalidate: seconds } caches the response and refreshes it at most once per interval. This is time-based revalidation. After the interval the next request triggers a background refresh. It is the standard way to keep cached data reasonably fresh.",
+      "code": "await fetch(url, { next: { revalidate: 3600 } });",
+      "tags": [
+        "revalidation",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/fetch"
+      ]
+    },
+    {
+      "id": "caching-007",
+      "difficulty": "Beginner",
+      "question": "What is revalidatePath used for?",
+      "answer": "revalidatePath invalidates the cache for a specific path, forcing it to be regenerated on the next visit. You call it from a Server Action or Route Handler after a mutation. It can target a page or a dynamic route pattern. This keeps content in sync after changes.",
+      "code": "revalidatePath('/blog');",
+      "tags": [
+        "revalidate-path",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/revalidatePath"
+      ]
+    },
+    {
+      "id": "caching-008",
+      "difficulty": "Beginner",
+      "question": "What is revalidateTag used for?",
+      "answer": "revalidateTag invalidates all cached fetches tagged with a given tag. You add tags when fetching and purge them together after a mutation. It gives finer control than revalidating a whole path. Use tags to group related data like a post and its list.",
+      "code": "fetch(url, { next: { tags: ['posts'] } });\nrevalidateTag('posts');",
+      "tags": [
+        "revalidate-tag",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/revalidateTag"
+      ]
+    },
+    {
+      "id": "caching-009",
+      "difficulty": "Beginner",
+      "question": "What changed about caching in Next.js 15?",
+      "answer": "In Next.js 15 fetch requests and GET Route Handlers are uncached by default, reversing the Next.js 14 behavior. Caching is now explicit through cache options or revalidate. The client Router Cache also no longer serves stale data by default. This favors correctness and predictability.",
+      "tags": [
+        "caching",
+        "version"
+      ],
+      "references": [
+        "https://nextjs.org/blog/next-15"
+      ]
+    },
+    {
+      "id": "caching-010",
+      "difficulty": "Beginner",
+      "question": "What is the client-side Router Cache?",
+      "answer": "The Router Cache keeps visited route segments in the browser for instant back and forward navigation. It is separate from server caches and lives in memory. In Next.js 15 its stale time is zero by default for dynamic data. You can tune it with staleTimes.",
+      "tags": [
+        "router-cache",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-011",
+      "difficulty": "Intermediate",
+      "question": "How does time-based revalidation differ from on-demand revalidation?",
+      "answer": "Time-based revalidation refreshes data automatically after a set interval. On-demand revalidation refreshes immediately when you call revalidatePath or revalidateTag, usually after a mutation. Time-based suits periodic content; on-demand suits content that changes in response to user actions. You can combine both.",
+      "tags": [
+        "revalidation",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration"
+      ]
+    },
+    {
+      "id": "caching-012",
+      "difficulty": "Intermediate",
+      "question": "How do you revalidate data after a mutation?",
+      "answer": "Perform the mutation in a Server Action, then call revalidatePath or revalidateTag to clear affected caches. Optionally call redirect to navigate. The next request regenerates fresh data. This keeps the UI consistent with the database.",
+      "code": "'use server';\nawait db.post.create(data);\nrevalidatePath('/posts');",
+      "tags": [
+        "server-actions",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "caching-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between force-cache and no-store?",
+      "answer": "force-cache tells fetch to use and populate the Data Cache, reusing the response. no-store skips caching and always fetches fresh data, making the route dynamic. force-cache favors speed; no-store favors freshness. Choose based on how often the data changes.",
+      "tags": [
+        "force-cache",
+        "no-store"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/fetch"
+      ]
+    },
+    {
+      "id": "caching-014",
+      "difficulty": "Intermediate",
+      "question": "How do fetch tags enable targeted invalidation?",
+      "answer": "When you fetch with next: { tags: ['x'] } the cached entry is associated with that tag. Later revalidateTag('x') clears every entry with that tag in one call. This avoids clearing unrelated caches. Tags are ideal for content grouped across multiple URLs.",
+      "tags": [
+        "tags",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/revalidateTag"
+      ]
+    },
+    {
+      "id": "caching-015",
+      "difficulty": "Intermediate",
+      "question": "How does caching interact with dynamic rendering?",
+      "answer": "Using dynamic APIs like cookies makes a route dynamic, so it is not stored in the Full Route Cache. Individual fetch calls can still be cached in the Data Cache. This means a dynamic page can serve cached data while rendering per request. Understanding the layers prevents stale or slow pages.",
+      "tags": [
+        "dynamic",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-016",
+      "difficulty": "Intermediate",
+      "question": "What is staleTimes and when would you configure it?",
+      "answer": "staleTimes in next.config.js controls how long the client Router Cache treats segments as fresh. Setting dynamic or static values lets you trade instant navigation for freshness. In Next.js 15 the default dynamic stale time is zero. Tune it if you want faster back navigation at the cost of staleness.",
+      "tags": [
+        "router-cache",
+        "configuration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/staleTimes"
+      ]
+    },
+    {
+      "id": "caching-017",
+      "difficulty": "Intermediate",
+      "question": "How do you cache data from a database that is not fetch?",
+      "answer": "Wrap the query function in React's cache to deduplicate within a request, and use unstable_cache or your data layer's caching for cross-request caching. Next.js 15 introduced the use cache directive for explicit caching. fetch caching does not apply to ORM calls. Choose the mechanism based on scope.",
+      "tags": [
+        "database",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/directives/use-cache"
+      ]
+    },
+    {
+      "id": "caching-018",
+      "difficulty": "Intermediate",
+      "question": "How do you debug unexpected caching behavior?",
+      "answer": "Inspect the build output to see which routes are static or dynamic, and log cache hits and misses. The Next.js dev overlay shows cache status. Check for dynamic APIs that force dynamic rendering. Verifying fetch options and tags often reveals the cause.",
+      "tags": [
+        "debugging",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-019",
+      "difficulty": "Intermediate",
+      "question": "What happens when a cached page is requested after revalidation expires?",
+      "answer": "Next.js serves the stale cached version immediately and regenerates it in the background. The next visitor receives the updated version. This is stale-while-revalidate behavior. It avoids blocking users on regeneration.",
+      "tags": [
+        "isr",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration"
+      ]
+    },
+    {
+      "id": "caching-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid caching personalized responses?",
+      "answer": "Do not cache responses that vary by user, and avoid reading cookies inside cached fetches. Mark those fetches no-store or use a dynamic route. If you must cache shared parts, isolate personalized content in uncached components. Caching user-specific data risks leaking it to other users.",
+      "tags": [
+        "personalization",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-021",
+      "difficulty": "Advanced",
+      "question": "How do the four caches interact during a request?",
+      "answer": "First, request memoization deduplicates fetches in the render. The Data Cache may satisfy cached fetches, and the Full Route Cache may serve prerendered output entirely. The client Router Cache affects navigations in the browser. Each layer can short-circuit the ones after it, so understanding the order explains observed behavior.",
+      "tags": [
+        "caching",
+        "architecture"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "caching-022",
+      "difficulty": "Advanced",
+      "question": "What is the use cache directive in Next.js?",
+      "answer": "The use cache directive explicitly marks a function or component as cacheable, caching its return value on the server. It works with cacheTag and cacheLife for tagging and lifetimes. It complements fetch caching for non-fetch data. It is part of Next.js's move to explicit caching.",
+      "code": "'use cache';\nexport async function getData() { /* ... */ }",
+      "tags": [
+        "use-cache",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/directives/use-cache"
+      ]
+    },
+    {
+      "id": "caching-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement a cache invalidation strategy across routes?",
+      "answer": "Tag fetches by domain entity, and after a mutation call revalidateTag for the affected entity. Combine with revalidatePath for pages that render that entity. Use time-based revalidation as a fallback. Document the tags so mutations invalidate the right caches.",
+      "tags": [
+        "tags",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/revalidateTag"
+      ]
+    },
+    {
+      "id": "caching-024",
+      "difficulty": "Advanced",
+      "question": "How does caching differ between Next.js 14 and 15 in practice?",
+      "answer": "In 14 fetch defaulted to cached and GET handlers were cached, so developers often had to opt out. In 15 both default to uncached, so you opt in explicitly. The client Router Cache also changed defaults. This shift makes behavior more predictable but requires adding cache options where you want them.",
+      "tags": [
+        "version",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/blog/next-15"
+      ]
+    },
+    {
+      "id": "caching-025",
+      "difficulty": "Advanced",
+      "question": "How do you cache a Route Handler response?",
+      "answer": "In Next.js 15 GET handlers are uncached by default; you enable caching by exporting a static route segment config or wrapping work in cached functions. For dynamic handlers set dynamic = 'force-dynamic'. You can also set Cache-Control headers for CDN caching. Choose based on whether the response is shared.",
+      "tags": [
+        "route-handlers",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
+      ]
+    }
+  ]
+}

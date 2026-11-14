@@ -1,0 +1,337 @@
+{
+  "category": "State Management",
+  "slug": "state-management",
+  "icon": "share",
+  "questions": [
+    {
+      "id": "state-management-001",
+      "difficulty": "Beginner",
+      "question": "Where should client state live in the App Router?",
+      "answer": "Client state lives in Client Components marked with 'use client'. Keep it as low in the tree as possible so most components stay server-rendered. Use local state for component-level needs. Lift to context only when many components share it.",
+      "tags": [
+        "state",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-002",
+      "difficulty": "Beginner",
+      "question": "How do you use React state in a Client Component?",
+      "answer": "Add 'use client' and use useState and useReducer as in any React app. The component hydrates in the browser and manages its own state. Server Components cannot use these hooks. This is the standard React model.",
+      "code": "'use client';\nconst [count, setCount] = useState(0);",
+      "tags": [
+        "usestate",
+        "client-components"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-management-003",
+      "difficulty": "Beginner",
+      "question": "When do you need global state?",
+      "answer": "You need global state when many distant components share the same value, such as the current user, theme, or a cart. For less shared data prefer local state or server data. Global state adds complexity. Introduce it only when prop drilling becomes painful.",
+      "tags": [
+        "global-state",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-004",
+      "difficulty": "Beginner",
+      "question": "How do you use React Context in the App Router?",
+      "answer": "Create a provider in a Client Component and wrap children in the root layout. Consumers use useContext. The provider must be a Client Component. Keep it low to limit client rendering.",
+      "code": "'use client';\nexport function ThemeProvider({ children }) {\n  return <ThemeContext.Provider value=\"dark\">{children}</ThemeContext.Provider>;\n}",
+      "tags": [
+        "context",
+        "providers"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "state-management-005",
+      "difficulty": "Beginner",
+      "question": "Can Server Components hold state?",
+      "answer": "No, Server Components cannot use state or effects because they do not run in the browser. They can fetch data and render, but interactivity requires a Client Component. Pass server data as props to client components. This separation is fundamental to the App Router.",
+      "tags": [
+        "server-components",
+        "state"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "state-management-006",
+      "difficulty": "Beginner",
+      "question": "How do you manage form state?",
+      "answer": "For simple forms use controlled inputs with useState or uncontrolled inputs read from FormData in a Server Action. For complex forms use a library like React Hook Form. Server Actions handle submission. Choose based on validation complexity.",
+      "tags": [
+        "forms",
+        "state"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "state-management-007",
+      "difficulty": "Beginner",
+      "question": "What is prop drilling and how do you avoid it?",
+      "answer": "Prop drilling is passing props through many intermediate components that do not use them. Avoid it with context, component composition, or by fetching data where it is needed on the server. Composition via children often removes the need. Prefer the simplest fix.",
+      "tags": [
+        "prop-drilling",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "state-management-008",
+      "difficulty": "Beginner",
+      "question": "How do you persist state across navigations?",
+      "answer": "State in a layout persists because layouts stay mounted across navigation within their segment. Component state resets when its component unmounts. Use context in a layout or a store for persistence. This is why shared providers live in layouts.",
+      "tags": [
+        "layouts",
+        "state"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/layouts-and-templates"
+      ]
+    },
+    {
+      "id": "state-management-009",
+      "difficulty": "Beginner",
+      "question": "What is a state management library like Zustand used for?",
+      "answer": "Zustand provides a small global store usable outside React components and with selectors to limit re-renders. It works in Client Components and avoids provider boilerplate. It is lighter than Redux for many cases. Use it for cross-component client state.",
+      "code": "const useStore = create((set) => ({\n  count: 0,\n  inc: () => set((s) => ({ count: s.count + 1 })),\n}));",
+      "tags": [
+        "zustand",
+        "libraries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-010",
+      "difficulty": "Beginner",
+      "question": "How do you store UI state like a modal?",
+      "answer": "Keep modal open state in the nearest Client Component with useState, or use a URL query param so it is shareable. Local state is simplest. For app-wide modals use a store or context. Prefer URL state when the modal should be linkable.",
+      "tags": [
+        "ui-state",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-011",
+      "difficulty": "Intermediate",
+      "question": "How do you decide between server state and client state?",
+      "answer": "Server state is data owned by the backend, such as a list from the database; client state is UI state owned by the browser. Fetch server state on the server and cache it, and keep client state minimal. Libraries like React Query manage server state on the client when needed. Mixing them carelessly causes sync bugs.",
+      "tags": [
+        "server-state",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ]
+    },
+    {
+      "id": "state-management-012",
+      "difficulty": "Intermediate",
+      "question": "What is the best way to pass initial state from the server to the client?",
+      "answer": "The server fetches initial data and passes it as props to a Client Component that owns the interactive state. For app-wide state, a Client Component provider in the root layout holds it. The server never holds mutable state. This pattern keeps rendering server-side.",
+      "tags": [
+        "state",
+        "composition"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use URL state for filters and pagination?",
+      "answer": "Store filters in searchParams and read them on the server to fetch data. Update them with Link or router.push. This makes views shareable and back-button friendly. It also keeps data fetching on the server.",
+      "tags": [
+        "url-state",
+        "search-params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating"
+      ]
+    },
+    {
+      "id": "state-management-014",
+      "difficulty": "Intermediate",
+      "question": "What are the pitfalls of using context for everything?",
+      "answer": "Context re-renders all consumers when its value changes, which can hurt performance if the value is large or changes often. Splitting contexts and memoizing values helps. Prefer local state or stores with selectors for frequently changing data. Use context for stable, widely shared values.",
+      "tags": [
+        "context",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "state-management-015",
+      "difficulty": "Intermediate",
+      "question": "How does React Query or SWR fit the App Router?",
+      "answer": "These libraries manage client-side server state with caching, revalidation, and deduplication. Use them in Client Components for data that changes on the client or needs polling. For initial server-rendered data, fetch on the server and hydrate. They complement, not replace, server fetching.",
+      "tags": [
+        "react-query",
+        "swr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/client-side"
+      ]
+    },
+    {
+      "id": "state-management-016",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid hydration issues with client state?",
+      "answer": "Do not read browser-only values like localStorage or Date during render, because the server cannot match them. Read them in useEffect or use a mounted flag. Keep the first client render identical to the server output. This prevents hydration mismatches.",
+      "tags": [
+        "hydration",
+        "state"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "state-management-017",
+      "difficulty": "Intermediate",
+      "question": "How do you implement undo or history?",
+      "answer": "Keep a stack of previous states in a reducer and push on each change. Undo pops the stack and restores the prior state. Keep it in a Client Component or store. For text fields integrate with the input's native history where possible.",
+      "tags": [
+        "history",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useReducer"
+      ]
+    },
+    {
+      "id": "state-management-018",
+      "difficulty": "Intermediate",
+      "question": "How do you synchronize client state with the server after a mutation?",
+      "answer": "After a Server Action mutates data, call revalidatePath or revalidateTag to refresh server-rendered data. On the client, update local or optimistic state to match. Keep a single source of truth where possible. Optimistic UI reconciles when the server responds.",
+      "tags": [
+        "state",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "state-management-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use a store outside React components?",
+      "answer": "Libraries like Zustand let you read and write the store from plain functions or event handlers outside the React tree. This is useful for analytics or non-React code. Subscribe components with selectors to limit re-renders. It complements React state.",
+      "tags": [
+        "stores",
+        "libraries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle theme state with SSR?",
+      "answer": "Read the theme on the server from a cookie and set it on the html element so the first paint is correct. Provide a client toggle that updates the cookie and the class. This avoids a flash of the wrong theme. Keep the toggle a small Client Component.",
+      "tags": [
+        "theme",
+        "ssr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-021",
+      "difficulty": "Advanced",
+      "question": "How do you structure global state providers for the App Router?",
+      "answer": "Create small, focused providers as Client Components and compose them in a single Providers component used in the root layout. Split contexts by update frequency to reduce re-renders. Keep server components as children so they stay server-rendered. This balances sharing and performance.",
+      "code": "'use client';\nexport function Providers({ children }) {\n  return <ThemeProvider><CartProvider>{children}</CartProvider></ThemeProvider>;\n}",
+      "tags": [
+        "providers",
+        "architecture"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "state-management-022",
+      "difficulty": "Advanced",
+      "question": "How does React 19 useOptimistic help state management?",
+      "answer": "useOptimistic shows a temporary state while an async action is in flight, then reverts or confirms when it resolves. It pairs with Server Actions for instant feedback. It avoids manual pending state bookkeeping. The optimistic state is derived, not the source of truth.",
+      "code": "const [optimistic, addOptimistic] = useOptimistic(messages, reducer);",
+      "tags": [
+        "optimistic",
+        "react-19"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useOptimistic"
+      ]
+    },
+    {
+      "id": "state-management-023",
+      "difficulty": "Advanced",
+      "question": "How do you avoid unnecessary re-renders in a large client tree?",
+      "answer": "Split contexts by concern, use selectors in stores, memoize expensive children, and colocate state. Move state down so only the components that need it re-render. Profile with React DevTools to find hotspots. Server rendering most of the tree further reduces client work.",
+      "tags": [
+        "performance",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo"
+      ]
+    },
+    {
+      "id": "state-management-024",
+      "difficulty": "Advanced",
+      "question": "How do you persist and rehydrate client state safely?",
+      "answer": "Persist to localStorage or a cookie in an effect, then rehydrate after mount to avoid hydration mismatches. Validate and version persisted data. For SSR, prefer a cookie read on the server. Never store secrets in persisted client state.",
+      "tags": [
+        "persistence",
+        "hydration"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "state-management-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose between context, a store, and server state?",
+      "answer": "Use context for stable, widely shared values like theme or locale. Use a store for frequently changing global client state with selectors. Use server state and fetching for data owned by the backend. Keep the source of truth clear and minimize duplication. The wrong choice causes re-render or sync problems.",
+      "tags": [
+        "architecture",
+        "state"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    }
+  ]
+}

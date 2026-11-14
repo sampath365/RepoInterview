@@ -1,0 +1,339 @@
+{
+  "category": "Authentication & Authorization",
+  "slug": "authentication",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "authentication-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between authentication and authorization?",
+      "answer": "Authentication verifies who a user is, while authorization decides what that user may do. Authentication happens first, producing an identity, and authorization checks that identity against permissions. Mixing them leads to security gaps. Fastify handles both through hooks and decorators.",
+      "tags": [
+        "authentication",
+        "authorization"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Authentication"
+      ]
+    },
+    {
+      "id": "authentication-002",
+      "difficulty": "Beginner",
+      "question": "How do you add JWT authentication to Fastify?",
+      "answer": "You register @fastify/jwt with a secret, then call request.jwtVerify in an onRequest or preHandler hook to validate the token. The decoded payload becomes available on request.user. Routes then check permissions. The plugin also provides signing helpers.",
+      "tags": [
+        "authentication",
+        "jwt"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-jwt"
+      ],
+      "code": "await app.register(require('@fastify/jwt'), { secret: process.env.JWT_SECRET })\n\napp.addHook('preHandler', async (req) => {\n  await req.jwtVerify()\n})"
+    },
+    {
+      "id": "authentication-003",
+      "difficulty": "Beginner",
+      "question": "What is a JWT and what does it contain?",
+      "answer": "A JSON Web Token is a signed, base64url-encoded string with three parts: header, payload, and signature. The payload carries claims such as subject, expiry, and roles. Because it is signed, the server can verify integrity without a session store. Never put secrets in the payload, as it is readable.",
+      "tags": [
+        "authentication",
+        "jwt"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization",
+        "https://jwt.io/introduction"
+      ]
+    },
+    {
+      "id": "authentication-004",
+      "difficulty": "Beginner",
+      "question": "Where should an access token be sent?",
+      "answer": "Clients send tokens in the Authorization header using the Bearer scheme. Headers avoid the logging and caching issues of query strings. Cookies are an alternative with their own trade-offs. Always use HTTPS to protect tokens in transit.",
+      "tags": [
+        "authentication",
+        "tokens"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Authorization"
+      ]
+    },
+    {
+      "id": "authentication-005",
+      "difficulty": "Beginner",
+      "question": "How do you protect a subset of routes?",
+      "answer": "You register the authentication hook inside a plugin that contains only the protected routes, so it applies to that scope. Public routes stay in a separate scope without the hook. Encapsulation makes this natural. This avoids per-route checks.",
+      "tags": [
+        "authentication",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "authentication-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a session and a token?",
+      "answer": "Sessions store state server-side and give the client an opaque id, usually in a cookie. Tokens like JWTs are self-contained and verified by signature. Sessions are easy to revoke, tokens scale statelessly but need care for revocation. The choice depends on your needs.",
+      "tags": [
+        "authentication",
+        "sessions"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies"
+      ]
+    },
+    {
+      "id": "authentication-007",
+      "difficulty": "Beginner",
+      "question": "How do you store passwords securely?",
+      "answer": "You hash passwords with a slow, salted algorithm like bcrypt or argon2, never storing plaintext or fast hashes. Compare using the library's verify function. Salting prevents rainbow-table attacks and slowness resists brute force. This is a non-negotiable baseline.",
+      "tags": [
+        "authentication",
+        "passwords"
+      ],
+      "references": [
+        "https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html"
+      ]
+    },
+    {
+      "id": "authentication-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an access token and a refresh token?",
+      "answer": "Access tokens are short-lived and used for API calls, limiting damage if leaked. Refresh tokens are long-lived, stored securely, and exchanged for new access tokens. Refresh tokens should be revocable and rotated. This split balances security and usability.",
+      "tags": [
+        "authentication",
+        "tokens"
+      ],
+      "references": [
+        "https://jwt.io/introduction"
+      ]
+    },
+    {
+      "id": "authentication-009",
+      "difficulty": "Beginner",
+      "question": "How do you read the authenticated user in a handler?",
+      "answer": "After verification you attach the user to request, typically request.user, then read it in the handler. Decorating request documents and types the property. A hook guarantees it is set before handlers run. This is the standard Fastify pattern.",
+      "tags": [
+        "authentication",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "authentication-010",
+      "difficulty": "Beginner",
+      "question": "Why should you always use HTTPS for authentication?",
+      "answer": "Tokens, passwords, and session cookies sent over plain HTTP can be intercepted. HTTPS encrypts traffic and prevents tampering. Modern deployments terminate TLS at a proxy, so enable trustProxy for correct client info. Authentication without TLS is unsafe.",
+      "tags": [
+        "authentication",
+        "security"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/HTTPS"
+      ]
+    },
+    {
+      "id": "authentication-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement role-based authorization?",
+      "answer": "You store roles in the token or load them for the user, then check them in a preHandler hook that reads route config for required roles. If the check fails you send 403 and stop the chain. This keeps authorization declarative per route. It centralises the logic.",
+      "tags": [
+        "authorization",
+        "roles"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ],
+      "code": "function requireRole(role) {\n  return async (req, reply) => {\n    if (req.user?.role !== role) reply.code(403).send()\n  }\n}"
+    },
+    {
+      "id": "authentication-012",
+      "difficulty": "Intermediate",
+      "question": "How do you handle token expiration and refresh?",
+      "answer": "You set a short expiry on access tokens and expose a refresh endpoint that validates the refresh token, rotates it, and issues a new access token. Reject expired access tokens with 401. Rotating refresh tokens limits replay. This reduces the blast radius of a leak.",
+      "tags": [
+        "authentication",
+        "tokens"
+      ],
+      "references": [
+        "https://jwt.io/introduction"
+      ]
+    },
+    {
+      "id": "authentication-013",
+      "difficulty": "Intermediate",
+      "question": "How do you revoke JWTs before they expire?",
+      "answer": "Since stateless JWTs cannot be unissued, you maintain a denylist of revoked token ids or use short expiry plus refresh-token revocation. Checking the denylist in the auth hook adds state but enables logout. Balance the cost against your security needs. Alternatively use opaque tokens with server-side sessions.",
+      "tags": [
+        "authentication",
+        "revocation"
+      ],
+      "references": [
+        "https://jwt.io/introduction"
+      ]
+    },
+    {
+      "id": "authentication-014",
+      "difficulty": "Intermediate",
+      "question": "How do you verify JWTs with public-key cryptography?",
+      "answer": "You configure the JWT plugin with the public key and algorithm so it verifies signatures without sharing the private key. This suits distributed systems where one service signs and others verify. Use RS256 or ES256 rather than HS256 for multi-service setups. Rotate keys carefully.",
+      "tags": [
+        "authentication",
+        "jwt"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-jwt"
+      ]
+    },
+    {
+      "id": "authentication-015",
+      "difficulty": "Intermediate",
+      "question": "How do you protect against CSRF when using cookies?",
+      "answer": "You set cookies with SameSite=Lax or Strict and use CSRF tokens for state-changing requests. SameSite alone blocks many cross-site attacks but not all cases. Never rely on cookies without these protections. The @fastify/csrf-protection plugin helps.",
+      "tags": [
+        "authentication",
+        "csrf"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies#samesite_attribute",
+        "https://github.com/fastify/fastify-csrf-protection"
+      ]
+    },
+    {
+      "id": "authentication-016",
+      "difficulty": "Intermediate",
+      "question": "How do you rate-limit login attempts?",
+      "answer": "You apply @fastify/rate-limit to the login route, keyed by IP and account, to slow brute-force attempts. Combine with account lockout or exponential backoff. Log failures for monitoring. This raises the cost of credential stuffing.",
+      "tags": [
+        "authentication",
+        "rate-limiting"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-rate-limit"
+      ]
+    },
+    {
+      "id": "authentication-017",
+      "difficulty": "Intermediate",
+      "question": "How do you implement API key authentication?",
+      "answer": "You issue keys per client, store a hash of each key, and verify the presented key in an onRequest hook. Look up the key's permissions and attach them to the request. Keys are simple for service-to-service calls but need rotation. Treat them like passwords.",
+      "tags": [
+        "authentication",
+        "api-keys"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "authentication-018",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate OAuth or OpenID Connect with Fastify?",
+      "answer": "You use a library to handle the authorization code flow, exchanging the code for tokens at the provider, then establish your own session or issue your own token. Validate the id token signature and claims. The @fastify/oauth2 plugin covers provider flows. Never trust unverified provider responses.",
+      "tags": [
+        "authentication",
+        "oauth"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-oauth2",
+        "https://openid.net/developers/how-connect-works/"
+      ]
+    },
+    {
+      "id": "authentication-019",
+      "difficulty": "Intermediate",
+      "question": "How do you scope a hook so only some routes require auth?",
+      "answer": "You register the auth plugin inside a prefixed plugin that wraps only protected routes, so its preHandler hook applies there. Public routes live outside that scope. This uses encapsulation instead of per-route flags. It is cleaner and less error-prone.",
+      "tags": [
+        "authentication",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    },
+    {
+      "id": "authentication-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test authenticated routes?",
+      "answer": "You sign a valid token with your test secret and pass it in the Authorization header when injecting requests. Assert that protected routes reject missing or invalid tokens and accept valid ones. Test role checks with tokens carrying different roles. This covers the security boundary.",
+      "tags": [
+        "authentication",
+        "testing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "authentication-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a token strategy for a multi-service system?",
+      "answer": "Use a central identity service that issues short-lived access tokens with a key other services can verify, plus refresh tokens for the client. Include minimal claims and use standard scopes. Rotate signing keys and publish them via JWKS. This keeps verification stateless and revocation controlled.",
+      "tags": [
+        "authentication",
+        "architecture"
+      ],
+      "references": [
+        "https://openid.net/developers/how-connect-works/",
+        "https://jwt.io/introduction"
+      ]
+    },
+    {
+      "id": "authentication-022",
+      "difficulty": "Advanced",
+      "question": "How do you prevent timing attacks in credential comparison?",
+      "answer": "You compare secrets with constant-time functions such as crypto.timingSafeEqual, and always run a hash comparison even for unknown users to avoid leaking existence. Avoid early returns that reveal which part matched. This removes measurable timing differences. It matters for tokens, keys, and passwords.",
+      "tags": [
+        "authentication",
+        "security"
+      ],
+      "references": [
+        "https://nodejs.org/api/crypto.html#cryptotimingsafeequala-b"
+      ]
+    },
+    {
+      "id": "authentication-023",
+      "difficulty": "Advanced",
+      "question": "How do you securely store session cookies?",
+      "answer": "You set HttpOnly, Secure, and SameSite attributes, use a signed or encrypted session store, and rotate the session id on login. Scope the cookie path and set a sensible expiry. Never store sensitive data in the cookie itself. This defends against XSS and CSRF.",
+      "tags": [
+        "authentication",
+        "cookies"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies"
+      ]
+    },
+    {
+      "id": "authentication-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement fine-grained authorization?",
+      "answer": "Beyond roles, you model permissions or policies and evaluate them against the resource and the user, often with a library like CASL. Enforce checks close to the data access to avoid gaps. Deny by default and grant explicitly. This scales better than role checks for complex domains.",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Authentication"
+      ]
+    },
+    {
+      "id": "authentication-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle authentication in a service-to-service context?",
+      "answer": "You use short-lived tokens obtained via a client-credentials flow or mTLS, avoiding shared long-lived secrets. Each service has its own identity so tokens can be scoped and revoked. Verify audience and issuer claims on every call. This limits lateral movement if one service is compromised.",
+      "tags": [
+        "authentication",
+        "security"
+      ],
+      "references": [
+        "https://openid.net/developers/how-connect-works/",
+        "https://developer.mozilla.org/en-US/docs/Web/Security/Transport_Layer_Security"
+      ]
+    }
+  ]
+}

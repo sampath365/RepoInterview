@@ -1,0 +1,341 @@
+{
+  "category": "Middleware",
+  "slug": "middleware",
+  "icon": "shield",
+  "questions": [
+    {
+      "id": "middleware-001",
+      "difficulty": "Beginner",
+      "question": "What is middleware in Next.js?",
+      "answer": "Middleware is code that runs before a request completes, defined in a middleware.ts file at the project root. It can inspect and rewrite requests, redirect, or set headers. It runs on every matching request before routing. It is a good place for auth checks and localization.",
+      "code": "export function middleware(request) {\n  return NextResponse.next();\n}",
+      "tags": [
+        "middleware",
+        "routing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-002",
+      "difficulty": "Beginner",
+      "question": "Where does the middleware file live?",
+      "answer": "Middleware lives in middleware.ts at the root of the project, or inside src/ if you use the src directory. It sits next to the app folder. Only one middleware file is supported per project. The location is fixed by convention.",
+      "tags": [
+        "middleware",
+        "file-conventions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-003",
+      "difficulty": "Beginner",
+      "question": "What can middleware do with a request?",
+      "answer": "It can read the URL, cookies, and headers, then return a NextResponse to continue, rewrite, redirect, or set headers. It cannot read the request body. It runs before caching and routing. This makes it suited to cross-cutting concerns.",
+      "tags": [
+        "middleware",
+        "next-response"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-004",
+      "difficulty": "Beginner",
+      "question": "How do you restrict middleware to certain paths?",
+      "answer": "Export a matcher config array of path patterns, or check the pathname inside the function. The matcher is evaluated statically for performance. You can exclude paths like _next/static and API routes. This avoids running middleware on every asset request.",
+      "code": "export const config = {\n  matcher: ['/dashboard/:path*'],\n};",
+      "tags": [
+        "middleware",
+        "matcher"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-005",
+      "difficulty": "Beginner",
+      "question": "How do you redirect in middleware?",
+      "answer": "Return NextResponse.redirect with a new URL. You can also use NextResponse.rewrite to serve different content without changing the URL. Redirects change the address bar. This is commonly used to send unauthenticated users to a login page.",
+      "code": "return NextResponse.redirect(new URL('/login', request.url));",
+      "tags": [
+        "middleware",
+        "redirect"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-006",
+      "difficulty": "Beginner",
+      "question": "How do you read cookies in middleware?",
+      "answer": "Use request.cookies.get('name') to read a cookie. You can also set cookies on the response with response.cookies.set. Middleware can read and write cookies before the request reaches a route. This is useful for session checks and A/B tests.",
+      "code": "const token = request.cookies.get('session')?.value;",
+      "tags": [
+        "middleware",
+        "cookies"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-007",
+      "difficulty": "Beginner",
+      "question": "What runtime does middleware use?",
+      "answer": "Middleware runs on the Edge runtime by default, a lightweight V8 environment. It has access to Web APIs like fetch and crypto but not full Node.js APIs. You can opt into the Node.js runtime in newer versions if needed. This keeps middleware fast and globally distributed.",
+      "tags": [
+        "middleware",
+        "edge"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-008",
+      "difficulty": "Beginner",
+      "question": "Can middleware access the database directly?",
+      "answer": "Not directly in the default Edge runtime, which lacks Node drivers. Instead call an HTTP API or an Edge-compatible data service, or do the database check in the route itself. Keep middleware light and fast. Heavy work belongs in the route or a Server Action.",
+      "tags": [
+        "middleware",
+        "edge"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-009",
+      "difficulty": "Beginner",
+      "question": "How do you continue a request in middleware?",
+      "answer": "Return NextResponse.next() to pass the request through unchanged. You can also clone headers onto the response to forward data to the route. This is the default flow when you only inspect the request. It adds minimal overhead.",
+      "code": "return NextResponse.next();",
+      "tags": [
+        "middleware",
+        "next-response"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-010",
+      "difficulty": "Beginner",
+      "question": "What is a common use case for middleware?",
+      "answer": "Authentication gating is a common one: redirect users without a valid session away from protected routes. Other uses include locale detection, A/B testing, bot filtering, and adding security headers. Middleware centralizes these cross-cutting concerns. Keep the logic fast and free of heavy I/O.",
+      "tags": [
+        "middleware",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-011",
+      "difficulty": "Intermediate",
+      "question": "How do you set response headers in middleware?",
+      "answer": "Clone the response or create one with NextResponse.next and set headers on it. You can also modify request headers to pass values to the route. This is useful for CSP, CORS, and custom headers. Headers set here apply to the matched routes.",
+      "code": "const res = NextResponse.next();\nres.headers.set('x-custom', 'value');\nreturn res;",
+      "tags": [
+        "middleware",
+        "headers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-012",
+      "difficulty": "Intermediate",
+      "question": "How do you protect routes with middleware?",
+      "answer": "Check for a session cookie or verify a token in middleware, and redirect to login when missing. Be careful not to rely solely on the cookie's presence; verify its signature. Also re-check authorization in the route or Server Action, since middleware is a first gate. This defense in depth prevents bypasses.",
+      "tags": [
+        "auth",
+        "middleware"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "middleware-013",
+      "difficulty": "Intermediate",
+      "question": "What are the limitations of middleware?",
+      "answer": "Middleware cannot read the request body, cannot do heavy Node work in the Edge runtime, and runs on every matched request, adding latency. It also cannot fully replace route-level checks. Keep it fast and stateless. Overusing middleware can slow all requests.",
+      "tags": [
+        "middleware",
+        "limitations"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-014",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data from middleware to a route?",
+      "answer": "Set a header on the request or response using NextResponse.next with modified request headers. The route can read it via headers(). You can also use cookies. This avoids re-computing values in the route. Do not pass sensitive data in headers you forward to the client.",
+      "code": "const res = NextResponse.next();\nres.headers.set('x-user-id', userId);",
+      "tags": [
+        "middleware",
+        "headers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-015",
+      "difficulty": "Intermediate",
+      "question": "How do you implement internationalization in middleware?",
+      "answer": "Detect the locale from the pathname, cookie, or Accept-Language header, then rewrite to a locale-prefixed path or redirect. Set a cookie to remember the choice. This keeps locale routing centralized. Many apps pair this with the [lang] dynamic segment.",
+      "tags": [
+        "i18n",
+        "middleware"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/internationalization"
+      ]
+    },
+    {
+      "id": "middleware-016",
+      "difficulty": "Intermediate",
+      "question": "How do you run middleware only for specific methods?",
+      "answer": "Middleware runs for all methods on matched paths. Check request.method inside and return early for methods you do not handle. There is no method field in the matcher config. This keeps the logic explicit.",
+      "code": "if (request.method !== 'POST') return NextResponse.next();",
+      "tags": [
+        "middleware",
+        "http"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-017",
+      "difficulty": "Intermediate",
+      "question": "How does middleware interact with caching?",
+      "answer": "Middleware runs before the cache is consulted, so it executes on every matched request even for static routes. It can rewrite to a cached route or bypass it. Keep middleware cheap so it does not negate caching benefits. It cannot cache responses itself.",
+      "tags": [
+        "middleware",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-018",
+      "difficulty": "Intermediate",
+      "question": "How do you exclude static assets from middleware?",
+      "answer": "Use a matcher that lists the paths you want, or a negative lookahead regex to exclude _next, favicon, and static files. The matcher is evaluated statically at build time. Excluding assets avoids needless middleware execution. This is a common performance fix.",
+      "code": "export const config = {\n  matcher: ['/((?!_next|favicon.ico).*)'],\n};",
+      "tags": [
+        "middleware",
+        "matcher"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-019",
+      "difficulty": "Intermediate",
+      "question": "How do you log requests in middleware?",
+      "answer": "Read request.nextUrl and request headers, then log or send to your observability service. Keep logging non-blocking so it does not slow requests. Be careful not to log secrets or personal data. Middleware is a convenient single choke point for request logging.",
+      "tags": [
+        "middleware",
+        "logging"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-020",
+      "difficulty": "Intermediate",
+      "question": "How do you do A/B testing with middleware?",
+      "answer": "Assign a variant using a cookie or a random value, then rewrite to the appropriate route or set a header the page reads. Persist the variant in a cookie so it stays consistent. Track results in your analytics. Middleware makes this transparent to the page.",
+      "tags": [
+        "middleware",
+        "ab-testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-021",
+      "difficulty": "Advanced",
+      "question": "How does middleware handle a rewrite versus a redirect at scale?",
+      "answer": "A rewrite serves content under the same URL without a browser round trip, so it is faster and preserves the address. A redirect requires the client to make a second request. Use rewrites for internal routing and redirects for canonicalization. Choose based on whether the URL should change.",
+      "tags": [
+        "middleware",
+        "rewrites"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-022",
+      "difficulty": "Advanced",
+      "question": "How do you verify a JWT in middleware safely?",
+      "answer": "Use a library that supports the Edge runtime to verify the signature with the public key or secret. Check expiration and issuer claims. On failure, redirect to login and clear the cookie. Never decode without verifying, since the payload is untrusted. Re-verify in server code for sensitive actions.",
+      "tags": [
+        "jwt",
+        "auth"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "middleware-023",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of middleware?",
+      "answer": "Middleware runs on every matched request before routing, adding latency proportional to its work. Avoid network calls and heavy crypto unless necessary. Use the matcher to limit scope. Because it runs at the edge, keep it small and fast.",
+      "tags": [
+        "performance",
+        "middleware"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-024",
+      "difficulty": "Advanced",
+      "question": "How do you share logic between middleware and route handlers?",
+      "answer": "Extract shared functions into Edge-compatible modules that both can import. Keep them free of Node-only APIs so middleware can use them. This avoids duplication of auth or validation logic. Test the shared module independently.",
+      "tags": [
+        "middleware",
+        "code-sharing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/middleware"
+      ]
+    },
+    {
+      "id": "middleware-025",
+      "difficulty": "Advanced",
+      "question": "When should you avoid middleware for authorization?",
+      "answer": "Middleware is a good first gate but should not be the only authorization layer, because it can be bypassed by direct server calls and lacks fine-grained context. Always enforce authorization in the data access layer, Server Actions, or Route Handlers. Treat middleware as a convenience, not a security boundary by itself.",
+      "tags": [
+        "auth",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    }
+  ]
+}

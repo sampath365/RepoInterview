@@ -1,6 +1,6 @@
-# Interview Questions - 11 Books, 5,500 Questions
+# Interview Questions - 13 Books, 6,500 Questions
 
-A collection of **11 interview-question books**, each with **500 questions and
+A collection of **13 interview-question books**, each with **500 questions and
 answers** across 20 topic areas, delivered as navigable PDFs.
 
 ## Books
@@ -18,6 +18,8 @@ answers** across 20 topic areas, delivered as navigable PDFs.
 | `angular` | Angular | 500 | 103 |
 | `react` | React | 500 | 102 |
 | `designpatterns` | Design Patterns | 500 | 98 |
+| `fastify` | Fastify | 500 | 97 |
+| `nextjs` | Next.js | 500 | 94 |
 
 Each PDF has a cover page, a clickable table of contents, PDF bookmarks per
 category, and 500 numbered questions with a difficulty label, tags, reference
