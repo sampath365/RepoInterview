@@ -1,0 +1,220 @@
+{
+  "category": "Testing Async Code",
+  "slug": "async",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "async-001",
+      "difficulty": "Beginner",
+      "question": "How do you write an async test in xUnit?",
+      "answer": "Declare the test method as async and return Task or ValueTask; xUnit awaits the returned task and reports the test as failed if it faults. Do not use async void, because the runner cannot observe completion and the test may pass before the work finishes. This works for both [Fact] and [Theory] methods.",
+      "code": "[Fact]\npublic async Task Loads_data_async()\n{\n    var result = await _service.LoadAsync();\n    Assert.NotNull(result);\n}",
+      "tags": ["async", "task"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-002",
+      "difficulty": "Beginner",
+      "question": "Why is async void a problem in tests?",
+      "answer": "An async void method returns to its caller as soon as it hits the first await, so the test framework considers the test complete before the asynchronous work finishes. Any exception thrown afterwards is raised on a captured synchronization context and may crash the process instead of failing the test. Always return Task or ValueTask so the runner can await the result.",
+      "tags": ["async-void", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-003",
+      "difficulty": "Beginner",
+      "question": "Can you use await inside an xUnit test method?",
+      "answer": "Yes. xUnit's runner detects the returned Task and awaits it, so you can await directly in the test body. This makes asynchronous tests read like ordinary synchronous tests. Avoid blocking with .Result or .Wait() because that can deadlock and hides the asynchronous nature of the call.",
+      "tags": ["await", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-004",
+      "difficulty": "Beginner",
+      "question": "How do you assert that an async method throws an exception?",
+      "answer": "Use Assert.ThrowsAsync<TException> with an async lambda, which awaits the delegate and verifies the faulted task. Using the synchronous Assert.Throws on an async method is wrong because it returns before the exception is observed. ThrowsAsync also returns the exception so you can assert on its message or data.",
+      "code": "await Assert.ThrowsAsync<InvalidOperationException>(\n    () => _service.SaveAsync(null!));",
+      "tags": ["throwsasync", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "async-005",
+      "difficulty": "Beginner",
+      "question": "How do you test a method that returns a Task with no result?",
+      "answer": "Await the task and then assert on any observable side effect or state change. Because there is no return value, verify through the object's state, an injected dependency, or a subsequent query. The test method itself returns Task so the runner can await it.",
+      "code": "[Fact]\npublic async Task Save_persists_entity()\n{\n    await _repo.SaveAsync(entity);\n    Assert.True(await _repo.ExistsAsync(entity.Id));\n}",
+      "tags": ["task", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Task and ValueTask in tests?",
+      "answer": "Task is a reference type that allocates and can be awaited multiple times, while ValueTask is a struct that avoids allocation in hot paths but should be awaited only once. In xUnit v3 many framework methods, such as IAsyncLifetime, return ValueTask, so test code increasingly uses it. For ordinary test methods either return type works; choose Task unless you are matching an API that returns ValueTask.",
+      "tags": ["task", "valuetask"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"]
+    },
+    {
+      "id": "async-007",
+      "difficulty": "Beginner",
+      "question": "How do you test code that uses CancellationToken?",
+      "answer": "Pass a CancellationTokenSource.Token into the method under test and assert the expected behaviour, such as an OperationCanceledException when the token is already cancelled. Create the source inside the test and dispose it afterwards. Never rely on real timeouts in unit tests; cancel the token explicitly to make the test deterministic.",
+      "code": "using var cts = new CancellationTokenSource();\ncts.Cancel();\nawait Assert.ThrowsAsync<OperationCanceledException>(\n    () => _svc.RunAsync(cts.Token));",
+      "tags": ["cancellation", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken"]
+    },
+    {
+      "id": "async-008",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid Thread.Sleep in async tests?",
+      "answer": "Thread.Sleep blocks the thread and introduces a fixed delay that is either too short and flaky or too long and slow. Use await Task.Delay with a small, purposeful delay only when you genuinely need to yield, and prefer synchronisation primitives such as TaskCompletionSource to control timing precisely. Deterministic coordination is always better than sleeping.",
+      "tags": ["sleep", "flakiness"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-009",
+      "difficulty": "Beginner",
+      "question": "How do you test that a Task completes within a reasonable time?",
+      "answer": "Use a timeout so the test fails instead of hanging forever: await Task.WhenAny on the task and Task.Delay, or rely on xUnit's per-test timeout. A hanging test can block a whole CI job, so guarding long-running operations is good practice. v3 also supports the Timeout property on facts and theories.",
+      "code": "var work = _service.RunAsync();\nvar done = await Task.WhenAny(work, Task.Delay(5000));\nAssert.Same(work, done);",
+      "tags": ["timeout", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "async-010",
+      "difficulty": "Beginner",
+      "question": "How do you use TaskCompletionSource in a test?",
+      "answer": "TaskCompletionSource lets the test control exactly when an awaited task completes, which is ideal for testing event-driven or callback code deterministically. The test starts the operation, awaits the source's task, and the callback under test signals completion. Always set a timeout when awaiting so a missing signal fails the test instead of hanging it.",
+      "code": "var tcs = new TaskCompletionSource<bool>();\n_subject.Completed += () => tcs.TrySetResult(true);\n_subject.Start();\nAssert.True(await tcs.Task.WaitAsync(TimeSpan.FromSeconds(5)));",
+      "tags": ["taskcompletionsource", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"]
+    },
+    {
+      "id": "async-011",
+      "difficulty": "Intermediate",
+      "question": "What are the common causes of deadlocks in async tests?",
+      "answer": "Calling .Result or .Wait() on a task can deadlock when the continuation needs the same thread that is blocked, especially in code with a captured SynchronizationContext. Mixing blocking and async APIs, or awaiting inside a lock, also causes deadlocks. Always await all the way and never block on asynchronous code in tests.",
+      "tags": ["deadlock", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test parallel asynchronous operations?",
+      "answer": "Start the operations with Task.WhenAll and await the combined task, then assert on the results of each. This exercises real concurrency and can reveal races that sequential awaits would hide. Make assertions about the final state rather than the interleaving, which is not deterministic.",
+      "code": "var tasks = Enumerable.Range(0, 10)\n    .Select(i => _svc.ProcessAsync(i));\nvar results = await Task.WhenAll(tasks);\nAssert.All(results, r => Assert.True(r.Success));",
+      "tags": ["concurrency", "whenall"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-013",
+      "difficulty": "Intermediate",
+      "question": "How do you make an asynchronous test deterministic?",
+      "answer": "Replace real delays and schedulers with controllable abstractions such as TimeProvider or TaskCompletionSource so the test decides when work proceeds. Avoid depending on wall-clock time or thread scheduling. Injecting these abstractions is the same dependency-inversion approach you use for any other external dependency.",
+      "tags": ["determinism", "timeprovider"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test asynchronous initialization of a fixture?",
+      "answer": "Implement IAsyncLifetime on the fixture and perform the awaited startup in InitializeAsync, storing the resulting resources in properties. xUnit awaits InitializeAsync before running the first test in the scope. Cleanup belongs in DisposeAsync.",
+      "code": "public class ServerFixture : IAsyncLifetime\n{\n    public HttpClient Client { get; private set; } = null!;\n    public async ValueTask InitializeAsync()\n        => Client = await StartServerAsync();\n    public ValueTask DisposeAsync() => Client.DisposeAsync();\n}",
+      "tags": ["iasynclifetime", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "async-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle unobserved task exceptions in tests?",
+      "answer": "Always await or otherwise observe every task you create, because an unobserved faulted task raises TaskScheduler.UnobservedTaskException only at garbage collection, which may be after the test finished. Awaiting the task surfaces the exception immediately and fails the right test. Avoid fire-and-forget tasks unless you deliberately track them.",
+      "tags": ["exceptions", "tasks"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test IAsyncEnumerable sequences?",
+      "answer": "Consume the sequence with await foreach in the test and collect the items into a list, then assert on the collected result. This verifies the full enumeration including any awaits inside the producer. Because the test method is async, the runner awaits it and reports failures correctly.",
+      "code": "var items = new List<int>();\nawait foreach (var item in _svc.StreamAsync())\n    items.Add(item);\nAssert.Equal(new[] { 1, 2, 3 }, items);",
+      "tags": ["iasyncenumerable", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-017",
+      "difficulty": "Intermediate",
+      "question": "How do you assert the order of asynchronous callbacks?",
+      "answer": "Record each callback into a shared list in the order it occurs and assert on the resulting sequence after awaiting completion. The list must be protected or the callbacks must be sequential, because concurrent writes are not thread-safe. Asserting the observed order is valid only when the contract actually specifies ordering.",
+      "code": "var order = new List<string>();\nawait _pipeline.RunAsync(x => order.Add(x));\nAssert.Equal(new[] { \"validate\", \"save\" }, order);",
+      "tags": ["ordering", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test a method that returns ValueTask?",
+      "answer": "Await the returned ValueTask exactly once, then assert on the result or side effect. Because a ValueTask must not be awaited twice, do not store it and await it in multiple places. If you need to await it more than once, convert it with AsTask first.",
+      "code": "[Fact]\npublic async Task Returns_value()\n{\n    var value = await _cache.GetAsync(\"key\");\n    Assert.Equal(42, value);\n}",
+      "tags": ["valuetask", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"]
+    },
+    {
+      "id": "async-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use ConfigureAwait in test code?",
+      "answer": "In test code there is generally no need for ConfigureAwait(false) because the runner does not install a synchronisation context that could deadlock, and library guidance does not apply to test projects. Using it everywhere adds noise without benefit. Reserve it for shared library code that may be consumed by UI applications.",
+      "tags": ["configureawait", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that uses Task.Delay?",
+      "answer": "Refactor the delay behind an abstraction such as TimeProvider.Delay so the test can advance time instantly instead of waiting. Injecting TimeProvider is the modern .NET 8+ approach and avoids real delays entirely. If you cannot refactor, use a very short delay plus a polling assertion with a timeout.",
+      "code": "// production: await _time.Delay(TimeSpan.FromMinutes(5), ct);\n// test:\nvar fake = new FakeTimeProvider();\nvar task = _svc.RunAsync();\nfake.Advance(TimeSpan.FromMinutes(5));\nawait task;",
+      "tags": ["timeprovider", "delay"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-021",
+      "difficulty": "Advanced",
+      "question": "How do you test for race conditions reliably?",
+      "answer": "Use synchronisation primitives such as Barrier, CountdownEvent, or TaskCompletionSource to force the interleaving you want, rather than relying on timing. Deterministically orchestrating the threads makes a race reproducible instead of probabilistic. Even then, run the test repeatedly or under a stress harness, because a passing test never proves the absence of a race.",
+      "tags": ["race-conditions", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a real clock versus TimeProvider in async tests?",
+      "answer": "A real clock exercises the actual timing path but makes tests slow and flaky because it depends on machine load. TimeProvider gives deterministic, instant control over delays and timestamps, making tests fast and reliable, but it requires the production code to accept the abstraction. The recommended approach is to inject TimeProvider in production and use FakeTimeProvider in tests.",
+      "tags": ["timeprovider", "determinism"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "async-023",
+      "difficulty": "Advanced",
+      "question": "How do you test cancellation of a long-running async operation?",
+      "answer": "Start the operation with a token from a CancellationTokenSource, cancel the source after confirming the operation has begun, and assert that it throws OperationCanceledException. To know the operation has begun, coordinate with a TaskCompletionSource signalled by the code under test. Always cancel rather than relying on a timeout to trigger the cancellation path.",
+      "code": "var started = new TaskCompletionSource();\nvar task = _svc.RunAsync(started.SetResult, cts.Token);\nawait started.Task;\ncts.Cancel();\nawait Assert.ThrowsAsync<OperationCanceledException>(() => task);",
+      "tags": ["cancellation", "advanced"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken"]
+    },
+    {
+      "id": "async-024",
+      "difficulty": "Advanced",
+      "question": "How does xUnit's parallelization interact with asynchronous tests?",
+      "answer": "Parallelization happens across test collections, not across awaits, so an async test simply yields its thread while it is waiting. Different test classes run in parallel on the thread pool, which is why tests must not share unsynchronised state. Because there is no synchronisation context, continuations resume on pool threads and deadlocks from blocking calls are less likely but still possible.",
+      "tags": ["parallelization", "async"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "async-025",
+      "difficulty": "Advanced",
+      "question": "How do you diagnose an intermittent async test failure?",
+      "answer": "First reproduce it by running the test in a loop, then look for the usual suspects: unsynchronised shared state, dependence on timing, unobserved tasks, and missing awaits. Add logging with ITestOutputHelper around the coordination points and tighten the determinism by replacing delays with explicit signals. Intermittent failures are almost always a real defect in either the test or the code, so treat them as bugs rather than noise.",
+      "tags": ["flakiness", "diagnostics"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

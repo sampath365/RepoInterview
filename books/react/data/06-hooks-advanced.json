@@ -1,0 +1,343 @@
+{
+  "category": "Hooks: Advanced",
+  "slug": "hooks-advanced",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "hooks-advanced-001",
+      "difficulty": "Beginner",
+      "question": "What is useMemo used for?",
+      "answer": "useMemo caches the result of a calculation between renders and recomputes it only when its dependencies change. It is useful when the calculation is expensive or when you need a stable object or array reference. It does not make rendering faster by itself, it trades memory for avoided work. Use it only after identifying a real cost.",
+      "tags": [
+        "useMemo",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "hooks-advanced-002",
+      "difficulty": "Beginner",
+      "question": "What is useCallback used for?",
+      "answer": "useCallback returns a memoized version of a function that only changes when its dependencies change. It is mainly used to keep a stable reference for props passed to memoized children or for effect dependencies. Like useMemo it adds overhead, so it is not always worth it. Use it when a changing function reference causes real extra renders or re-subscriptions.",
+      "code": "const onAdd = useCallback(() => setItems((i) => [...i, x]), [x]);",
+      "tags": [
+        "useCallback",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useCallback"
+      ]
+    },
+    {
+      "id": "hooks-advanced-003",
+      "difficulty": "Beginner",
+      "question": "What is useRef used for?",
+      "answer": "useRef returns a mutable object with a current property that persists across renders without causing re-renders when changed. It is commonly used to reference a DOM node, store a timer id, or keep the previous value of a prop. Unlike state, changing current does not update the UI. It is the right tool for values that are not part of rendering output.",
+      "code": "const inputRef = useRef(null);\nreturn <input ref={inputRef} />;",
+      "tags": [
+        "useRef",
+        "dom"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "hooks-advanced-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between useMemo and useCallback?",
+      "answer": "useMemo memoizes the result of calling a function, while useCallback memoizes the function itself. useCallback(fn, deps) is roughly equivalent to useMemo(() => fn, deps). Use useMemo for computed values and useCallback for function references passed as props. Both only recompute when their dependencies change.",
+      "tags": [
+        "useMemo",
+        "useCallback"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useCallback"
+      ]
+    },
+    {
+      "id": "hooks-advanced-005",
+      "difficulty": "Beginner",
+      "question": "What is the useReducer hook?",
+      "answer": "useReducer manages state through a reducer function that takes the current state and an action and returns the next state. You dispatch actions instead of calling setters directly. It is a good fit when updates are complex or when the next state depends on several pieces of data. It also makes the update logic testable in isolation.",
+      "code": "const [state, dispatch] = useReducer(reducer, { count: 0 });\ndispatch({ type: 'increment' });",
+      "tags": [
+        "useReducer",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useReducer"
+      ]
+    },
+    {
+      "id": "hooks-advanced-006",
+      "difficulty": "Beginner",
+      "question": "What is a custom hook and why create one?",
+      "answer": "A custom hook is a function starting with use that calls other hooks to encapsulate reusable stateful logic. Creating one removes duplication, gives the logic a clear name and keeps components focused on presentation. Custom hooks share logic, not state, so each caller has independent state. They are the modern alternative to higher-order components and render props.",
+      "tags": [
+        "custom-hooks",
+        "reuse"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "hooks-advanced-007",
+      "difficulty": "Beginner",
+      "question": "How do you access a DOM node in React?",
+      "answer": "You create a ref with useRef, attach it to an element with the ref prop, and read ref.current to get the node. This is used for focusing, measuring or integrating with libraries that need a real element. Avoid manipulating the DOM directly unless you must, because it bypasses React. Refs are null until the element mounts.",
+      "code": "const ref = useRef(null);\nuseEffect(() => ref.current.focus(), []);\nreturn <input ref={ref} />;",
+      "tags": [
+        "useRef",
+        "dom"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "hooks-advanced-008",
+      "difficulty": "Beginner",
+      "question": "When does React re-run a useMemo calculation?",
+      "answer": "useMemo recomputes only when one of its dependencies changes, compared with Object.is. Between renders with the same dependencies it returns the cached value. This means the dependency array must include every value the calculation reads. An incorrect array can return a stale result.",
+      "tags": [
+        "useMemo",
+        "dependencies"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "hooks-advanced-009",
+      "difficulty": "Beginner",
+      "question": "What is useImperativeHandle used for?",
+      "answer": "useImperativeHandle customizes the instance value exposed to a parent when it uses a ref on your component. It is usually paired with forwardRef to expose only a few imperative methods instead of the raw DOM node. This keeps the component API controlled and minimal. It is useful for focus, scroll and animation handles.",
+      "tags": [
+        "useRef",
+        "forwardRef"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useImperativeHandle"
+      ]
+    },
+    {
+      "id": "hooks-advanced-010",
+      "difficulty": "Beginner",
+      "question": "What is useId used for?",
+      "answer": "useId generates a stable unique id that is consistent between server and client rendering. It is used to link labels to inputs or to connect aria attributes without hardcoding ids. You should not use it to generate keys for list items. Its main purpose is accessible markup that renders correctly on both server and client.",
+      "code": "const id = useId();\nreturn <><label htmlFor={id}>Name</label><input id={id} /></>;",
+      "tags": [
+        "useId",
+        "accessibility"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useId"
+      ]
+    },
+    {
+      "id": "hooks-advanced-011",
+      "difficulty": "Intermediate",
+      "question": "When is useMemo actually worth using?",
+      "answer": "useMemo helps when a calculation is genuinely expensive or when a stable reference prevents re-renders of memoized children. For cheap calculations the bookkeeping costs more than it saves. Profile first, then memoize the hot path. Also consider whether the calculation can be moved out of the component entirely.",
+      "tags": [
+        "useMemo",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "hooks-advanced-012",
+      "difficulty": "Intermediate",
+      "question": "Why does useCallback not always prevent re-renders?",
+      "answer": "useCallback only stabilizes the function reference, but if other props or state still change, the child re-renders anyway. It helps only when combined with React.memo on the child and when the function is a dependency that would otherwise change. Wrapping every handler without a memoized child adds overhead for little gain. Apply it where profiling shows a benefit.",
+      "tags": [
+        "useCallback",
+        "memo"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useCallback"
+      ]
+    },
+    {
+      "id": "hooks-advanced-013",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom hook that fetches data?",
+      "answer": "The hook manages loading, error and data state, runs the request in an effect, and cancels it on cleanup. It returns the three pieces of state plus any refetch function the caller needs. Keeping the logic in one hook means every component gets consistent behavior. For production, a dedicated data library adds caching and retries.",
+      "code": "function useFetch(url) {\n  const [data, setData] = useState(null);\n  useEffect(() => {\n    const c = new AbortController();\n    fetch(url, { signal: c.signal }).then((r) => r.json()).then(setData);\n    return () => c.abort();\n  }, [url]);\n  return data;\n}",
+      "tags": [
+        "custom-hooks",
+        "data-fetching"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "hooks-advanced-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between useReducer and useState?",
+      "answer": "useState is simplest for independent values and straightforward updates. useReducer centralizes update logic in a reducer, which suits complex state with many actions or transitions that depend on previous state. Reducers are pure functions and easy to unit test. Choose useState by default and reach for useReducer when the update logic becomes tangled.",
+      "tags": [
+        "useReducer",
+        "useState"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useReducer"
+      ]
+    },
+    {
+      "id": "hooks-advanced-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use useRef to track the previous value of a prop?",
+      "answer": "You keep a ref and update it inside an effect that runs after each render, storing the current prop for next time. On the next render the ref still holds the previous value, so you can compare. Mutating the ref does not cause a re-render, which is exactly what you want here. This is a common pattern for animations and change detection.",
+      "code": "const prev = useRef(value);\nuseEffect(() => { prev.current = value; }, [value]);",
+      "tags": [
+        "useRef",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "hooks-advanced-016",
+      "difficulty": "Intermediate",
+      "question": "How do you memoize a computed list that is passed to a child?",
+      "answer": "Wrap the computation in useMemo with the inputs it depends on, so the array reference stays stable between renders when the inputs have not changed. Combined with React.memo on the child, this avoids unnecessary re-renders. Make sure the dependencies are complete or the memo returns stale data. Measure to confirm it helps before keeping it.",
+      "tags": [
+        "useMemo",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "hooks-advanced-017",
+      "difficulty": "Intermediate",
+      "question": "What are the pitfalls of overusing memoization hooks?",
+      "answer": "Every useMemo and useCallback adds a dependency array to maintain and a comparison on each render, which can cost more than the work it avoids. Stale or incomplete dependencies introduce bugs that are hard to trace. Overusing them also clutters code and hides the real performance story. Optimize guided by profiling, not by default.",
+      "tags": [
+        "memoization",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "hooks-advanced-018",
+      "difficulty": "Intermediate",
+      "question": "How do you expose an imperative API from a component?",
+      "answer": "You combine forwardRef with useImperativeHandle to define exactly which methods the parent can call through the ref. This avoids leaking the whole DOM node and keeps the API intentional. Typical methods are focus, scrollIntoView and play. Document the handle so callers know it is imperative and outside the normal data flow.",
+      "code": "useImperativeHandle(ref, () => ({ focus: () => inputRef.current.focus() }));",
+      "tags": [
+        "useImperativeHandle",
+        "refs"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useImperativeHandle"
+      ]
+    },
+    {
+      "id": "hooks-advanced-019",
+      "difficulty": "Intermediate",
+      "question": "What does useDeferredValue do?",
+      "answer": "useDeferredValue returns a copy of a value that lags behind during urgent updates, letting React render the new value in the background. This keeps expensive parts of the UI responsive while the deferred value catches up. It is useful for filtering large lists as the user types. It differs from debouncing because React schedules the work rather than delaying by a fixed time.",
+      "tags": [
+        "useDeferredValue",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useDeferredValue"
+      ]
+    },
+    {
+      "id": "hooks-advanced-020",
+      "difficulty": "Intermediate",
+      "question": "What does useTransition do?",
+      "answer": "useTransition marks a state update as non-urgent so React can keep the interface responsive while the update renders in the background. It returns a startTransition function and an isPending flag. You use it to wrap updates that cause expensive re-renders, such as switching tabs or filtering. Urgent updates like typing stay fast because they are not blocked.",
+      "code": "const [isPending, startTransition] = useTransition();\nstartTransition(() => setQuery(next));",
+      "tags": [
+        "useTransition",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useTransition"
+      ]
+    },
+    {
+      "id": "hooks-advanced-021",
+      "difficulty": "Advanced",
+      "question": "How does useMemo relate to referential equality in effects?",
+      "answer": "Effects compare dependencies by reference, so passing a new object or array each render makes the effect re-run every time. Memoizing the value with useMemo keeps the reference stable and prevents those extra runs. This is a common reason effects fire more often than expected. Alternatively, restructure the effect to depend on primitives instead of objects.",
+      "tags": [
+        "useMemo",
+        "useEffect"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo",
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-advanced-022",
+      "difficulty": "Advanced",
+      "question": "When would you choose useReducer with context over useState?",
+      "answer": "Combining useReducer with context centralizes related state and update logic in one place, which suits app-wide concerns like a shopping cart or a complex form. Components dispatch actions instead of receiving many setters, which keeps the API small. The trade-off is that any context change re-renders all consumers unless you split contexts or memoize values. Use it when the state genuinely has many coordinated transitions.",
+      "tags": [
+        "useReducer",
+        "context"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useReducer",
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "hooks-advanced-023",
+      "difficulty": "Advanced",
+      "question": "How does useSyncExternalStore differ from subscribing in an effect?",
+      "answer": "useSyncExternalStore subscribes to an external store and reads a snapshot in a way that is safe under concurrent rendering and server rendering. Subscribing in an effect can tear, because different components may read different versions of the store during a single render. The hook requires a subscribe function and a getSnapshot function. It is the recommended way to integrate non-React state sources.",
+      "tags": [
+        "useSyncExternalStore",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useSyncExternalStore"
+      ]
+    },
+    {
+      "id": "hooks-advanced-024",
+      "difficulty": "Advanced",
+      "question": "What is the useEffectEvent pattern and why does it exist?",
+      "answer": "useEffectEvent lets an effect read the latest props and state without listing them as dependencies, so the effect does not re-run for values it does not truly depend on. It separates reactive values the effect depends on from values it merely reads when the event fires. This avoids re-subscribing on every change. It is an experimental API for cases where dependencies would otherwise be misleading.",
+      "tags": [
+        "useEffect",
+        "experimental"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-advanced-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure whether memoization actually improved performance?",
+      "answer": "Use the React Profiler in the browser dev tools or the Profiler component to record render durations and counts before and after a change. Look for components that render often or take long, and confirm the memoization reduced those numbers. Measure on realistic data, because small lists hide the cost. If the numbers do not improve, remove the memoization to keep the code simple.",
+      "tags": [
+        "performance",
+        "profiling"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Profiler"
+      ]
+    }
+  ]
+}

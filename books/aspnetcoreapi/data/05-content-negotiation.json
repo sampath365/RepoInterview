@@ -1,0 +1,337 @@
+{
+  "category": "Content Negotiation & Formatters",
+  "slug": "content-negotiation",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "content-negotiation-001",
+      "difficulty": "Beginner",
+      "question": "What is content negotiation?",
+      "answer": "Content negotiation is the process of choosing a response representation that best matches what the client can accept, based on the Accept header and the available output formatters. If no formatter can satisfy the request, the server returns 406 Not Acceptable. It lets one endpoint serve JSON, XML, or other formats without changing the URL.",
+      "tags": [
+        "content-negotiation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-002",
+      "difficulty": "Beginner",
+      "question": "What does the Accept header do?",
+      "answer": "The Accept header lists the media types the client can handle, optionally with quality values such as application/json;q=1.0, text/plain;q=0.5. ASP.NET Core uses it to select an output formatter. A wildcard like */* accepts any supported type.",
+      "tags": [
+        "content-negotiation",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-003",
+      "difficulty": "Beginner",
+      "question": "What is the default output format in ASP.NET Core Web API?",
+      "answer": "JSON via System.Text.Json is the only output formatter registered by default in recent versions, so responses are serialized as application/json. Earlier templates included XML too. You add other formats explicitly in ConfigureServices.",
+      "tags": [
+        "json",
+        "formatters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-004",
+      "difficulty": "Beginner",
+      "question": "What is an output formatter?",
+      "answer": "An output formatter, implementing IOutputFormatter, writes an object to the response body for a supported media type. The framework ships SystemTextJsonOutputFormatter and can include an XML formatter. Custom formatters let you emit formats such as CSV.",
+      "tags": [
+        "formatters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-005",
+      "difficulty": "Beginner",
+      "question": "What is an input formatter?",
+      "answer": "An input formatter, implementing IInputFormatter, reads the request body and converts it into a bound model for a supported media type. It is used when binding parameters from the body. ASP.NET Core includes SystemTextJsonInputFormatter and an optional XML input formatter.",
+      "tags": [
+        "formatters",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-006",
+      "difficulty": "Beginner",
+      "question": "How do you add XML support to a Web API?",
+      "answer": "Call AddControllers().AddXmlSerializerFormatters() or AddXmlDataContractSerializerFormatters() when registering controllers. This registers input and output formatters for application/xml and text/xml. Clients then request XML with the Accept header.",
+      "tags": [
+        "xml",
+        "formatters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ],
+      "code": "builder.Services.AddControllers()\n    .AddXmlSerializerFormatters();"
+    },
+    {
+      "id": "content-negotiation-007",
+      "difficulty": "Beginner",
+      "question": "When does a Web API return 406 Not Acceptable?",
+      "answer": "It returns 406 when the Accept header requests only media types that no configured output formatter can produce. This tells the client that the server understands the request but cannot represent the response in an acceptable format. Adding a formatter or relaxing the Accept header resolves it.",
+      "tags": [
+        "status-codes",
+        "content-negotiation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-008",
+      "difficulty": "Beginner",
+      "question": "What is the Content-Type header in a response?",
+      "answer": "Content-Type declares the media type of the response body, such as application/json; charset=utf-8. The selected output formatter sets it. Clients use it to decide how to parse the payload.",
+      "tags": [
+        "http",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-009",
+      "difficulty": "Beginner",
+      "question": "How do you force JSON output regardless of the Accept header?",
+      "answer": "Return a JsonResult or use Results.Json in minimal APIs, which bypasses content negotiation and always writes JSON. Alternatively remove other output formatters so only the JSON formatter remains. Forcing a format is useful when the contract must be stable.",
+      "tags": [
+        "json",
+        "formatters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ],
+      "code": "return new JsonResult(product);"
+    },
+    {
+      "id": "content-negotiation-010",
+      "difficulty": "Beginner",
+      "question": "What is the default serializer in modern ASP.NET Core?",
+      "answer": "System.Text.Json is the default serializer for both controllers and minimal APIs. It is fast, allocation-friendly, and supports source generation for trimming and AOT. Newtonsoft.Json can be added back for legacy features if needed.",
+      "tags": [
+        "json",
+        "system-text-json"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-011",
+      "difficulty": "Intermediate",
+      "question": "How do you customize System.Text.Json serialization options?",
+      "answer": "For controllers, configure JsonOptions through AddControllers().AddJsonOptions, and for minimal APIs configure Microsoft.AspNetCore.Http.Json.JsonOptions. Options control naming policy, null handling, converters, and reference handling. Sharing settings between the two paths requires configuring both.",
+      "tags": [
+        "json",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ],
+      "code": "builder.Services.ConfigureHttpJsonOptions(o =>\n    o.SerializerOptions.PropertyNamingPolicy = null);"
+    },
+    {
+      "id": "content-negotiation-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between JsonOptions and HttpJsonOptions?",
+      "answer": "JsonOptions configures MVC and controller serialization, while HttpJsonOptions configures minimal API and Results.Json serialization. They are separate option types, so a setting applied to one does not affect the other. Configure both when you want consistent behavior across controllers and minimal APIs.",
+      "tags": [
+        "json",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-013",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom output formatter?",
+      "answer": "Derive from TextOutputFormatter or OutputFormatter, declare the supported media types and encodings, and override WriteResponseBodyAsync to serialize the object. Register it in MvcOptions.OutputFormatters. Custom formatters are appropriate for formats such as CSV or HAL that the built-ins do not cover.",
+      "tags": [
+        "formatters",
+        "custom"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/custom-formatters"
+      ],
+      "code": "public sealed class CsvFormatter : TextOutputFormatter\n{\n    public CsvFormatter() => SupportedMediaTypes.Add(\"text/csv\");\n}"
+    },
+    {
+      "id": "content-negotiation-014",
+      "difficulty": "Intermediate",
+      "question": "How do you support HAL or custom hypermedia media types?",
+      "answer": "Add a vendor media type such as application/vnd.myapi.hal+json and register a formatter that emits the hypermedia structure, then negotiate it via the Accept header. You can subclass the JSON formatter and enrich the output with links. This keeps the standard JSON representation available while offering a richer one.",
+      "tags": [
+        "formatters",
+        "hypermedia"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/custom-formatters"
+      ]
+    },
+    {
+      "id": "content-negotiation-015",
+      "difficulty": "Intermediate",
+      "question": "How does content negotiation interact with ProblemDetails?",
+      "answer": "ProblemDetails is returned as application/problem+json by the framework for errors, regardless of the negotiated success format. This media type is standardized by RFC 9457 so clients can parse errors uniformly. Custom error middleware should set the same content type.",
+      "tags": [
+        "problemdetails",
+        "content-negotiation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "content-negotiation-016",
+      "difficulty": "Intermediate",
+      "question": "What is the role of quality values in the Accept header?",
+      "answer": "Quality values, from 0 to 1, express the client's relative preference among media types, and the server picks the highest-quality supported type. Ties are broken by specificity and then by formatter order. Quality values let clients prefer JSON but fall back to XML.",
+      "tags": [
+        "content-negotiation",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-017",
+      "difficulty": "Intermediate",
+      "question": "How do you add a custom converter to System.Text.Json?",
+      "answer": "Create a JsonConverter<T> and add it to JsonSerializerOptions.Converters, either globally in the options or with the [JsonConverter] attribute on a type. Converters handle types the serializer does not support natively. Source-generated contexts must also register them.",
+      "tags": [
+        "json",
+        "converters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ],
+      "code": "options.Converters.Add(new JsonStringEnumConverter());"
+    },
+    {
+      "id": "content-negotiation-018",
+      "difficulty": "Intermediate",
+      "question": "How does System.Text.Json handle reference loops?",
+      "answer": "By default it throws on reference loops and on duplicate object references. You can set ReferenceHandler to IgnoreCycles or Preserve, but the recommended fix is to return DTOs without cyclic navigation properties. This keeps payloads small and avoids client-side surprises.",
+      "tags": [
+        "json",
+        "serialization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-019",
+      "difficulty": "Intermediate",
+      "question": "How do you customize property naming in JSON responses?",
+      "answer": "Set JsonSerializerOptions.PropertyNamingPolicy to CamelCase, SnakeCaseLower, or a custom policy, or annotate properties with [JsonPropertyName]. ASP.NET Core defaults to camelCase for controllers. Choose one convention and apply it consistently across the API.",
+      "tags": [
+        "json",
+        "serialization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-020",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of System.Text.Json versus Newtonsoft.Json?",
+      "answer": "System.Text.Json is faster and supports trimming and AOT, but has fewer legacy features such as some dynamic and reference-handling behaviors. Newtonsoft.Json is more permissive and feature-rich but slower and reflection-heavy. Use System.Text.Json by default and add Newtonsoft only for specific gaps.",
+      "tags": [
+        "json",
+        "serialization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement content negotiation for a versioned vendor media type?",
+      "answer": "Register a formatter that supports a media type such as application/vnd.contoso.v2+json and let the Accept header select it, or combine it with API versioning's media-type reader. The formatter maps the representation for that version while the URL stays stable. This gives clients explicit control over the contract they receive.",
+      "tags": [
+        "content-negotiation",
+        "versioning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/custom-formatters"
+      ]
+    },
+    {
+      "id": "content-negotiation-022",
+      "difficulty": "Advanced",
+      "question": "How does System.Text.Json source generation help an API?",
+      "answer": "Source generation emits serialization code at build time, which avoids runtime reflection and enables trimming and native AOT. Register the generated JsonSerializerContext in the options. The trade-off is that new types must be added to the context.",
+      "tags": [
+        "json",
+        "aot"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ],
+      "code": "[JsonSerializable(typeof(Product))]\npublic partial class ApiJsonContext : JsonSerializerContext { }"
+    },
+    {
+      "id": "content-negotiation-023",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of formatter selection?",
+      "answer": "Formatter selection is cheap, but serialization cost grows with payload size and object graph complexity, and large buffered payloads increase memory pressure. Stream large responses with IAsyncEnumerable or streaming results to avoid buffering the whole document. Source-generated serializers further reduce per-request overhead.",
+      "tags": [
+        "performance",
+        "formatters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "content-negotiation-024",
+      "difficulty": "Advanced",
+      "question": "How do you stream JSON results incrementally?",
+      "answer": "Return IAsyncEnumerable<T> from an action or handler, which the framework serializes as a JSON array streamed as items are produced. This avoids materializing the whole collection in memory. It works well for large reads and for server-sent data, though clients must consume it as a stream.",
+      "tags": [
+        "streaming",
+        "json"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ],
+      "code": "public IAsyncEnumerable<Product> Get() => _repo.StreamAsync();"
+    },
+    {
+      "id": "content-negotiation-025",
+      "difficulty": "Advanced",
+      "question": "How do you keep serialization consistent between controllers and minimal APIs?",
+      "answer": "Configure both JsonOptions and HttpJsonOptions with the same settings, or centralize a JsonSerializerOptions instance used by both, and prefer source-generated contexts. Consistency avoids subtle differences in naming, null handling, and converters. Automated contract tests can assert identical output for the same type.",
+      "tags": [
+        "json",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    }
+  ]
+}

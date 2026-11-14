@@ -1,0 +1,213 @@
+{
+  "category": "Prototype Pattern",
+  "slug": "prototype",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "prototype-001",
+      "difficulty": "Beginner",
+      "question": "What is the Prototype pattern?",
+      "answer": "Prototype creates new objects by copying an existing instance, called the prototype, instead of invoking a constructor. The client asks the prototype to clone itself and then adjusts the copy as needed. It is useful when construction is expensive or when many similar objects differ only slightly.",
+      "tags": ["prototype", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "prototype-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a shallow copy and a deep copy?",
+      "answer": "A shallow copy duplicates the top-level object but shares references to nested objects, so changes to shared children appear in both copies. A deep copy recursively clones the entire object graph, so the copies are fully independent. The right choice depends on whether the clone must diverge from the original.",
+      "tags": ["prototype", "cloning"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone"]
+    },
+    {
+      "id": "prototype-003",
+      "difficulty": "Beginner",
+      "question": "How does MemberwiseClone work in C#?",
+      "answer": "MemberwiseClone is a protected method on Object that creates a shallow copy of the instance, copying value fields and reference fields directly. It does not run constructors and does not clone referenced objects. You call it from a Clone method and then deep-copy any mutable references that must be independent.",
+      "tags": ["prototype", "cloning"],
+      "code": "public object Clone() => MemberwiseClone();",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone"]
+    },
+    {
+      "id": "prototype-004",
+      "difficulty": "Beginner",
+      "question": "When is the Prototype pattern a good choice?",
+      "answer": "Use it when creating an object is costly, such as loading configuration or running a query, and you need many similar instances. It also helps when the class to instantiate is decided at runtime from a set of preconfigured prototypes. Copying a known-good object is often simpler than rebuilding it.",
+      "tags": ["prototype", "design"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "prototype-005",
+      "difficulty": "Beginner",
+      "question": "How does the with expression in C# relate to Prototype?",
+      "answer": "Records support the with expression, which creates a copy of the record with specified properties changed. This is a language-level, immutable form of cloning that fits the Prototype idea. It works because records have a copy constructor and value semantics for equality.",
+      "tags": ["prototype", "records"],
+      "code": "var a = new Point(1, 2);\nvar b = a with { X = 10 };",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "prototype-006",
+      "difficulty": "Beginner",
+      "question": "Why is ICloneable considered a problematic interface?",
+      "answer": "ICloneable.Clone returns object, so callers do not know whether they get a shallow or deep copy, and the contract is ambiguous. It also forces callers to cast. Modern guidance is to provide a typed Clone method or use records with with expressions instead.",
+      "tags": ["prototype", "icloneable"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.icloneable"]
+    },
+    {
+      "id": "prototype-007",
+      "difficulty": "Beginner",
+      "question": "How do you deep clone an object graph in .NET?",
+      "answer": "You can implement a recursive Clone that deep-copies each mutable reference, or serialize and deserialize the graph as a shortcut. Serialization-based cloning is easy but slower and requires serializable types. Manual cloning is faster and more explicit but more code.",
+      "tags": ["prototype", "cloning"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.json.jsonserializer"]
+    },
+    {
+      "id": "prototype-008",
+      "difficulty": "Beginner",
+      "question": "What is a prototype registry?",
+      "answer": "A prototype registry stores named prototypes and returns clones of them on request. Clients ask for a clone by key instead of constructing or configuring an object. It combines Prototype with a simple lookup, similar to a factory keyed by name.",
+      "tags": ["prototype", "registry"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "prototype-009",
+      "difficulty": "Beginner",
+      "question": "Does MemberwiseClone call constructors?",
+      "answer": "No, MemberwiseClone does not run any constructor; it copies the raw field values of the existing instance. This means field initializers and constructor validation are skipped. As a result, you should ensure the cloned state is valid and any resources needing setup are handled explicitly.",
+      "tags": ["prototype", "constructors"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone"]
+    },
+    {
+      "id": "prototype-010",
+      "difficulty": "Beginner",
+      "question": "How does cloning interact with value types and reference types?",
+      "answer": "A shallow copy duplicates value-type fields by value, so the copies are independent, but reference-type fields are copied as references, so both copies point to the same object. To get independence you must clone the referenced objects too. This is the core reason deep copying is sometimes required.",
+      "tags": ["prototype", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/value-types"]
+    },
+    {
+      "id": "prototype-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a deep clone for a class with a collection of mutable items?",
+      "answer": "Clone each item in the collection and build a new collection for the copy. If items are immutable, you can copy the collection but share the items. For nested graphs, recurse or use serialization to guarantee full independence.",
+      "tags": ["prototype", "cloning"],
+      "code": "public Item Clone() => new Item(Name, Tags.ToList(), Child?.Clone());",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone"]
+    },
+    {
+      "id": "prototype-012",
+      "difficulty": "Intermediate",
+      "question": "How do you clone objects that contain circular references?",
+      "answer": "A naive recursive clone loops forever on cycles, so you must track visited objects in a dictionary keyed by reference. When you encounter an already-cloned object, return the existing clone. Serialization handles cycles automatically when the format supports references.",
+      "tags": ["prototype", "cloning"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/"]
+    },
+    {
+      "id": "prototype-013",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of serialization-based cloning?",
+      "answer": "It is easy to implement and handles complex graphs, but it is slower, requires serializable types, and can fail on non-serializable members. It also copies only serializable state, which may differ from runtime state. Manual cloning is faster and more predictable for hot paths.",
+      "tags": ["prototype", "serialization"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/overview"]
+    },
+    {
+      "id": "prototype-014",
+      "difficulty": "Intermediate",
+      "question": "How does Prototype help when object creation requires configuration lookup?",
+      "answer": "You build and cache a fully configured prototype once, then clone it for each use, avoiding repeated configuration reads. The clone can be tweaked for the specific case. This is common for templated documents, reports, or game entities.",
+      "tags": ["prototype", "performance"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "prototype-015",
+      "difficulty": "Intermediate",
+      "question": "How do records implement cloning under the hood?",
+      "answer": "Records generate a protected copy constructor that copies all fields, and the with expression invokes it then applies the specified property changes. This gives a shallow copy by default. For nested mutable members, you still need to ensure deep independence where required.",
+      "tags": ["prototype", "records"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "prototype-016",
+      "difficulty": "Intermediate",
+      "question": "How do you unit test a Clone implementation?",
+      "answer": "Verify that the clone is equal in value but a different reference, and that mutating the clone does not affect the original. Test nested mutable members to confirm deep versus shallow behavior matches intent. Cover edge cases like null members and empty collections.",
+      "tags": ["prototype", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "prototype-017",
+      "difficulty": "Intermediate",
+      "question": "How does Prototype differ from creating objects with a factory?",
+      "answer": "A factory constructs a new object from scratch using a known type, while Prototype copies an existing configured instance. Prototype is better when configuration is complex and should be reused. Factories are better when each object should be freshly constructed.",
+      "tags": ["prototype", "factory"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "prototype-018",
+      "difficulty": "Intermediate",
+      "question": "What is a copy constructor in C# and how is it used?",
+      "answer": "A copy constructor is a constructor that takes an instance of the same type and copies its state into the new object. You write it explicitly to control what is copied and to perform deep copies of mutable members. Records generate one automatically for their fields.",
+      "tags": ["prototype", "copy-constructor"],
+      "code": "public Item(Item other)\n{\n    Name = other.Name;\n    Tags = new List<string>(other.Tags);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/constructors"]
+    },
+    {
+      "id": "prototype-019",
+      "difficulty": "Intermediate",
+      "question": "How does Prototype interact with immutability?",
+      "answer": "If a prototype is immutable, a shallow copy is effectively safe because no member can change. The with expression then produces modified copies without deep-cloning concerns. Immutability therefore simplifies cloning considerably.",
+      "tags": ["prototype", "immutability"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "prototype-020",
+      "difficulty": "Intermediate",
+      "question": "When should you avoid the Prototype pattern?",
+      "answer": "Avoid it when objects are cheap to construct or when deep cloning is complex and error-prone for little benefit. Cloning also bypasses constructors, which can skip validation and invariants. If construction is simple, a factory or a plain constructor is clearer.",
+      "tags": ["prototype", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "prototype-021",
+      "difficulty": "Advanced",
+      "question": "How would you implement generic deep cloning without reflection per call?",
+      "answer": "Compile expression trees or emit IL once per type into a cached delegate that copies fields and recurses into reference members. This avoids per-call reflection overhead and handles graphs efficiently. Source generators can produce the same cloning code at build time with no runtime reflection.",
+      "tags": ["prototype", "performance"],
+      "code": "private static readonly ConcurrentDictionary<Type, Func<object, object>> _cloners = new();",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/advanced-topics/expression-trees/"]
+    },
+    {
+      "id": "prototype-022",
+      "difficulty": "Advanced",
+      "question": "What pitfalls arise when cloning objects that hold unmanaged resources?",
+      "answer": "A shallow copy duplicates the handle reference, so both objects may try to release the same resource, causing double-dispose or use-after-free. You must either implement proper resource ownership transfer or clone the resource itself. Wrapping unmanaged handles in SafeHandle and implementing IDisposable carefully is essential.",
+      "tags": ["prototype", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-dispose"]
+    },
+    {
+      "id": "prototype-023",
+      "difficulty": "Advanced",
+      "question": "How does Prototype support object pooling and high-performance scenarios?",
+      "answer": "You can clone a canonical configuration and return objects to a pool for reuse, reducing allocations. Combined with immutable prototypes, clones can share static data safely. In hot paths, a compiled clone avoids reflection and keeps latency low.",
+      "tags": ["prototype", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.objectpool"]
+    },
+    {
+      "id": "prototype-024",
+      "difficulty": "Advanced",
+      "question": "How do you design a prototype registry that is safe under concurrent access?",
+      "answer": "Store prototypes in a ConcurrentDictionary or a read-only snapshot built at startup so readers never see a partial update. Cloning reads the prototype without mutating it, so readers can proceed concurrently. If prototypes can be added at runtime, use immutable snapshots swapped atomically.",
+      "tags": ["prototype", "concurrency"],
+      "code": "private readonly ConcurrentDictionary<string, Item> _protos = new();\npublic Item Create(string key) => _protos[key].Clone();",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2"]
+    },
+    {
+      "id": "prototype-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide between deep cloning, serialization, and re-construction for a copy?",
+      "answer": "Choose deep cloning when you need a faithful, fast copy and can write correct clone logic for the graph. Choose serialization when types are serializable and simplicity matters more than speed. Choose re-construction when invariants must be revalidated or the copy should not share identity, accepting the cost of a full build.",
+      "tags": ["prototype", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/overview"]
+    }
+  ]
+}

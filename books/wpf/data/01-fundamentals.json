@@ -1,0 +1,210 @@
+{
+  "category": "WPF Fundamentals & Architecture",
+  "slug": "fundamentals",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is Windows Presentation Foundation (WPF)?",
+      "answer": "WPF is a UI framework for building Windows desktop applications on .NET. It uses a vector-based, resolution-independent rendering engine built on DirectX and separates UI definition in XAML from logic in code-behind. WPF provides rich layout, data binding, styling, animation, and 2D/3D graphics out of the box. It ships as part of the Windows Desktop workload for .NET.",
+      "tags": ["overview", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What is the relationship between WPF and XAML?",
+      "answer": "XAML is an XML-based markup language used to declaratively describe WPF object trees. WPF is the runtime framework that instantiates those objects; XAML is only one way to build the tree, since you can create the same UI entirely in C#. Each XAML element maps to a .NET type and each attribute to a property or event.",
+      "tags": ["xaml", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/xaml/"]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is a Window in WPF?",
+      "answer": "Window is the top-level container that represents an operating-system window with a title bar, borders, and client area. A WPF application typically has one main Window and may show additional windows or dialogs. Window derives from ContentControl, so it holds a single content element that is usually a layout panel.",
+      "tags": ["window", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the App.xaml file?",
+      "answer": "App.xaml declares application-level resources, the startup window, and the Application-derived class. Its generated code-behind (App.xaml.cs) contains the entry point that runs the application. Application-scoped styles, brushes, and converters are commonly registered here so every window can reuse them.",
+      "tags": ["application", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What is code-behind in WPF?",
+      "answer": "Code-behind is the partial C# class that is paired with a XAML file and handles its logic. The XAML compiler generates a partial class with fields for named elements, and your code-behind provides event handlers and behavior. It keeps declarative markup separate from imperative logic, though heavy logic is often moved to view models in MVVM.",
+      "tags": ["code-behind", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/code-behind-and-xaml-in-wpf"]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "How does WPF differ from Windows Forms?",
+      "answer": "Windows Forms wraps Win32 controls and uses immediate-mode GDI+ drawing with pixel-based layout. WPF uses a retained-mode composition engine, vector graphics, resolution-independent layout, and a rich property system with data binding and styling. This makes WPF better suited to modern, data-driven, and heavily styled UIs.",
+      "tags": ["comparison", "winforms"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is the WPF element tree?",
+      "answer": "The element tree is the hierarchy of objects that make up a WPF UI, with a root Window and nested panels, controls, and content. WPF distinguishes the logical tree, which reflects what you declared, from the visual tree, which includes the expanded templates and visuals. Layout, routing, and property inheritance all traverse these trees.",
+      "tags": ["element-tree", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/element-tree-and-serialization"]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What is the base class hierarchy of WPF controls?",
+      "answer": "Most WPF types derive from DispatcherObject, then DependencyObject, then Visual, UIElement, and FrameworkElement. FrameworkElement adds layout, data binding, styles, and resource lookup. Controls such as Button and TextBox derive from Control, which adds templating and theming.",
+      "tags": ["class-hierarchy", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/base-elements-overview"]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a Control and a FrameworkElement?",
+      "answer": "FrameworkElement provides core layout, data binding, styling, and resource support and is the base for elements like TextBlock. Control derives from FrameworkElement and adds templating, theming, and the ability to be re-skinned via a ControlTemplate. Not every element is a Control, but every Control is a FrameworkElement.",
+      "tags": ["controls", "class-hierarchy"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/controls-by-category"]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "How do you create and run a WPF application on .NET 8?",
+      "answer": "Create a project with the WPF App template (dotnet new wpf) targeting net8.0-windows and enable the UseWPF property in the project file. The generated App.xaml starts the application and MainWindow.xaml provides the initial window. You build and run with dotnet build and dotnet run on Windows.",
+      "code": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <OutputType>WinExe</OutputType>\n    <TargetFramework>net8.0-windows</TargetFramework>\n    <UseWPF>true</UseWPF>\n  </PropertyGroup>\n</Project>",
+      "tags": ["dotnet8", "project"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the logical tree and the visual tree?",
+      "answer": "The logical tree reflects the elements you declare in XAML or code, including content and items, and is used for resource lookup and event routing in some cases. The visual tree expands control templates into the actual rendering primitives and is used by layout and hit testing. A control such as Button appears as one logical node but many visual nodes.",
+      "tags": ["logical-tree", "visual-tree"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/element-tree-and-serialization"]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the Dispatcher in WPF?",
+      "answer": "The Dispatcher owns a thread's message queue and marshals work onto the UI thread. WPF objects have thread affinity, so UI elements can only be accessed from the thread that created them. You use Dispatcher.Invoke or InvokeAsync to run code on the UI thread from a background thread.",
+      "code": "await Dispatcher.InvokeAsync(() =>\n{\n    StatusText.Text = \"Done\";\n});",
+      "tags": ["dispatcher", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcher"]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "Why must WPF UI work run on an STA thread?",
+      "answer": "WPF depends on COM interop for drag-and-drop, the clipboard, dialogs, and some shell integration, all of which require a single-threaded apartment. The generated Main method is marked with STAThreadAttribute to satisfy this. Running UI code on an MTA thread can cause runtime errors or silent failures.",
+      "tags": ["sta", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "What is a Freezable and why does WPF use them?",
+      "answer": "Freezable is a base class for objects such as brushes, transforms, and geometries that can be made immutable by calling Freeze. A frozen object can be shared safely across threads and is more efficient because WPF no longer tracks changes. You freeze objects when they will not change after creation.",
+      "code": "var brush = new SolidColorBrush(Colors.SteelBlue);\nbrush.Freeze(); // now immutable and shareable",
+      "tags": ["freezable", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/freezable-objects-overview"]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What are the main WPF assemblies?",
+      "answer": "PresentationCore contains the core types such as UIElement, Visual, and the dispatcher. PresentationFramework provides controls, layout panels, binding, and styling. WindowsBase holds foundational types like DependencyObject, DispatcherObject, and Freezable. Media and theming resources are also part of these assemblies.",
+      "tags": ["assemblies", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-architecture"]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between FrameworkElement and FrameworkContentElement?",
+      "answer": "FrameworkElement is the base for elements that participate in the visual tree and layout, such as panels and controls. FrameworkContentElement is the base for flow content elements like Run and Paragraph that live in a content model rather than the visual tree. Both support data binding, resources, and styling.",
+      "tags": ["framework-element", "content"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/base-elements-overview"]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "How does WPF split work between the UI thread and the render thread?",
+      "answer": "The UI thread runs your application code, layout, and input handling and produces a display list. A separate render thread, driven by the composition engine (MilCore), turns that display list into DirectX commands and composites the frame. This separation lets animation continue smoothly even if the UI thread is briefly busy.",
+      "tags": ["rendering", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a Window and a UserControl?",
+      "answer": "A Window is a top-level OS window that can be shown, moved, and closed independently. A UserControl is a reusable composite of controls meant to be hosted inside a window or another container, not shown on its own. Use UserControl to factor shared UI into a component and Window for top-level surfaces.",
+      "tags": ["usercontrol", "window"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "How does WPF handle high-DPI displays?",
+      "answer": "WPF uses device-independent units, where one unit is one ninety-sixth of an inch, and scales automatically based on the monitor DPI. This keeps layout crisp and resolution-independent. Per-monitor DPI awareness lets the application rescale when moved between monitors with different scaling factors.",
+      "tags": ["dpi", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the DispatcherObject class?",
+      "answer": "DispatcherObject is the base class that associates an object with the Dispatcher of the thread that created it. It provides CheckAccess and VerifyAccess to detect illegal cross-thread access. Most WPF types, including DependencyObject, derive from it, which is why UI objects have thread affinity.",
+      "tags": ["dispatcherobject", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How does the WPF rendering pipeline work?",
+      "answer": "WPF is a retained-mode system: elements are stored in a visual tree that the framework keeps and re-renders as needed. The UI thread performs measure and arrange, then builds a display list of drawing instructions. The render thread passes this list to MilCore, which translates it into DirectX calls and composites the final frame.",
+      "tags": ["rendering", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/visual-layer-programming"]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "What are the key differences between WPF on .NET Framework and WPF on modern .NET?",
+      "answer": "WPF on .NET Core and .NET 5+ is a port of the same framework that runs cross-compiled on modern runtimes with improved performance and access to current C# and .NET features. It ships as a Windows Desktop workload and supports side-by-side deployment and self-contained publishing. Some legacy features such as XAML Browser Applications were removed.",
+      "tags": ["net8", "migration"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/migration/differences-from-net-framework"]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "How can you override the logical tree for a custom control?",
+      "answer": "A custom control can override the LogicalChildren property and the GetLogicalChildren enumerator to expose child objects that are not automatically part of the tree. This ensures resource lookup, property inheritance, and logical-tree traversal see those children. It is used by controls that manage their own content, such as ItemsControl.",
+      "tags": ["logical-tree", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/how-to-override-the-logical-tree"]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "How does WPF decide whether an element participates in layout and rendering?",
+      "answer": "UIElement provides rendering, hit testing, and input, while FrameworkElement adds layout participation through Measure and Arrange. An element becomes visible when it is connected to the visual tree of a rendered root and its Visibility is not Collapsed. Removing an element from the tree stops its layout and rendering entirely.",
+      "tags": ["layout", "visual-tree"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "What new WPF features and improvements arrived in .NET 8?",
+      "answer": "WPF on .NET 8 continued the modernization of the framework with performance and accessibility improvements and support for the latest C# language version. It added hardware-acceleration and rendering refinements and improved support for modern Windows features. Because WPF shares the .NET runtime, apps benefit from runtime-level performance gains automatically.",
+      "tags": ["net8", "whats-new"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/whats-new/net80"]
+    }
+  ]
+}

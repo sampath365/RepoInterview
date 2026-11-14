@@ -1,0 +1,227 @@
+{
+  "category": "Custom Controls & Graphics",
+  "slug": "graphics",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "graphics-001",
+      "difficulty": "Beginner",
+      "question": "What is the GraphicsView control in .NET MAUI?",
+      "answer": "GraphicsView is a control that hosts an IDrawable and lets you draw custom 2D graphics with the Microsoft.Maui.Graphics API. You assign a Drawable property and implement Draw to render shapes, paths, text, and images. It is useful for charts, diagrams, and custom visuals that are not built-in controls. The same drawing code works across platforms.",
+      "tags": ["graphicsview", "graphics"],
+      "code": "<GraphicsView>\n  <GraphicsView.Drawable>\n    <local:ChartDrawable />\n  </GraphicsView.Drawable>\n</GraphicsView>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/graphicsview"]
+    },
+    {
+      "id": "graphics-002",
+      "difficulty": "Beginner",
+      "question": "What is the IDrawable interface?",
+      "answer": "IDrawable defines a single Draw method that receives an ICanvas and a dirtyRect describing the area to repaint. You implement it to render custom graphics on a GraphicsView or when creating images. The canvas provides methods to draw lines, shapes, text, and images using a fluent API. Implementing it is the entry point for custom drawing.",
+      "tags": ["idrawable", "graphics"],
+      "code": "public class RingDrawable : IDrawable\n{\n    public void Draw(ICanvas canvas, RectF dirtyRect)\n    {\n        canvas.StrokeColor = Colors.Purple;\n        canvas.StrokeSize = 6;\n        canvas.DrawEllipse(10, 10, 100, 100);\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/draw"]
+    },
+    {
+      "id": "graphics-003",
+      "difficulty": "Beginner",
+      "question": "How do you draw a shape with the Shapes API?",
+      "answer": "Use shape controls such as Ellipse, Rectangle, Line, Polygon, and Path directly in XAML, setting properties like Fill and Stroke. Shapes are vector-based and scale cleanly, unlike bitmap images. You can bind their properties and animate them. For complex paths, use the Path control with path markup syntax.",
+      "tags": ["shapes", "xaml"],
+      "code": "<Ellipse Fill=\"Purple\" Stroke=\"Black\"\n         WidthRequest=\"80\" HeightRequest=\"80\" />\n<Path Data=\"M 0,0 L 40,40 L 80,0\" Stroke=\"Red\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/shapes/"]
+    },
+    {
+      "id": "graphics-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a Shape and a GraphicsView?",
+      "answer": "Shapes are lightweight declarative controls for simple vector figures that participate in layout and binding like any control. GraphicsView is a canvas for arbitrary custom drawing where you control every pixel in code. Use shapes for static or simple geometry and GraphicsView for dynamic, data-driven, or complex visuals. GraphicsView gives more power at the cost of writing draw code.",
+      "tags": ["shapes", "graphicsview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/"]
+    },
+    {
+      "id": "graphics-005",
+      "difficulty": "Beginner",
+      "question": "What is a Color in .NET MAUI?",
+      "answer": "Color is a struct representing an RGBA color used by brushes, strokes, and fills. You can create it from hex, named colors, or explicit channel values, and it supports alpha for transparency. Colors are commonly defined as resources and referenced by key. They can also be created from HSLA or converted to other spaces.",
+      "tags": ["colors", "graphics"],
+      "code": "var purple = Color.FromArgb(\"#512BD4\");\nvar semi = purple.WithAlpha(0.5f);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/colors"]
+    },
+    {
+      "id": "graphics-006",
+      "difficulty": "Beginner",
+      "question": "What is a Brush in .NET MAUI?",
+      "answer": "A Brush describes how an area is painted and can be a solid color, linear or radial gradient. Controls expose brush properties such as Background and Fill that accept any brush. Brushes give richer visuals than a single color, including gradients. They are used across shapes, borders, and drawing APIs.",
+      "tags": ["brushes", "graphics"],
+      "code": "<Border>\n  <Border.Background>\n    <LinearGradientBrush StartPoint=\"0,0\" EndPoint=\"1,1\">\n      <GradientStop Color=\"#512BD4\" Offset=\"0.0\" />\n      <GradientStop Color=\"#AC99EA\" Offset=\"1.0\" />\n    </LinearGradientBrush>\n  </Border.Background>\n</Border>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/brushes/"]
+    },
+    {
+      "id": "graphics-007",
+      "difficulty": "Beginner",
+      "question": "How do you draw text on a canvas?",
+      "answer": "Set the canvas font properties such as FontColor, FontSize, and Font, then call DrawString with the text, position, and alignment. The ICanvas type provides these drawing helpers. Text drawn this way is rendered by the graphics backend rather than a Label. This is useful for labels inside charts or custom visuals.",
+      "tags": ["graphics", "text"],
+      "code": "canvas.FontColor = Colors.Black;\ncanvas.FontSize = 14;\ncanvas.DrawString(\"Value\", 10, 20, 100, 30,\n    HorizontalAlignment.Left, VerticalAlignment.Center);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/draw"]
+    },
+    {
+      "id": "graphics-008",
+      "difficulty": "Beginner",
+      "question": "What is a Path in .NET MAUI?",
+      "answer": "The Path control renders a Geometry defined with path markup syntax or a Geometry object, similar to SVG paths. You can fill and stroke it and apply transforms. Paths are ideal for icons and custom vector shapes that are hard to compose from primitives. The markup uses standard move, line, curve, and close commands.",
+      "tags": ["path", "shapes"],
+      "code": "<Path Stroke=\"Black\" StrokeThickness=\"2\"\n      Data=\"M 10,50 C 30,0 70,0 90,50\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/shapes/path"]
+    },
+    {
+      "id": "graphics-009",
+      "difficulty": "Beginner",
+      "question": "What is a custom control in .NET MAUI?",
+      "answer": "A custom control is a reusable UI component you build by subclassing an existing control or composing several controls. You expose bindable properties and often a ControlTemplate so consumers can style it. Custom controls encapsulate behavior and appearance so they can be reused across pages. They differ from custom handlers, which change how an existing control renders natively.",
+      "tags": ["custom-controls", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/controltemplate"]
+    },
+    {
+      "id": "graphics-010",
+      "difficulty": "Beginner",
+      "question": "How do you draw a line on a canvas?",
+      "answer": "Set the StrokeColor and StrokeSize on the canvas, then call DrawLine with the start and end coordinates. The graphics API is fluent, so you can chain property sets and draw calls. Coordinates are in the canvas coordinate space, which matches the view's layout. This is the basis for charts, grids, and freehand drawing.",
+      "tags": ["graphics", "lines"],
+      "code": "canvas.StrokeColor = Colors.Gray;\ncanvas.StrokeSize = 2;\ncanvas.DrawLine(0, 0, dirtyRect.Width, 0);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/draw"]
+    },
+    {
+      "id": "graphics-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create a reusable custom control with a ControlTemplate?",
+      "answer": "Subclass a layout or ContentView, expose bindable properties, and define a ControlTemplate that uses TemplateBinding to read those properties. Consumers set the properties and optionally override the template. This separates behavior from appearance and enables theming. It is the standard way to build a design-system component.",
+      "tags": ["custom-controls", "controltemplate"],
+      "code": "public class CardView : ContentView\n{\n    public static readonly BindableProperty TitleProperty =\n        BindableProperty.Create(nameof(Title), typeof(string),\n            typeof(CardView), string.Empty);\n    public string Title\n    {\n        get => (string)GetValue(TitleProperty);\n        set => SetValue(TitleProperty, value);\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/controltemplate"]
+    },
+    {
+      "id": "graphics-012",
+      "difficulty": "Intermediate",
+      "question": "How do you apply a transform to a visual element?",
+      "answer": "Use the Scale, Rotation, TranslationX and Y, and AnchorX and Y properties on any VisualElement to transform it. These are bindable and animatable, so they work well with animations and gestures. Transforms are applied during rendering without affecting layout of siblings in the same way margin would. Set the anchor to control the pivot point.",
+      "tags": ["transforms", "graphics"],
+      "code": "<Image Source=\"logo.png\" Scale=\"1.5\" Rotation=\"15\" />\n<Image Source=\"logo.png\" AnchorX=\"0.5\" AnchorY=\"0.5\" Scale=\"2\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/transforms"]
+    },
+    {
+      "id": "graphics-013",
+      "difficulty": "Intermediate",
+      "question": "How do you draw a path programmatically with the canvas API?",
+      "answer": "Use PathF to build a path with MoveTo, LineTo, and curve methods, then draw it with canvas.DrawPath or fill it with FillPath. PathF is a platform-independent geometry type used by the drawing API. This is useful when the shape depends on runtime data. You can also add arcs and bezier curves.",
+      "tags": ["graphics", "paths"],
+      "code": "var path = new PathF();\npath.MoveTo(0, 0);\npath.LineTo(50, 50);\npath.QuadTo(75, 75, 100, 0);\ncanvas.DrawPath(path);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/draw"]
+    },
+    {
+      "id": "graphics-014",
+      "difficulty": "Intermediate",
+      "question": "How do you create a gradient brush?",
+      "answer": "Use LinearGradientBrush or RadialGradientBrush with GradientStop entries that define colors at offsets. Set StartPoint and EndPoint for linear gradients or Center for radial ones. Assign the brush to a Background or Fill property. Gradients add depth without image assets and scale to any size.",
+      "tags": ["brushes", "gradients"],
+      "code": "<RadialGradientBrush Center=\"0.5,0.5\" Radius=\"0.5\">\n  <GradientStop Color=\"White\" Offset=\"0.0\" />\n  <GradientStop Color=\"#512BD4\" Offset=\"1.0\" />\n</RadialGradientBrush>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/brushes/radialgradient"]
+    },
+    {
+      "id": "graphics-015",
+      "difficulty": "Intermediate",
+      "question": "How do you add a drop shadow to a control?",
+      "answer": "Set the Shadow property with a Shadow object specifying Brush, Offset, Radius, and Opacity. Shadows apply to many visual elements and are rendered natively where supported. They add depth but can cost performance if used on many elements. Use them sparingly, especially in scrolling lists.",
+      "tags": ["shadow", "graphics"],
+      "code": "<Border>\n  <Border.Shadow>\n    <Shadow Brush=\"Black\" Offset=\"0,4\" Radius=\"8\" Opacity=\"0.3\" />\n  </Border.Shadow>\n</Border>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/shadow"]
+    },
+    {
+      "id": "graphics-016",
+      "difficulty": "Intermediate",
+      "question": "How do you draw an image on a canvas?",
+      "answer": "Load an IImage from a stream or file and call canvas.DrawImage with the image, position, and dimensions. The graphics backend handles scaling and clipping. This lets you compose images with other drawn content. Always dispose or cache images appropriately because loading them repeatedly is costly.",
+      "tags": ["graphics", "images"],
+      "code": "using var stream = await FileSystem.OpenAppPackageFileAsync(\"logo.png\");\nvar image = PlatformImage.FromStream(stream);\ncanvas.DrawImage(image, 10, 10, 100, 100);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/images"]
+    },
+    {
+      "id": "graphics-017",
+      "difficulty": "Intermediate",
+      "question": "How do you force a GraphicsView to redraw?",
+      "answer": "Call Invalidate on the GraphicsView after the data or state that affects the drawing changes. The control then invokes the Drawable's Draw method again. Without invalidating, the view keeps the previous rendering. This is the standard way to refresh custom visuals when underlying values change.",
+      "tags": ["graphicsview", "redraw"],
+      "code": "// after updating data\nchartView.Invalidate();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/graphicsview"]
+    },
+    {
+      "id": "graphics-018",
+      "difficulty": "Intermediate",
+      "question": "How do you create a composite custom control from existing controls?",
+      "answer": "Subclass ContentView, put a layout with the child controls in XAML, and expose bindable properties that map to the children's properties. Bind the children to those properties so consumers interact with your API rather than internals. This composition approach is simpler than drawing from scratch and reuses built-in behavior. Use it for most custom components.",
+      "tags": ["custom-controls", "composition"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/controltemplate"]
+    },
+    {
+      "id": "graphics-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use path markup syntax to draw an icon?",
+      "answer": "Write the path commands in the Data property using the standard syntax with M for move, L for line, C for cubic curves, and Z to close. This renders vector icons that scale without blurring. You can wrap the Path in a ViewBox to size it responsively. Keep stroke and fill as resources so icons can be themed.",
+      "tags": ["path", "icons"],
+      "code": "<Path Fill=\"{StaticResource Primary}\"\n      Data=\"M 12,2 L 2,22 L 22,22 Z\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/shapes/path-markup-syntax"]
+    },
+    {
+      "id": "graphics-020",
+      "difficulty": "Intermediate",
+      "question": "How do you apply a scale transform about a specific point?",
+      "answer": "Set AnchorX and AnchorY to the pivot point in relative coordinates, then set Scale. The anchor determines the point that stays fixed during scaling. This is important for zoom effects that should grow from a corner or center. Combine with rotation for more complex transforms.",
+      "tags": ["transforms", "graphics"],
+      "code": "<Image Source=\"map.png\" AnchorX=\"0\" AnchorY=\"0\" Scale=\"1.8\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/transforms"]
+    },
+    {
+      "id": "graphics-021",
+      "difficulty": "Advanced",
+      "question": "How do you optimize custom drawing for performance?",
+      "answer": "Keep the Draw method allocation-free by reusing PathF and Paint objects, and avoid creating brushes or colors per frame. Only redraw when needed by invalidating deliberately rather than on every property change. Draw only within the dirty rectangle when practical. For heavy visuals consider precomputing geometry or caching rendered images.",
+      "tags": ["graphics", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/draw"]
+    },
+    {
+      "id": "graphics-022",
+      "difficulty": "Advanced",
+      "question": "How do you create a custom handler that renders a native control?",
+      "answer": "Define a virtual view interface with the properties you need, implement a ViewHandler that creates the native control in CreatePlatformView, and map properties with Mapper entries. Register the handler and set the virtual view in XAML or code. This exposes native capabilities not available through existing MAUI controls. Keep the mapping thin and let the virtual view hold the cross-platform state.",
+      "tags": ["handlers", "custom-controls"],
+      "code": "public static class MapViewExtensions\n{\n    public static MauiAppBuilder UseMapView(this MauiAppBuilder b)\n    {\n        b.ConfigureMauiHandlers(h =>\n            h.AddHandler<IMapView, MapViewHandler>());\n        return b;\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/create"]
+    },
+    {
+      "id": "graphics-023",
+      "difficulty": "Advanced",
+      "question": "How do blend modes affect drawing in MAUI graphics?",
+      "answer": "BlendMode on the canvas controls how new drawing combines with what is already painted, such as Multiply, Screen, or Overlay. The default is Normal, which replaces pixels. Blend modes enable effects like highlights and shadows without extra layers. They may not be supported identically on every backend, so test across platforms.",
+      "tags": ["graphics", "blendmodes"],
+      "code": "canvas.BlendMode = BlendMode.Multiply;\ncanvas.FillColor = Colors.Red;\ncanvas.FillRectangle(0, 0, 100, 100);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/blendmodes"]
+    },
+    {
+      "id": "graphics-024",
+      "difficulty": "Advanced",
+      "question": "How do you render a GraphicsView to an image?",
+      "answer": "Create a bitmap-backed canvas for the target size, pass it to your IDrawable's Draw method, and save or export the resulting image. MAUI provides image platform types you can create from a canvas. This is useful for exporting charts or generating thumbnails. Cache the result if it does not change often.",
+      "tags": ["graphics", "export"],
+      "code": "using var image = new SkiaBitmapExportContext(800, 600, 1);\ndrawable.Draw(image.Canvas, new RectF(0, 0, 800, 600));\nimage.WriteToFile(\"chart.png\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/images"]
+    },
+    {
+      "id": "graphics-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between using Shapes, GraphicsView, and image assets for custom visuals?",
+      "answer": "Shapes are declarative, bindable, and resolution-independent but limited to built-in geometry. GraphicsView can render anything but requires custom draw code and careful invalidation for performance. Image assets are easy to author in design tools and fast to draw but do not scale crisply without multiple densities and cannot adapt to runtime data. Choose shapes for static geometry, GraphicsView for dynamic data-driven visuals, and images for rich artwork that does not change.",
+      "tags": ["graphics", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/graphics/"]
+    }
+  ]
+}

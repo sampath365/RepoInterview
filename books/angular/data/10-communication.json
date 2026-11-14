@@ -1,0 +1,380 @@
+{
+  "category": "Component Communication",
+  "slug": "communication",
+  "icon": "message",
+  "questions": [
+    {
+      "id": "communication-001",
+      "difficulty": "Beginner",
+      "question": "What are the main ways Angular components communicate?",
+      "answer": "Parents pass data down through inputs, children send data up through outputs, and unrelated components share state through a service. Template reference variables handle same-template interaction, and content projection passes markup. Choosing the simplest mechanism that fits the relationship keeps the design clean.",
+      "tags": [
+        "communication",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/inputs",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    },
+    {
+      "id": "communication-002",
+      "difficulty": "Beginner",
+      "question": "How does a parent pass data to a child component?",
+      "answer": "The parent binds a value to an input declared on the child, either with @Input or with the input() function. The child receives the value as a property or a read-only signal. Inputs flow in one direction and should be treated as read-only inside the child.",
+      "code": "// parent\n<app-card [title]=\"pageTitle\" />\n// child\n@Input() title = '';",
+      "tags": [
+        "input",
+        "data-flow"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/inputs",
+        "https://angular.dev/guide/signals/inputs"
+      ]
+    },
+    {
+      "id": "communication-003",
+      "difficulty": "Beginner",
+      "question": "How does a child notify a parent of an event?",
+      "answer": "The child declares an output and emits a payload, and the parent binds a handler to that event. With the output() function the child calls emit on the returned emitter. This keeps the child unaware of who is listening.",
+      "code": "// child\nreadonly selected = output<string>();\nthis.selected.emit(id);\n// parent\n<app-list (selected)=\"onSelect($event)\" />",
+      "tags": [
+        "output",
+        "events"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/outputs",
+        "https://angular.dev/guide/components/output-function"
+      ]
+    },
+    {
+      "id": "communication-004",
+      "difficulty": "Beginner",
+      "question": "What is a service-based approach to component communication?",
+      "answer": "A shared service holds state and exposes it to any component that injects it, which is how sibling or distant components communicate. The service can expose signals, Observables, or methods to update state. This avoids threading inputs and outputs through many intermediate components.",
+      "tags": [
+        "services",
+        "state",
+        "communication"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/essentials/dependency-injection"
+      ]
+    },
+    {
+      "id": "communication-005",
+      "difficulty": "Beginner",
+      "question": "How does a child get a reference to its parent or its children?",
+      "answer": "A component can query its own template with viewChild or @ViewChild and its projected content with contentChild or @ContentChild. These queries return element, directive, or component references that the component can call. They are read-only handles and should be used sparingly to avoid tight coupling.",
+      "tags": [
+        "queries",
+        "viewchild",
+        "contentchild"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/queries",
+        "https://angular.dev/guide/signals/queries"
+      ]
+    },
+    {
+      "id": "communication-006",
+      "difficulty": "Beginner",
+      "question": "What is a template reference variable used for in communication?",
+      "answer": "A template reference variable such as #input gives the template a handle to an element or component, which can be passed to a method or read directly. For example, a button can pass #input.value to a save method. It enables interaction within a single template without extra class members.",
+      "code": "<input #q />\n<button (click)=\"search(q.value)\">Search</button>",
+      "tags": [
+        "reference-variables",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/reference-variables",
+        "https://angular.dev/guide/templates/expression-syntax"
+      ]
+    },
+    {
+      "id": "communication-007",
+      "difficulty": "Beginner",
+      "question": "What is two-way binding and how does it support parent-child communication?",
+      "answer": "Two-way binding combines an input with a matching change output so a value flows down and updates flow back up. The banana-in-a-box syntax [(value)]=\"state\" desugars into [value] and (valueChange). The model() function provides this for signal-based components.",
+      "tags": [
+        "two-way-binding",
+        "model"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/two-way-binding",
+        "https://angular.dev/guide/signals/model"
+      ]
+    },
+    {
+      "id": "communication-008",
+      "difficulty": "Beginner",
+      "question": "What is content projection and when is it useful?",
+      "answer": "Content projection lets a parent supply markup that the child renders with ng-content, which is how reusable containers such as tabs or cards stay flexible. The child controls where the content appears, and the parent controls what the content is. Named slots via select allow several regions.",
+      "tags": [
+        "content-projection",
+        "ng-content"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/content-projection",
+        "https://angular.dev/guide/templates/ng-content"
+      ]
+    },
+    {
+      "id": "communication-009",
+      "difficulty": "Beginner",
+      "question": "How do you use a Subject in a service to broadcast events?",
+      "answer": "Expose a Subject or BehaviorSubject as an Observable from the service and let components subscribe, while an internal method pushes values with next. This decouples the sender from the receivers. Signals are often a simpler alternative for current-value state.",
+      "tags": [
+        "subject",
+        "services",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "communication-010",
+      "difficulty": "Beginner",
+      "question": "Why is passing data through many levels of components discouraged?",
+      "answer": "Threading inputs and outputs through intermediate components that do not use the data creates brittle, verbose code that is painful to refactor. A shared service or a store removes the middle layers. If only a few levels are involved, inputs and outputs remain the clearest option.",
+      "tags": [
+        "data-flow",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/guide/components/inputs"
+      ]
+    },
+    {
+      "id": "communication-011",
+      "difficulty": "Intermediate",
+      "question": "How do you choose between an input/output pair and a shared service?",
+      "answer": "Inputs and outputs are ideal when the relationship is direct and local, because they keep data flow explicit and components reusable. A shared service is better for distant components or state that many features read and write. Introducing a service too early adds indirection, while overusing inputs and outputs leads to prop drilling.",
+      "tags": [
+        "design",
+        "data-flow",
+        "services"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/inputs",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    },
+    {
+      "id": "communication-012",
+      "difficulty": "Intermediate",
+      "question": "How do signals improve component communication?",
+      "answer": "Signals let a service expose writable or computed state that any component can read reactively without subscriptions. Because consumers update only when the signals they read change, communication becomes simpler and more efficient. Signal inputs and model signals also streamline the parent-child flow.",
+      "tags": [
+        "signals",
+        "communication",
+        "state"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/signals/inputs"
+      ]
+    },
+    {
+      "id": "communication-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between EventEmitter and a plain Subject?",
+      "answer": "EventEmitter is a thin wrapper around Subject that Angular uses for outputs; it is intended for component outputs and not for general pub-sub. A plain Subject or BehaviorSubject is the right choice for service-level event streams. Using EventEmitter inside a service is discouraged because its API is designed for outputs.",
+      "tags": [
+        "eventemitter",
+        "subject",
+        "outputs"
+      ],
+      "references": [
+        "https://angular.dev/api/core/EventEmitter",
+        "https://angular.dev/guide/components/outputs"
+      ]
+    },
+    {
+      "id": "communication-014",
+      "difficulty": "Intermediate",
+      "question": "How do you pass a template from a parent to a child?",
+      "answer": "The parent defines an ng-template and passes it to the child, either as content projected into the child or through a template input; the child renders it with ngTemplateOutlet and an optional context. This lets a parent customize how the child renders items. Context objects pass data back to the template.",
+      "code": "// parent\n<app-table [rowTpl]=\"row\" />\n<ng-template #row let-item>{{ item.name }}</ng-template>",
+      "tags": [
+        "ng-template",
+        "ngtemplateoutlet",
+        "content-projection"
+      ],
+      "references": [
+        "https://angular.dev/api/common/NgTemplateOutlet",
+        "https://angular.dev/guide/templates/ng-template"
+      ]
+    },
+    {
+      "id": "communication-015",
+      "difficulty": "Intermediate",
+      "question": "How does a component expose an API without leaking its internals?",
+      "answer": "Expose only the inputs, outputs, and public methods consumers need, and keep implementation details private. Use content projection or templates for customization instead of exposing internal references. A narrow public surface makes refactoring safer and keeps coupling low.",
+      "tags": [
+        "api-design",
+        "components",
+        "encapsulation"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/components/content-projection"
+      ]
+    },
+    {
+      "id": "communication-016",
+      "difficulty": "Intermediate",
+      "question": "How do you communicate between sibling components?",
+      "answer": "Siblings typically share state through a service that both inject, or they communicate through their common parent, which owns the state and passes inputs to each child and handles their outputs. A service scales better as the number of siblings grows. The parent approach keeps data flow explicit but can become noisy.",
+      "tags": [
+        "siblings",
+        "services",
+        "communication"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/guide/components/inputs"
+      ]
+    },
+    {
+      "id": "communication-017",
+      "difficulty": "Intermediate",
+      "question": "What is the role of output() compared with a callback input?",
+      "answer": "The output() function declares a typed event emitter that consumers bind to with event syntax, keeping the child decoupled from its parent. A callback passed as an input works but couples the parent to the child's calling convention and is harder to type. Prefer outputs for events and inputs for data.",
+      "tags": [
+        "output",
+        "callbacks",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/output-function",
+        "https://angular.dev/guide/components/outputs"
+      ]
+    },
+    {
+      "id": "communication-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle state shared across routes?",
+      "answer": "Provide the shared service at the application root so its state survives navigation, or store it in the router state or a store if it must persist across reloads. Route-scoped providers intentionally reset when the route is destroyed. Choose the scope based on how long the state should live.",
+      "tags": [
+        "routing",
+        "state",
+        "services"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/routing/read-route-state"
+      ]
+    },
+    {
+      "id": "communication-019",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid memory leaks in service-based communication?",
+      "answer": "Complete or unsubscribe from long-lived streams when consumers are destroyed, using takeUntilDestroyed, the async pipe, or toSignal. A root service outlives components, so subscriptions created in components must be tied to their lifetime. Subjects should also be completed when the service itself is torn down.",
+      "tags": [
+        "memory",
+        "rxjs",
+        "services"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed",
+        "https://angular.dev/api/core/rxjs-interop/toSignal"
+      ]
+    },
+    {
+      "id": "communication-020",
+      "difficulty": "Intermediate",
+      "question": "How do model signals simplify two-way communication?",
+      "answer": "A model signal is a writable signal input that also emits a change event, so the parent can bind with [(value)] and the child can update the value directly. This removes the manual input plus output pair and keeps the value typed. It is the modern way to build two-way bindable components.",
+      "tags": [
+        "model",
+        "signals",
+        "two-way-binding"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/model",
+        "https://angular.dev/guide/templates/two-way-binding"
+      ]
+    },
+    {
+      "id": "communication-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of a global state store versus component inputs and outputs?",
+      "answer": "A global store centralizes state and makes cross-cutting updates predictable and debuggable, but adds ceremony and indirection for simple cases. Inputs and outputs keep data flow local and explicit but become unwieldy when many components share state. Most teams start local and introduce a store only where the sharing genuinely becomes complex.",
+      "tags": [
+        "state-management",
+        "architecture",
+        "trade-offs"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "communication-022",
+      "difficulty": "Advanced",
+      "question": "How do you design a component API that stays stable across refactors?",
+      "answer": "Design inputs and outputs around the consumer's needs rather than the component's internal structure, and prefer data in and events out over imperative methods. Avoid exposing internal references or leaking implementation details through types. Treat the public API as a contract and evolve it with deprecation rather than breaking changes.",
+      "tags": [
+        "api-design",
+        "components",
+        "refactoring"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/components/outputs"
+      ]
+    },
+    {
+      "id": "communication-023",
+      "difficulty": "Advanced",
+      "question": "How does change detection strategy affect component communication?",
+      "answer": "A component with OnPush only re-renders when its inputs change by reference, an event fires from it or its children, or a signal it reads updates. This means communication must use new references or signals to be observed. Understanding this prevents the classic bug where mutated data does not update the view.",
+      "tags": [
+        "onpush",
+        "change-detection",
+        "communication"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/best-practices/skipping-subtrees"
+      ]
+    },
+    {
+      "id": "communication-024",
+      "difficulty": "Advanced",
+      "question": "How would you implement a notification bus with signals?",
+      "answer": "Expose a private writable signal and a public read-only computed or asReadonly view in a root service, plus methods to push and clear notifications. Components read the signal reactively without subscribing, and the API prevents external writes. This gives type-safe broadcasting with automatic cleanup.",
+      "code": "@Injectable({ providedIn: 'root' })\nexport class ToastService {\n  private items = signal<string[]>([]);\n  readonly toasts = this.items.asReadonly();\n  push(msg: string) { this.items.update((t) => [...t, msg]); }\n}",
+      "tags": [
+        "signals",
+        "services",
+        "design"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    },
+    {
+      "id": "communication-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a shared service, a store, and a signal, and when do you pick each?",
+      "answer": "A shared service is any injectable that holds state, a signal is the reactive primitive used to represent that state, and a store is a structured, often opinionated service that manages state transitions and side effects. Small apps can use services with signals directly, while large apps benefit from a store's conventions and tooling. The choice is about process and scale, not about which one is technically capable.",
+      "tags": [
+        "state",
+        "architecture",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    }
+  ]
+}

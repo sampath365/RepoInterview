@@ -1,0 +1,348 @@
+{
+  "category": "TypeScript with React",
+  "slug": "typescript",
+  "icon": "type",
+  "questions": [
+    {
+      "id": "typescript-001",
+      "difficulty": "Beginner",
+      "question": "Why use TypeScript with React?",
+      "answer": "TypeScript adds static types to JavaScript, catching mismatched props, missing fields and null mistakes at build time instead of at runtime. It also powers editor autocomplete and refactoring across components. This makes large React codebases easier to change safely. The cost is some extra annotations and configuration.",
+      "tags": [
+        "typescript",
+        "benefits"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-002",
+      "difficulty": "Beginner",
+      "question": "How do you type component props?",
+      "answer": "You define an interface or type describing the props and annotate the component parameter with it. Required fields are listed normally and optional ones with a question mark. Then TypeScript checks every usage of the component. This documents the component contract in code.",
+      "code": "type Props = { title: string; count?: number };\nfunction Card({ title, count }: Props) { ... }",
+      "tags": [
+        "typescript",
+        "props"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-003",
+      "difficulty": "Beginner",
+      "question": "How do you type the children prop?",
+      "answer": "You declare children with the ReactNode type, which covers elements, strings, numbers, fragments, arrays and null. This is more permissive and accurate than JSX.Element. If you expect a single element you can use ReactElement, and for a render function you type it as a function returning ReactNode. Choosing the right type avoids false errors.",
+      "code": "type Props = { children: React.ReactNode };",
+      "tags": [
+        "typescript",
+        "children"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-004",
+      "difficulty": "Beginner",
+      "question": "How do you type event handlers?",
+      "answer": "React provides types such as ChangeEvent, MouseEvent and FormEvent, usually parameterized with the element type. For an input change handler you write React.ChangeEvent<HTMLInputElement>. Using the right type gives you access to value, checked and other properties. Inline handlers are often inferred automatically.",
+      "code": "function onChange(e: React.ChangeEvent<HTMLInputElement>) { ... }",
+      "tags": [
+        "typescript",
+        "events"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-005",
+      "difficulty": "Beginner",
+      "question": "How do you type useState?",
+      "answer": "TypeScript usually infers the state type from the initial value, but you can pass a type argument for clarity or when the initial value is null. For nullable state you write useState<User | null>(null). Union types let you model a state machine such as loading, success and error. Explicit types help when the initial value is not representative.",
+      "code": "const [user, setUser] = useState<User | null>(null);",
+      "tags": [
+        "typescript",
+        "useState"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "typescript-006",
+      "difficulty": "Beginner",
+      "question": "How do you type useRef for a DOM node?",
+      "answer": "You create the ref with an initial null and a type argument for the element, such as useRef<HTMLInputElement>(null). The current property is then nullable until the element mounts. For a mutable value that is not a node you provide a non-null initial value. This gives accurate access to DOM methods.",
+      "code": "const ref = useRef<HTMLInputElement>(null);",
+      "tags": [
+        "typescript",
+        "useRef"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "typescript-007",
+      "difficulty": "Beginner",
+      "question": "What is the React.FC type and should you use it?",
+      "answer": "React.FC was a type for function components that added children to props implicitly and could hide some generics. Many teams now prefer typing props directly on the function, which is more explicit and avoids the implicit children behavior. Both work, but plain function typing is the common recommendation today. Consistency across a codebase matters most.",
+      "tags": [
+        "typescript",
+        "components"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-008",
+      "difficulty": "Beginner",
+      "question": "How do you type a component that accepts a ref?",
+      "answer": "You use forwardRef with two type parameters, one for the props and one for the ref element type. The second argument is typed as Ref<HTMLElement>. In React 19 ref can be a normal prop and typed accordingly. Correct ref typing lets callers use DOM methods safely.",
+      "code": "const Input = forwardRef<HTMLInputElement, Props>((props, ref) => ...);",
+      "tags": [
+        "typescript",
+        "refs"
+      ],
+      "references": [
+        "https://react.dev/reference/react/forwardRef"
+      ]
+    },
+    {
+      "id": "typescript-009",
+      "difficulty": "Beginner",
+      "question": "How do you type an array of objects in props?",
+      "answer": "You define a type or interface for the object and use an array of it, such as items: Item[]. Components then get autocomplete and type checking on each field. If the object shape varies, use a union or generic. Clear item types make list components self-documenting.",
+      "code": "type Item = { id: string; label: string };\ntype Props = { items: Item[] };",
+      "tags": [
+        "typescript",
+        "props"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-010",
+      "difficulty": "Beginner",
+      "question": "How do you handle optional props with defaults?",
+      "answer": "You mark the prop optional with a question mark and give it a default value in the destructuring pattern, so TypeScript knows the value inside the component is defined. This combines the type contract with runtime safety. Consumers can omit the prop and get the default. It is the idiomatic pattern for optional configuration.",
+      "code": "function Card({ title = 'Untitled' }: { title?: string }) { ... }",
+      "tags": [
+        "typescript",
+        "defaults"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-011",
+      "difficulty": "Intermediate",
+      "question": "How do you type generic components?",
+      "answer": "You declare a type parameter on the function and use it for props, so the component works with any item type while preserving inference. For example a List<T> component takes items: T[] and a renderItem callback. This gives callers full type safety without casts. Generics are common for tables, selects and lists.",
+      "code": "function List<T>({ items, render }: { items: T[]; render: (i: T) => ReactNode }) { ... }",
+      "tags": [
+        "typescript",
+        "generics"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-012",
+      "difficulty": "Intermediate",
+      "question": "How do you type the return value of a custom hook?",
+      "answer": "You can let TypeScript infer the tuple or object the hook returns, which is usually accurate. For public hooks an explicit return type documents the API and catches accidental changes. Use a named type or an interface for object returns. This keeps hook consumers stable across refactors.",
+      "tags": [
+        "typescript",
+        "custom-hooks"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "typescript-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between type and interface for props?",
+      "answer": "Both can describe props and are largely interchangeable for object shapes. Interfaces support declaration merging and are often used for public APIs, while type aliases can express unions, intersections and mapped types. Many teams pick one style for consistency. The practical difference for props is small.",
+      "tags": [
+        "typescript",
+        "types"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-014",
+      "difficulty": "Intermediate",
+      "question": "How do you type context?",
+      "answer": "You create the context with a type argument describing the value, and often allow null as the default so a missing provider can be detected. The custom hook that reads it throws if the value is null and then returns a non-null type. This gives consumers a safe, typed API. Avoid a fake default that hides missing providers.",
+      "code": "const Ctx = createContext<Auth | null>(null);",
+      "tags": [
+        "typescript",
+        "context"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createContext"
+      ]
+    },
+    {
+      "id": "typescript-015",
+      "difficulty": "Intermediate",
+      "question": "How do you type event handlers passed as props?",
+      "answer": "You can type the callback by its parameters rather than by the React event type, such as onChange: (value: string) => void. This keeps the child decoupled from DOM events and easier to test. If the child needs the event object, use the appropriate React event type. Prefer the narrower signature when the child only needs data.",
+      "tags": [
+        "typescript",
+        "events"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle discriminated unions for component state?",
+      "answer": "You model state as a union of object types each with a literal status field, such as loading, success with data, or error with a message. TypeScript then narrows the type when you check status, so you cannot access data on the error branch. This makes invalid states unrepresentable. It is a powerful pattern for async UI.",
+      "code": "type State =\n  | { status: 'loading' }\n  | { status: 'success'; data: User }\n  | { status: 'error'; message: string };",
+      "tags": [
+        "typescript",
+        "unions"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-017",
+      "difficulty": "Intermediate",
+      "question": "How do you type a polymorphic component?",
+      "answer": "A polymorphic component accepts an as prop to render as different elements while forwarding the matching props. You use a generic with the element type and an intersection of the element props. This preserves type safety for attributes like href on an anchor. It is common in design systems but adds type complexity.",
+      "tags": [
+        "typescript",
+        "polymorphic"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-018",
+      "difficulty": "Intermediate",
+      "question": "How do you type third-party component props?",
+      "answer": "Many libraries export their prop types, which you can import and extend or use directly. If a type is not exported you can use ComponentProps to extract the props of a component or element. This avoids duplicating shapes and keeps you in sync with the library. Reach for these helpers before writing types by hand.",
+      "code": "type ButtonProps = React.ComponentProps<typeof Button>;",
+      "tags": [
+        "typescript",
+        "third-party"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-019",
+      "difficulty": "Intermediate",
+      "question": "How do you type an object of CSS-in-JS styles?",
+      "answer": "You can type style objects with React.CSSProperties for inline styles, which validates property names and value types. CSS-in-JS libraries usually provide their own types for their APIs. Using the provided types gives autocomplete for properties. Avoid typing style objects as any, which loses all checking.",
+      "code": "const style: React.CSSProperties = { padding: 8 };",
+      "tags": [
+        "typescript",
+        "styles"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/common"
+      ]
+    },
+    {
+      "id": "typescript-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle typing of useState setter functions?",
+      "answer": "The setter type is inferred from the state type and accepts either the new value or an updater function, so you rarely annotate it. When passing a setter as a prop, use Dispatch<SetStateAction<T>> for the exact type. For simpler callbacks, type them by their arguments. Prefer narrow types at component boundaries.",
+      "code": "type Props = { onCount: React.Dispatch<React.SetStateAction<number>> };",
+      "tags": [
+        "typescript",
+        "useState"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "typescript-021",
+      "difficulty": "Advanced",
+      "question": "How do you avoid common any-related mistakes in React types?",
+      "answer": "Avoid any because it disables checking; use unknown and narrow, or precise generics. Type event handlers and refs explicitly so DOM access is safe. Use discriminated unions instead of optional fields that can be in an invalid combination. Enable strict mode and the no-implicit-any rule to catch problems early. Strong types pay off most in large teams.",
+      "tags": [
+        "typescript",
+        "strict"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-022",
+      "difficulty": "Advanced",
+      "question": "How do you type higher-order components and their injected props?",
+      "answer": "An HOC should be generic over the wrapped component's props and omit the props it injects before forwarding the rest. You express this with Omit and a generic parameter, returning a component whose props are the remaining ones. This keeps callers from having to supply injected props. Correct typing makes HOCs transparent rather than confusing.",
+      "code": "function withAuth<P>(C: React.ComponentType<P>) {\n  return (props: Omit<P, 'user'>) => { ... };\n}",
+      "tags": [
+        "typescript",
+        "hoc"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-023",
+      "difficulty": "Advanced",
+      "question": "How do you type render props and function children?",
+      "answer": "You type the prop as a function that receives the data and returns ReactNode, optionally generic over the data type. This gives callers type-safe access to the values the component provides. Function children are typed the same way through the children prop. Being explicit avoids casts inside consumers.",
+      "tags": [
+        "typescript",
+        "render-props"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-024",
+      "difficulty": "Advanced",
+      "question": "How do you use satisfies or as const with component data?",
+      "answer": "satisfies checks a value against a type while preserving its literal types, which is useful for config objects and variant maps. as const freezes literals so union types narrow correctly. Both avoid widening that loses information. They keep data structures precise without extra annotations.",
+      "code": "const sizes = { sm: 8, lg: 16 } as const;",
+      "tags": [
+        "typescript",
+        "inference"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "typescript-025",
+      "difficulty": "Advanced",
+      "question": "How do you migrate a JavaScript React app to TypeScript incrementally?",
+      "answer": "Enable allowJs and start by renaming files to .tsx one at a time, adding types to props first because they catch the most bugs. Turn on strict checks gradually, beginning with noImplicitAny for new code. Keep the build green throughout the migration. Incremental adoption avoids a risky big-bang rewrite.",
+      "tags": [
+        "typescript",
+        "migration"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    }
+  ]
+}

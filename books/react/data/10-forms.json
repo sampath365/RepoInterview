@@ -1,0 +1,340 @@
+{
+  "category": "Forms & Controlled Inputs",
+  "slug": "forms",
+  "icon": "edit",
+  "questions": [
+    {
+      "id": "forms-001",
+      "difficulty": "Beginner",
+      "question": "What is a controlled input?",
+      "answer": "A controlled input is a form element whose value is driven by React state and whose changes update that state through an onChange handler. React becomes the single source of truth for the value. This makes validation, formatting and conditional logic straightforward. The pattern is the default recommendation for most forms.",
+      "code": "const [name, setName] = useState('');\n<input value={name} onChange={(e) => setName(e.target.value)} />",
+      "tags": [
+        "forms",
+        "controlled"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-002",
+      "difficulty": "Beginner",
+      "question": "What is an uncontrolled input?",
+      "answer": "An uncontrolled input keeps its value in the DOM and you read it with a ref when you need it, such as on submit. You can set an initial value with defaultValue. Uncontrolled inputs are simpler and avoid a re-render per keystroke. They are useful for simple forms or when integrating with non-React code.",
+      "code": "const ref = useRef(null);\nfunction submit() { console.log(ref.current.value); }",
+      "tags": [
+        "forms",
+        "uncontrolled"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-003",
+      "difficulty": "Beginner",
+      "question": "How do you handle form submission in React?",
+      "answer": "You attach an onSubmit handler to the form and call event.preventDefault to stop the browser from reloading the page. Then you read your state or refs and perform the submission. Handling the form element means users can submit by pressing Enter. This is the standard approach for controlled and uncontrolled forms.",
+      "code": "function onSubmit(e) {\n  e.preventDefault();\n  save({ name });\n}",
+      "tags": [
+        "forms",
+        "submit"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    },
+    {
+      "id": "forms-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between onChange and onInput in React?",
+      "answer": "In React the onChange handler fires on every value change, much like the native input event, so it is what you use for controlled inputs. The native change event normally fires on blur, but React normalizes it to fire on input. This makes onChange the correct choice for live updates. onInput also exists but is rarely needed in React.",
+      "tags": [
+        "forms",
+        "events"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-005",
+      "difficulty": "Beginner",
+      "question": "How do you handle a checkbox in React?",
+      "answer": "Checkboxes use the checked prop with a boolean state and an onChange handler that toggles it. Unlike text inputs you read event.target.checked rather than value. For groups of checkboxes you often store an array or object of selected values. Controlled checkboxes make it easy to enable or disable other parts of the UI.",
+      "code": "<input type='checkbox' checked={ok} onChange={(e) => setOk(e.target.checked)} />",
+      "tags": [
+        "forms",
+        "checkbox"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-006",
+      "difficulty": "Beginner",
+      "question": "How do you handle a select element in React?",
+      "answer": "A controlled select sets the value prop on the select element and updates state in onChange, rather than marking an option as selected. This keeps the value in one place. For multiple selection you use an array and the multiple attribute. React reads the selected option through event.target.value.",
+      "code": "<select value={fruit} onChange={(e) => setFruit(e.target.value)}>\n  <option value='apple'>Apple</option>\n</select>",
+      "tags": [
+        "forms",
+        "select"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/select"
+      ]
+    },
+    {
+      "id": "forms-007",
+      "difficulty": "Beginner",
+      "question": "How do you handle multiple inputs with one handler?",
+      "answer": "Give each input a name attribute and write a single change handler that updates state using event.target.name as the key. You can spread the previous state and set the changed field. This avoids writing a handler per field. For nested state, keep the update shallow and copy the changed level.",
+      "code": "function onChange(e) {\n  const { name, value } = e.target;\n  setForm((f) => ({ ...f, [name]: value }));\n}",
+      "tags": [
+        "forms",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "forms-008",
+      "difficulty": "Beginner",
+      "question": "What is form validation in React?",
+      "answer": "Validation checks that user input meets rules before submission, such as required fields or valid emails. With controlled inputs you can validate during render, on blur or on submit, and show messages next to fields. Client validation improves experience but must be repeated on the server. Libraries like React Hook Form and Zod reduce the boilerplate.",
+      "tags": [
+        "forms",
+        "validation"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    },
+    {
+      "id": "forms-009",
+      "difficulty": "Beginner",
+      "question": "Why does React warn about a value without onChange?",
+      "answer": "If you pass value to an input without an onChange handler, React warns that the field is read-only because there is no way to update it. The fix is to add an onChange handler, or use defaultValue and a ref for an uncontrolled input. The warning prevents silently frozen fields. Choosing controlled or uncontrolled deliberately avoids it.",
+      "tags": [
+        "forms",
+        "warnings"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-010",
+      "difficulty": "Beginner",
+      "question": "How do you clear a form after submit?",
+      "answer": "With controlled inputs you reset the state values to their initial values, which updates the fields. With uncontrolled inputs you can call form.reset() through a ref or use the browser reset. Always confirm the submission succeeded before clearing so users do not lose data on failure. Resetting to a shared initial object keeps the logic consistent.",
+      "tags": [
+        "forms",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    },
+    {
+      "id": "forms-011",
+      "difficulty": "Intermediate",
+      "question": "How do you handle file inputs in React?",
+      "answer": "File inputs are inherently uncontrolled because the value cannot be set programmatically for security reasons. You read the selected files from event.target.files in the change handler. To submit files you use FormData. Do not try to bind value to state for a file input, since React will not allow it.",
+      "code": "<input type='file' onChange={(e) => setFile(e.target.files[0])} />",
+      "tags": [
+        "forms",
+        "files"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-012",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of controlled versus uncontrolled forms?",
+      "answer": "Controlled forms give React full control for validation and conditional logic but re-render on every keystroke and require more code. Uncontrolled forms are simpler and faster for large forms but put the source of truth in the DOM, making dynamic validation harder. Many apps use uncontrolled inputs with a library that reads values on submit. The choice depends on how much live logic the form needs.",
+      "tags": [
+        "forms",
+        "controlled"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-013",
+      "difficulty": "Intermediate",
+      "question": "How do you debounce input validation?",
+      "answer": "You keep the input controlled and run validation in an effect that sets a timer and clears it in cleanup, or you debounce the handler itself. The timer delays expensive work such as a network check until typing pauses. Always clear the timer to avoid firing on stale values. Libraries like lodash.debounce or a small custom hook keep it tidy.",
+      "tags": [
+        "forms",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "forms-014",
+      "difficulty": "Intermediate",
+      "question": "How do you build reusable form field components?",
+      "answer": "You extract a component that renders a label, an input and an error message, and takes value, onChange and error as props. This removes repetition across fields. Forwarding a ref lets it work with libraries that need the DOM node. Keeping the component presentational means the parent owns the state and validation.",
+      "tags": [
+        "forms",
+        "reuse"
+      ],
+      "references": [
+        "https://react.dev/reference/react/forwardRef"
+      ]
+    },
+    {
+      "id": "forms-015",
+      "difficulty": "Intermediate",
+      "question": "How does React Hook Form reduce re-renders?",
+      "answer": "React Hook Form uses uncontrolled inputs and refs, subscribing to the form through its own state, so typing does not re-render the whole form. It registers fields and reads values on demand, and only fields that show errors re-render. This makes large forms faster than naive controlled forms. It integrates with schema validation libraries like Zod.",
+      "code": "const { register, handleSubmit } = useForm();\n<form onSubmit={handleSubmit(save)}>\n  <input {...register('email')} />\n</form>",
+      "tags": [
+        "forms",
+        "libraries"
+      ],
+      "references": [
+        "https://react-hook-form.com/get-started"
+      ]
+    },
+    {
+      "id": "forms-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle dynamic form fields?",
+      "answer": "You store the fields in an array in state and render them with map, giving each a stable key. Adding or removing a field updates the array immutably. Each field keeps its own value in the array entry. This pattern powers repeatable groups such as adding multiple addresses.",
+      "tags": [
+        "forms",
+        "arrays"
+      ],
+      "references": [
+        "https://react.dev/learn/updating-arrays-in-state"
+      ]
+    },
+    {
+      "id": "forms-017",
+      "difficulty": "Intermediate",
+      "question": "How do you validate on blur versus on submit?",
+      "answer": "Validating on submit gives feedback only when the user finishes, which reduces noise but delays errors. Validating on blur catches mistakes as users move between fields without scolding them mid-typing. A common blend is to validate on blur and again on submit, and to re-validate on change once a field already shows an error. The goal is timely feedback without distraction.",
+      "tags": [
+        "forms",
+        "validation"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    },
+    {
+      "id": "forms-018",
+      "difficulty": "Intermediate",
+      "question": "How do you focus the first invalid field after submit?",
+      "answer": "Track errors in state and, after a failed submit, focus the first invalid input using a ref or a query within the form. Focusing guides the user straight to the problem. Combine it with an aria-live message for screen readers. This small touch noticeably improves form usability.",
+      "tags": [
+        "forms",
+        "accessibility"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/HTMLElement/focus"
+      ]
+    },
+    {
+      "id": "forms-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle numeric inputs?",
+      "answer": "With a controlled number input you read event.target.value, which is always a string, and convert it before storing. Empty strings must be handled separately so the field can be cleared. Use type='number' for numeric keyboards and stepping, or type='text' with inputMode when you need full control over formatting. Validate range and precision on submit.",
+      "tags": [
+        "forms",
+        "input"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "forms-020",
+      "difficulty": "Intermediate",
+      "question": "How do you reset a controlled form to initial values?",
+      "answer": "Store the initial values in a constant and reset state to a fresh copy of them. Using a function to build the initial object avoids sharing a reference that could be mutated. If the initial values depend on props, recompute them when those props change. Keeping one source for initial values makes reset predictable.",
+      "tags": [
+        "forms",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "forms-021",
+      "difficulty": "Advanced",
+      "question": "How do you keep server and client validation in sync?",
+      "answer": "Define the validation rules once in a schema and run the same schema on the client and the server, for example with Zod. The client uses it for instant feedback while the server treats it as the source of truth. Return structured errors from the API and map them back to fields. Sharing the schema prevents rules from drifting apart.",
+      "tags": [
+        "forms",
+        "validation"
+      ],
+      "references": [
+        "https://zod.dev/"
+      ]
+    },
+    {
+      "id": "forms-022",
+      "difficulty": "Advanced",
+      "question": "What are the accessibility requirements for forms?",
+      "answer": "Every input needs an associated label, either by wrapping it or using htmlFor with an id. Error messages should be linked with aria-describedby and announced with aria-live when they appear. Mark required fields and invalid states with the appropriate aria attributes. Group related controls with fieldset and legend. Accessibility is part of correctness, not an add-on.",
+      "tags": [
+        "forms",
+        "accessibility"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Forms"
+      ]
+    },
+    {
+      "id": "forms-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle a multi-step form?",
+      "answer": "Keep all step data in one parent state or a store and render one step at a time, validating before advancing. Preserving state across steps avoids losing input when users go back. Only submit once at the end, or save progressively to the server. A single source of truth makes conditional navigation and review pages straightforward.",
+      "tags": [
+        "forms",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "forms-024",
+      "difficulty": "Advanced",
+      "question": "How do uncontrolled forms interact with React 19 form actions?",
+      "answer": "React 19 adds form actions so you can pass a function to the form action prop and read the submitted data with FormData, including the new useActionState hook for pending and error state. This pairs naturally with uncontrolled inputs because the browser collects the values. It reduces the need for per-keystroke state. Progressive enhancement lets the form work before hydration.",
+      "tags": [
+        "forms",
+        "react19"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    },
+    {
+      "id": "forms-025",
+      "difficulty": "Advanced",
+      "question": "How do you prevent duplicate submissions?",
+      "answer": "Disable the submit button and show a pending state while the request is in flight, and guard the handler against re-entry. Idempotency keys on the server protect against retries and double clicks that slip through. Using an action with useActionState gives you a built-in pending flag. Both client and server guards are needed for reliability.",
+      "tags": [
+        "forms",
+        "ux"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,370 @@
+{
+  "category": "Angular Fundamentals & Architecture",
+  "slug": "fundamentals",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is Angular and what problems does it solve?",
+      "answer": "Angular is an open-source, TypeScript-based web framework maintained by Google for building single-page applications. It ships a component model, dependency injection, routing, forms, and an HTTP client as one integrated platform. It solves the problem of structuring large, interactive front ends by giving teams conventions, tooling, and a consistent architecture. The same codebase can target client-side rendering and server-side rendering.",
+      "tags": [
+        "overview",
+        "spa",
+        "framework"
+      ],
+      "references": [
+        "https://angular.dev/overview"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What are the main building blocks of an Angular application?",
+      "answer": "The core building blocks are components, which combine a class with a template and styles, plus directives, pipes, and services. Dependency injection wires services into the classes that need them. Routing maps URLs to component trees, and forms and HTTP are provided as optional packages. Modern apps are assembled mostly from standalone components and providers instead of NgModules.",
+      "tags": [
+        "architecture",
+        "components",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/overview"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is a standalone component?",
+      "answer": "A standalone component declares the template dependencies it uses in its own imports array instead of depending on an NgModule. Since Angular 19 standalone is the default, so components, directives, and pipes no longer need to set standalone: true explicitly. Standalone components can be bootstrapped directly and improve tree-shaking because each dependency is declared where it is used.",
+      "code": "@Component({\n  selector: 'app-greeting',\n  template: `<h1>Hello {{ name }}</h1>`,\n})\nexport class GreetingComponent {\n  name = 'Angular';\n}",
+      "tags": [
+        "standalone",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "Why does Angular use TypeScript?",
+      "answer": "Angular is written in and designed around TypeScript, which adds static types, interfaces, decorators, and modern class syntax to JavaScript. Types catch mistakes at build time and power editor features such as autocomplete and safe refactoring. Angular's compiler also uses type information to validate templates, so many template errors surface during the build rather than at runtime.",
+      "tags": [
+        "typescript",
+        "tooling"
+      ],
+      "references": [
+        "https://angular.dev/overview",
+        "https://angular.dev/tools/language-service"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What is the Angular CLI and what does it do for you?",
+      "answer": "The Angular CLI, invoked as ng, is the official command-line tool that creates workspaces, generates code, runs the dev server, builds for production, and executes tests. Commands such as ng new, ng generate component, and ng build apply sensible defaults and keep projects consistent. It also drives the build system and automates migrations between Angular versions.",
+      "tags": [
+        "cli",
+        "tooling"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli",
+        "https://angular.dev/cli"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a component, a directive, and a pipe?",
+      "answer": "A component is a directive that has a template and renders a view. A directive adds behavior to an existing element without its own template, and a pipe transforms a value for display in a template. Components build UI, directives change behavior or appearance, and pipes format data such as dates and currency.",
+      "tags": [
+        "components",
+        "directives",
+        "pipes"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/directives"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "How does an Angular application start up?",
+      "answer": "The app boots from main.ts, which calls bootstrapApplication with a root component and an application configuration object. The configuration registers providers such as the router, the HTTP client, and the change detection strategy. Angular then compiles the root component and renders it into the host element defined in index.html.",
+      "code": "bootstrapApplication(AppComponent, appConfig)\n  .catch((err) => console.error(err));",
+      "tags": [
+        "bootstrap",
+        "main"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/api/platform-browser/bootstrapApplication"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What is an Angular workspace and what is angular.json for?",
+      "answer": "An Angular workspace is a directory managed by the CLI that can hold one or more projects, such as applications and libraries. The angular.json file describes those projects, their source roots, and the builder targets for build, serve, and test. Editing it lets you customize budgets, assets, styles, and build options for each target.",
+      "tags": [
+        "workspace",
+        "configuration"
+      ],
+      "references": [
+        "https://angular.dev/reference/configs/workspace-config",
+        "https://angular.dev/reference/configs/file-structure"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What is Angular's release and versioning policy?",
+      "answer": "Angular follows semantic versioning and ships a major release roughly every six months, with minor releases in between. Each major version receives bug fixes and security patches for a defined support window, and the team documents which versions are supported. The ng update command automates many upgrade steps and applies migrations.",
+      "tags": [
+        "versioning",
+        "releases"
+      ],
+      "references": [
+        "https://angular.dev/reference/releases",
+        "https://angular.dev/reference/versions"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between AngularJS and Angular?",
+      "answer": "AngularJS, version 1.x, was the original JavaScript framework built around controllers, the scope object, and digest-based two-way binding. Angular, from version 2 onward, is a complete rewrite that uses TypeScript, a component-based model, and a new rendering and change detection engine. They are separate frameworks, and the @angular/upgrade package exists only to help migrate legacy applications.",
+      "tags": [
+        "angularjs",
+        "history"
+      ],
+      "references": [
+        "https://angular.dev/overview",
+        "https://angular.dev/api/upgrade/static/UpgradeModule"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "How does a standalone component differ from an NgModule-based component?",
+      "answer": "A standalone component lists the components, directives, and pipes it needs in its own imports array, while an NgModule-based component depends on a module's declarations and imports. Standalone components remove the need for a module just to group and expose declarations, yet they can still import NgModules when consuming module-based libraries. NgModules remain fully supported and are still useful for grouping providers and library APIs.",
+      "tags": [
+        "standalone",
+        "ngmodules"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/guide/ngmodules/overview"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between AOT and JIT compilation in Angular?",
+      "answer": "Ahead-of-time compilation turns templates and components into JavaScript during the build, while just-in-time compilation does it in the browser at runtime. AOT is the default for production because it produces smaller bundles, faster startup, and reports template errors at build time. JIT is mostly used in development and in some test setups.",
+      "tags": [
+        "aot",
+        "compilation"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/aot-compiler",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What does bootstrapApplication do and how does it differ from the older module bootstrap?",
+      "answer": "bootstrapApplication starts a standalone application from a root component and an ApplicationConfig object that lists providers. The older API used platformBrowserDynamic().bootstrapModule(AppModule) to boot an NgModule. The function-based API is simpler, more tree-shakeable, and is the recommended way to start new Angular applications.",
+      "code": "bootstrapApplication(AppComponent, {\n  providers: [provideRouter(routes), provideHttpClient()],\n});",
+      "tags": [
+        "bootstrap",
+        "standalone"
+      ],
+      "references": [
+        "https://angular.dev/api/platform-browser/bootstrapApplication",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "What is a provider in Angular?",
+      "answer": "A provider tells the injector how to create a value for a token, using a class, a value, a factory, or an existing alias. Providers can be declared with providedIn in a service, in a component's providers array, on a route, or in an ApplicationConfig. Where you declare the provider determines its scope and lifetime in the injector hierarchy.",
+      "tags": [
+        "providers",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/defining-dependency-providers",
+        "https://angular.dev/guide/di/dependency-injection-providers"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between providedIn: 'root' and providing a service in a component?",
+      "answer": "providedIn: 'root' registers a service with the root injector so a single, tree-shakeable instance is shared across the whole application. Providing a service in a component's providers array creates a new instance scoped to that component and its children. Component-level providers suit per-instance state, while root providers suit stateless shared services.",
+      "tags": [
+        "di",
+        "scope",
+        "providers"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/di/creating-injectable-service"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "What is the inject() function and why is it useful?",
+      "answer": "inject() retrieves a dependency from the active injection context, such as a constructor or a field initializer inside an injectable class. It enables function-based patterns like composable helpers and router guards that cannot use constructor injection. It must be called during an injection context, for example in a constructor or factory, or it throws an error.",
+      "code": "@Injectable({ providedIn: 'root' })\nexport class CartStore {\n  private http = inject(HttpClient);\n}",
+      "tags": [
+        "inject",
+        "di",
+        "functions"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/dependency-injection-context",
+        "https://angular.dev/api/core/inject"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is the Angular style guide and why follow it?",
+      "answer": "The style guide defines naming, file layout, and coding conventions such as kebab-case file names, PascalCase class names, and one concept per file. Following it keeps teams consistent, makes code easier to review, and matches the structure the CLI generates. Many rules are enforced automatically by linters and schematics.",
+      "tags": [
+        "style-guide",
+        "conventions"
+      ],
+      "references": [
+        "https://angular.dev/style-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "What files make up a typical modern Angular application?",
+      "answer": "A modern app has main.ts to bootstrap, app.config.ts for application-wide providers, app.routes.ts for route definitions, and a root app.component.ts with its template and styles. Feature folders group related components, services, and routes. Workspace configuration lives in angular.json together with the TypeScript and build config files at the root.",
+      "tags": [
+        "structure",
+        "files"
+      ],
+      "references": [
+        "https://angular.dev/reference/configs/file-structure",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What rendering strategies does Angular support?",
+      "answer": "Angular supports client-side rendering, server-side rendering per request, static site generation through prerendering at build time, and hydration that reuses server-rendered DOM on the client. You enable them with the SSR and prerender builders in angular.json plus the hydration providers. The right mix depends on SEO needs, time-to-first-byte targets, and how much interactivity each page requires.",
+      "tags": [
+        "ssr",
+        "rendering",
+        "hydration"
+      ],
+      "references": [
+        "https://angular.dev/guide/ssr",
+        "https://angular.dev/guide/hydration"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between zone-based and zoneless change detection?",
+      "answer": "Zone-based apps use zone.js to patch asynchronous browser APIs so Angular knows when to run change detection after events, timers, and HTTP calls. Zoneless apps rely on signals and explicit notifications instead, which removes zone.js overhead and can improve performance and debugging. Zoneless change detection is enabled with provideZonelessChangeDetection and is the direction Angular is moving.",
+      "tags": [
+        "zoneless",
+        "zone",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/api/core/provideZonelessChangeDetection"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How do signals and the built-in control flow change application architecture compared with an RxJS-centric approach?",
+      "answer": "Signals give Angular a synchronous, glitch-free reactive graph that the framework can track precisely, so templates update only where values actually changed. This reduces reliance on the async pipe and on zone.js and enables zoneless change detection and finer-grained rendering. RxJS remains the right tool for event streams, cancellation, and complex async composition, and toSignal bridges the two models.",
+      "tags": [
+        "signals",
+        "rxjs",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/signals/rxjs-interop"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "What is Ivy and how did it change the Angular compiler?",
+      "answer": "Ivy is Angular's compilation and rendering engine that replaced View Engine starting with Angular 9. It compiles components into instructions that build and update the DOM incrementally, which improves tree-shaking, shrinks bundles, and produces more readable generated code. Ivy also underpins features such as standalone components, inject(), and improved runtime debugging.",
+      "tags": [
+        "ivy",
+        "compiler"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/tools/cli/aot-compiler"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "How do standalone components and providedIn help tree-shaking?",
+      "answer": "Because standalone components and providedIn: 'root' services declare their dependencies locally, the bundler can drop anything that is not actually referenced. NgModule-based code often pulled in declarations that were difficult to eliminate from the bundle. This local reasoning makes production bundles smaller and startup faster.",
+      "tags": [
+        "tree-shaking",
+        "bundle",
+        "standalone"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/di/creating-injectable-service"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of server-side rendering with hydration?",
+      "answer": "SSR improves first contentful paint and SEO by returning rendered HTML, and hydration lets the client reuse that DOM instead of re-rendering it. The costs are added server infrastructure, the need to keep code SSR-safe by avoiding direct DOM and browser globals, and extra complexity around data transfer and caching. Hydration also requires the server and client output to match so the framework can reuse the markup safely.",
+      "tags": [
+        "ssr",
+        "hydration",
+        "trade-offs"
+      ],
+      "references": [
+        "https://angular.dev/guide/ssr",
+        "https://angular.dev/guide/hydration"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "How would you structure a large Angular application for maintainability?",
+      "answer": "Organize by feature, with each feature exposing its own standalone components, routes, and services behind a clear boundary, and keep genuinely shared code in a separate folder. Use lazy-loaded routes to keep the initial bundle small, and prefer signals or a store for cross-cutting state. Enforce boundaries with lint rules and reviews, because a consistent structure and strict typing matter more than any single folder convention.",
+      "tags": [
+        "architecture",
+        "scalability",
+        "features"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/best-practices/performance"
+      ]
+    }
+  ]
+}

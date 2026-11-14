@@ -1,0 +1,214 @@
+{
+  "category": "Singleton Pattern",
+  "slug": "singleton",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "singleton-001",
+      "difficulty": "Beginner",
+      "question": "What is the Singleton pattern?",
+      "answer": "Singleton ensures a class has only one instance and provides a global point of access to it. It is typically implemented with a private constructor, a static field holding the instance, and a static property to retrieve it. It is used for shared resources such as configuration, logging, or caches.",
+      "tags": ["singleton", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/singleton"]
+    },
+    {
+      "id": "singleton-002",
+      "difficulty": "Beginner",
+      "question": "How do you implement a basic thread-safe singleton in C#?",
+      "answer": "The simplest safe approach is a static readonly field initialized inline, because the CLR guarantees type initialization runs once. The public static property returns that field, and the constructor is private to prevent external instantiation. This avoids locks on the read path entirely.",
+      "tags": ["singleton", "threading"],
+      "code": "public sealed class Settings\n{\n    private static readonly Settings _instance = new();\n    public static Settings Instance => _instance;\n    private Settings() { }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-constructors"]
+    },
+    {
+      "id": "singleton-003",
+      "difficulty": "Beginner",
+      "question": "Why should a singleton class be sealed?",
+      "answer": "Sealing the class prevents inheritance, which would allow a subclass to add another instance path and break the single-instance guarantee. It also avoids the confusion of a derived type with its own static state. Combined with a private constructor, sealing makes the contract clear.",
+      "tags": ["singleton", "sealed"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/sealed"]
+    },
+    {
+      "id": "singleton-004",
+      "difficulty": "Beginner",
+      "question": "What is a common downside of the Singleton pattern?",
+      "answer": "The main downside is that it introduces global mutable state, which hides dependencies and makes code harder to test in isolation. Because consumers reach out to a static accessor, they cannot easily be given a substitute implementation. Overuse leads to tight coupling across the codebase.",
+      "tags": ["singleton", "testing"],
+      "references": ["https://refactoring.guru/design-patterns/singleton"]
+    },
+    {
+      "id": "singleton-005",
+      "difficulty": "Beginner",
+      "question": "When is Singleton a reasonable choice?",
+      "answer": "Singleton is reasonable when exactly one instance is genuinely required and shared, such as a process-wide cache, a hardware handle, or an application-wide configuration source. Even then, registering the instance in a DI container is often cleaner than a static accessor. The key is that the uniqueness is a real constraint, not a convenience.",
+      "tags": ["singleton", "design"],
+      "references": ["https://refactoring.guru/design-patterns/singleton"]
+    },
+    {
+      "id": "singleton-006",
+      "difficulty": "Beginner",
+      "question": "How do you make a singleton in .NET with a DI container?",
+      "answer": "You register the type with the singleton lifetime, and the container guarantees one instance for the application. Consumers receive it through constructor injection, so the dependency stays explicit and testable. This is generally preferred over a static Instance property.",
+      "tags": ["singleton", "dependency-injection"],
+      "code": "builder.Services.AddSingleton<IClock, SystemClock>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "singleton-007",
+      "difficulty": "Beginner",
+      "question": "What does lazy initialization mean in a singleton?",
+      "answer": "Lazy initialization creates the instance only when it is first requested rather than at type load. This saves resources when the singleton may never be used. In .NET, Lazy<T> provides a clean and thread-safe way to do this.",
+      "tags": ["singleton", "lazy"],
+      "code": "private static readonly Lazy<Cache> _lazy =\n    new(() => new Cache());\npublic static Cache Instance => _lazy.Value;",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.lazy-1"]
+    },
+    {
+      "id": "singleton-008",
+      "difficulty": "Beginner",
+      "question": "Why is a static class not the same as a singleton?",
+      "answer": "A static class cannot be instantiated, cannot implement an interface, and cannot be passed as a dependency, so it cannot participate in polymorphism or DI. A singleton is a real object with a controlled single instance, which can implement interfaces and be injected. Static classes are convenient for pure helpers but poor for stateful shared services.",
+      "tags": ["singleton", "static"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-classes-and-static-class-members"]
+    },
+    {
+      "id": "singleton-009",
+      "difficulty": "Beginner",
+      "question": "What is double-checked locking in a singleton?",
+      "answer": "Double-checked locking checks the instance field before and after acquiring a lock so the lock is taken only on the first creation. The field must be volatile to prevent instruction reordering that could expose a partially constructed object. In modern C#, static initialization or Lazy<T> makes this unnecessary.",
+      "tags": ["singleton", "locking"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/volatile"]
+    },
+    {
+      "id": "singleton-010",
+      "difficulty": "Beginner",
+      "question": "How can a singleton cause memory or state leaks?",
+      "answer": "Because a singleton lives for the whole application lifetime, any data it caches stays in memory forever unless explicitly evicted. If it stores per-user or per-request state, that data leaks across requests and grows without bound. Singletons should hold immutable configuration or caches with eviction policies, not request-specific state.",
+      "tags": ["singleton", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "singleton-011",
+      "difficulty": "Intermediate",
+      "question": "How does the CLR static initializer guarantee thread safety for a singleton?",
+      "answer": "The CLR runs a type's static constructor exactly once and ensures no other thread sees the type before initialization completes. A static readonly field assigned inline is therefore safe without locks. This is why the static-field singleton is both simple and correct.",
+      "tags": ["singleton", "clr"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-constructors"]
+    },
+    {
+      "id": "singleton-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that depends on a singleton?",
+      "answer": "The cleanest approach is to inject an interface rather than call the static Instance, so tests can supply a fake. If the singleton is unavoidable, you can add an internal setter or a reset method guarded for test builds, but that leaks test concerns into production code. Refactoring to DI is the durable fix.",
+      "tags": ["singleton", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "singleton-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a singleton and a static utility class in terms of lifetime?",
+      "answer": "A static class has no instance and no lifetime to manage; its members exist as soon as the type is loaded. A singleton has a real instance whose creation and disposal you control, which matters for resources that must be released. Only the singleton can implement IDisposable or be swapped in tests.",
+      "tags": ["singleton", "static"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-classes-and-static-class-members"]
+    },
+    {
+      "id": "singleton-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a singleton that can be reset for tests?",
+      "answer": "Expose an internal static method that assigns the field, and make it visible to the test project with InternalsVisibleTo. This keeps the reset capability out of the public API. Alternatively, prefer DI with a scoped lifetime so each test gets a fresh instance without special hooks.",
+      "tags": ["singleton", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.runtime.compilerservices.internalsvisibletoattribute"]
+    },
+    {
+      "id": "singleton-015",
+      "difficulty": "Intermediate",
+      "question": "What is the enum-based singleton and why is it less common in C#?",
+      "answer": "In Java an enum with one constant is a serialization-safe singleton, but C# enums cannot have instance behavior, so this idiom does not translate. C# instead relies on static readonly fields or Lazy<T> for safety. The concept of a single well-defined instance still applies.",
+      "tags": ["singleton", "csharp"],
+      "references": ["https://refactoring.guru/design-patterns/singleton"]
+    },
+    {
+      "id": "singleton-016",
+      "difficulty": "Intermediate",
+      "question": "How does a singleton interact with IDisposable and application shutdown?",
+      "answer": "A singleton holding unmanaged or pooled resources should implement IDisposable and be disposed at shutdown. With DI, the container disposes singletons it created when the host stops. A static singleton must register for shutdown events or risk leaking resources.",
+      "tags": ["singleton", "idisposable"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "singleton-017",
+      "difficulty": "Intermediate",
+      "question": "Why is a singleton dangerous in multi-threaded code?",
+      "answer": "A single shared instance means multiple threads can access its mutable fields concurrently, leading to race conditions if access is not synchronized. This is exactly why singletons should be immutable or internally thread-safe. If it caches mutable data, you must use locks or concurrent collections.",
+      "tags": ["singleton", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/thread-safe/"]
+    },
+    {
+      "id": "singleton-018",
+      "difficulty": "Intermediate",
+      "question": "How does the Singleton pattern compare with a monostate pattern?",
+      "answer": "Singleton restricts the number of instances to one, while Monostate allows many instances that all share the same static state. Monostate is easier to subclass and mock but hides shared state even more thoroughly. Singleton is generally preferred when you actually need a single object.",
+      "tags": ["singleton", "monostate"],
+      "references": ["https://refactoring.guru/design-patterns/singleton"]
+    },
+    {
+      "id": "singleton-019",
+      "difficulty": "Intermediate",
+      "question": "What is the role of a singleton in caching?",
+      "answer": "A process-wide cache is a natural singleton because all callers should see the same cached entries. The implementation must be thread-safe and include an eviction or expiration policy to avoid unbounded growth. Microsoft.Extensions.Caching.Memory provides a ready-made thread-safe memory cache.",
+      "tags": ["singleton", "caching"],
+      "code": "builder.Services.AddMemoryCache();\n// Resolve IMemoryCache and use GetOrCreate for shared entries.",
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache"]
+    },
+    {
+      "id": "singleton-020",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent a singleton from being broken by reflection or serialization?",
+      "answer": "Reflection can invoke a private constructor, so you can guard it to throw if an instance already exists. For serialization, implement a read-resolve or a custom serialization callback that returns the existing instance. In practice, avoiding serialization of singletons entirely is the safest policy.",
+      "tags": ["singleton", "serialization"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.runtime.serialization"]
+    },
+    {
+      "id": "singleton-021",
+      "difficulty": "Advanced",
+      "question": "How would you replace a legacy static singleton with DI without breaking callers?",
+      "answer": "Introduce an interface for the singleton's behavior and register an implementation with singleton lifetime. Provide a temporary static Instance that resolves from the composition root so existing callers keep working. Then migrate call sites to constructor injection incrementally and remove the static accessor once unused.",
+      "tags": ["singleton", "refactoring"],
+      "code": "public interface IClock { DateTimeOffset UtcNow { get; } }\n// Legacy bridge: Settings.Instance => container.GetRequiredService<ISettings>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "singleton-022",
+      "difficulty": "Advanced",
+      "question": "How does a scoped lifetime differ from singleton and why does it matter in web apps?",
+      "answer": "A scoped lifetime creates one instance per request or unit of work, while a singleton is shared across the whole application. Using a singleton to hold scoped resources like a DbContext causes concurrency errors because the same instance is used by many requests. The container even throws when a singleton depends on a scoped service to catch this mistake.",
+      "tags": ["singleton", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "singleton-023",
+      "difficulty": "Advanced",
+      "question": "How can a singleton cause a captive dependency problem?",
+      "answer": "A captive dependency occurs when a long-lived singleton captures a shorter-lived service, keeping it alive far beyond its intended scope. This defeats the scope's isolation guarantees and can leak state across requests. The fix is to inject a factory or IServiceScopeFactory so the short-lived dependency is resolved per use.",
+      "tags": ["singleton", "captive-dependency"],
+      "code": "public sealed class Publisher\n{\n    private readonly IServiceScopeFactory _scopes;\n    public Publisher(IServiceScopeFactory scopes) => _scopes = scopes;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "singleton-024",
+      "difficulty": "Advanced",
+      "question": "What are the concurrency implications of a singleton implementing an async cache?",
+      "answer": "Concurrent requests may trigger duplicate work if the cache does not coordinate, so you need a lock or a per-key semaphore around population. Async locking requires SemaphoreSlim rather than lock, which cannot span awaits. Libraries such as a memory cache or a get-or-create helper handle this coordination safely.",
+      "tags": ["singleton", "async"],
+      "code": "private static readonly SemaphoreSlim Gate = new(1, 1);\nawait Gate.WaitAsync();\ntry { /* populate once */ }\nfinally { Gate.Release(); }",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.semaphoreslim"]
+    },
+    {
+      "id": "singleton-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose between a singleton and a static class for a cross-cutting concern like logging?",
+      "answer": "Logging benefits from an injected abstraction such as ILogger<T> so it can be configured, replaced, and tested, which argues against a static accessor. A static helper is fine only for stateless, pure formatting with no configuration. For anything with state or configuration, prefer a DI singleton behind an interface.",
+      "tags": ["singleton", "logging"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/logging"]
+    }
+  ]
+}

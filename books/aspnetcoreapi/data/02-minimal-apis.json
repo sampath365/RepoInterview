@@ -1,0 +1,341 @@
+{
+  "category": "Minimal APIs vs Controllers",
+  "slug": "minimal-apis",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "minimal-apis-001",
+      "difficulty": "Beginner",
+      "question": "What are minimal APIs in ASP.NET Core?",
+      "answer": "Minimal APIs let you define HTTP endpoints with lambda expressions or methods in Program.cs instead of controller classes. They reduce ceremony and startup overhead, making them a good fit for small services, microservices, and prototypes. They run on the same routing, middleware, and dependency injection infrastructure as controllers.",
+      "tags": [
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "minimal-apis-002",
+      "difficulty": "Beginner",
+      "question": "How do you define a minimal API endpoint?",
+      "answer": "You call a Map method such as MapGet, MapPost, or MapPut on the WebApplication instance and supply a route template plus a delegate that returns a result. The delegate's parameters are bound automatically from the route, query string, headers, or body. The endpoint is registered directly in the pipeline without a controller.",
+      "tags": [
+        "minimal-apis",
+        "endpoints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ],
+      "code": "var app = builder.Build();\napp.MapGet(\"/hello/{name}\", (string name) => $\"Hello {name}\");\napp.Run();"
+    },
+    {
+      "id": "minimal-apis-003",
+      "difficulty": "Beginner",
+      "question": "What does the MapGet method do?",
+      "answer": "MapGet registers an endpoint that responds to HTTP GET requests matching the given route template. It is one of the Map verb methods, alongside MapPost, MapPut, MapPatch, and MapDelete. The returned IEndpointConventionBuilder lets you attach metadata such as names, tags, and authorization.",
+      "tags": [
+        "minimal-apis",
+        "routing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ]
+    },
+    {
+      "id": "minimal-apis-004",
+      "difficulty": "Beginner",
+      "question": "How do you return JSON from a minimal API?",
+      "answer": "Returning a plain object makes the framework serialize it as JSON using System.Text.Json. You can also return Results.Ok(value) or TypedResults.Ok(value) for explicit status codes and content types. The JSON options are configured through the HTTP JSON options in dependency injection.",
+      "tags": [
+        "minimal-apis",
+        "json"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ],
+      "code": "app.MapGet(\"/products/{id}\", (int id) =>\n    TypedResults.Ok(new Product(id, \"Widget\")));"
+    },
+    {
+      "id": "minimal-apis-005",
+      "difficulty": "Beginner",
+      "question": "What is TypedResults?",
+      "answer": "TypedResults is a static class whose methods return concrete result types such as Ok<Product> and NotFound, giving compile-time type information and richer OpenAPI metadata. It complements the untyped Results class and is the recommended choice for handlers because the return type is explicit. This improves testability and documentation generation.",
+      "tags": [
+        "typedresults",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ]
+    },
+    {
+      "id": "minimal-apis-006",
+      "difficulty": "Beginner",
+      "question": "How do you inject a service into a minimal API handler?",
+      "answer": "Declare the service as a parameter of the handler delegate and it is resolved from the request services container. Alternatively call the RequestServices property on HttpContext. Parameters that are registered services are recognized automatically and excluded from body binding.",
+      "tags": [
+        "minimal-apis",
+        "dependency-injection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ],
+      "code": "app.MapGet(\"/time\", (IClock clock) => clock.UtcNow);"
+    },
+    {
+      "id": "minimal-apis-007",
+      "difficulty": "Beginner",
+      "question": "What is a route group in minimal APIs?",
+      "answer": "MapGroup creates a RouteGroupBuilder that shares a common prefix and metadata across a set of endpoints. You can add authorization, tags, or filters once on the group and they apply to every endpoint mapped from it. Groups keep large endpoint sets organized without controllers.",
+      "tags": [
+        "minimal-apis",
+        "route-groups"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ],
+      "code": "var todos = app.MapGroup(\"/todos\").RequireAuthorization();\ntodos.MapGet(\"/\", GetAll);\ntodos.MapPost(\"/\", Create);"
+    },
+    {
+      "id": "minimal-apis-008",
+      "difficulty": "Beginner",
+      "question": "How is the request body bound in a minimal API?",
+      "answer": "A complex type parameter that is not a registered service or a known special type is bound from the request body as JSON. You can force this with [FromBody] and limit a parameter to specific sources using [FromQuery], [FromRoute], or [FromHeader]. By default only one body-bound parameter is allowed.",
+      "tags": [
+        "model-binding",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ]
+    },
+    {
+      "id": "minimal-apis-009",
+      "difficulty": "Beginner",
+      "question": "How do you read route parameters in a minimal API?",
+      "answer": "Include a placeholder such as {id} in the route template and declare a matching parameter, which is bound from the route by name. Type conversion and validation happen automatically, and constraints like {id:int} restrict matching. You can also read them from HttpContext.Request.RouteValues.",
+      "tags": [
+        "routing",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ]
+    },
+    {
+      "id": "minimal-apis-010",
+      "difficulty": "Beginner",
+      "question": "Can minimal APIs use attributes such as [Authorize]?",
+      "answer": "Yes, you can apply attributes like [Authorize] to the handler delegate or use the fluent RequireAuthorization extension on an endpoint or route group. Both paths add the same authorization metadata consumed by the middleware. Attributes are convenient for fine-grained control, while fluent methods scale better for groups.",
+      "tags": [
+        "authorization",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "minimal-apis-011",
+      "difficulty": "Intermediate",
+      "question": "When should you choose minimal APIs over controllers?",
+      "answer": "Choose minimal APIs for small, focused services where low ceremony and fast startup matter, and controllers when you need rich filters, model binding conventions, or many endpoints grouped by resource. Controllers also integrate more naturally with MVC features such as view results. Both share the same runtime, so the decision is mostly about ergonomics and team familiarity.",
+      "tags": [
+        "minimal-apis",
+        "controllers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "minimal-apis-012",
+      "difficulty": "Intermediate",
+      "question": "How do endpoint filters work in minimal APIs?",
+      "answer": "An endpoint filter implements IEndpointFilter and wraps handler execution, allowing code before and after the handler and short-circuiting by returning a result. Filters are attached with AddEndpointFilter and run in a nested order like middleware. They are the minimal API analog of action filters.",
+      "tags": [
+        "minimal-apis",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filters"
+      ],
+      "code": "app.MapPost(\"/products\", Create)\n   .AddEndpointFilter<ValidationFilter<Product>>();"
+    },
+    {
+      "id": "minimal-apis-013",
+      "difficulty": "Intermediate",
+      "question": "What does the WithName or WithTags convention do?",
+      "answer": "Fluent conventions such as WithName, WithTags, WithSummary, and WithOpenApi attach metadata to an endpoint. WithName sets the endpoint name used for link generation, and WithTags groups endpoints in the OpenAPI document. These conventions keep metadata declarative and close to the endpoint definition.",
+      "tags": [
+        "minimal-apis",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ]
+    },
+    {
+      "id": "minimal-apis-014",
+      "difficulty": "Intermediate",
+      "question": "How do you organize a large minimal API application?",
+      "answer": "Split endpoints into static extension methods on IEndpointRouteBuilder, one per resource, and call them from Program.cs. Route groups, shared filters, and conventions keep behavior consistent, while separate files keep Program.cs readable. This mirrors controller organization without the class-per-action overhead.",
+      "tags": [
+        "minimal-apis",
+        "organization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ],
+      "code": "public static class ProductEndpoints\n{\n    public static void MapProducts(this IEndpointRouteBuilder app)\n        => app.MapGet(\"/products\", () => Results.Ok());\n}"
+    },
+    {
+      "id": "minimal-apis-015",
+      "difficulty": "Intermediate",
+      "question": "Which special types can a minimal API handler bind automatically?",
+      "answer": "Handlers can accept HttpContext, HttpRequest, HttpResponse, CancellationToken, ClaimsPrincipal, and IFormFile among others, which the framework supplies without binding from the request body. A CancellationToken is tied to the request abort token. This avoids manually reaching into HttpContext for common needs.",
+      "tags": [
+        "model-binding",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ]
+    },
+    {
+      "id": "minimal-apis-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Results and TypedResults?",
+      "answer": "Results returns IResult from factory methods, which erases the concrete type, while TypedResults returns specific types such as Ok<T> that the compiler and OpenAPI tooling can inspect. TypedResults gives better documentation and lets you declare a union return type like Results<Ok<Product>, NotFound>. Results remains useful when the result type varies dynamically.",
+      "tags": [
+        "typedresults",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ]
+    },
+    {
+      "id": "minimal-apis-017",
+      "difficulty": "Intermediate",
+      "question": "How do you validate input in minimal APIs?",
+      "answer": "You can validate manually, use an endpoint filter that inspects the bound argument and returns ValidationProblem, or use the built-in validation support added in .NET 10 for DataAnnotations on the bound model. A reusable filter keeps validation out of each handler. Returning ValidationProblem produces a standard ProblemDetails response.",
+      "tags": [
+        "validation",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filters"
+      ],
+      "code": "app.MapPost(\"/products\", (Product p) => Results.Created(\"/\", p))\n   .AddEndpointFilter<ValidationFilter<Product>>();"
+    },
+    {
+      "id": "minimal-apis-018",
+      "difficulty": "Intermediate",
+      "question": "What is the [AsParameters] attribute used for?",
+      "answer": "AsParameters tells the framework to bind each public property of a record or struct from the request, treating the type as a group of parameters. This lets you bundle many query, route, or header values into a single strongly typed argument. It reduces long parameter lists and improves readability.",
+      "tags": [
+        "model-binding",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ],
+      "code": "record ProductQuery(int Page = 1, int Size = 20);\napp.MapGet(\"/products\", ([AsParameters] ProductQuery q) => q);"
+    },
+    {
+      "id": "minimal-apis-019",
+      "difficulty": "Intermediate",
+      "question": "How do you add authorization to minimal API endpoints?",
+      "answer": "Call RequireAuthorization with optional policy names on an endpoint or route group, and ensure UseAuthentication and UseAuthorization are in the pipeline. The fluent API composes naturally with groups so an entire resource can share a policy. Attribute-based [Authorize] is an alternative for individual handlers.",
+      "tags": [
+        "authorization",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "minimal-apis-020",
+      "difficulty": "Intermediate",
+      "question": "How do you document minimal APIs with OpenAPI?",
+      "answer": "AddOpenApi or AddSwaggerGen registers the document generator, and endpoint metadata such as WithSummary, WithDescription, and typed results feed the schema. In .NET 9 the built-in Microsoft.AspNetCore.OpenApi package produces the document without Swashbuckle. Call MapOpenApi to serve the generated JSON.",
+      "tags": [
+        "openapi",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "minimal-apis-021",
+      "difficulty": "Advanced",
+      "question": "How do you write a custom endpoint filter that uses dependency injection?",
+      "answer": "Implement IEndpointFilter and inject services through the constructor, then register the filter with AddEndpointFilter<T> so it is resolved from the container. Inside InvokeAsync call next(context) to continue and inspect or replace the returned result. Filters can also be added as singletons via AddEndpointFilterFactory for shared behavior.",
+      "tags": [
+        "minimal-apis",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filters"
+      ],
+      "code": "public sealed class LogFilter(ILogger<LogFilter> log) : IEndpointFilter\n{\n    public async ValueTask<object?> InvokeAsync(\n        EndpointFilterInvocationContext ctx, EndpointFilterDelegate next)\n    {\n        log.LogInformation(\"calling\");\n        return await next(ctx);\n    }\n}"
+    },
+    {
+      "id": "minimal-apis-022",
+      "difficulty": "Advanced",
+      "question": "Do minimal APIs perform better than controllers?",
+      "answer": "Minimal APIs have a smaller startup cost and slightly lower per-request overhead because they skip controller discovery and action descriptor infrastructure. In real applications the difference is usually small compared to I/O and database work. Choose based on developer experience and feature needs rather than micro-benchmarks.",
+      "tags": [
+        "performance",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "minimal-apis-023",
+      "difficulty": "Advanced",
+      "question": "How do you apply shared filters and conventions to many endpoints?",
+      "answer": "Use a route group and add filters or conventions to the group so they cascade to every endpoint mapped from it. For cross-cutting concerns you can also use AddEndpointFilterFactory or register conventions through EndpointConventionBuilderExtensions. This avoids repeating metadata on each endpoint.",
+      "tags": [
+        "minimal-apis",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filters"
+      ]
+    },
+    {
+      "id": "minimal-apis-024",
+      "difficulty": "Advanced",
+      "question": "How do you test minimal APIs?",
+      "answer": "Because handlers are delegates, you can unit test the extracted logic directly and use WebApplicationFactory to run integration tests against the real pipeline. Integration tests exercise routing, binding, filters, and serialization end to end. Keep business logic in injected services so handlers stay thin and easy to verify.",
+      "tags": [
+        "testing",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "minimal-apis-025",
+      "difficulty": "Advanced",
+      "question": "What are the limitations of minimal APIs and how do you work around them?",
+      "answer": "Minimal APIs lack some controller conveniences such as convention-based model binding providers, action filter attributes with MVC semantics, and built-in content negotiation for multiple output formats. You work around this with endpoint filters, custom binding via BindAsync, and explicit result types. If you need heavy MVC features, controllers remain the better fit.",
+      "tags": [
+        "minimal-apis",
+        "limitations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ],
+      "code": "public static ValueTask<Product?> BindAsync(HttpContext ctx) =>\n    Product.FromQueryAsync(ctx.Request.Query);"
+    }
+  ]
+}

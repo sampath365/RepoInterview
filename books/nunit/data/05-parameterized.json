@@ -1,0 +1,371 @@
+{
+  "category": "Parameterized Tests",
+  "slug": "parameterized",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "parameterized-001",
+      "difficulty": "Beginner",
+      "question": "What is a parameterized test in NUnit?",
+      "answer": "A parameterized test is a test method that takes arguments supplied from outside the method, so one method runs many times with different data. NUnit calls these data-driven tests, and each argument set appears as its own case in the runner. Attributes such as [TestCase] supply the data.",
+      "tags": [
+        "parameterized",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html"
+      ]
+    },
+    {
+      "id": "parameterized-002",
+      "difficulty": "Beginner",
+      "question": "How do you supply inline data with [TestCase]?",
+      "answer": "Apply [TestCase] once per data row, passing the arguments in the order the method expects them, and NUnit generates one test case for each attribute. For example [TestCase(1, 2, 3)] on a method with three parameters supplies 1, 2 and 3. The method must have parameters matching the attribute arguments.",
+      "code": "public class AddTests\n{\n    [TestCase(1, 2, 3)]\n    [TestCase(2, 3, 5)]\n    public void Add_ReturnsSum(int a, int b, int expected)\n    {\n        Assert.That(new Calculator().Add(a, b), Is.EqualTo(expected));\n    }\n}",
+      "tags": [
+        "testcase",
+        "inline"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-003",
+      "difficulty": "Beginner",
+      "question": "What is ExpectedResult and how does it work with [TestCase]?",
+      "answer": "Set ExpectedResult on a [TestCase] and let the test method return a value; NUnit compares the returned value to ExpectedResult with an equality assertion. This removes the need for a separate expected parameter and reads like a table of inputs and outputs. The method's return type must match the type of ExpectedResult.",
+      "code": "[TestCase(1, 2, ExpectedResult = 3)]\n[TestCase(2, 3, ExpectedResult = 5)]\npublic int Add_ReturnsSum(int a, int b) => new Calculator().Add(a, b);",
+      "tags": [
+        "expectedresult",
+        "testcase"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [TestCase] and [Test]?",
+      "answer": "[Test] marks a method that runs exactly once and takes no arguments. [TestCase] supplies arguments so the method runs once per attribute, producing multiple test cases from one method. Use [Test] for a single scenario and [TestCase] when the same logic applies to several data sets.",
+      "tags": [
+        "testcase",
+        "test"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html"
+      ]
+    },
+    {
+      "id": "parameterized-005",
+      "difficulty": "Beginner",
+      "question": "How do you pass string data to a parameterized test?",
+      "answer": "Pass the string as an argument to [TestCase], for example [TestCase(\"hello\", 5)] for a method taking a string and an int. Strings are passed literally, and you can use the TestName property to give each case a readable name. Null values can be passed with the null literal.",
+      "code": "[TestCase(\"hello\", 5)]\n[TestCase(\"\", 0)]\npublic void Length_Matches(string text, int expected)\n{\n    Assert.That(text.Length, Is.EqualTo(expected));\n}",
+      "tags": [
+        "testcase",
+        "strings"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-006",
+      "difficulty": "Beginner",
+      "question": "How do you name individual test cases in a parameterized test?",
+      "answer": "Set the TestName property on [TestCase], and you can interpolate the argument values with placeholders such as {0}, for example TestName = \"Divide {0} by {1}\". This makes the runner show a meaningful name instead of the raw argument list. Readable names make failures much easier to identify in CI.",
+      "code": "[TestCase(12, 3, 4, TestName = \"Divide {0} by {1} is {2}\")]\npublic void Divide(int n, int d, int expected)\n{\n    Assert.That(n / d, Is.EqualTo(expected));\n}",
+      "tags": [
+        "testname",
+        "testcase"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-007",
+      "difficulty": "Beginner",
+      "question": "What types of arguments can [TestCase] accept?",
+      "answer": "The attribute accepts compile-time constant values such as numbers, strings, characters, booleans, enums and null, plus arrays of those constants. For values that cannot be expressed as constants, such as objects or computed data, use [TestCaseSource] or [ValueSource] instead. This is a limitation of attributes rather than of NUnit.",
+      "tags": [
+        "testcase",
+        "arguments"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-008",
+      "difficulty": "Beginner",
+      "question": "How do you supply a single parameter with multiple values using [Values]?",
+      "answer": "Apply [Values] to the parameter or method to list the values for that parameter, and NUnit combines it with the other parameters automatically. For example [Values(1, 2, 3)] on one parameter produces three cases when there is only one parameter. It keeps a simple list of values close to the method.",
+      "code": "[Test]\npublic void IsPositive([Values(1, 2, 3)] int value)\n{\n    Assert.That(value, Is.GreaterThan(0));\n}",
+      "tags": [
+        "values",
+        "parameters"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/values.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-009",
+      "difficulty": "Beginner",
+      "question": "How do you generate a range of values for a parameter?",
+      "answer": "Use the [Range] attribute, for example [Range(1, 10, 2)] to step from 1 to 10 by 2, or [Range(1.0, 2.0, 0.5)] for doubles. NUnit expands the range into individual cases. It is convenient for boundary and sweep testing without listing every value.",
+      "code": "[Test]\npublic void InRange([Range(1, 10, 3)] int value)\n{\n    Assert.That(value, Is.InRange(1, 10));\n}",
+      "tags": [
+        "range",
+        "parameters"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/range.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-010",
+      "difficulty": "Beginner",
+      "question": "How do you test the same method with a sequence of integers?",
+      "answer": "Combine [Range] with a second parameter, or use [Values] with explicit numbers, and NUnit produces the cross product of the supplied values. For sequential integers [Range(1, 5)] generates 1 through 5. This is the simplest way to sweep a numeric parameter.",
+      "tags": [
+        "range",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/range.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/combinatorial.html"
+      ]
+    },
+    {
+      "id": "parameterized-011",
+      "difficulty": "Intermediate",
+      "question": "What is [TestCaseSource] and when is it preferable to [TestCase]?",
+      "answer": "TestCaseSource names a static member or type that returns the data as an IEnumerable of object arrays or TestCaseData. It is preferable when the data is computed, loaded from a file or shared between methods, because attributes can only hold constants. You can also attach metadata per row through TestCaseData.",
+      "code": "public static IEnumerable Cases => new[]\n{\n    new object[] { 12, 3, 4 },\n    new object[] { 12, 2, 6 },\n};\n\n[TestCaseSource(nameof(Cases))]\npublic void Divide(int n, int d, int expected)\n{\n    Assert.That(n / d, Is.EqualTo(expected));\n}",
+      "tags": [
+        "testcasesource",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between [Values] and [ValueSource]?",
+      "answer": "[Values] supplies constant values directly in the attribute, while [ValueSource] names a static member that returns the values, which allows computed or shared data. Both feed a single parameter, and NUnit combines them with other parameters. Use [Values] for a short literal list and [ValueSource] when the data is dynamic or reused.",
+      "tags": [
+        "values",
+        "valuesource"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/values.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/valuesource.html"
+      ]
+    },
+    {
+      "id": "parameterized-013",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit combine data when several parameters have attributes?",
+      "answer": "By default NUnit generates the full cross product of the supplied values, which is called combinatorial behaviour. You can change this with [Sequential] to pair values by position, or reduce the set with [Pairwise]. The mode is chosen with the attribute on the method.",
+      "tags": [
+        "combinatorial",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/combinatorial.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/pairwise.html"
+      ]
+    },
+    {
+      "id": "parameterized-014",
+      "difficulty": "Intermediate",
+      "question": "What does the [Sequential] attribute change about data generation?",
+      "answer": "[Sequential] makes NUnit pair the values of each parameter by index instead of producing the cross product, so the first value of each parameter forms one case, the second another, and so on. The number of cases equals the longest value list. It is useful when the values belong together rather than being independent.",
+      "code": "[Test, Sequential]\npublic void Pairs([Values(1, 2)] int a, [Values(\"one\", \"two\")] string b)\n{\n    Assert.That(a, Is.GreaterThan(0));\n    Assert.That(b, Is.Not.Empty);\n}",
+      "tags": [
+        "sequential",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/sequential.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/combinatorial.html"
+      ]
+    },
+    {
+      "id": "parameterized-015",
+      "difficulty": "Intermediate",
+      "question": "What does [Pairwise] do and why would you use it?",
+      "answer": "[Pairwise] generates a reduced set of cases that still covers every possible pair of values across parameters, instead of the full cross product. This keeps coverage of two-way interactions while cutting the number of tests dramatically for many parameters. It is a good compromise when exhaustive combination is too expensive.",
+      "tags": [
+        "pairwise",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/pairwise.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/combinatorial.html"
+      ]
+    },
+    {
+      "id": "parameterized-016",
+      "difficulty": "Intermediate",
+      "question": "How do you pass complex objects as test data?",
+      "answer": "Use [TestCaseSource] returning TestCaseData instances whose arguments are the objects, because attribute constants cannot express arbitrary objects. For example you can yield TestCaseData containing a domain object and an expected result. TestCaseData also lets you attach a name, category or expected result to each row.",
+      "code": "public static IEnumerable Cases()\n{\n    yield return new TestCaseData(new Order(2, 10m)).Returns(20m);\n}\n\n[TestCaseSource(nameof(Cases))]\npublic decimal Total(Order order) => order.Total;",
+      "tags": [
+        "testcasedata",
+        "objects"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html"
+      ]
+    },
+    {
+      "id": "parameterized-017",
+      "difficulty": "Intermediate",
+      "question": "What is the [Datapoint] and [Theory] style of parameterized testing?",
+      "answer": "A [Theory] makes a general statement that must hold for all supplied data, and its arguments are filled from [Datapoint] and [DatapointSource] members rather than from per-case attributes. NUnit enumerates the data points and runs the theory for each combination, allowing assumptions to filter out invalid cases. It suits mathematical or invariant-style properties.",
+      "code": "[Datapoint(1)]\n[Datapoint(2)]\n[Datapoint(3)]\nprivate int _n;\n\n[Theory]\npublic void IsPositive(int value)\n{\n    Assume.That(value, Is.GreaterThan(0));\n    Assert.That(value, Is.Positive);\n}",
+      "tags": [
+        "theory",
+        "datapoint"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/theory.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/datapointsource.html"
+      ]
+    },
+    {
+      "id": "parameterized-018",
+      "difficulty": "Intermediate",
+      "question": "How do you mark one case of a parameterized test as ignored?",
+      "answer": "Chain Ignore on a TestCaseData row, or use the Ignore property on [TestCase] with a reason. The row is reported as skipped rather than failed while the other cases still run. This is useful when one data combination is known to be unsupported.",
+      "code": "yield return new TestCaseData(0, 0).Ignore(\"division by zero is undefined\");",
+      "tags": [
+        "ignore",
+        "testcasedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html"
+      ]
+    },
+    {
+      "id": "parameterized-019",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit name the cases generated by a parameterized test?",
+      "answer": "By default NUnit appends the argument values to the method name, so a case reads like Add_ReturnsSum(1,2,3). You can override this with TestName on [TestCase] or SetName on TestCaseData. Meaningful names matter because filters and CI reports use them.",
+      "tags": [
+        "naming",
+        "parameterized"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html"
+      ]
+    },
+    {
+      "id": "parameterized-020",
+      "difficulty": "Intermediate",
+      "question": "How do you reuse the same data source across several test methods?",
+      "answer": "Put the data in a static property or method, ideally on a separate class, and reference it from each method with [TestCaseSource(typeof(Data), nameof(Data.Cases))]. The same member can then feed many tests without duplication. Keeping the data in a dedicated class also makes it easy to test and maintain.",
+      "code": "[TestCaseSource(typeof(DivideData), nameof(DivideData.Cases))]\npublic void Divide(int n, int d, int expected)\n{\n    Assert.That(n / d, Is.EqualTo(expected));\n}",
+      "tags": [
+        "testcasesource",
+        "reuse"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-021",
+      "difficulty": "Advanced",
+      "question": "How does NUnit generate the cross product of multiple parameter sources, and how can you limit it?",
+      "answer": "When several parameters have data attributes NUnit produces the full cross product by default, so two parameters with three values each yield nine cases. [Sequential] reduces this to positional pairing and [Pairwise] reduces it to a two-way covering set. Choosing the right mode keeps the suite fast without losing the coverage you care about.",
+      "tags": [
+        "combinatorial",
+        "pairwise"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/combinatorial.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/pairwise.html"
+      ]
+    },
+    {
+      "id": "parameterized-022",
+      "difficulty": "Advanced",
+      "question": "How do TestCaseData's fluent methods extend a parameterized test case?",
+      "answer": "TestCaseData supports methods such as SetName, SetCategory, SetDescription, SetProperty, Explicit, Ignore and Returns, each of which returns the same instance so calls chain. Returns sets the expected result and SetCategory or SetProperty add metadata used by filters and reports. This lets a single data source drive cases with different names and behaviours.",
+      "code": "yield return new TestCaseData(12, 3)\n    .Returns(4)\n    .SetName(\"Divide 12 by 3\")\n    .SetCategory(\"Arithmetic\");",
+      "tags": [
+        "testcasedata",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "parameterized-023",
+      "difficulty": "Advanced",
+      "question": "How do you use generic type arguments with [TestCase]?",
+      "answer": "Since NUnit 4.1 you can supply generic type arguments to a test method with the TypeArgs property on [TestCase], or use the generic TestCaseData<T> form which sets TypeArgs automatically. The method must be generic and the supplied types are matched to the type parameters in order. This lets one generic test cover several concrete types.",
+      "code": "[TestCase(typeof(int), 1)]\n[TestCase(typeof(string), \"x\")]\npublic void RoundTrip<T>(T value)\n{\n    Assert.That(value, Is.Not.Null);\n}",
+      "tags": [
+        "generics",
+        "testcase"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html"
+      ]
+    },
+    {
+      "id": "parameterized-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of [Theory] and datapoints versus [TestCase]?",
+      "answer": "A [Theory] expresses a general invariant and automatically enumerates combinations of data points, which is powerful for property-style testing and lets assumptions discard invalid inputs. [TestCase] gives explicit, readable examples with precise names and is easier to debug. Use theories for invariants and explicit cases for concrete scenarios.",
+      "tags": [
+        "theory",
+        "design"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/theory.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html"
+      ]
+    },
+    {
+      "id": "parameterized-025",
+      "difficulty": "Advanced",
+      "question": "How does NUnit handle a parameterized test when the data source returns no rows?",
+      "answer": "If a data source yields no rows NUnit produces no test cases for the method, so the method does not appear as a failure but may be flagged as having no tests. Some runners warn about the missing cases. This usually signals a bug in the source, so verify the source returns the expected rows.",
+      "tags": [
+        "testcasesource",
+        "troubleshooting"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    }
+  ]
+}

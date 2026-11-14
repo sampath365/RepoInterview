@@ -1,0 +1,369 @@
+{
+  "category": "Testing Exceptions",
+  "slug": "exceptions",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "exceptions-001",
+      "difficulty": "Beginner",
+      "question": "How do you assert that code throws a specific exception in NUnit?",
+      "answer": "Use the constraint model with Assert.That and Throws.TypeOf<T>, or the classic Assert.Throws<T> which returns the caught exception. Both fail if no exception is thrown or if the type does not match. The classic form is convenient when you want to inspect the exception instance.",
+      "code": "var ex = Assert.Throws<ArgumentNullException>(() => service.Save(null));\nAssert.That(ex.ParamName, Is.EqualTo(\"order\"));",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-002",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a method throws any exception?",
+      "answer": "Use Assert.Catch or the constraint Throws.Exception when the exact type does not matter, for example Assert.That(() => Parse(input), Throws.Exception). This passes for any exception type. It is weaker than asserting a specific type, so use it only when any failure is acceptable.",
+      "code": "Assert.That(() => int.Parse(\"abc\"), Throws.Exception);",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Catch.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-003",
+      "difficulty": "Beginner",
+      "question": "How do you assert on the message of an exception?",
+      "answer": "Capture the exception returned by Assert.Throws and assert on its Message with a constraint such as Does.Contain, or use the constraint model with Throws.TypeOf<T>().With.Message.Contains(\"x\"). Asserting on a substring is more robust than an exact match. Both approaches let you verify the diagnostic detail.",
+      "code": "var ex = Assert.Throws<InvalidOperationException>(() => service.Run());\nAssert.That(ex.Message, Does.Contain(\"closed\"));",
+      "tags": [
+        "exceptions",
+        "message"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Assert.Throws and Assert.DoesNotThrow?",
+      "answer": "Assert.Throws expects an exception and fails if none is thrown, while Assert.DoesNotThrow fails if any exception is thrown. Use the former to verify error paths and the latter to verify that a call completes normally. They express opposite expectations about the same code.",
+      "code": "Assert.DoesNotThrow(() => service.Validate(order));",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.DoesNotThrow.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html"
+      ]
+    },
+    {
+      "id": "exceptions-005",
+      "difficulty": "Beginner",
+      "question": "Why should you assert the exception type rather than any exception?",
+      "answer": "Asserting the specific type ensures the code fails for the reason you expect, so a NullReferenceException caused by a bug does not satisfy a test meant for ArgumentException. A vague assertion can hide real defects. Precise assertions make the test a meaningful specification.",
+      "tags": [
+        "exceptions",
+        "bestpractices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-006",
+      "difficulty": "Beginner",
+      "question": "How do you check the parameter name of an ArgumentException?",
+      "answer": "Capture the exception and assert on its ParamName property, for example Assert.That(ex.ParamName, Is.EqualTo(\"order\")). This verifies the guard clause reports the correct argument. It is a common way to strengthen an argument-validation test.",
+      "code": "var ex = Assert.Throws<ArgumentNullException>(() => service.Save(null));\nAssert.That(ex.ParamName, Is.EqualTo(\"order\"));",
+      "tags": [
+        "exceptions",
+        "argumentexception"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-007",
+      "difficulty": "Beginner",
+      "question": "How do you assert an exception with the constraint model?",
+      "answer": "Use Throws.TypeOf<T>() or Throws.InstanceOf<T>() inside Assert.That, optionally chaining With.Message or With.Property to inspect details. This composes like other constraints and reads as one expression. It is the idiomatic NUnit 3/4 style.",
+      "code": "Assert.That(() => service.Run(), Throws.TypeOf<InvalidOperationException>()\n    .With.Message.Contains(\"closed\"));",
+      "tags": [
+        "exceptions",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/ThrowsConstraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-008",
+      "difficulty": "Beginner",
+      "question": "What does Throws.InnerException let you assert?",
+      "answer": "Throws.InnerException applies an inner constraint to the InnerException of the thrown exception, which lets you verify wrapped exceptions. You can also use With.InnerException for the same purpose. This is useful when a layer wraps a lower-level error.",
+      "code": "Assert.That(() => service.Run(),\n    Throws.TypeOf<ServiceException>()\n        .With.InnerException.TypeOf<TimeoutException>());",
+      "tags": [
+        "exceptions",
+        "innerexception"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/ThrowsConstraint.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-009",
+      "difficulty": "Beginner",
+      "question": "How do you verify that no exception is thrown by a block of code?",
+      "answer": "Wrap the call in Assert.DoesNotThrow or simply call it; an unhandled exception fails the test automatically. Assert.DoesNotThrow documents the expectation explicitly. Prefer letting unexpected exceptions fail the test naturally unless you want the intent spelled out.",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.DoesNotThrow.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-010",
+      "difficulty": "Beginner",
+      "question": "What happens if a test expects an exception but none is thrown?",
+      "answer": "Assert.Throws and Throws.TypeOf fail the test with a message saying the expected exception was not thrown. This catches code paths that silently succeed when they should fail. The failure message names the expected type, which helps diagnose the issue.",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-011",
+      "difficulty": "Intermediate",
+      "question": "How do you assert an exception thrown by an async method?",
+      "answer": "Use Assert.ThrowsAsync<T> or the constraint Throws.TypeOf<T>() applied to an async delegate, awaiting the result. The exception is observed after the task completes. Do not use the synchronous Assert.Throws for async code.",
+      "code": "var ex = await Assert.ThrowsAsync<InvalidOperationException>(\n    () => service.RunAsync());",
+      "tags": [
+        "exceptions",
+        "async"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.ThrowsAsync.html",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "exceptions-012",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that an exception's property has a particular value?",
+      "answer": "Use With.Property, for example Throws.TypeOf<DomainException>().With.Property(\"Code\").EqualTo(42), or capture the exception and assert on the property directly. Both approaches inspect the exception's state. The constraint form keeps everything in one expression.",
+      "code": "Assert.That(() => service.Run(),\n    Throws.TypeOf<DomainException>().With.Property(\"Code\").EqualTo(42));",
+      "tags": [
+        "exceptions",
+        "properties"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/ThrowsConstraint.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test that a specific exception is not thrown while another is allowed?",
+      "answer": "Use Assert.Catch to capture any exception and then assert that the captured instance is not of the forbidden type, or structure the test to expect the allowed type explicitly. Being explicit about the expected type is usually clearer. Avoid catch-all blocks that could mask defects.",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Catch.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-014",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on a custom exception type defined by your domain?",
+      "answer": "Treat it like any other type with Assert.Throws<MyDomainException> or Throws.TypeOf<MyDomainException>(), and then assert on its custom properties. This verifies both the category of failure and the details. Custom exception tests document the domain's error contract.",
+      "code": "var ex = Assert.Throws<InsufficientFundsException>(() => account.Withdraw(100));\nAssert.That(ex.Shortfall, Is.EqualTo(20));",
+      "tags": [
+        "exceptions",
+        "custom"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-015",
+      "difficulty": "Intermediate",
+      "question": "What is the [ExpectedException] attribute and why is it discouraged?",
+      "answer": "The older [ExpectedException] attribute declared the expected type on the method, but it could not assert on the message or properties and applied to the whole method, so an exception from setup could satisfy it. NUnit 3 deprecated it in favour of Assert.Throws and the constraint model, which scope the expectation to a specific call. Prefer the modern assertions.",
+      "tags": [
+        "exceptions",
+        "legacy"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://docs.nunit.org/articles/nunit/release-notes/breaking-changes.html"
+      ]
+    },
+    {
+      "id": "exceptions-016",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that an exception is thrown exactly once from a loop?",
+      "answer": "Wrap the whole loop in a single assertion if you expect one failure, or assert inside the loop for each iteration. If exactly one iteration should fail, count the caught exceptions and assert the count. Being explicit about the expected number avoids ambiguity.",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test retry logic that throws then succeeds?",
+      "answer": "Use a counter in a fake or mock so the first call throws and the second returns a value, then assert that the operation completed. This verifies the retry path without real failures. It pairs well with a stub that returns a failure response initially.",
+      "code": "var attempts = 0;\nclient.Setup(c => c.Send())\n    .Returns(() => ++attempts == 1\n        ? throw new TimeoutException()\n        : \"ok\");",
+      "tags": [
+        "exceptions",
+        "retry"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/retry.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-018",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that an exception does not occur under a specific condition?",
+      "answer": "Use Assert.DoesNotThrow for the happy path and pair it with a negative case that expects the exception. This documents both sides of the boundary. Testing both paths gives confidence that the guard is neither too strict nor too loose.",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.DoesNotThrow.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "exceptions-019",
+      "difficulty": "Intermediate",
+      "question": "How do you verify the stack trace or source of an exception in a test?",
+      "answer": "You can assert on properties such as Source or StackTrace, but they are environment-dependent and brittle, so this is rarely worthwhile. Prefer asserting on type, message and custom properties. Test the contract, not the runtime's diagnostics.",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-020",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on multiple properties of a thrown exception?",
+      "answer": "Capture the exception once and use several assertions, ideally inside Assert.Multiple so all failures are reported. This keeps the test readable and gives complete feedback. Asserting on type, message and a custom property together fully describes the expected failure.",
+      "code": "var ex = Assert.Throws<DomainException>(() => service.Run());\nAssert.Multiple(() =>\n{\n    Assert.That(ex.Code, Is.EqualTo(7));\n    Assert.That(ex.Message, Does.Contain(\"limit\"));\n});",
+      "tags": [
+        "exceptions",
+        "multipleasserts"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/multiple-asserts.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html"
+      ]
+    },
+    {
+      "id": "exceptions-021",
+      "difficulty": "Advanced",
+      "question": "How does NUnit's ThrowsConstraint distinguish TypeOf from InstanceOf?",
+      "answer": "Throws.TypeOf<T>() requires the thrown exception to be exactly the specified type, whereas Throws.InstanceOf<T>() also accepts derived types. Use TypeOf for a precise contract and InstanceOf when any subtype is acceptable. The distinction matters for exception hierarchies.",
+      "tags": [
+        "exceptions",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/ThrowsConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-022",
+      "difficulty": "Advanced",
+      "question": "How do you test that an exception is thrown with a specific HResult or error code?",
+      "answer": "Capture the exception and assert on the relevant property, for example ex.HResult or a domain-specific Code, rather than relying on the message text. Asserting on a structured code is more stable across localisation. This is especially important for interop exceptions.",
+      "tags": [
+        "exceptions",
+        "errorcodes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "exceptions-023",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of catching Exception in tests?",
+      "answer": "Catching Exception can swallow the very defect the test is meant to detect, and it makes the test pass for the wrong reason. Always assert a specific type unless you genuinely want to inspect any failure. Narrow catch blocks keep tests honest.",
+      "tags": [
+        "exceptions",
+        "pitfalls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Catch.html"
+      ]
+    },
+    {
+      "id": "exceptions-024",
+      "difficulty": "Advanced",
+      "question": "How do you test exception filters and when the filter suppresses the exception?",
+      "answer": "Call the code and assert on the observable outcome: either the exception propagates or a fallback value is produced. A filter that suppresses the exception means no assertion of a throw should be used. Design the test around the behaviour the filter is meant to produce.",
+      "tags": [
+        "exceptions",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/fundamentals/exceptions/"
+      ]
+    },
+    {
+      "id": "exceptions-025",
+      "difficulty": "Advanced",
+      "question": "How should exception testing differ between unit and integration tests?",
+      "answer": "Unit tests should assert precise exception types and properties for the guard clauses and domain rules they exercise. Integration tests more often assert on error responses, status codes or retry behaviour rather than raw exception types. Choose the level of detail that matches the boundary under test.",
+      "tags": [
+        "exceptions",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    }
+  ]
+}

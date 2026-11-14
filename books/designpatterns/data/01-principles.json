@@ -1,0 +1,210 @@
+{
+  "category": "Design Principles & SOLID",
+  "slug": "principles",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "principles-001",
+      "difficulty": "Beginner",
+      "question": "What are software design principles and why do they matter?",
+      "answer": "Design principles are general guidelines that help you structure code so it stays readable, testable, and easy to change over time. They are not rules enforced by the compiler but shared heuristics that experienced developers use to avoid known failure modes like tight coupling and duplication. Following them reduces the cost of future change, while ignoring them tends to produce rigid code that breaks in unexpected places.",
+      "tags": ["design", "principles"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-002",
+      "difficulty": "Beginner",
+      "question": "What does the SOLID acronym stand for?",
+      "answer": "SOLID is a set of five object-oriented design principles popularized by Robert C. Martin. The letters stand for Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion. Together they encourage small focused types, extension over modification, substitutable subtypes, narrow interfaces, and depending on abstractions rather than concrete classes.",
+      "tags": ["solid", "oop"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-003",
+      "difficulty": "Beginner",
+      "question": "What is the Single Responsibility Principle (SRP)?",
+      "answer": "SRP states that a class should have only one reason to change, meaning it should be responsible to a single actor or concern. A class that parses data, validates it, and persists it has three reasons to change and should usually be split. Keeping responsibilities focused makes classes easier to understand, reuse, and test in isolation.",
+      "tags": ["solid", "srp"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-004",
+      "difficulty": "Beginner",
+      "question": "What is the Open/Closed Principle (OCP)?",
+      "answer": "OCP says software entities should be open for extension but closed for modification, so new behavior is added by adding code rather than editing and retesting existing code. Abstractions such as interfaces, abstract classes, and virtual members are the usual mechanisms. For example, a discount calculator can gain a new rule by adding an IDiscount implementation instead of adding another branch to a switch.",
+      "tags": ["solid", "ocp"],
+      "code": "public interface IDiscount\n{\n    decimal Apply(decimal total);\n}\n\npublic class VipDiscount : IDiscount\n{\n    public decimal Apply(decimal total) => total * 0.9m;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-005",
+      "difficulty": "Beginner",
+      "question": "What is the Liskov Substitution Principle (LSP)?",
+      "answer": "LSP says objects of a derived class must be usable anywhere the base class is expected without breaking the program. A subclass should honor the base contract: it must not strengthen preconditions, weaken postconditions, or throw unexpected exceptions. Classic violations include a Square deriving from Rectangle and overriding width and height in a way that breaks callers.",
+      "tags": ["solid", "lsp"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"]
+    },
+    {
+      "id": "principles-006",
+      "difficulty": "Beginner",
+      "question": "What is the Interface Segregation Principle (ISP)?",
+      "answer": "ISP says clients should not be forced to depend on methods they do not use, so prefer many small role-specific interfaces over one large general one. A fat interface forces implementers to write empty or throwing members and makes changes ripple across unrelated callers. Splitting it into cohesive interfaces like IReader and IWriter keeps each consumer dependent only on what it needs.",
+      "tags": ["solid", "isp"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/interface"]
+    },
+    {
+      "id": "principles-007",
+      "difficulty": "Beginner",
+      "question": "What is the Dependency Inversion Principle (DIP)?",
+      "answer": "DIP says high-level modules should not depend on low-level modules, and both should depend on abstractions. Instead of an OrderService instantiating a concrete SqlOrderRepository, it should depend on an IOrderRepository interface supplied from outside. This inverts the traditional dependency direction and makes the high-level policy independent of infrastructure details.",
+      "tags": ["solid", "dip"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "principles-008",
+      "difficulty": "Beginner",
+      "question": "What is the DRY principle?",
+      "answer": "DRY, Do Not Repeat Yourself, says every piece of knowledge should have a single authoritative representation in the system. When the same logic is duplicated, a change requires edits in multiple places and one is often missed. The goal is to avoid duplicated knowledge, not merely similar-looking code, since over-applying DRY can create awkward coupling.",
+      "tags": ["dry", "principles"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-009",
+      "difficulty": "Beginner",
+      "question": "What do KISS and YAGNI mean?",
+      "answer": "KISS, Keep It Simple, encourages the simplest design that solves the current problem rather than a clever one. YAGNI, You Aren't Gonna Need It, says do not build features or abstractions for imagined future needs. Both reduce complexity and waste, and they pair well with refactoring when a real need finally appears.",
+      "tags": ["kiss", "yagni"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-010",
+      "difficulty": "Beginner",
+      "question": "Why is favoring composition over inheritance recommended?",
+      "answer": "Composition builds behavior by holding and delegating to other objects, while inheritance builds it by extending a base class. Inheritance creates tight coupling to the base implementation and can lead to fragile hierarchies and the diamond problem. Composition is more flexible because behavior can be swapped at runtime and combined freely through interfaces.",
+      "tags": ["composition", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"]
+    },
+    {
+      "id": "principles-011",
+      "difficulty": "Intermediate",
+      "question": "How is SRP commonly misunderstood, and what is the correct interpretation?",
+      "answer": "A common mistake is reading SRP as a class should do only one thing, which leads to an explosion of tiny classes. The original meaning ties responsibility to a single actor or stakeholder who would request changes, so the unit of cohesion is the reason to change. A class can have several methods and still satisfy SRP if they all serve one actor and change for the same reason.",
+      "tags": ["solid", "srp"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-012",
+      "difficulty": "Intermediate",
+      "question": "What are common signs that the Open/Closed Principle is being violated?",
+      "answer": "Frequent edits to a switch or long if/else chain whenever a new case is added is the classic smell. Other signs include methods that keep growing in length as features accumulate and changes that force retesting unrelated behavior. Refactoring toward polymorphism or a strategy registry lets new cases be added as new classes instead of edits.",
+      "tags": ["solid", "ocp"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"]
+    },
+    {
+      "id": "principles-013",
+      "difficulty": "Intermediate",
+      "question": "How does the Liskov Substitution Principle relate to preconditions and postconditions?",
+      "answer": "Subtypes may weaken preconditions and strengthen postconditions but never the reverse. A subtype that requires more of its callers or guarantees less in return is not substitutable. In .NET you can also express contracts with interfaces, argument validation, and Code Contracts style checks so violations surface early.",
+      "tags": ["solid", "lsp", "contracts"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"]
+    },
+    {
+      "id": "principles-014",
+      "difficulty": "Intermediate",
+      "question": "How can covariance and contravariance in C# generics violate LSP if misused?",
+      "answer": "C# supports covariance with out and contravariance with in on generic interfaces and delegates. Covariance lets an IEnumerable<string> be used as IEnumerable<object>, which is safe for reading. Misusing these modifiers on mutable collections can let callers write the wrong type and break type safety, so the compiler restricts variance to reference types and appropriate positions.",
+      "tags": ["generics", "variance", "lsp"],
+      "code": "IEnumerable<object> items = new List<string>();\nAction<object> handle = (object o) => Console.WriteLine(o);\nAction<string> narrowed = handle;",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/covariance-contravariance/"]
+    },
+    {
+      "id": "principles-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the Dependency Inversion Principle and dependency injection?",
+      "answer": "DIP is a design principle about the direction of dependencies: depend on abstractions, not concretions. Dependency injection is a technique for supplying those dependencies from outside a class, often via constructor parameters. You can apply DI without DIP, for example injecting a concrete class, and you can apply DIP without a container by hand-wiring interfaces.",
+      "tags": ["dip", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "principles-016",
+      "difficulty": "Intermediate",
+      "question": "How do coupling and cohesion relate to good design?",
+      "answer": "Coupling measures how much modules depend on each other, and cohesion measures how focused a module's responsibilities are. Good design aims for low coupling and high cohesion so that changes stay local and modules are reusable. These two qualities are often in tension, and design patterns are largely tools for balancing them.",
+      "tags": ["coupling", "cohesion"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-017",
+      "difficulty": "Intermediate",
+      "question": "What is the Law of Demeter and how is it applied?",
+      "answer": "The Law of Demeter, or principle of least knowledge, says an object should talk only to its immediate collaborators and avoid navigating long chains of other objects. Code like order.Customer.Address.City.CreateLabel() couples the caller to the whole graph and breaks when structure changes. Exposing a single method such as order.GetShippingLabel() hides the traversal behind a stable API.",
+      "tags": ["law-of-demeter", "encapsulation"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "principles-018",
+      "difficulty": "Intermediate",
+      "question": "What does tell, do not ask mean in object-oriented design?",
+      "answer": "Tell, do not ask means you should tell an object to perform work rather than querying its state and then deciding for it. Asking exposes internals and spreads an object's logic across callers, which weakens encapsulation. Moving behavior into the object keeps rules in one place and makes the code easier to change.",
+      "tags": ["encapsulation", "oop"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "principles-019",
+      "difficulty": "Intermediate",
+      "question": "Why can over-applying DRY be harmful?",
+      "answer": "DRY targets duplicated knowledge, but two pieces of code that merely look alike may represent different business rules that will evolve separately. Merging them creates an accidental coupling where a change for one caller forces a change for another. The safer rule is to wait until duplication is proven and to keep abstraction boundaries aligned with real concepts.",
+      "tags": ["dry", "abstraction"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-020",
+      "difficulty": "Intermediate",
+      "question": "How does the Interface Segregation Principle improve testability?",
+      "answer": "Narrow interfaces let tests provide small fakes that implement only the members a class actually uses. When a class depends on a fat interface, a test must implement or mock many unrelated members, which is brittle and noisy. Segregated interfaces therefore reduce test setup and make dependencies explicit.",
+      "tags": ["isp", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/interface"]
+    },
+    {
+      "id": "principles-021",
+      "difficulty": "Advanced",
+      "question": "When is it reasonable to violate a SOLID principle?",
+      "answer": "Principles are heuristics, and rigid adherence can produce indirection that costs more than it saves. In small or stable code, adding an abstraction for a single implementation can be premature, and some framework integration points force inheritance. The pragmatic test is whether the design makes the next likely change easier without adding accidental complexity.",
+      "tags": ["solid", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "principles-022",
+      "difficulty": "Advanced",
+      "question": "How do the SOLID principles influence microservice and layered architecture boundaries?",
+      "answer": "SRP and ISP suggest services should own a single cohesive capability with focused contracts, which limits blast radius when one changes. DIP lets core domain logic stay independent of transport and persistence by depending on abstractions. Applying these consistently leads to boundaries that align with business capabilities rather than technical layers.",
+      "tags": ["solid", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/architect-microservice-container-applications/"]
+    },
+    {
+      "id": "principles-023",
+      "difficulty": "Advanced",
+      "question": "How does the Open/Closed Principle interact with the Strategy and Template Method patterns?",
+      "answer": "Strategy externalizes interchangeable algorithms behind an interface so new variants are added as new classes, directly supporting OCP. Template Method keeps a fixed skeleton in a base class and lets subclasses override steps, extending behavior without changing the algorithm's structure. Strategy favors composition and runtime flexibility, while Template Method favors reuse through inheritance.",
+      "tags": ["ocp", "strategy", "template-method"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "principles-024",
+      "difficulty": "Advanced",
+      "question": "What are the limits of the Dependency Inversion Principle in large systems?",
+      "answer": "Depending on abstractions everywhere adds indirection, more types, and harder navigation, which can obscure what actually runs. Abstractions that leak implementation details or change as often as their implementations provide little benefit. DIP pays off most at unstable boundaries, while inside a stable cohesive module concrete types are often fine.",
+      "tags": ["dip", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "principles-025",
+      "difficulty": "Advanced",
+      "question": "How would you refactor a God class using SOLID principles?",
+      "answer": "First identify the distinct actors and responsibilities the class serves, then extract cohesive pieces such as validation, mapping, and persistence into their own types. Introduce interfaces at the boundaries the class depends on and inject them so behavior can vary. Apply ISP to split broad interfaces and OCP to replace conditionals with polymorphic strategies, testing after each step.",
+      "tags": ["solid", "refactoring"],
+      "code": "public sealed class OrderService\n{\n    private readonly IOrderRepository _repo;\n    private readonly IPaymentGateway _payments;\n\n    public OrderService(IOrderRepository repo, IPaymentGateway payments)\n    {\n        _repo = repo;\n        _payments = payments;\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    }
+  ]
+}

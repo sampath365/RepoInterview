@@ -1,0 +1,376 @@
+{
+  "category": "Pipes",
+  "slug": "pipes",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "pipes-001",
+      "difficulty": "Beginner",
+      "question": "What is a pipe in Angular?",
+      "answer": "A pipe transforms a value for display in a template using the pipe operator, for example {{ birthday | date }}. Pipes are pure functions by default and are declared with the @Pipe decorator and a name. They keep formatting logic out of components and make templates readable.",
+      "tags": [
+        "pipes",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/guide/templates/pipes"
+      ]
+    },
+    {
+      "id": "pipes-002",
+      "difficulty": "Beginner",
+      "question": "What are some commonly used built-in pipes in Angular?",
+      "answer": "Angular ships pipes such as date, currency, decimal, percent, uppercase, lowercase, titlecase, slice, json, keyvalue, and async. DatePipe, CurrencyPipe, and DecimalPipe accept locale-aware format options. These cover most formatting needs without writing custom code.",
+      "tags": [
+        "pipes",
+        "built-in"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/api/common/DatePipe"
+      ]
+    },
+    {
+      "id": "pipes-003",
+      "difficulty": "Beginner",
+      "question": "How do you pass parameters to a pipe?",
+      "answer": "Parameters follow the pipe name after colons, for example {{ price | currency:'EUR':'symbol':'1.2-2' }}. Each colon-separated value maps to a subsequent argument of the pipe's transform method. Optional parameters must be ordered exactly as the pipe declares them.",
+      "code": "{{ price | currency:'EUR' }}\n{{ today | date:'fullDate' }}",
+      "tags": [
+        "pipes",
+        "parameters"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/api/common/CurrencyPipe"
+      ]
+    },
+    {
+      "id": "pipes-004",
+      "difficulty": "Beginner",
+      "question": "What does the async pipe do?",
+      "answer": "The async pipe subscribes to an Observable or Promise and returns the latest emitted value, automatically unsubscribing when the component is destroyed. It handles the subscription lifecycle for you, which prevents leaks from manual subscriptions. With signals now available, the async pipe remains useful for RxJS streams in templates.",
+      "code": "<p>{{ users$ | async }}</p>",
+      "tags": [
+        "async-pipe",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/api/common/AsyncPipe",
+        "https://angular.dev/guide/pipes"
+      ]
+    },
+    {
+      "id": "pipes-005",
+      "difficulty": "Beginner",
+      "question": "Can you chain pipes in a template?",
+      "answer": "Yes, pipes can be chained left to right, for example {{ name | lowercase | slice:0:10 }}, where each pipe receives the previous output. The output type must be compatible with the next pipe's input. Chaining keeps transformations declarative but can become hard to read if the chain grows long.",
+      "tags": [
+        "pipes",
+        "chaining"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/api/common/SlicePipe"
+      ]
+    },
+    {
+      "id": "pipes-006",
+      "difficulty": "Beginner",
+      "question": "How do you create a custom pipe?",
+      "answer": "Create a class that implements PipeTransform, decorate it with @Pipe and a name, and implement transform to convert the input. Register the pipe in the imports array of any standalone component that uses it. Keep transform pure and free of side effects.",
+      "code": "@Pipe({ name: 'truncate' })\nexport class TruncatePipe implements PipeTransform {\n  transform(value: string, limit = 20): string {\n    return value.length > limit ? value.slice(0, limit) + '...' : value;\n  }\n}",
+      "tags": [
+        "custom-pipe",
+        "pipetransform"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/api/core/PipeTransform"
+      ]
+    },
+    {
+      "id": "pipes-007",
+      "difficulty": "Beginner",
+      "question": "What is the JsonPipe used for?",
+      "answer": "The json pipe serializes a value to JSON so you can inspect it in a template, for example {{ user | json }}. It is a debugging aid and is rarely appropriate for production UI. Using it on large objects can be slow and clutters the DOM.",
+      "code": "<pre>{{ state | json }}</pre>",
+      "tags": [
+        "json-pipe",
+        "debugging"
+      ],
+      "references": [
+        "https://angular.dev/api/common/JsonPipe",
+        "https://angular.dev/guide/pipes"
+      ]
+    },
+    {
+      "id": "pipes-008",
+      "difficulty": "Beginner",
+      "question": "What does the KeyValuePipe do?",
+      "answer": "The keyvalue pipe converts an object or Map into an array of key-value pairs so it can be iterated with a loop. For example, items | keyvalue yields objects with key and value properties. It is useful for rendering dynamic maps, though iterating plain objects is often better replaced by arrays.",
+      "code": "@for (entry of config | keyvalue; track entry.key) {\n  <li>{{ entry.key }}: {{ entry.value }}</li>\n}",
+      "tags": [
+        "keyvalue-pipe",
+        "iteration"
+      ],
+      "references": [
+        "https://angular.dev/api/common/KeyValuePipe",
+        "https://angular.dev/guide/pipes"
+      ]
+    },
+    {
+      "id": "pipes-009",
+      "difficulty": "Beginner",
+      "question": "What is the SlicePipe?",
+      "answer": "The slice pipe extracts a portion of a string or array using start and optional end indexes, for example list | slice:0:5. It behaves like Array.prototype.slice and returns a new value. It is convenient for previews and pagination in templates.",
+      "tags": [
+        "slice-pipe",
+        "arrays"
+      ],
+      "references": [
+        "https://angular.dev/api/common/SlicePipe",
+        "https://angular.dev/guide/pipes"
+      ]
+    },
+    {
+      "id": "pipes-010",
+      "difficulty": "Beginner",
+      "question": "How do the UpperCasePipe, LowerCasePipe, and TitleCasePipe differ?",
+      "answer": "The uppercase pipe converts a string to all capitals, the lowercase pipe to all small letters, and the titlecase pipe capitalizes the first letter of each word. They are locale-aware where relevant and return the original value for null or undefined. Use them for display only, not for stored data.",
+      "code": "{{ title | titlecase }}\n{{ code | uppercase }}",
+      "tags": [
+        "text-pipes",
+        "formatting"
+      ],
+      "references": [
+        "https://angular.dev/api/common/UpperCasePipe",
+        "https://angular.dev/api/common/TitleCasePipe"
+      ]
+    },
+    {
+      "id": "pipes-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a pure and an impure pipe?",
+      "answer": "A pure pipe runs only when Angular detects a change to its input reference or parameters, while an impure pipe runs on every change detection cycle. Pure pipes are fast and cacheable, whereas impure pipes can hurt performance badly. You mark a pipe impure with pure: false only when it must react to mutations inside objects or arrays.",
+      "tags": [
+        "pure-pipe",
+        "impure-pipe",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/api/core/Pipe"
+      ]
+    },
+    {
+      "id": "pipes-012",
+      "difficulty": "Intermediate",
+      "question": "Why does an impure pipe have a performance cost?",
+      "answer": "Impure pipes are re-evaluated on every change detection pass because Angular cannot know whether their inputs changed internally. This makes them run far more often than pure pipes, especially inside loops. When mutation tracking is required, prefer signals, immutable updates, or precomputed values over an impure pipe.",
+      "tags": [
+        "impure-pipe",
+        "performance",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "pipes-013",
+      "difficulty": "Intermediate",
+      "question": "How do pipes relate to locale-aware formatting?",
+      "answer": "Pipes such as date, currency, decimal, and percent format values according to the active locale, which is determined by LOCALE_ID or by registering locale data. The output changes with the locale without altering your code. In internationalized apps, ensure the correct locale is provided so numbers and dates match user expectations.",
+      "tags": [
+        "i18n",
+        "locale",
+        "pipes"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/format-data-locale",
+        "https://angular.dev/api/core/LOCALE_ID"
+      ]
+    },
+    {
+      "id": "pipes-014",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of using a pipe versus a component method for formatting?",
+      "answer": "A pure pipe is only re-evaluated when its inputs change, so it is generally cheaper than a method that runs on every change detection pass. Pipes also communicate intent and are reusable across templates. Methods can be more flexible for complex logic that depends on several values, but that logic often belongs in a computed signal instead.",
+      "tags": [
+        "pipes",
+        "methods",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "pipes-015",
+      "difficulty": "Intermediate",
+      "question": "How do you make a standalone pipe and use it in a component?",
+      "answer": "Declare the pipe with @Pipe as usual; standalone is the default in modern Angular, so no extra flag is needed. Import the pipe into the imports array of each standalone component that uses it. This keeps dependencies explicit and improves tree-shaking.",
+      "code": "@Component({\n  selector: 'app-price',\n  imports: [CurrencyPipe],\n  template: `{{ amount | currency }}`,\n})\nexport class PriceComponent {\n  amount = 9.99;\n}",
+      "tags": [
+        "standalone",
+        "pipes"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "pipes-016",
+      "difficulty": "Intermediate",
+      "question": "How does the async pipe handle errors and completion?",
+      "answer": "When the source Observable errors, the async pipe rethrows the error into Angular's error handling, so uncaught errors can break rendering. When the source completes, the pipe keeps the last value and stops updating. Handle errors upstream with catchError or use a resource so the template stays stable.",
+      "tags": [
+        "async-pipe",
+        "errors",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/api/common/AsyncPipe",
+        "https://angular.dev/guide/http/making-requests"
+      ]
+    },
+    {
+      "id": "pipes-017",
+      "difficulty": "Intermediate",
+      "question": "What is the DecimalPipe and how do you control its format?",
+      "answer": "The decimal pipe formats a number with locale-aware grouping and decimal digits, for example {{ ratio | number:'1.2-2' }}. The format string has the shape minIntegerDigits.minFractionDigits-maxFractionDigits. Use it for plain numbers and percent for ratios that should render as percentages.",
+      "code": "{{ ratio | number:'1.2-2' }}\n{{ rate | percent:'1.0-1' }}",
+      "tags": [
+        "decimal-pipe",
+        "formatting"
+      ],
+      "references": [
+        "https://angular.dev/api/common/DecimalPipe",
+        "https://angular.dev/api/common/PercentPipe"
+      ]
+    },
+    {
+      "id": "pipes-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use a pipe with an Observable compared with a signal?",
+      "answer": "In templates you pipe an Observable through the async pipe, while a signal is read directly as a function call such as {{ count() }}. You can convert between the two with toSignal and toObservable. For purely local derived state, signals avoid the subscription machinery entirely.",
+      "tags": [
+        "async-pipe",
+        "signals",
+        "rxjs-interop"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/rxjs-interop",
+        "https://angular.dev/api/core/rxjs-interop/toSignal"
+      ]
+    },
+    {
+      "id": "pipes-019",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the CurrencyPipe parameters?",
+      "answer": "The currency pipe takes a currency code, a display option such as symbol or code, and a digit format, for example {{ cost | currency:'USD':'symbol':'1.2-2' }}. It formats the value using the current locale's rules. This keeps monetary display consistent across an application.",
+      "tags": [
+        "currency-pipe",
+        "formatting"
+      ],
+      "references": [
+        "https://angular.dev/api/common/CurrencyPipe",
+        "https://angular.dev/guide/i18n/format-data-locale"
+      ]
+    },
+    {
+      "id": "pipes-020",
+      "difficulty": "Intermediate",
+      "question": "Why must a custom pipe be stateless?",
+      "answer": "Angular may call transform many times and in any order, so a pipe that stores state produces unpredictable output. Pure pipes rely on input reference equality, so hidden state breaks caching and can show stale values. Keep pipes deterministic and depend only on their inputs and parameters.",
+      "tags": [
+        "custom-pipe",
+        "pure-pipe"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/api/core/PipeTransform"
+      ]
+    },
+    {
+      "id": "pipes-021",
+      "difficulty": "Advanced",
+      "question": "How does Angular decide to re-run a pure pipe?",
+      "answer": "Angular stores the last input value and parameters for each pure pipe instance and compares them using strict equality on the next change detection pass. If both the reference and the parameters are unchanged, the transform is skipped. This is why mutating an array in place does not refresh a pure pipe until the reference changes.",
+      "tags": [
+        "pure-pipe",
+        "change-detection",
+        "immutability"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "pipes-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between using async pipe and subscribing in the component?",
+      "answer": "Subscribing in the component gives you full control and lets you transform data before display, but you must manage unsubscription to avoid leaks. The async pipe manages the subscription and its teardown automatically but exposes the raw emitted values to the template. Choosing depends on how much processing the data needs before rendering.",
+      "tags": [
+        "async-pipe",
+        "subscriptions",
+        "memory"
+      ],
+      "references": [
+        "https://angular.dev/api/common/AsyncPipe",
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed"
+      ]
+    },
+    {
+      "id": "pipes-023",
+      "difficulty": "Advanced",
+      "question": "How do locale data and LOCALE_ID affect built-in pipes?",
+      "answer": "LOCALE_ID selects the locale used by the built-in pipes, and registerLocaleData supplies the locale rules that are not bundled by default. Changing the locale changes date, number, and currency output. In server-rendered or localized apps, the locale must be provided consistently on the server and the client.",
+      "tags": [
+        "i18n",
+        "locale",
+        "pipes"
+      ],
+      "references": [
+        "https://angular.dev/api/core/LOCALE_ID",
+        "https://angular.dev/api/common/registerLocaleData"
+      ]
+    },
+    {
+      "id": "pipes-024",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of the async pipe with multiple subscriptions?",
+      "answer": "Each use of the async pipe on the same cold Observable creates an independent subscription, so a template that reads it twice triggers the work twice. Assigning the Observable to a single reference with a shared operator, or converting to a signal, avoids duplicate side effects. This matters for HTTP calls and other expensive cold sources.",
+      "tags": [
+        "async-pipe",
+        "cold-observable",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/api/common/AsyncPipe",
+        "https://angular.dev/guide/signals/rxjs-interop"
+      ]
+    },
+    {
+      "id": "pipes-025",
+      "difficulty": "Advanced",
+      "question": "When should you replace a pipe with a computed signal?",
+      "answer": "A computed signal is preferable when the derived value is needed in both the template and the component class, or when it depends on several reactive sources. Computed signals cache their result and integrate with change detection, and they avoid re-running template expressions. Pipes remain a good fit for pure display formatting that only the template needs.",
+      "tags": [
+        "signals",
+        "computed",
+        "pipes"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/pipes"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,221 @@
+{
+  "category": "Traits, Categories & Skipping",
+  "slug": "traits",
+  "icon": "tag",
+  "questions": [
+    {
+      "id": "traits-001",
+      "difficulty": "Beginner",
+      "question": "What is a trait in xUnit?",
+      "answer": "A trait is a name and value pair attached to a test or test class with the [Trait] attribute, used to categorise and filter tests. Common traits include Category, Priority, or a work item id. The runner can then run or exclude subsets of tests based on those values.",
+      "code": "[Fact]\n[Trait(\"Category\", \"Unit\")]\npublic void Runs_fast() { }",
+      "tags": ["traits", "categories"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-002",
+      "difficulty": "Beginner",
+      "question": "How do you run only tests with a given trait?",
+      "answer": "Pass a filter to dotnet test such as --filter \"Category=Unit\", which the VSTest adapter translates into a trait filter. This is how CI pipelines separate fast unit tests from slower integration tests. The exact filter syntax depends on the runner, but trait names map directly to filter properties.",
+      "code": "dotnet test --filter \"Category=Integration\"",
+      "tags": ["filtering", "cli"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [Trait] and a custom category attribute?",
+      "answer": "The built-in [Trait] attribute stores a name and value and works with the standard runner filters without extra code. A custom attribute is a convenience wrapper that derives from TraitAttribute or sets traits in its constructor, giving you a strongly named attribute such as [UnitTest]. Custom attributes improve readability and prevent typos in the trait name.",
+      "code": "public sealed class UnitTestAttribute()\n    : TraitAttribute(\"Category\", \"Unit\");",
+      "tags": ["custom-attributes", "traits"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-004",
+      "difficulty": "Beginner",
+      "question": "How do you skip a test in xUnit?",
+      "answer": "Use the Skip parameter on [Fact] or [Theory], or the [Fact(Skip = \"reason\")] form, which marks the test as skipped and shows the reason in the report. Skipped tests are reported separately from passing and failing so they remain visible. Always give a reason so the team knows why the test is disabled.",
+      "code": "[Fact(Skip = \"Awaiting fix for #123\")]\npublic void Broken_flow() { }",
+      "tags": ["skip", "fact"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "traits-005",
+      "difficulty": "Beginner",
+      "question": "How do you skip a whole test class?",
+      "answer": "xUnit has no built-in class-level skip attribute, so the portable approach is to set Skip on each [Fact] or [Theory] in the class. To avoid repeating the attribute you can derive a custom fact attribute that sets Skip from a shared condition and apply it to every method. In v3 you can also point SkipUnless or SkipWhen at a static property to skip the whole class dynamically. Prefer fixing or deleting obsolete tests over leaving them skipped forever.",
+      "tags": ["skip", "class"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "traits-006",
+      "difficulty": "Beginner",
+      "question": "Why should skipped tests be tracked?",
+      "answer": "A skipped test is a claim that the code is not verified, so an untracked skip quietly reduces confidence in the suite. Linking the skip reason to a work item makes it actionable and prevents permanent skipping. Periodically reviewing skips keeps the suite honest.",
+      "tags": ["skip", "process"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "traits-007",
+      "difficulty": "Beginner",
+      "question": "How do you mark a test as belonging to a work item?",
+      "answer": "Add a trait such as [Trait(\"Bug\", \"1234\")] or a custom attribute that records the id, which makes the test searchable and filterable. Many runners and reporting tools surface traits so you can trace a failing test back to the requirement. Keep the id format consistent across the team.",
+      "code": "[Fact]\n[Trait(\"WorkItem\", \"AB#1234\")]\npublic void Registers_user() { }",
+      "tags": ["work-items", "traceability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-008",
+      "difficulty": "Beginner",
+      "question": "What happens to traits applied at the class level?",
+      "answer": "Class-level traits apply to every test method in the class, and method-level traits are added on top of them. This is a convenient way to tag a whole category of tests without repeating the attribute. If a method needs a different category, add the method-level trait rather than removing the class one.",
+      "code": "[Trait(\"Category\", \"Integration\")]\npublic class ApiTests { }",
+      "tags": ["class-level", "traits"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-009",
+      "difficulty": "Beginner",
+      "question": "How do you exclude tests by trait in CI?",
+      "answer": "Use a filter expression with a negation such as --filter \"Category!=Integration\" to run everything except that category. This lets a fast unit-test stage run on every commit while the slower integration stage runs less often. Combine conditions with & and | to express more complex selections.",
+      "code": "dotnet test --filter \"Category!=Integration\"",
+      "tags": ["ci", "filtering"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between skipped and ignored tests?",
+      "answer": "xUnit uses the term skipped, and the test is reported as skipped with its reason rather than run. Some other frameworks call the same concept ignored. In both cases the test does not execute and its status is distinct from pass or fail.",
+      "tags": ["skip", "terminology"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "traits-011",
+      "difficulty": "Intermediate",
+      "question": "How do you skip a test conditionally at runtime?",
+      "answer": "In xUnit v2 a test cannot skip itself at runtime, so the usual approach is a discovery-time condition in a custom fact attribute that sets Skip. xUnit v3 adds dynamic skipping, which lets a running test report itself as skipped with a reason. Prefer the discovery-time condition when the answer is already known, and reserve dynamic skipping for facts you can only learn while the test runs.",
+      "tags": ["conditional-skip", "runtime"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "traits-012",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom fact attribute that skips based on a condition?",
+      "answer": "Derive from FactAttribute and set the Skip property in the constructor based on an environment check, so the decision is made at discovery. This keeps the test class clean and centralises the condition. Be careful that the condition is evaluated consistently, because discovery runs before the tests.",
+      "code": "public sealed class WindowsOnlyFactAttribute : FactAttribute\n{\n    public WindowsOnlyFactAttribute()\n    {\n        if (!OperatingSystem.IsWindows())\n            Skip = \"Windows only\";\n    }\n}",
+      "tags": ["custom-fact", "conditional-skip"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "traits-013",
+      "difficulty": "Intermediate",
+      "question": "How do you filter tests by fully qualified name?",
+      "answer": "Use --filter \"FullyQualifiedName~Orders\" where the ~ operator performs a contains match on the test's fully qualified name. This is handy for running a single class or namespace during development. It complements trait filters when you need to target a specific area.",
+      "code": "dotnet test --filter \"FullyQualifiedName~OrderServiceTests\"",
+      "tags": ["filtering", "names"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-014",
+      "difficulty": "Intermediate",
+      "question": "How do traits interact with parallelisation?",
+      "answer": "Traits are metadata and do not affect parallelisation directly; parallelism is controlled by collections. You can, however, put all tests with a given trait into the same collection to serialise them if the trait marks a shared resource. Keep the two concepts separate so filtering does not accidentally change concurrency.",
+      "tags": ["parallelism", "traits"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "traits-015",
+      "difficulty": "Intermediate",
+      "question": "How do you disable parallelisation for specific tests?",
+      "answer": "Place the tests that must not run concurrently into their own collection, because tests in the same collection run sequentially. If a whole assembly must be serial, disable parallelisation with an assembly-level attribute. Prefer a narrow collection over disabling parallelism globally so the rest of the suite stays fast.",
+      "code": "[Collection(\"Serial\")]\npublic class SlowTests { }",
+      "tags": ["parallelism", "collections"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "traits-016",
+      "difficulty": "Intermediate",
+      "question": "How do you organise tests into categories for reporting?",
+      "answer": "Use a small, stable set of trait names such as Category with values Unit, Integration, and EndToEnd, and apply them at the class level where possible. Consistent categories let the CI produce per-category results and time trends. Avoid inventing many overlapping trait names, which makes filtering and reporting confusing.",
+      "tags": ["categories", "reporting"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-017",
+      "difficulty": "Intermediate",
+      "question": "How do you skip a theory data row?",
+      "answer": "In xUnit v3 you mark a single row as skipped by setting Skip on a TheoryDataRow or calling its WithSkip method, so that case is reported as skipped while the rest of the theory still runs. In v2 there is no per-row skip, so the usual approach is to exclude the row from the data source or to return early with a guard. Excluding a genuinely inapplicable row keeps the report clean.",
+      "tags": ["theory", "skip"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "traits-018",
+      "difficulty": "Intermediate",
+      "question": "How do you mark a test as flaky or quarantined?",
+      "answer": "Add a trait such as [Trait(\"Flaky\", \"true\")] and exclude that category from the blocking CI gate while still running it in a separate non-blocking job. This keeps the signal visible without blocking the pipeline on a known unstable test. Quarantine is a temporary measure; the underlying flakiness should be fixed.",
+      "code": "[Fact]\n[Trait(\"Flaky\", \"true\")]\npublic void Timing_sensitive() { }",
+      "tags": ["flaky", "quarantine"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "traits-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use the Skip reason in reports?",
+      "answer": "The reason string passed to the Skip property is surfaced in the test report next to the skipped test, so write it as a short actionable note. Include a work item id when the skip is temporary. A good reason lets a reviewer decide whether the skip is still justified.",
+      "code": "[Fact(Skip = \"Requires Docker; see #482\")]",
+      "tags": ["skip", "reasons"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "traits-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a trait and a test collection?",
+      "answer": "A trait is descriptive metadata used for filtering and reporting, while a collection controls execution, specifically which tests run in parallel and which share fixtures. Traits do not change how tests run, and collections do not appear as categories in reports. Use traits to organise and collections to control concurrency and sharing.",
+      "tags": ["traits", "collections"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "traits-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement dynamic skipping in xUnit v3?",
+      "answer": "In v3 a test skips itself at runtime by calling Assert.Skip, Assert.SkipWhen, or Assert.SkipUnless, which reports the test as skipped rather than failed. Under the hood the runner treats any exception whose message begins with the special dynamic-skip token as a skip, so you can also trigger one by throwing. This is useful when the condition can only be evaluated at execution time, such as whether a container runtime is available. Prefer a discovery-time condition when it is known ahead of time.",
+      "code": "if (!Docker.IsAvailable)\n    Assert.Skip(\"Docker is not available\");",
+      "tags": ["dynamic-skip", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "traits-022",
+      "difficulty": "Advanced",
+      "question": "How do you combine multiple trait filters in a CI pipeline?",
+      "answer": "Use filter expressions that combine conditions with & and | and parentheses, for example --filter \"(Category=Unit)&(Priority=1)\". Most runners evaluate these against the trait metadata collected at discovery. Keep the expressions in the pipeline configuration rather than in code so they can be tuned per stage.",
+      "code": "dotnet test --filter \"(Category=Unit)&(Priority=1)\"",
+      "tags": ["filtering", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "traits-023",
+      "difficulty": "Advanced",
+      "question": "What are the risks of relying on traits for correctness?",
+      "answer": "Traits are only as reliable as the discipline of the team applying them, so a mislabelled integration test in the unit category can slow the fast stage or fail it for the wrong reason. Because traits are strings, typos create categories that silently do not match any filter. Use custom attribute wrappers and review trait usage in code review to keep the taxonomy trustworthy.",
+      "tags": ["traits", "risks"],
+      "references": ["https://xunit.net/docs/query-filter-language"]
+    },
+    {
+      "id": "traits-024",
+      "difficulty": "Advanced",
+      "question": "How do you audit and reduce a large number of skipped tests?",
+      "answer": "List the skipped tests with their reasons, group them by cause, and for each group decide whether to fix the underlying issue, convert it to a dynamic skip with a clear condition, or delete the obsolete test. Set a policy that a skip must reference a work item and be revisited. Reducing skips restores confidence that the green build actually verifies the system.",
+      "tags": ["skips", "maintenance"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "traits-025",
+      "difficulty": "Advanced",
+      "question": "How do you design a trait taxonomy that scales?",
+      "answer": "Define a small set of orthogonal dimensions such as Category, Speed, and Owner, document the allowed values, and enforce them with custom attributes so typos are impossible. Keep the taxonomy stable because filters in CI and dashboards depend on it. Review it periodically and retire values that no longer match how the team works.",
+      "tags": ["taxonomy", "governance"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    }
+  ]
+}

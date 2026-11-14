@@ -1,0 +1,213 @@
+{
+  "category": "Performance & Virtualization",
+  "slug": "performance",
+  "icon": "gauge",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "Why is WPF performance a common interview topic?",
+      "answer": "WPF's flexibility can hide expensive patterns such as deep visual trees, heavy bindings, and unvirtualized lists. Understanding the rendering and layout pipeline helps you diagnose slow UI. Interviewers ask about performance to see whether you build scalable applications.",
+      "tags": ["performance", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-wpf-application-performance"]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "What is UI virtualization?",
+      "answer": "Virtualization creates UI containers only for items currently in view and reuses them as the user scrolls. It keeps memory and layout cost low for large collections. WPF enables it by default in controls such as ListBox and DataGrid through VirtualizingStackPanel.",
+      "tags": ["virtualization", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "Why should you freeze Freezable objects?",
+      "answer": "Frozen Freezables are immutable, so WPF stops tracking changes and can share them efficiently, even across threads. This reduces memory and CPU overhead for shared brushes and geometries. Freeze resources that will not change after creation.",
+      "code": "var brush = new SolidColorBrush(Colors.SteelBlue);\nbrush.Freeze();",
+      "tags": ["freezable", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/freezable-objects-overview"]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "What is the effect of a deep visual tree on performance?",
+      "answer": "Each level in the visual tree adds layout, rendering, and hit-testing cost. A deep tree increases the time for measure, arrange, and property invalidation. Flattening templates and removing unnecessary containers improves performance.",
+      "tags": ["visual-tree", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-layout-and-design"]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid binding to properties that change frequently with a heavy converter?",
+      "answer": "Every time the source changes, WPF re-evaluates the binding and runs the converter, which can be costly if it runs for thousands of items or on every keystroke. Use OneTime bindings for static values and keep converters lightweight. Move expensive work out of the binding path.",
+      "tags": ["binding", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-data-binding"]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "What is the benefit of using a Canvas for many simple visuals?",
+      "answer": "Canvas positions children absolutely without measuring their content, so layout is cheap. When many elements are placed at known coordinates, Canvas avoids repeated measure passes. However it does not virtualize, so large counts still cost memory.",
+      "tags": ["canvas", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-layout-and-design"]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "Why is animating opacity and transforms cheaper than animating size?",
+      "answer": "Opacity and transform animations are handled by the composition engine on the render thread and do not trigger layout. Animating Width, Height, or Margin triggers measure and arrange on every frame. Prefer transforms for movement and scaling.",
+      "tags": ["animation", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-taking-advantage-of-hardware"]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "How does hardware acceleration affect WPF rendering?",
+      "answer": "WPF renders through DirectX, so most drawing is GPU-accelerated when hardware acceleration is available. Some effects and layered windows fall back to software rendering, which is slower. Understanding this helps you avoid features that disable acceleration.",
+      "tags": ["rendering", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/graphics-rendering-tiers"]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between layout and render cost?",
+      "answer": "Layout cost is the work to measure and arrange the element tree, which happens when layout-affecting properties change. Render cost is the work to draw the visuals each frame. Reducing layout invalidations and simplifying visuals both improve responsiveness.",
+      "tags": ["layout", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-layout-and-design"]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "Why can too many resource lookups slow down startup?",
+      "answer": "StaticResource lookups traverse the resource tree at load time, and many merged dictionaries make that traversal longer. Duplicate keys and deep hierarchies add overhead. Keeping the resource structure shallow and reusing dictionaries reduces startup time.",
+      "tags": ["resources", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-application-resources"]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you enable virtualization on a ListBox or ListView?",
+      "answer": "Virtualization is on by default when the items panel is a VirtualizingStackPanel. Ensure ScrollViewer.CanContentScroll is true so the panel can virtualize, and set VirtualizationMode to Recycling to reuse containers. Custom item panels may disable virtualization.",
+      "code": "<ListBox VirtualizingPanel.IsVirtualizing=\"True\"\n         VirtualizingPanel.VirtualizationMode=\"Recycling\"\n         ScrollViewer.CanContentScroll=\"True\"/>",
+      "tags": ["virtualization", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "What is container recycling and why does it help?",
+      "answer": "Recycling reuses item containers as the user scrolls instead of creating and destroying them, reducing garbage collection and allocation. It is enabled by setting VirtualizationMode to Recycling. Recycling is faster but requires templates that handle being reused for different items.",
+      "tags": ["virtualization", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How does data binding affect performance?",
+      "answer": "Each binding creates a BindingExpression with listeners, and deep paths or frequent updates multiply the cost. Prefer OneTime bindings for static values, avoid unnecessary converters, and reduce the number of bound properties per item. Profiling reveals the binding-heavy areas.",
+      "tags": ["binding", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-data-binding"]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "What tools help diagnose WPF performance issues?",
+      "answer": "Visual Studio's Performance Profiler and the WPF Performance Suite tools such as Perforator and Visual Profiler help analyze rendering and layout. The Application Timeline tool shows where time is spent. Using them on a representative workload is the reliable way to find bottlenecks.",
+      "tags": ["profiling", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/performance-profiling-tools"]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce the cost of many elements on a Canvas?",
+      "answer": "Group static drawings into a single Geometry or DrawingVisual, or use a DrawingGroup to batch them. This reduces the number of visuals the renderer must manage. For dynamic scenes, update only what changed.",
+      "tags": ["graphics", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-2d-graphics-and-imaging"]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "What is the effect of using Effects such as Blur on performance?",
+      "answer": "Effects are pixel shaders that render the element to an intermediate surface, which is expensive and can disable hardware acceleration. Applying them to large or animated elements can drop frames. Use them sparingly and on static content.",
+      "tags": ["effects", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-taking-advantage-of-hardware"]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How do you improve startup time for a WPF application?",
+      "answer": "Reduce the amount of work in the constructor and startup, lazy-load views and resources, and avoid loading large assemblies until needed. Use the NGen or ReadyToRun compilation to reduce JIT cost. Splash screens and asynchronous initialization also help perceived startup time.",
+      "tags": ["startup", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-wpf-application-performance"]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "What is the cost of using DynamicResource versus StaticResource?",
+      "answer": "DynamicResource keeps a live reference and re-resolves when resources change, which costs more at runtime. StaticResource resolves once at load and is cheaper. Use DynamicResource only when the value may change, such as for theme switching.",
+      "tags": ["resources", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-application-resources"]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid unnecessary layout passes?",
+      "answer": "Batch property changes, avoid setting layout-affecting properties in loops, and use BeginInit and EndInit or Dispatcher to coalesce updates. Prefer transforms over layout changes for animation. This reduces the number of measure and arrange passes.",
+      "tags": ["layout", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-layout-and-design"]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "What is the benefit of using a VirtualizingStackPanel with grouping?",
+      "answer": "Grouping can disable virtualization if the panel is not virtualizing, because groups are realized as containers. Setting IsVirtualizingWhenGrouping to true on the VirtualizingStackPanel keeps grouping virtualized. This preserves performance when displaying grouped data.",
+      "code": "<VirtualizingStackPanel VirtualizingPanel.IsVirtualizingWhenGrouping=\"True\"/>",
+      "tags": ["virtualization", "grouping"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How do rendering tiers affect WPF performance?",
+      "answer": "WPF classifies the graphics hardware into rendering tiers based on capabilities, from tier 0 software rendering to tier 2 full hardware acceleration. Higher tiers enable more features to run on the GPU. You can query RenderCapability.Tier to adapt visuals when acceleration is limited.",
+      "code": "int tier = (RenderCapability.Tier >> 16);",
+      "tags": ["rendering", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/graphics-rendering-tiers"]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "How do you reduce memory usage in a large WPF application?",
+      "answer": "Virtualize large lists, free unused resources, and avoid retaining views in navigation stacks. Unsubscribe from events to prevent leaks and use weak event patterns for long-lived sources. Analyze with a memory profiler to find retained objects.",
+      "tags": ["memory", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-other-recommendations"]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How do you optimize custom drawing for high frame rates?",
+      "answer": "Use DrawingVisual and RenderOpen to draw lightweight visuals without the overhead of full framework elements, and cache complex drawings in a DrawingGroup. Freeze brushes and pens, and avoid re-creating visuals every frame. Batch static content into single geometries.",
+      "code": "using (var dc = visual.RenderOpen())\n{\n    dc.DrawRectangle(Brushes.SteelBlue, null, new Rect(0, 0, 100, 100));\n}",
+      "tags": ["drawing", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/using-drawingvisual-objects"]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of enabling bitmap caching?",
+      "answer": "CacheMode with BitmapCache renders an element to a bitmap, which speeds up repeated rendering of complex content. It costs memory for the cached bitmap and looks blurry when scaled or when content changes often. It is best for static, complex visuals that animate via transforms.",
+      "code": "<Grid CacheMode=\"BitmapCache\">",
+      "tags": ["caching", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-taking-advantage-of-hardware"]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you profile and find a UI freeze in a WPF application?",
+      "answer": "Reproduce the freeze and use the Visual Studio debugger to break in and inspect call stacks, or use the Application Timeline tool to see long-running UI thread work. Look for synchronous I/O, blocking calls, or heavy layout on the UI thread. Move the offending work off the UI thread or make it asynchronous.",
+      "tags": ["profiling", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/performance-profiling-tools"]
+    }
+  ]
+}

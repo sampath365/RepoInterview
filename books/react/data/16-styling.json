@@ -1,0 +1,338 @@
+{
+  "category": "Styling in React",
+  "slug": "styling",
+  "icon": "palette",
+  "questions": [
+    {
+      "id": "styling-001",
+      "difficulty": "Beginner",
+      "question": "How do you add CSS to a React app?",
+      "answer": "You can import a plain CSS file into a component, use CSS modules for scoped class names, or adopt CSS-in-JS or utility classes. Plain CSS is simple but global, so class name collisions are possible. CSS modules and scoped solutions avoid that by hashing class names. The right choice depends on team preference and build setup.",
+      "tags": [
+        "styling",
+        "css"
+      ],
+      "references": [
+        "https://react.dev/learn/adding-interactivity"
+      ]
+    },
+    {
+      "id": "styling-002",
+      "difficulty": "Beginner",
+      "question": "What is the className attribute and how do you use it?",
+      "answer": "React uses className instead of class because class is a reserved JavaScript word. You assign a string of class names, and the rendered DOM receives the standard class attribute. For conditional classes you build the string with template literals or a helper. This is the most common way to apply styles in React.",
+      "code": "const cls = `btn ${active ? 'btn-active' : ''}`;\n<button className={cls}>Go</button>",
+      "tags": [
+        "styling",
+        "className"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "styling-003",
+      "difficulty": "Beginner",
+      "question": "How do you apply inline styles in React?",
+      "answer": "Inline styles use the style prop with a JavaScript object whose keys are camelCase and whose values are strings or numbers. Numbers are treated as pixels for most properties. Inline styles are best for a few dynamic values, since they cannot express pseudo-classes or media queries. Prefer classes for anything reusable.",
+      "code": "<div style={{ padding: 8, color: 'navy' }}>Box</div>",
+      "tags": [
+        "styling",
+        "inline-styles"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/common"
+      ]
+    },
+    {
+      "id": "styling-004",
+      "difficulty": "Beginner",
+      "question": "What are CSS modules?",
+      "answer": "CSS modules are CSS files whose class names are locally scoped by the bundler, typically hashed at build time. You import the module and reference classes as properties of the imported object, which avoids global collisions. They keep the ergonomics of writing plain CSS. They are a popular middle ground between global CSS and CSS-in-JS.",
+      "code": "import styles from './Button.module.css';\n<button className={styles.primary}>Go</button>",
+      "tags": [
+        "styling",
+        "css-modules"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ]
+    },
+    {
+      "id": "styling-005",
+      "difficulty": "Beginner",
+      "question": "What is CSS-in-JS?",
+      "answer": "CSS-in-JS is an approach where styles are written in JavaScript and attached to components, often through libraries like styled-components or Emotion. Styles are scoped automatically and can depend on props. The trade-off is added runtime cost and a dependency, though some solutions compile to static CSS at build time. It suits teams that value colocation and dynamic styling.",
+      "tags": [
+        "styling",
+        "css-in-js"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ]
+    },
+    {
+      "id": "styling-006",
+      "difficulty": "Beginner",
+      "question": "What are utility-first CSS frameworks?",
+      "answer": "Utility-first frameworks such as Tailwind CSS provide small single-purpose classes that you compose directly in markup. This keeps styles close to the component and avoids naming classes. It can make markup verbose, which is often managed with component extraction. Many React teams adopt it for its consistency and speed.",
+      "code": "<button className='px-4 py-2 rounded bg-blue-600 text-white'>Go</button>",
+      "tags": [
+        "styling",
+        "tailwind"
+      ],
+      "references": [
+        "https://tailwindcss.com/docs/utility-first"
+      ]
+    },
+    {
+      "id": "styling-007",
+      "difficulty": "Beginner",
+      "question": "Why does React use htmlFor instead of for?",
+      "answer": "for is a reserved word in JavaScript, so JSX uses htmlFor to set the label's for attribute. This keeps the code valid JavaScript while producing the correct HTML. It is one of several attribute renames along with className and tabIndex. Getting them right matters for accessibility.",
+      "tags": [
+        "styling",
+        "attributes"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "styling-008",
+      "difficulty": "Beginner",
+      "question": "How do you conditionally apply a class?",
+      "answer": "You compute the class string based on state or props, often with a ternary, template literal or a small helper that joins truthy names. Libraries like clsx or classnames make this cleaner. Keeping the logic in a variable before the return improves readability. This is how you drive visual states such as active or disabled.",
+      "code": "className={clsx('tab', { 'tab-active': isActive })}",
+      "tags": [
+        "styling",
+        "conditional"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "styling-009",
+      "difficulty": "Beginner",
+      "question": "How do global styles differ from component styles?",
+      "answer": "Global styles apply everywhere and are useful for resets, fonts and CSS variables. Component-scoped styles limit their effect to one component, which reduces accidental collisions and makes deletion safe. Most projects use a small set of globals plus scoped component styles. This balance keeps the stylesheet predictable as the app grows.",
+      "tags": [
+        "styling",
+        "architecture"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ]
+    },
+    {
+      "id": "styling-010",
+      "difficulty": "Beginner",
+      "question": "What are CSS variables and how do you use them in React?",
+      "answer": "CSS variables are custom properties defined with a double dash and read with var(). They cascade like other properties, so you can set them on a container and override them in a subtree. In React you can set them via inline style for dynamic theming. They pair well with context for switching themes.",
+      "code": "<div style={{ '--brand': color }}>\n  <span className='badge'>New</span>\n</div>",
+      "tags": [
+        "styling",
+        "css-variables"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties"
+      ]
+    },
+    {
+      "id": "styling-011",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of CSS-in-JS versus static CSS?",
+      "answer": "CSS-in-JS offers scoping, dynamic styles and colocation but adds runtime cost and a dependency, and can complicate server rendering and caching. Static CSS and CSS modules are simpler, faster and easier to cache but require discipline to avoid collisions and support dynamic values less directly. Zero-runtime CSS-in-JS and utility frameworks offer a middle path. Choose based on performance needs and team workflow.",
+      "tags": [
+        "styling",
+        "trade-offs"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ]
+    },
+    {
+      "id": "styling-012",
+      "difficulty": "Intermediate",
+      "question": "How do you implement theming in React?",
+      "answer": "You define theme values as CSS variables or a theme object, provide them through context, and let components read the current theme. Switching the theme updates the provider value and the variables, restyling the tree. Persist the choice in storage for continuity. Keeping themes in tokens makes components theme-agnostic.",
+      "tags": [
+        "styling",
+        "theming"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "styling-013",
+      "difficulty": "Intermediate",
+      "question": "How do you style a component library or third-party component?",
+      "answer": "You can pass a className or style prop if the component forwards it, wrap it and target the wrapper, or override CSS variables it uses. Some libraries expose a theme or slots API. Avoid deep selectors into internal class names, which break on upgrades. Prefer documented extension points.",
+      "tags": [
+        "styling",
+        "third-party"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ]
+    },
+    {
+      "id": "styling-014",
+      "difficulty": "Intermediate",
+      "question": "What is a CSS reset or normalize and why use one?",
+      "answer": "A reset removes or standardizes default browser styles so your layout starts from a consistent baseline across browsers. Normalize preserves useful defaults while fixing inconsistencies. In React you import it once at the app entry. It reduces cross-browser surprises, though modern browsers need less than before.",
+      "tags": [
+        "styling",
+        "reset"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps"
+      ]
+    },
+    {
+      "id": "styling-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle responsive design in React?",
+      "answer": "You use CSS media queries and flexible layouts as the primary tool, since they adapt without JavaScript. When you need the viewport size in logic, a custom hook with matchMedia or a resize listener works, but prefer CSS where possible to avoid re-renders. Container queries let components respond to their own size. Keep breakpoints as shared tokens for consistency.",
+      "tags": [
+        "styling",
+        "responsive"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_media_queries/Using_media_queries"
+      ]
+    },
+    {
+      "id": "styling-016",
+      "difficulty": "Intermediate",
+      "question": "How do you style with dynamic values from props?",
+      "answer": "You can set inline styles or CSS variables from props, or generate classes conditionally. CSS variables are often cleaner because they keep the stylesheet intact and only swap values. For many variants, map props to class names rather than interpolating arbitrary CSS. This keeps styles predictable and cacheable.",
+      "tags": [
+        "styling",
+        "dynamic"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties"
+      ]
+    },
+    {
+      "id": "styling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid style conflicts in large apps?",
+      "answer": "Use scoped solutions such as CSS modules, CSS-in-JS or utility classes, and adopt naming conventions like BEM if you write global CSS. Keep global styles minimal and documented. Extract shared components rather than copying class strings. These practices keep styles maintainable as the team grows.",
+      "tags": [
+        "styling",
+        "architecture"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS"
+      ]
+    },
+    {
+      "id": "styling-018",
+      "difficulty": "Intermediate",
+      "question": "How does styling interact with server rendering?",
+      "answer": "With server rendering the CSS must be available before the first paint to avoid a flash of unstyled content. Static CSS and CSS modules are collected during the build, while runtime CSS-in-JS needs to extract styles on the server. Tools like styled-components support server style sheets for this. Plan the styling approach with SSR in mind.",
+      "tags": [
+        "styling",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/server"
+      ]
+    },
+    {
+      "id": "styling-019",
+      "difficulty": "Intermediate",
+      "question": "What is the role of a design system in React styling?",
+      "answer": "A design system provides shared tokens, components and guidelines so teams build consistent interfaces. In React it usually means a component library with a theme layer. It reduces duplication and speeds up development while keeping the look coherent. Adoption depends on good documentation and clear ownership.",
+      "tags": [
+        "styling",
+        "design-system"
+      ],
+      "references": [
+        "https://react.dev/learn/thinking-in-react"
+      ]
+    },
+    {
+      "id": "styling-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle dark mode?",
+      "answer": "You store the user preference and apply a theme class or data attribute on a root element, then define both themes with CSS variables. Respect the system preference with prefers-color-scheme as the default. Persist the choice so it survives reloads. Because variables cascade, components do not need to know which theme is active.",
+      "tags": [
+        "styling",
+        "dark-mode"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme"
+      ]
+    },
+    {
+      "id": "styling-021",
+      "difficulty": "Advanced",
+      "question": "How do you prevent flash of unstyled content with runtime CSS-in-JS?",
+      "answer": "You collect the styles generated during server rendering and inline them in the HTML head so the first paint is styled. Client hydration then reuses them. Without extraction, styles appear only after JavaScript runs, causing a visible flash. This is a key reason some teams choose zero-runtime or static CSS solutions.",
+      "tags": [
+        "styling",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/server"
+      ]
+    },
+    {
+      "id": "styling-022",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of styling approaches?",
+      "answer": "Runtime CSS-in-JS adds work on every render and can slow large trees, while static CSS is compiled ahead of time and cached by the browser. Unused CSS bloats downloads, so purging and code splitting help. Inline styles are fast to compute but cannot be cached and hurt CSP. Measure the styling layer as part of overall performance.",
+      "tags": [
+        "styling",
+        "performance"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Performance"
+      ]
+    },
+    {
+      "id": "styling-023",
+      "difficulty": "Advanced",
+      "question": "How do you integrate styling with a component library at scale?",
+      "answer": "Establish a single styling strategy, publish shared tokens and base components, and enforce usage through lint rules and code review. Provide escape hatches such as className and style props so consumers are not blocked. Version the library and document breaking changes. Consistency at scale comes from governance, not just tooling.",
+      "tags": [
+        "styling",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/learn/thinking-in-react"
+      ]
+    },
+    {
+      "id": "styling-024",
+      "difficulty": "Advanced",
+      "question": "How do CSS layers and cascade control help large React apps?",
+      "answer": "The @layer at-rule lets you define the precedence of stylesheet groups, so resets, base styles, components and utilities have a predictable order regardless of source order. This tames specificity battles in large apps and third-party overrides. Combined with scoped class names it makes the cascade intentional. It is a modern tool for a long-standing problem.",
+      "tags": [
+        "styling",
+        "cascade"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/@layer"
+      ]
+    },
+    {
+      "id": "styling-025",
+      "difficulty": "Advanced",
+      "question": "How do you test styled components?",
+      "answer": "Assert on user-visible behavior and semantics rather than exact class names, since hashed or generated names change. For visual regressions use snapshot or visual testing tools that compare rendered output. Test theme switching by changing the provider and checking that expected styles or attributes apply. Focus tests on outcomes users can perceive.",
+      "tags": [
+        "styling",
+        "testing"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/intro/"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,219 @@
+{
+  "category": "JSON, XML & Spatial Data",
+  "slug": "json-xml",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "json-xml-001",
+      "difficulty": "Beginner",
+      "question": "Does SQL Server have a native JSON data type?",
+      "answer": "SQL Server stores JSON as text in NVARCHAR columns and provides built-in functions to work with it; there is no separate JSON type before SQL Server 2025. Azure SQL and SQL Server 2025 add a native json data type. For most workloads, storing JSON in NVARCHAR(MAX) with a CHECK constraint using ISJSON is the standard approach.",
+      "tags": ["json", "datatypes"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/json-data-sql-server"]
+    },
+    {
+      "id": "json-xml-002",
+      "difficulty": "Beginner",
+      "question": "How do you validate that a column contains valid JSON?",
+      "answer": "The ISJSON function returns 1 if its argument is valid JSON and 0 otherwise. You can use it in a CHECK constraint to guarantee that only valid JSON is stored. This prevents malformed documents from entering the table.",
+      "code": "ALTER TABLE dbo.Events\nADD CONSTRAINT CK_Events_Payload\nCHECK (ISJSON(Payload) = 1);",
+      "tags": ["isjson", "validation"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/isjson-transact-sql"]
+    },
+    {
+      "id": "json-xml-003",
+      "difficulty": "Beginner",
+      "question": "How do you extract a scalar value from JSON?",
+      "answer": "JSON_VALUE returns a scalar value from a JSON string using a path expression such as $.name. It returns a single value and is limited to 4000 characters unless the returned value is assigned to a larger type. Use it to pull individual fields into columns.",
+      "code": "SELECT JSON_VALUE(Payload, '$.customer.id') AS CustomerId\nFROM dbo.Events;",
+      "tags": ["json-value", "json"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/json-value-transact-sql"]
+    },
+    {
+      "id": "json-xml-004",
+      "difficulty": "Beginner",
+      "question": "How do you extract a nested object or array from JSON?",
+      "answer": "JSON_QUERY returns an object or array from a JSON string, preserving the JSON structure, while JSON_VALUE returns only scalars. Use JSON_QUERY when the result is itself JSON and needs to remain valid JSON. Both take a path expression.",
+      "code": "SELECT JSON_QUERY(Payload, '$.items') AS Items\nFROM dbo.Events;",
+      "tags": ["json-query", "json"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/json-query-transact-sql"]
+    },
+    {
+      "id": "json-xml-005",
+      "difficulty": "Beginner",
+      "question": "How do you turn a table into JSON?",
+      "answer": "The FOR JSON clause appended to a SELECT produces JSON from a result set, with FOR JSON AUTO inferring the structure and FOR JSON PATH giving full control over the shape. It is commonly used to serve JSON to web APIs directly from T-SQL. You can also use it to build nested documents with subqueries.",
+      "code": "SELECT Id, Name FROM dbo.Products\nFOR JSON PATH, ROOT('products');",
+      "tags": ["for-json", "json"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/format-query-results-as-json-with-for-json-sql-server"]
+    },
+    {
+      "id": "json-xml-006",
+      "difficulty": "Beginner",
+      "question": "How do you shred JSON into rows?",
+      "answer": "OPENJSON takes a JSON document and produces a rowset, either with an explicit schema of columns or with the default key, value, type structure. It is the standard way to turn a JSON array into a table. You can reference it in a FROM clause or with CROSS APPLY over a column.",
+      "code": "SELECT j.Id, j.Name\nFROM dbo.Events e\nCROSS APPLY OPENJSON(e.Payload)\n  WITH (Id INT '$.id', Name NVARCHAR(50) '$.name') AS j;",
+      "tags": ["openjson", "shredding"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/openjson-transact-sql"]
+    },
+    {
+      "id": "json-xml-007",
+      "difficulty": "Beginner",
+      "question": "What is XML data type in SQL Server?",
+      "answer": "The xml data type stores well-formed XML documents and fragments in a binary internal format, allowing queries against them with XQuery and methods such as value, query, exist, and nodes. It validates well-formedness and optionally a schema collection. XML is useful for semi-structured documents and for interoperating with systems that exchange XML.",
+      "tags": ["xml", "datatypes"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/xml/create-xml-data-type-variables-and-columns"]
+    },
+    {
+      "id": "json-xml-008",
+      "difficulty": "Beginner",
+      "question": "What are the XML data type methods?",
+      "answer": "query returns XML, value returns a scalar SQL value, exist tests for a condition and returns a bit, nodes shreds XML into a rowset, and modify updates the XML in place. These methods take XQuery expressions. Together they let you query and transform XML stored in a column.",
+      "code": "SELECT Payload.value('(/Order/Id)[1]', 'INT') AS OrderId\nFROM dbo.XmlOrders;",
+      "tags": ["xml-methods", "xquery"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/xml/xml-data-type-methods"]
+    },
+    {
+      "id": "json-xml-009",
+      "difficulty": "Beginner",
+      "question": "What is an XML index?",
+      "answer": "A primary XML index indexes all tags, paths, and values in an xml column, and secondary XML indexes for path, value, and property speed up specific query patterns. They improve XML query performance at the cost of storage and write overhead. You need a clustered primary key on the table before creating one.",
+      "tags": ["xml-index", "xml"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/xml/xml-indexes-sql-server"]
+    },
+    {
+      "id": "json-xml-010",
+      "difficulty": "Beginner",
+      "question": "What is spatial data in SQL Server?",
+      "answer": "SQL Server provides two spatial data types: geometry for planar (flat) data and geography for round-earth data using latitude and longitude. Both support points, lines, and polygons and methods for distance, intersection, and containment. They enable location-based queries and mapping.",
+      "tags": ["spatial", "geometry"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/spatial/spatial-data-types-overview"]
+    },
+    {
+      "id": "json-xml-011",
+      "difficulty": "Intermediate",
+      "question": "How do you build JSON incrementally with FOR JSON PATH and subqueries?",
+      "answer": "You nest subqueries that each use FOR JSON PATH, and because a nested FOR JSON result is text, you wrap it with JSON_QUERY to keep it as JSON rather than escaping it. This lets you produce a hierarchical document from related tables in one query. The pattern is essential for API responses with nested arrays.",
+      "code": "SELECT o.Id,\n  JSON_QUERY((SELECT l.ProductId, l.Qty\n              FROM dbo.OrderLines l\n              WHERE l.OrderId = o.Id\n              FOR JSON PATH)) AS Lines\nFROM dbo.Orders o\nFOR JSON PATH;",
+      "tags": ["for-json", "nested-json"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/format-nested-json-output-with-path-mode-sql-server"]
+    },
+    {
+      "id": "json-xml-012",
+      "difficulty": "Intermediate",
+      "question": "How do you update a value inside a JSON document?",
+      "answer": "Use JSON_MODIFY to set, insert, append, or delete a value at a given path and return the modified document. Because the column is text, you assign the result back to the column. There is no in-place update, so the whole document is rewritten.",
+      "code": "UPDATE dbo.Events\nSET Payload = JSON_MODIFY(Payload, '$.status', 'Processed')\nWHERE Id = 42;",
+      "tags": ["json-modify", "json"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/json-modify-transact-sql"]
+    },
+    {
+      "id": "json-xml-013",
+      "difficulty": "Intermediate",
+      "question": "How do you index JSON properties for fast queries?",
+      "answer": "Because JSON is stored as text, you create computed columns that use JSON_VALUE to extract the properties you filter on, persist them, and index those columns. This lets the optimizer seek instead of scanning and evaluating the path per row. This is the standard technique for querying JSON efficiently.",
+      "code": "ALTER TABLE dbo.Events\nADD CustomerId AS JSON_VALUE(Payload, '$.customer.id') PERSISTED;\nCREATE INDEX IX_Events_CustomerId ON dbo.Events (CustomerId);",
+      "tags": ["json-index", "computed-column"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/index-json-data"]
+    },
+    {
+      "id": "json-xml-014",
+      "difficulty": "Intermediate",
+      "question": "How do you store spatial data and query nearby points?",
+      "answer": "You store a geography or geometry value in a column and query with methods such as STDistance to find rows within a radius, filtering by a bounding box first for performance. A spatial index on the column speeds up those queries. Distance units depend on the spatial reference identifier.",
+      "code": "DECLARE @p GEOGRAPHY = GEOGRAPHY::Point(47.6, -122.3, 4326);\nSELECT Id FROM dbo.Stores\nWHERE Location.STDistance(@p) < 5000;",
+      "tags": ["spatial", "geography"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/spatial/query-spatial-data-for-nearest-neighbor"]
+    },
+    {
+      "id": "json-xml-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between OPENJSON with a schema and without?",
+      "answer": "Without a schema, OPENJSON returns the default columns key, value, and type for each property, which is useful for exploring unknown JSON. With a WITH clause you declare typed output columns and paths, producing a strongly typed rowset. Use the schema form in production for predictable, typed results.",
+      "tags": ["openjson", "schema"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/openjson-transact-sql"]
+    },
+    {
+      "id": "json-xml-016",
+      "difficulty": "Intermediate",
+      "question": "How do you convert between JSON and a relational table?",
+      "answer": "Use OPENJSON to shred JSON into rows for loading, and FOR JSON to build JSON from rows for output. Together they let you integrate a JSON-based API with a normalized schema. Keeping a typed relational model as the source of truth and converting at the edges is a common and robust pattern.",
+      "tags": ["openjson", "for-json"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/json-data-sql-server"]
+    },
+    {
+      "id": "json-xml-017",
+      "difficulty": "Intermediate",
+      "question": "What is the nodes method used for in XML queries?",
+      "answer": "The nodes method shreds an XML value into a rowset of XML fragments, one per matched node, which you then use to extract scalar values with value. It is the XML equivalent of OPENJSON. It is the standard way to turn repeated XML elements into rows.",
+      "code": "SELECT t.c.value('@id', 'INT') AS Id\nFROM dbo.XmlOrders o\nCROSS APPLY o.Payload.nodes('/Order/Line') AS t(c);",
+      "tags": ["nodes", "xml"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/xml/nodes-method-xml-data-type"]
+    },
+    {
+      "id": "json-xml-018",
+      "difficulty": "Intermediate",
+      "question": "What is a spatial index and when do you need one?",
+      "answer": "A spatial index is a B-tree-like structure over a grid tessellation that speeds up spatial predicates such as distance and containment. Without it, spatial queries scan the table and compute geometry for every row. You need one when querying spatial columns at any scale.",
+      "tags": ["spatial-index", "spatial"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/spatial/spatial-indexes-overview"]
+    },
+    {
+      "id": "json-xml-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle large XML documents efficiently?",
+      "answer": "Store XML in the xml type rather than NVARCHAR to get validation and the built-in methods, and use typed schema collections only when needed because they add overhead. Shred frequently queried values into relational columns for indexing. Avoid loading very large documents if you can query them in the database instead.",
+      "tags": ["xml", "performance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/xml/compare-typed-xml-to-untyped-xml"]
+    },
+    {
+      "id": "json-xml-020",
+      "difficulty": "Intermediate",
+      "question": "How do you validate JSON against a schema?",
+      "answer": "SQL Server does not validate JSON against a JSON Schema natively; ISJSON only checks well-formedness. You enforce structure with CHECK constraints on extracted values or by validating in the application before insert. Some teams use a stored procedure to apply structural rules.",
+      "tags": ["json", "validation"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/isjson-transact-sql"]
+    },
+    {
+      "id": "json-xml-021",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of storing JSON in NVARCHAR?",
+      "answer": "JSON in NVARCHAR is opaque to the optimizer, so predicates on JSON properties require computed persisted columns and indexes to avoid scans. Documents are rewritten in full on any update, and large documents increase row size and I/O. Use JSON for flexible or sparse attributes and keep hot, filtered fields in typed columns.",
+      "tags": ["json-performance", "indexing"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/index-json-data"]
+    },
+    {
+      "id": "json-xml-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between geometry and geography types?",
+      "answer": "Geometry assumes a flat, planar coordinate system, so distances and areas are computed in the units of the coordinates and it is fast. Geography assumes a round earth and computes distances on a sphere using latitude and longitude, which is accurate over large distances but slower. Choose geography for real-world location data and geometry for flat spaces such as floor plans.",
+      "tags": ["geometry", "geography"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/spatial/spatial-data-types-overview"]
+    },
+    {
+      "id": "json-xml-023",
+      "difficulty": "Advanced",
+      "question": "How do you query XML with namespaces?",
+      "answer": "You declare the namespace in the XQuery using WITH XMLNAMESPACES before the query, or use wildcard namespaces with *:localname. Without handling namespaces, path expressions return nothing even when the data is present. Correct namespace handling is the most common pitfall in XML queries.",
+      "code": "WITH XMLNAMESPACES ('urn:order' AS o)\nSELECT Payload.query('/o:Order/o:Id') FROM dbo.XmlOrders;",
+      "tags": ["xml", "namespaces"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/xml/with-xmlnamespaces"]
+    },
+    {
+      "id": "json-xml-024",
+      "difficulty": "Advanced",
+      "question": "How does the native json type in newer versions change things?",
+      "answer": "The native json type, available in Azure SQL Database and SQL Server 2025, stores JSON in an optimized binary format that parses faster and is more compact than NVARCHAR, with built-in validation and indexing improvements. It reduces the need for computed columns to index common paths. On older versions you continue to use NVARCHAR with the JSON functions.",
+      "tags": ["native-json", "json"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/json-data-sql-server"]
+    },
+    {
+      "id": "json-xml-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose between XML, JSON, and relational columns for semi-structured data?",
+      "answer": "Use relational columns when the attributes are known, queried often, and benefit from constraints and indexing. Use JSON for flexible, evolving, or sparse attributes and for API payloads, indexing the hot paths with computed columns. Use XML mainly for interoperability with systems that exchange XML or when you need schema validation and XQuery.",
+      "tags": ["design", "semi-structured"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/json-data-sql-server"]
+    }
+  ]
+}

@@ -1,83 +1,84 @@
-# Complete C# Interview Questions and Answers — 500 Questions
+# Interview Questions - 11 Books, 5,500 Questions
 
-A curated set of **500 C# interview questions with detailed answers**, grouped
-into 20 topic areas and delivered as a single, navigable **PDF**.
+A collection of **11 interview-question books**, each with **500 questions and
+answers** across 20 topic areas, delivered as navigable PDFs.
 
-## Deliverable
+## Books
 
-`dist/CSharp-Interview-Questions-500.pdf`
+| Book | Topic | Questions | Pages |
+|------|-------|-----------|-------|
+| `csharp` | Complete C# | 500 | 135 |
+| `sqlserver` | SQL Server | 500 | 105 |
+| `aspnetcore` | ASP.NET Core | 500 | 114 |
+| `aspnetcoreapi` | ASP.NET Core Web API | 500 | 99 |
+| `wpf` | WPF | 500 | 107 |
+| `xunit` | xUnit | 500 | 116 |
+| `nunit` | NUnit | 500 | 102 |
+| `maui` | .NET MAUI | 500 | 114 |
+| `angular` | Angular | 500 | 103 |
+| `react` | React | 500 | 102 |
+| `designpatterns` | Design Patterns | 500 | 98 |
 
-- 135 pages, A4
-- Cover page, clickable table of contents, and PDF bookmarks per category
-- 500 numbered questions, each with a difficulty label, tags, and reference links
-- Syntax-highlighted-style code blocks where relevant
+Each PDF has a cover page, a clickable table of contents, PDF bookmarks per
+category, and 500 numbered questions with a difficulty label, tags, reference
+links, and code blocks where relevant.
 
-## Topic areas
+## Download
 
-| # | Category | Questions |
-|---|----------|-----------|
-| 1 | C# Basics & Syntax | 25 |
-| 2 | Object-Oriented Programming | 25 |
-| 3 | Value Types & Reference Types | 25 |
-| 4 | Collections & Data Structures | 25 |
-| 5 | Generics | 25 |
-| 6 | Delegates, Events & Lambdas | 25 |
-| 7 | LINQ | 25 |
-| 8 | Exception Handling | 25 |
-| 9 | Async & Await | 25 |
-| 10 | Memory Management & Garbage Collection | 25 |
-| 11 | Strings & Text | 25 |
-| 12 | File I/O & Serialization | 25 |
-| 13 | Threading & Concurrency | 25 |
-| 14 | Reflection & Attributes | 25 |
-| 15 | Modern C# Features | 25 |
-| 16 | Design Patterns | 25 |
-| 17 | Testing & Best Practices | 25 |
-| 18 | .NET Platform & Tooling | 25 |
-| 19 | ASP.NET Core & Web | 25 |
-| 20 | Entity Framework & Data Access | 25 |
+Prebuilt PDFs are in `dist/`. Each book is also published as a GitHub release
+with a direct download link, for example:
+
+```
+https://github.com/sampath365/RepoInterview/releases/download/<tag>/<slug>.pdf
+```
 
 ## Repository layout
 
 ```
-data/                 One JSON file per category (the content source of truth)
-  SCHEMA.md           Schema and authoring rules
-generate_pdf.py       Builds the PDF from the JSON data
-dist/                 Generated PDF output
+books/
+  AUTHORING.md            Schema and authoring rules for all books
+  <slug>/
+    book.json             Title, subtitle, blurb
+    PLAN.md               Category plan (20 categories)
+    data/*.json           One file per category (source of truth)
+tools/
+  build_pdf.py            Builds PDFs from book folders
+  validate.py             Validates books (schema, counts, duplicates)
+dist/                     Generated PDFs
 ```
 
-## Regenerating the PDF
+## Regenerating the PDFs
 
 ```bash
 pip install -r requirements.txt
-python3 generate_pdf.py
+python3 tools/validate.py --all      # check content
+python3 tools/build_pdf.py --all     # build every book into dist/
 ```
 
-The generator reads every `data/*.json` file, validates nothing implicitly, and
-writes `dist/CSharp-Interview-Questions-500.pdf`. The table of contents and
-bookmarks resolve over multiple build passes.
+Build a single book with `python3 tools/build_pdf.py books/<slug>`.
 
 ## Content schema
 
-Each `data/<nn>-<slug>.json` file contains:
+Each `books/<slug>/data/<nn>-<category>.json` file contains 25 questions:
 
 ```json
 {
   "category": "Human Readable Category Name",
-  "slug": "short-slug",
-  "icon": "icon-name",
+  "slug": "category-slug",
+  "icon": "short-icon-name",
   "questions": [
     {
-      "id": "slug-001",
+      "id": "category-slug-001",
       "difficulty": "Beginner | Intermediate | Advanced",
       "question": "The interview question?",
       "answer": "A thorough answer.",
-      "code": "optional C# snippet",
+      "code": "optional snippet",
       "tags": ["keyword"],
-      "references": ["https://learn.microsoft.com/..."]
+      "references": ["https://official-docs..."]
     }
   ]
 }
 ```
 
-Answers target modern C# and .NET (C# 12/13, .NET 8/9) and cite Microsoft Learn.
+Answers target current versions (C# 12/13, .NET 8/9, SQL Server 2019/2022,
+Angular 17+, React 18/19, NUnit 4, xUnit v3) and cite official documentation.

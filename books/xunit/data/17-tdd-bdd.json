@@ -1,0 +1,209 @@
+{
+  "category": "TDD & BDD",
+  "slug": "tdd-bdd",
+  "icon": "cycle",
+  "questions": [
+    {
+      "id": "tdd-bdd-001",
+      "difficulty": "Beginner",
+      "question": "What is test-driven development?",
+      "answer": "Test-driven development is a workflow where you write a failing test first, then the minimum code to make it pass, then refactor while keeping the tests green. The short red-green-refactor cycle forces you to clarify the desired behaviour before writing the implementation. It also produces a regression suite as a by-product of development.",
+      "tags": ["tdd", "workflow"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-002",
+      "difficulty": "Beginner",
+      "question": "What are the three steps of the TDD cycle?",
+      "answer": "Red: write a test that fails for the right reason, which proves the test is meaningful. Green: write the simplest code that makes the test pass. Refactor: improve the design while the tests continue to pass. Repeating these steps keeps the code covered and the design evolving in small, safe increments.",
+      "tags": ["red-green-refactor", "tdd"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-003",
+      "difficulty": "Beginner",
+      "question": "How does Arrange-Act-Assert shape a TDD cycle?",
+      "answer": "Arrange sets up the context, Act performs the single behaviour you are test-driving, and Assert states the expectation. In TDD you write this skeleton first so the test fails for the right reason before any implementation exists. Keeping exactly one Act per test ensures each cycle adds one clearly specified behaviour.",
+      "code": "[Fact]\npublic void Withdraw_reduces_balance()\n{\n    var account = new Account(100); // Arrange\n    account.Withdraw(30);           // Act\n    Assert.Equal(70, account.Balance); // Assert\n}",
+      "tags": ["aaa", "structure"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-004",
+      "difficulty": "Beginner",
+      "question": "What is behaviour-driven development?",
+      "answer": "Behaviour-driven development is an extension of TDD that expresses requirements in terms of the system's behaviour using a shared vocabulary such as Given-When-Then. It aims to align developers, testers, and business stakeholders on the same examples. The result is tests that double as living documentation of the requirements.",
+      "tags": ["bdd", "gherkin"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-005",
+      "difficulty": "Beginner",
+      "question": "What does Given-When-Then mean?",
+      "answer": "Given describes the initial context or preconditions, When describes the action or event, and Then describes the expected outcome. This structure makes a scenario readable to non-developers while still mapping directly to a test. It is the BDD counterpart of Arrange-Act-Assert.",
+      "tags": ["given-when-then", "bdd"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-006",
+      "difficulty": "Beginner",
+      "question": "How do you write a good test name?",
+      "answer": "Use a name that states the scenario and the expected behaviour, such as Withdraw_WhenBalanceIsTooLow_Throws, so a failing test tells you what broke without opening the code. A common convention is MethodName_Scenario_ExpectedResult. Avoid names that merely restate the method name.",
+      "tags": ["naming", "readability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-007",
+      "difficulty": "Beginner",
+      "question": "What is the main benefit of writing the test first?",
+      "answer": "Writing the test first forces you to think about the interface and the expected behaviour before the implementation, which usually leads to a cleaner design. It also guarantees that every line of production code exists to satisfy a test, so there is no untested code. Finally, seeing the test fail first confirms it actually exercises the new behaviour.",
+      "tags": ["tdd", "benefits"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-008",
+      "difficulty": "Beginner",
+      "question": "What is a specification by example?",
+      "answer": "Specification by example is a collaborative practice where the team captures concrete examples of desired behaviour and turns them into executable tests. The examples clarify requirements and remove ambiguity before coding starts. They become the acceptance tests that verify the feature.",
+      "tags": ["specification", "collaboration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-009",
+      "difficulty": "Beginner",
+      "question": "How does xUnit support BDD-style tests?",
+      "answer": "xUnit does not enforce any style, so you can express Given-When-Then directly with well-named methods, nested test classes for contexts, and comments or method names that mirror the scenario. Some teams add a lightweight BDD layer or use SpecFlow-style tools that generate xUnit tests from Gherkin. Plain xUnit tests with clear names are often enough.",
+      "code": "public class When_account_is_empty\n{\n    [Fact]\n    public void Then_withdraw_fails() => Assert.Throws<InvalidOperationException>(\n        () => new Account(0).Withdraw(1));\n}",
+      "tags": ["bdd", "naming"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "tdd-bdd-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between TDD and writing tests after the code?",
+      "answer": "With TDD the test drives the design and every behaviour is specified before it exists, so the code tends to be more modular and the tests more focused. Writing tests afterwards can still catch regressions but often mirrors the implementation's structure and misses edge cases that were never considered. Both produce a suite, but only TDD changes how the design emerges.",
+      "tags": ["tdd", "comparison"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-011",
+      "difficulty": "Intermediate",
+      "question": "How do you apply TDD to legacy code that has no tests?",
+      "answer": "Identify a seam where you can insert a test, often by introducing an interface or extracting a method, then write characterisation tests that pin down the current behaviour before changing it. Those tests let you refactor safely toward the design you want. Work in small steps and add tests around the code you are about to touch rather than the whole system.",
+      "tags": ["legacy", "characterisation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-012",
+      "difficulty": "Intermediate",
+      "question": "What is a characterisation test?",
+      "answer": "A characterisation test documents the existing behaviour of code, even if that behaviour is not ideal, so you have a safety net for refactoring. You write it by observing what the code currently does and asserting that, rather than what you think it should do. Once the behaviour is pinned down you can change it deliberately and update the test.",
+      "tags": ["characterisation", "legacy"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-013",
+      "difficulty": "Intermediate",
+      "question": "What is the outside-in approach to TDD?",
+      "answer": "Outside-in TDD starts from the outermost behaviour, such as an acceptance test for a use case, and drives inward through the layers, discovering collaborators as you go and testing each with focused unit tests. It keeps the work tied to a user-visible outcome. The alternative, inside-out, starts with the smallest units and builds upward.",
+      "tags": ["outside-in", "tdd"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-014",
+      "difficulty": "Intermediate",
+      "question": "How do you keep the refactor step safe?",
+      "answer": "Run the tests after every small refactoring step so a failure points to the change you just made. Refactor behaviour-preserving changes only, and keep the steps small enough that you can revert easily. A fast, reliable suite is the prerequisite that makes refactoring safe.",
+      "tags": ["refactoring", "tdd"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-015",
+      "difficulty": "Intermediate",
+      "question": "What is a test list or todo list in TDD?",
+      "answer": "A test list is a running list of the behaviours you plan to implement, written before you start coding, which keeps you focused and prevents scope creep. You pick the next item, write a test for it, and cross it off when it passes. The list also records cases you thought of but are not handling yet.",
+      "tags": ["test-list", "planning"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use xUnit theories in a TDD workflow?",
+      "answer": "Start with a single example as a [Fact], get it passing, then generalise into a [Theory] as you discover more cases. Adding a row is cheap and each row documents a specific scenario. This keeps the early cycle fast while the test grows into a specification table.",
+      "tags": ["theory", "tdd"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "tdd-bdd-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test-drive a new feature end to end?",
+      "answer": "Write an acceptance-level test that describes the feature from the user's perspective, watch it fail, and then drive the implementation inward with unit tests for each collaborator you introduce. The acceptance test stays as proof that the feature works as a whole. Keep the acceptance test coarse and the unit tests precise.",
+      "tags": ["acceptance", "tdd"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-018",
+      "difficulty": "Intermediate",
+      "question": "What is a walking skeleton?",
+      "answer": "A walking skeleton is the thinnest end-to-end implementation of a feature that connects all the layers, so the pipeline is exercised from the start. It lets you verify the integration early and gives you a place to hang further tests. From there you flesh out the behaviour in TDD cycles.",
+      "tags": ["walking-skeleton", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-019",
+      "difficulty": "Intermediate",
+      "question": "How do BDD scenarios map to xUnit tests?",
+      "answer": "Each Given-When-Then scenario becomes one or more xUnit tests, with the Given as setup, the When as the action, and the Then as the assertions. Tools such as SpecFlow or Reqnroll generate xUnit test methods from Gherkin files so the scenarios and the tests stay in sync. For simple cases you can write the scenarios directly as xUnit tests with descriptive names.",
+      "tags": ["specflow", "reqnroll"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-020",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the three amigos in BDD?",
+      "answer": "The three amigos are a business representative, a developer, and a tester who together explore examples of the desired behaviour before development starts. Their different perspectives surface assumptions and edge cases early. The conversation, not the tool, is what makes BDD valuable.",
+      "tags": ["three-amigos", "collaboration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-021",
+      "difficulty": "Advanced",
+      "question": "What are the failure modes of TDD?",
+      "answer": "Common failure modes are writing tests that pass immediately because they do not exercise the new behaviour, over-mocking until the tests verify the mocks, and skipping the refactor step so the design never improves. Another is treating TDD as a mandate for a coverage number rather than a design tool. Healthy TDD keeps tests behaviour-focused and the cycle short.",
+      "tags": ["tdd", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-022",
+      "difficulty": "Advanced",
+      "question": "How do you know when to stop adding tests in TDD?",
+      "answer": "Stop when the behaviour on your test list is specified, the edge cases that carry risk are covered, and further tests would only restate existing ones. A useful heuristic is that every remaining test should be able to fail for a distinct, meaningful reason. Chasing exhaustive coverage of trivial paths adds cost without confidence.",
+      "tags": ["tdd", "judgement"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-023",
+      "difficulty": "Advanced",
+      "question": "How does TDD influence API design?",
+      "answer": "Because you consume the API from the test before writing it, TDD naturally produces interfaces that are easy to call and hard to misuse, and it discourages hidden dependencies. The friction you feel while writing the test is feedback that the design is awkward. This is why TDD is often described as a design technique rather than a testing technique.",
+      "tags": ["design", "api"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-024",
+      "difficulty": "Advanced",
+      "question": "How do you reconcile BDD scenarios with a fast unit-test suite?",
+      "answer": "Keep the BDD scenarios as a small set of end-to-end acceptance tests that verify the feature from the outside, and cover the internal details with fast unit tests driven by TDD. The scenarios provide shared understanding and living documentation, while the unit tests give precise feedback. Avoid expressing every technical case as a Gherkin scenario, which would make the suite slow and the documentation noisy.",
+      "tags": ["bdd", "test-pyramid"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "tdd-bdd-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure whether TDD is working for a team?",
+      "answer": "Look at outcomes such as a falling defect escape rate, shorter lead time for changes, and the ability to refactor without fear, rather than at test counts or coverage. Also observe whether tests are written before the code and whether they describe behaviour. The clearest signal is that the team can change the design quickly and still ship with confidence.",
+      "tags": ["metrics", "team"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

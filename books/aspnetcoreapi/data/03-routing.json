@@ -1,0 +1,338 @@
+{
+  "category": "Routing & Endpoints",
+  "slug": "routing",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "routing-001",
+      "difficulty": "Beginner",
+      "question": "What is routing in ASP.NET Core?",
+      "answer": "Routing matches incoming request URLs to endpoints and is responsible for generating URLs from endpoint metadata. It maps a route template to a handler and exposes the matched endpoint through HttpContext. Routing is implemented by the RoutingMiddleware, which is added implicitly by UseRouting or when endpoints are mapped.",
+      "tags": [
+        "routing",
+        "endpoints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-002",
+      "difficulty": "Beginner",
+      "question": "What is a route template?",
+      "answer": "A route template is a pattern such as api/products/{id} that describes which URLs match an endpoint. Literal segments must match exactly, while placeholders in braces capture values into route data. Templates can also include optional and default values and constraints.",
+      "tags": [
+        "routing",
+        "templates"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ],
+      "code": "app.MapGet(\"/products/{id:int}\", (int id) => Results.Ok(id));"
+    },
+    {
+      "id": "routing-003",
+      "difficulty": "Beginner",
+      "question": "What are route constraints?",
+      "answer": "Route constraints restrict a route to URLs whose segments satisfy a rule, for example {id:int} or {slug:alpha}. They are declared inline after a colon in the placeholder. Constraints help disambiguate routes and reject malformed values before the handler runs.",
+      "tags": [
+        "routing",
+        "constraints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-constraint-reference"
+      ]
+    },
+    {
+      "id": "routing-004",
+      "difficulty": "Beginner",
+      "question": "What is attribute routing?",
+      "answer": "Attribute routing declares routes with attributes such as [Route], [HttpGet], and [HttpGet(\"{id}\")] directly on controllers and actions. It gives precise control over each endpoint's URL and is required when you use the [ApiController] attribute. Templates combine a controller-level prefix with action-level templates.",
+      "tags": [
+        "routing",
+        "attributes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"
+      ],
+      "code": "[Route(\"api/[controller]\")]\npublic class ProductsController : ControllerBase\n{\n    [HttpGet(\"{id:int}\")]\n    public IActionResult Get(int id) => Ok();\n}"
+    },
+    {
+      "id": "routing-005",
+      "difficulty": "Beginner",
+      "question": "What is conventional routing?",
+      "answer": "Conventional routing defines one or more patterns such as {controller}/{action}/{id?} that apply across controllers, with values resolved by name. It is common in MVC applications that serve views and is configured with MapControllerRoute. Minimal APIs and API controllers more often use attribute routing.",
+      "tags": [
+        "routing",
+        "conventions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"
+      ]
+    },
+    {
+      "id": "routing-006",
+      "difficulty": "Beginner",
+      "question": "How does route precedence work?",
+      "answer": "Endpoints are matched by the most specific template first, so literal segments rank above constrained parameters, which rank above unconstrained parameters and catch-all routes. Route precedence is computed per segment from left to right. When precedence ties, the order of registration decides.",
+      "tags": [
+        "routing",
+        "precedence"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-precedence"
+      ]
+    },
+    {
+      "id": "routing-007",
+      "difficulty": "Beginner",
+      "question": "What is a catch-all route parameter?",
+      "answer": "A catch-all parameter is written with an asterisk, such as {*path}, and captures the remainder of the URL including slashes. It is useful for proxy or file-serving endpoints. Because it matches broadly it should be placed last to avoid shadowing more specific routes.",
+      "tags": [
+        "routing",
+        "catch-all"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between MapGet and MapControllers?",
+      "answer": "MapGet registers a single endpoint for the GET verb with a delegate handler, whereas MapControllers registers all attribute-routed controller actions discovered in the assembly. Both add endpoints to the routing table. Minimal APIs use the Map verb methods and controllers use MapControllers.",
+      "tags": [
+        "routing",
+        "endpoints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-009",
+      "difficulty": "Beginner",
+      "question": "How do you make a route parameter optional?",
+      "answer": "Append a question mark to the placeholder, as in {id?}, and give the parameter a default value or a nullable type. The route then matches whether or not the segment is present. You can also supply a default inline, for example {page=1}.",
+      "tags": [
+        "routing",
+        "optional"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-010",
+      "difficulty": "Beginner",
+      "question": "What is URL generation in routing?",
+      "answer": "URL generation produces a URL from an endpoint's route template and supplied route values, using helpers such as LinkGenerator or CreatedAtAction. It uses the same route table used for matching, so links stay consistent with templates. Route value transformers can customize how values are encoded into the URL.",
+      "tags": [
+        "routing",
+        "url-generation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#url-generation"
+      ]
+    },
+    {
+      "id": "routing-011",
+      "difficulty": "Intermediate",
+      "question": "What is endpoint metadata and how is it used?",
+      "answer": "Metadata is a collection of objects attached to an endpoint that describe behavior, such as [Authorize], [Produces], route names, and tags. Middleware and filters read this metadata to decide how to handle the request. It decouples configuration from the handler and enables conventions that apply across many endpoints.",
+      "tags": [
+        "routing",
+        "metadata"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#endpoint-metadata"
+      ]
+    },
+    {
+      "id": "routing-012",
+      "difficulty": "Intermediate",
+      "question": "How do route constraints and model binding interact?",
+      "answer": "A constraint such as {id:int} prevents the route from matching unless the segment converts to the expected type, so the handler only runs with valid values. Model binding then converts the captured string to the parameter type. Constraints reduce the need for defensive parsing inside the handler.",
+      "tags": [
+        "routing",
+        "constraints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-constraints"
+      ]
+    },
+    {
+      "id": "routing-013",
+      "difficulty": "Intermediate",
+      "question": "What are route groups and why use them?",
+      "answer": "A route group, created with MapGroup, applies a shared prefix and shared metadata to a set of endpoints. Filters, authorization, and OpenAPI tags added to the group cascade to each child endpoint. Groups reduce repetition and make resource-oriented organization clear.",
+      "tags": [
+        "routing",
+        "route-groups"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ],
+      "code": "var v1 = app.MapGroup(\"/api/v1/products\");\nv1.MapGet(\"/\", GetAll).RequireAuthorization();"
+    },
+    {
+      "id": "routing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle ambiguous route matches?",
+      "answer": "Routing throws an AmbiguousMatchException when two endpoints match with equal precedence and no ordering rule resolves the tie. Fix it by adding constraints, making templates more specific, or ordering endpoints so the intended one is registered first. Ambiguity is usually a sign of overlapping templates.",
+      "tags": [
+        "routing",
+        "ambiguity"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-015",
+      "difficulty": "Intermediate",
+      "question": "What is a route value transformer used for?",
+      "answer": "An IRouteValueTransformer can rewrite route values dynamically, for example mapping a subdomain or a header to a route value such as an API version or tenant. It runs before endpoint selection and is registered with AddRouting plus MapDynamicControllerRoute. It enables URL schemes that a static template cannot express.",
+      "tags": [
+        "routing",
+        "transformers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/routing#route-value-transformers"
+      ]
+    },
+    {
+      "id": "routing-016",
+      "difficulty": "Intermediate",
+      "question": "What are built-in route constraints you commonly use?",
+      "answer": "Common constraints include int, guid, bool, datetime, decimal, minlength, maxlength, length, range, alpha, regex, and required. Multiple constraints can be chained, as in {id:int:min(1)}. A custom constraint implements IRouteConstraint and is registered with AddRouting.",
+      "tags": [
+        "routing",
+        "constraints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-constraint-reference"
+      ]
+    },
+    {
+      "id": "routing-017",
+      "difficulty": "Intermediate",
+      "question": "How does routing interact with the order of middleware?",
+      "answer": "UseRouting matches the endpoint early and UseEndpoints or MapControllers executes it, so authorization and CORS middleware placed between them can read endpoint metadata. In minimal hosting the framework adds these automatically around mapped endpoints. Incorrect ordering can leave endpoint metadata unavailable to middleware.",
+      "tags": [
+        "routing",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"
+      ]
+    },
+    {
+      "id": "routing-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between route data and query string values?",
+      "answer": "Route data comes from the matched path template and is part of resource identification, while query string values are optional modifiers such as filters, sorting, and paging. Both are bound by name to handler parameters, with route data taking precedence when a name collides. Put identity in the path and everything else in the query.",
+      "tags": [
+        "routing",
+        "query-string"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you version routes using the path?",
+      "answer": "Include the version as a path segment, for example /api/v1/products, using a route group or a route template with a version constraint. Path versioning is explicit and cache-friendly, which is why it is the most common approach. Header and query versioning are alternatives when the URL must stay stable.",
+      "tags": [
+        "routing",
+        "versioning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-020",
+      "difficulty": "Intermediate",
+      "question": "How does routing support link generation in controllers?",
+      "answer": "Controller helpers such as CreatedAtAction and CreatedAtRoute build URLs from action or route names plus values. LinkGenerator does the same without a controller context. Naming endpoints with WithName or route names is required for reliable link generation.",
+      "tags": [
+        "routing",
+        "url-generation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#url-generation"
+      ],
+      "code": "return CreatedAtRoute(\"GetProduct\", new { id = p.Id }, p);"
+    },
+    {
+      "id": "routing-021",
+      "difficulty": "Advanced",
+      "question": "How does endpoint routing differ from the older IRouter pipeline?",
+      "answer": "Endpoint routing separates matching from execution: the RoutingMiddleware matches and stores an Endpoint, and the EndpointMiddleware executes it later in the pipeline. This lets middleware between them see the matched endpoint and its metadata, which the legacy IRouter model could not do easily. Endpoint routing is the default and recommended approach.",
+      "tags": [
+        "routing",
+        "endpoints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a custom route constraint?",
+      "answer": "Implement IRouteConstraint with a Match method and register it with AddRouting using options.ConstraintMap. Then reference it by name in a template, for example {code:mycode}. Custom constraints should be lightweight because they run during matching.",
+      "tags": [
+        "routing",
+        "constraints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-constraint-reference"
+      ],
+      "code": "options.ConstraintMap.Add(\"mycode\", typeof(CodeConstraint));"
+    },
+    {
+      "id": "routing-023",
+      "difficulty": "Advanced",
+      "question": "How do you route to different handlers based on a request header?",
+      "answer": "Use a route value transformer or an endpoint filter to inspect headers, or define separate endpoints with the same path but different metadata and disambiguate with a custom matcher policy. A common real case is versioning by header via the API versioning package. This keeps the URL stable while varying behavior by header.",
+      "tags": [
+        "routing",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-024",
+      "difficulty": "Advanced",
+      "question": "What is a matcher policy and when do you need one?",
+      "answer": "A matcher policy, implementing IMatcherPolicy, participates in endpoint selection to disambiguate candidates or to apply special matching rules. The built-in policies handle HTTP method, host, and version matching. You write one when you need custom selection logic such as header-based or content-type-based routing.",
+      "tags": [
+        "routing",
+        "matcher-policy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "routing-025",
+      "difficulty": "Advanced",
+      "question": "How do you generate links outside of a request?",
+      "answer": "Inject LinkGenerator, which provides GetPathByAddress and GetUriByAddress, and supply the endpoint name or address plus route values. It works without an HttpContext, so background services can build URLs. This decouples link generation from the request pipeline.",
+      "tags": [
+        "routing",
+        "url-generation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing#url-generation"
+      ],
+      "code": "var path = _links.GetPathByAddress(\"GetProduct\", new { id = 42 });"
+    }
+  ]
+}

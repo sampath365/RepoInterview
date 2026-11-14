@@ -1,0 +1,220 @@
+{
+  "category": "XAML Basics & Syntax",
+  "slug": "xaml",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "xaml-001",
+      "difficulty": "Beginner",
+      "question": "What is XAML?",
+      "answer": "XAML is an XML-based markup language used to declaratively define object trees for WPF and other Microsoft UI frameworks. Each element maps to a .NET type and each attribute to a property or event. It separates UI structure from behavior and is compiled into a partial class alongside code-behind.",
+      "tags": ["xaml", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/xaml/"]
+    },
+    {
+      "id": "xaml-002",
+      "difficulty": "Beginner",
+      "question": "What does the x:Class attribute do?",
+      "answer": "x:Class specifies the fully qualified name of the code-behind class that the XAML compiler joins with the generated partial class. It links the markup to its C# logic and enables event handlers and named elements to be referenced. It must appear on the root element of the XAML file.",
+      "code": "<Window x:Class=\"MyApp.MainWindow\"\n        xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\">",
+      "tags": ["xclass", "code-behind"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-and-custom-classes-for-wpf"]
+    },
+    {
+      "id": "xaml-003",
+      "difficulty": "Beginner",
+      "question": "What is the default WPF XML namespace?",
+      "answer": "The default namespace maps the unprefixed XAML elements to WPF types. It is declared as xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\". Because it is the default, elements such as Button and Grid need no prefix.",
+      "code": "<Window xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\n        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\">",
+      "tags": ["namespaces", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-namespaces-and-namespace-mapping-for-wpf-xaml"]
+    },
+    {
+      "id": "xaml-004",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the x namespace prefix?",
+      "answer": "The x prefix maps to the XAML language namespace http://schemas.microsoft.com/winfx/2006/xaml. It provides language directives such as x:Class, x:Name, x:Key, x:Static, and x:Type that are not tied to WPF types. These attributes control how the XAML parser interprets the markup.",
+      "tags": ["namespaces", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-namespaces-and-namespace-mapping-for-wpf-xaml"]
+    },
+    {
+      "id": "xaml-005",
+      "difficulty": "Beginner",
+      "question": "How do you add a namespace for your own CLR types in XAML?",
+      "answer": "You declare an xmlns with the clr-namespace token followed by the namespace name and, optionally, the assembly name. The prefix you choose is then used to reference your types in markup. This lets you use custom controls and converters inside XAML.",
+      "code": "xmlns:local=\"clr-namespace:MyApp.Controls\"\nxmlns:conv=\"clr-namespace:MyApp.Converters;assembly=MyApp\"",
+      "tags": ["namespaces", "custom-types"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-namespaces-and-namespace-mapping-for-wpf-xaml"]
+    },
+    {
+      "id": "xaml-006",
+      "difficulty": "Beginner",
+      "question": "What is a markup extension in XAML?",
+      "answer": "A markup extension is a class that returns a value to the XAML parser at load time and is written inside curly braces, such as {Binding} or {StaticResource}. It avoids verbose property-element syntax for dynamic or referenced values. Common examples include Binding, StaticResource, DynamicResource, and RelativeSource.",
+      "tags": ["markup-extensions", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/markup-extensions-and-wpf-xaml"]
+    },
+    {
+      "id": "xaml-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between x:Name and Name?",
+      "answer": "x:Name is a XAML language directive that registers a field in the generated partial class and adds the element to the namescope. Name is a property on FrameworkElement that also sets the element's identifier. For most elements they produce the same result, but x:Name works on types that do not expose a Name property.",
+      "tags": ["xname", "naming"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-xaml-namescopes"]
+    },
+    {
+      "id": "xaml-008",
+      "difficulty": "Beginner",
+      "question": "What is a property element in XAML?",
+      "answer": "Property element syntax expresses a property value as a nested element instead of an attribute. It is used when a value cannot be written as a simple string, such as setting a complex object or a collection. The form is ParentType.PropertyName inside the parent element.",
+      "code": "<Button>\n  <Button.Background>\n    <SolidColorBrush Color=\"SteelBlue\"/>\n  </Button.Background>\n  Save\n</Button>",
+      "tags": ["property-elements", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-syntax-in-detail"]
+    },
+    {
+      "id": "xaml-009",
+      "difficulty": "Beginner",
+      "question": "How do you write special characters like ampersand and angle brackets in XAML?",
+      "answer": "XAML is XML, so you must escape reserved characters using entities such as &amp; for ampersand, &lt; for less-than, and &gt; for greater-than. Attributes use the same rules for quotes. Alternatively you can wrap text in a CDATA section when declaring content in XAML.",
+      "code": "<TextBlock Text=\"5 &lt; 10 &amp;&amp; 3 &gt; 1\"/>",
+      "tags": ["escaping", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/how-to-use-special-characters-in-xaml"]
+    },
+    {
+      "id": "xaml-010",
+      "difficulty": "Beginner",
+      "question": "What is the content property of a XAML element?",
+      "answer": "A content property is the property that accepts child elements without being named explicitly. It is declared with ContentPropertyAttribute on the type, such as Content for ContentControl and Children for Panel. This is why you can nest elements directly inside a Button or StackPanel.",
+      "tags": ["content-property", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-syntax-in-detail"]
+    },
+    {
+      "id": "xaml-011",
+      "difficulty": "Intermediate",
+      "question": "How does the XAML compiler turn markup into a running UI?",
+      "answer": "The XAML compiler parses the markup, generates a partial class, and emits BAML into the assembly, or compiles XAML to IL in modern SDK projects. At runtime WPF loads the compiled markup and instantiates the object tree. Named elements become fields and event attributes are wired to handlers.",
+      "tags": ["compilation", "baml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/code-behind-and-xaml-in-wpf"]
+    },
+    {
+      "id": "xaml-012",
+      "difficulty": "Intermediate",
+      "question": "What is a type converter and how does XAML use it?",
+      "answer": "A type converter converts a string in markup into a value of a target type. For example, BrushConverter turns \"Red\" into a SolidColorBrush and ThicknessConverter turns \"10,5\" into a Thickness. WPF looks for a TypeConverterAttribute on the property type to perform this conversion during parsing.",
+      "code": "<Border BorderThickness=\"2,4,2,4\" Background=\"LightGray\"/>",
+      "tags": ["type-converters", "parsing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/typeconverters-and-xaml"]
+    },
+    {
+      "id": "xaml-013",
+      "difficulty": "Intermediate",
+      "question": "What is a XAML namescope?",
+      "answer": "A namescope defines a boundary within which element names are unique, allowing the same name to be reused in different templates or user controls. It enables x:Name lookups and FindName to resolve names correctly. Each XAML file and each template instance creates its own namescope.",
+      "tags": ["namescope", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-xaml-namescopes"]
+    },
+    {
+      "id": "xaml-014",
+      "difficulty": "Intermediate",
+      "question": "How do you reference a static field, property, or enum value in XAML?",
+      "answer": "Use the x:Static markup extension to reference a static member of a type. It works for static fields, properties, constants, and enum values. The value is resolved at load time and is commonly used to bind to constants or system colors.",
+      "code": "<TextBlock Text=\"{x:Static sys:Environment.MachineName}\"/>\n<Button Visibility=\"{x:Static Visibility.Hidden}\"/>",
+      "tags": ["xstatic", "markup-extensions"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/markup-extensions-and-wpf-xaml"]
+    },
+    {
+      "id": "xaml-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a StaticResource and a DynamicResource reference?",
+      "answer": "StaticResource resolves a resource once at load time and is faster but does not update if the resource changes. DynamicResource keeps a live reference and re-resolves the value when the resource dictionary changes, at a small runtime cost. Use DynamicResource for values that may change at runtime, such as theme swaps.",
+      "code": "<Border Background=\"{StaticResource PanelBrush}\"/>\n<Border Background=\"{DynamicResource AccentBrush}\"/>",
+      "tags": ["resources", "markup-extensions"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dynamicresource-markup-extension"]
+    },
+    {
+      "id": "xaml-016",
+      "difficulty": "Intermediate",
+      "question": "How do you attach an event handler in XAML?",
+      "answer": "You set the event attribute on the element to the name of a method in code-behind. The method signature must match the event's delegate, for example a RoutedEventHandler with sender and RoutedEventArgs. The XAML compiler wires the handler during load.",
+      "code": "<Button Content=\"Save\" Click=\"OnSaveClick\"/>\n\n// code-behind\nprivate void OnSaveClick(object sender, RoutedEventArgs e) { }",
+      "tags": ["events", "code-behind"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "xaml-017",
+      "difficulty": "Intermediate",
+      "question": "What are attached properties and how do you set them in XAML?",
+      "answer": "Attached properties let a parent or another type set a value on a child element, such as Grid.Row or DockPanel.Dock. In XAML you write the owner type, a dot, and the property name as an attribute. This enables extensible layout and behavior without modifying the child type.",
+      "code": "<Button Grid.Row=\"1\" Grid.Column=\"2\" DockPanel.Dock=\"Top\"/>",
+      "tags": ["attached-properties", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/attached-properties-overview"]
+    },
+    {
+      "id": "xaml-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between x:Type and a plain type reference?",
+      "answer": "x:Type creates a System.Type object reference from a type name in markup, which is useful for properties that expect a Type. A plain type reference appears as an element name and instantiates that type. x:Type is a markup extension, while an element name is not.",
+      "code": "<Style TargetType=\"{x:Type Button}\" />",
+      "tags": ["xtype", "markup-extensions"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/markup-extensions-and-wpf-xaml"]
+    },
+    {
+      "id": "xaml-019",
+      "difficulty": "Intermediate",
+      "question": "How do you define a collection of items directly in XAML?",
+      "answer": "When a property is a collection, you can add items as child elements using collection syntax, and WPF adds each to the collection. For example ListBox.Items accepts ListBoxItem children. Some collections require explicit property element syntax with a name, such as Grid.RowDefinitions.",
+      "code": "<Grid.RowDefinitions>\n  <RowDefinition Height=\"Auto\"/>\n  <RowDefinition Height=\"*\"/>\n</Grid.RowDefinitions>",
+      "tags": ["collections", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-syntax-in-detail"]
+    },
+    {
+      "id": "xaml-020",
+      "difficulty": "Intermediate",
+      "question": "What does the mc:Ignorable attribute do?",
+      "answer": "mc:Ignorable tells the XAML parser which namespace prefixes can be ignored if the reader does not understand them. It is commonly used with the d prefix (design-time) so design-time-only attributes are ignored at runtime. It is part of the markup compatibility namespace.",
+      "code": "<Window xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"\n        xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"\n        mc:Ignorable=\"d\">",
+      "tags": ["markup-compatibility", "design-time"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/markup-compatibility-mc-language-features"]
+    },
+    {
+      "id": "xaml-021",
+      "difficulty": "Advanced",
+      "question": "How does the XAML parser resolve the type for an element?",
+      "answer": "The parser maps the element's namespace URI and local name to a CLR type using the XAML schema context. For WPF namespaces it consults the known assemblies and the XmlnsDefinitionAttribute mappings. For clr-namespace prefixes it loads the specified assembly and resolves the type directly.",
+      "tags": ["parsing", "namespaces"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-namespaces-and-namespace-mapping-for-wpf-xaml"]
+    },
+    {
+      "id": "xaml-022",
+      "difficulty": "Advanced",
+      "question": "How can you customize how your type is created and populated from XAML?",
+      "answer": "You can apply attributes such as ContentPropertyAttribute to define the content property, or implement the IAddChild pattern through the content model. For advanced scenarios you can control construction with x:Arguments, x:FactoryMethod, or a custom type converter. These hooks let the parser build your object correctly.",
+      "tags": ["custom-types", "parsing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-and-custom-classes-for-wpf"]
+    },
+    {
+      "id": "xaml-023",
+      "difficulty": "Advanced",
+      "question": "What is the role of XmlnsDefinitionAttribute in XAML namespace mapping?",
+      "answer": "XmlnsDefinitionAttribute, applied at the assembly level, maps a CLR namespace to a XAML namespace URI. This lets a single xmlns prefix in markup resolve types from many CLR namespaces. It is how the WPF presentation namespace exposes types spread across PresentationCore and PresentationFramework.",
+      "tags": ["namespaces", "assemblies"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-namespaces-and-namespace-mapping-for-wpf-xaml"]
+    },
+    {
+      "id": "xaml-024",
+      "difficulty": "Advanced",
+      "question": "How does deferred loading work in XAML?",
+      "answer": "Elements marked with x:Shared set to false or placed in templates are created lazily when first needed rather than at parse time. Templates in particular are parsed as deferred content and instantiated per use. This reduces startup cost and memory when templates are never applied.",
+      "tags": ["deferred-loading", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-loading-and-dependency-properties"]
+    },
+    {
+      "id": "xaml-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of defining UI in XAML versus C#?",
+      "answer": "XAML is declarative, tooling-friendly, and easier to read for layout and styling, and designers can edit it without touching logic. Defining UI in C# gives full control, easier programmatic construction, and simpler refactoring in some cases. Most teams use XAML for structure and C# for behavior, mixing them only where necessary.",
+      "tags": ["xaml", "csharp"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/code-behind-and-xaml-in-wpf"]
+    }
+  ]
+}

@@ -1,0 +1,336 @@
+{
+  "category": "Performance, Scaling & Deployment",
+  "slug": "performance",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "What is Kestrel?",
+      "answer": "Kestrel is the cross-platform web server built into ASP.NET Core that hosts your application and processes HTTP requests. It is fast and works on Windows, Linux, and macOS. In production it usually sits behind a reverse proxy such as IIS, Nginx, or a cloud load balancer.",
+      "tags": [
+        "kestrel",
+        "hosting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel"
+      ]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Kestrel and IIS?",
+      "answer": "Kestrel is the application server that runs your code, while IIS is a Windows web server often used as a reverse proxy in front of Kestrel, forwarding requests through the ASP.NET Core Module. IIS can add features such as Windows authentication and process management. Kestrel alone is sufficient on Linux and in containers.",
+      "tags": [
+        "kestrel",
+        "iis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/aspnet-core-module"
+      ]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "Why should you use async in Web API actions?",
+      "answer": "Async I/O frees the thread while waiting for the database or a network call, so the server can handle more concurrent requests with the same thread pool. Blocking threads under load causes thread starvation and poor throughput. Use async all the way down rather than blocking on async calls.",
+      "tags": [
+        "async",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/"
+      ]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "Why is response compression useful?",
+      "answer": "Compressing large responses reduces bandwidth and improves client-perceived latency, especially for JSON over slow links. ASP.NET Core provides ResponseCompression middleware supporting Brotli and Gzip. Compression costs CPU, so it matters most for large payloads.",
+      "tags": [
+        "compression",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/response-compression"
+      ],
+      "code": "builder.Services.AddResponseCompression(o => o.EnableForHttps = true);"
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "What is HTTP/2 and why use it?",
+      "answer": "HTTP/2 multiplexes many requests over one connection, uses header compression, and supports server push, reducing latency compared to HTTP/1.1. Kestrel supports it over TLS and can enable it for plaintext in specific cases. Modern clients and proxies support it widely.",
+      "tags": [
+        "http2",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/http2"
+      ]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "What is a reverse proxy and why put one in front of Kestrel?",
+      "answer": "A reverse proxy terminates TLS, load balances, caches, and can absorb attacks before requests reach Kestrel. It also enables features such as compression and request buffering. Kestrel remains the application server behind it.",
+      "tags": [
+        "hosting",
+        "proxy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer"
+      ]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "What is health checking?",
+      "answer": "Health checks expose endpoints that report whether the application and its dependencies are healthy, used by load balancers and orchestrators to route or restart traffic. ASP.NET Core provides AddHealthChecks and MapHealthChecks. Separate liveness from readiness checks.",
+      "tags": [
+        "health-checks",
+        "deployment"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ],
+      "code": "builder.Services.AddHealthChecks();\napp.MapHealthChecks(\"/health\");"
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "What is connection pooling?",
+      "answer": "Connection pooling reuses open database connections instead of opening a new one per request, which avoids the high cost of establishing connections. Providers such as ADO.NET and EF Core pool by connection string by default. Keep connections short-lived so they return to the pool.",
+      "tags": [
+        "database",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/"
+      ]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "Why avoid synchronous database calls in async endpoints?",
+      "answer": "Synchronous calls block a thread pool thread for the duration of the query, reducing throughput and risking thread starvation under load. Async calls release the thread while waiting. Mixing sync-over-async also risks deadlocks.",
+      "tags": [
+        "async",
+        "database"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/"
+      ]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "How does containerization help deployment?",
+      "answer": "Containers package the app and its dependencies into an immutable image, giving consistent behavior across environments and enabling fast, horizontal scaling. They pair naturally with orchestrators such as Kubernetes. Keep images small and avoid storing state inside them.",
+      "tags": [
+        "containers",
+        "deployment"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/docker/"
+      ]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you tune the thread pool for a high-throughput API?",
+      "answer": "Prefer non-blocking async code so the thread pool is not the bottleneck, and only then tune minimum threads if profiling shows starvation. Setting MinThreads too high can hide blocking problems. Measure with realistic load before changing defaults.",
+      "tags": [
+        "performance",
+        "threading"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/"
+      ]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce allocations in hot paths?",
+      "answer": "Avoid unnecessary boxing and intermediate collections, use Span<T> and pooling where appropriate, prefer source-generated JSON serialization, and cache expensive objects. Profile with allocation tools to find the real hotspots rather than guessing. Small per-request savings compound under load.",
+      "tags": [
+        "performance",
+        "allocations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/"
+      ]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How does response caching improve scalability?",
+      "answer": "Caching responses avoids re-executing expensive endpoints, cutting database and CPU work and improving latency. Combined with a CDN it can serve content without touching the origin. Correct cache keys and invalidation are essential to avoid stale or leaked data.",
+      "tags": [
+        "caching",
+        "scaling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/overview"
+      ]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "What is response compression negotiation?",
+      "answer": "The server compresses the response only when the client sends Accept-Encoding with a supported algorithm, and sets Content-Encoding accordingly. This avoids sending compressed data to clients that cannot decode it. Brotli generally compresses better than Gzip but is slower.",
+      "tags": [
+        "compression",
+        "http"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/response-compression"
+      ]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "How do you scale out a stateless API?",
+      "answer": "Run multiple instances behind a load balancer and keep no per-instance session state, storing shared state in a distributed cache or database. This lets you add or remove instances freely. Statelessness is the foundation of horizontal scaling.",
+      "tags": [
+        "scaling",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/"
+      ]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you configure Kestrel limits?",
+      "answer": "Set MaxConcurrentConnections, MaxRequestBodySize, request headers timeout, and keep-alive timeout to sensible values for your workload, and terminate TLS at the edge or in Kestrel as appropriate. Limits protect against resource exhaustion. Tune them from observed traffic, not guesses.",
+      "tags": [
+        "kestrel",
+        "limits"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/options"
+      ],
+      "code": "builder.WebHost.ConfigureKestrel(o =>\n    o.Limits.MaxRequestBodySize = 10 * 1024 * 1024);"
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How do you enable HTTP/3?",
+      "answer": "HTTP/3 runs over QUIC and is enabled on Kestrel by configuring the endpoint with HttpProtocols.Http1AndHttp2AndHttp3, which requires TLS and platform support. It improves performance on lossy networks. Clients fall back to earlier versions when unsupported.",
+      "tags": [
+        "http3",
+        "kestrel"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/http3"
+      ],
+      "code": "o.ListenAnyIP(443, l =>\n    l.Protocols = HttpProtocols.Http1AndHttp2AndHttp3);"
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use a CDN with an API?",
+      "answer": "Offload static content and cacheable GET responses to a CDN by setting appropriate cache headers, and consider signed URLs for private content. This reduces origin load and improves global latency. Ensure cache keys and invalidation handle API versioning.",
+      "tags": [
+        "cdn",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you profile an ASP.NET Core API?",
+      "answer": "Use built-in metrics, OpenTelemetry traces, and tools such as dotnet-counters, dotnet-trace, and Application Insights to find CPU, allocation, and latency hotspots. Measure under realistic load in an environment resembling production. Data-driven tuning beats intuition.",
+      "tags": [
+        "profiling",
+        "observability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "How do you tune the database layer for API performance?",
+      "answer": "Add indexes for frequent filters and sorts, project only needed columns, avoid N+1 queries with proper includes or projections, and use compiled queries for hot paths. Paginate large reads and cache expensive results. Database work is usually the dominant cost.",
+      "tags": [
+        "database",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/ef/core/performance/"
+      ]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How do you design an API for horizontal scale with minimal coordination?",
+      "answer": "Keep instances stateless, use a distributed cache and database for shared state, avoid in-process locks across instances, and make writes idempotent. Partition data where possible and use eventual consistency for non-critical reads. This lets you scale by adding instances.",
+      "tags": [
+        "scaling",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/microservices/"
+      ]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle thundering herd on cache expiration or cold start?",
+      "answer": "Add jitter to expirations, use single-flight recomputation or a distributed lock, and warm critical caches during deployment. HybridCache provides stampede protection. This prevents a burst of identical work from overwhelming the backend.",
+      "tags": [
+        "caching",
+        "scaling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/hybrid"
+      ]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How do you choose between vertical and horizontal scaling?",
+      "answer": "Vertical scaling raises the resources of one instance and is simple but has hard limits, while horizontal scaling adds instances and requires statelessness and shared state. Most APIs scale horizontally for resilience and elasticity. Start with vertical for simplicity and move to horizontal as demand grows.",
+      "tags": [
+        "scaling",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/"
+      ]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you run an ASP.NET Core API in Kubernetes?",
+      "answer": "Containerize the app, expose liveness and readiness endpoints, configure resource requests and limits, set graceful shutdown, and use horizontal pod autoscaling based on metrics. Respect proxy forwarding headers when behind an ingress. These practices keep pods healthy and responsive.",
+      "tags": [
+        "containers",
+        "kubernetes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer"
+      ]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you achieve near-zero-downtime deployments?",
+      "answer": "Deploy rolling updates with health-gated readiness, drain connections gracefully on shutdown, run database migrations in a backward-compatible way, and support running old and new versions side by side. Feature flags let you decouple release from deploy. This combination avoids user-visible outages.",
+      "tags": [
+        "deployment",
+        "availability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/"
+      ]
+    }
+  ]
+}

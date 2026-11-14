@@ -1,0 +1,212 @@
+{
+  "category": "Observer & Mediator",
+  "slug": "observer-mediator",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "observer-mediator-001",
+      "difficulty": "Beginner",
+      "question": "What is the Observer pattern?",
+      "answer": "Observer defines a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically. The subject maintains a list of observers and notifies them. This decouples the subject from the concrete classes of its observers.",
+      "tags": ["observer", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "observer-mediator-002",
+      "difficulty": "Beginner",
+      "question": "What is the Mediator pattern?",
+      "answer": "Mediator defines an object that encapsulates how a set of objects interact, so they do not refer to each other directly. Colleagues communicate only through the mediator, which coordinates the interactions. This reduces many-to-many dependencies to a single hub.",
+      "tags": ["mediator", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-003",
+      "difficulty": "Beginner",
+      "question": "How does C# implement Observer with events?",
+      "answer": "An event is a multicast delegate that subscribers attach handlers to, and raising the event invokes all handlers. This is the Observer pattern built into the language. You subscribe with += and unsubscribe with -=.",
+      "tags": ["observer", "events"],
+      "code": "public event EventHandler<EventArgs>? Updated;\nUpdated?.Invoke(this, EventArgs.Empty);",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/"]
+    },
+    {
+      "id": "observer-mediator-004",
+      "difficulty": "Beginner",
+      "question": "What are the roles in the Observer pattern?",
+      "answer": "The subject, or publisher, holds the state and a list of observers and sends notifications. The observer, or subscriber, defines an update method that the subject calls. Concrete subjects and observers provide the specific behavior.",
+      "tags": ["observer", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "observer-mediator-005",
+      "difficulty": "Beginner",
+      "question": "When is the Mediator pattern useful?",
+      "answer": "Use Mediator when many components interact in complex ways and direct references would create a tangled dependency graph. Centralizing communication in a mediator simplifies the interactions and makes them easier to change. Dialog controllers and chat rooms are common examples.",
+      "tags": ["mediator", "design"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Observer and Mediator?",
+      "answer": "Observer is a one-to-many notification where a subject broadcasts changes to subscribers. Mediator centralizes two-way communication among colleagues so they do not know each other. Observer distributes the notification, while Mediator concentrates the interaction logic.",
+      "tags": ["observer", "mediator"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-007",
+      "difficulty": "Beginner",
+      "question": "What is IObservable and how does it relate to Observer?",
+      "answer": "IObservable<T> and IObserver<T> are the .NET interfaces for the Observer pattern in the Reactive Extensions style. The observable pushes values to subscribed observers via OnNext, OnError, and OnCompleted. This formalizes push-based notifications with a well-defined contract.",
+      "tags": ["observer", "reactive"],
+      "code": "public interface IObserver<T>\n{\n    void OnNext(T value);\n    void OnError(Exception error);\n    void OnCompleted();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.iobservable-1"]
+    },
+    {
+      "id": "observer-mediator-008",
+      "difficulty": "Beginner",
+      "question": "Why should you unsubscribe from events?",
+      "answer": "If the subject outlives the subscriber, the subject's delegate holds a reference to the subscriber and prevents it from being collected, causing a memory leak. Unsubscribing in Dispose or a corresponding lifecycle method breaks that reference. This is a frequent source of leaks in long-lived publishers.",
+      "tags": ["observer", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events"]
+    },
+    {
+      "id": "observer-mediator-009",
+      "difficulty": "Beginner",
+      "question": "What is a chat room an example of?",
+      "answer": "A chat room is a classic Mediator: users send messages to the room, and the room delivers them to other participants. Users do not reference each other directly. The mediator handles routing and membership.",
+      "tags": ["mediator", "examples"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-010",
+      "difficulty": "Beginner",
+      "question": "How does a publish-subscribe system relate to Observer?",
+      "answer": "Publish-subscribe generalizes Observer by inserting a broker or event bus between publishers and subscribers, so neither knows the other. Subscribers register interest in topics, and the broker routes messages. This decouples further and supports many-to-many communication.",
+      "tags": ["observer", "pub-sub"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "observer-mediator-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a thread-safe observer list?",
+      "answer": "Use a concurrent collection or protect the subscriber list with a lock, and take a snapshot before invoking handlers to avoid mutation during iteration. Copying the invocation list of a delegate also provides a stable snapshot. This prevents exceptions when subscribers change while notifying.",
+      "tags": ["observer", "concurrency"],
+      "code": "EventHandler? handlers = Updated;\nhandlers?.Invoke(this, EventArgs.Empty);",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/"]
+    },
+    {
+      "id": "observer-mediator-012",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid memory leaks with the Mediator pattern?",
+      "answer": "The mediator holds references to colleagues, so it must release them when a colleague is no longer active. Use weak references or explicit unregister methods tied to the colleague's lifetime. Scoping the mediator to a short-lived unit avoids long retention.",
+      "tags": ["mediator", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.weakreference"]
+    },
+    {
+      "id": "observer-mediator-013",
+      "difficulty": "Intermediate",
+      "question": "How does the Mediator pattern relate to an event bus?",
+      "answer": "An event bus is a mediator that routes events between publishers and handlers, often with topics and dynamic subscription. It centralizes communication like a mediator but typically operates asynchronously and across modules. This makes it a powerful decoupling mechanism in modular systems.",
+      "tags": ["mediator", "event-bus"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that uses the Observer pattern?",
+      "answer": "Subscribe a test observer that records notifications and assert it receives the expected sequence and values. Verify that unsubscribed observers do not receive notifications. For async notifications, await the completion before asserting.",
+      "tags": ["observer", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "observer-mediator-015",
+      "difficulty": "Intermediate",
+      "question": "What is a mediator used for in a request pipeline?",
+      "answer": "A mediator can route a request to a single handler, decoupling the caller from the handler's location. Libraries implement this with a Send method that resolves the handler for the request type. This keeps controllers thin and handlers focused.",
+      "tags": ["mediator", "cqrs"],
+      "code": "var result = await _mediator.Send(new CreateOrder(customerId, lines));",
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-016",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent an observer from throwing and breaking notifications?",
+      "answer": "Wrap each handler invocation in a try/catch so one failing observer does not stop the rest. Log the error and continue, or collect errors and report them. This isolates failures and keeps the notification loop resilient.",
+      "tags": ["observer", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions"]
+    },
+    {
+      "id": "observer-mediator-017",
+      "difficulty": "Intermediate",
+      "question": "How does the Mediator pattern reduce coupling compared with direct references?",
+      "answer": "Without a mediator, each colleague needs references to many others, creating a dense dependency graph. With a mediator, each colleague depends only on the mediator, turning many-to-many into one-to-many. Changes to interaction logic stay in the mediator.",
+      "tags": ["mediator", "coupling"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-018",
+      "difficulty": "Intermediate",
+      "question": "How do you implement weak event subscriptions in .NET?",
+      "answer": "Weak event patterns let the publisher hold a weak reference to the subscriber so it does not prevent collection. WPF offers a WeakEventManager for this purpose. You can also implement a weak subscriber wrapper that filters out collected targets.",
+      "tags": ["observer", "weak-events"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.weakreference"]
+    },
+    {
+      "id": "observer-mediator-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle ordering and priority in observer notifications?",
+      "answer": "If order matters, store observers in an ordered collection and invoke them in that order, or attach a priority value and sort. For pipelines where order is critical, Chain of Responsibility may be a better fit. Document the ordering contract so subscribers can rely on it.",
+      "tags": ["observer", "ordering"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "observer-mediator-020",
+      "difficulty": "Intermediate",
+      "question": "How do you notify observers asynchronously?",
+      "answer": "Invoke async handlers and await them, or dispatch notifications to a queue so the publisher is not blocked. Awaiting all handlers keeps ordering but slows the publisher; fire-and-forget risks unobserved exceptions. Choose based on latency and reliability needs.",
+      "tags": ["observer", "async"],
+      "code": "foreach (var h in handlers)\n    await h.OnChangedAsync(evt, ct);",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "observer-mediator-021",
+      "difficulty": "Advanced",
+      "question": "How do you avoid infinite loops and cascading updates in Observer systems?",
+      "answer": "Guard against re-entrancy by tracking whether a notification is already in progress, or by using a queue to process changes in a controlled order. Debounce or coalesce rapid changes so observers do not re-trigger the subject repeatedly. Design idempotent handlers where possible.",
+      "tags": ["observer", "reentrancy"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "observer-mediator-022",
+      "difficulty": "Advanced",
+      "question": "How do you scale a mediator into a distributed event bus?",
+      "answer": "Introduce a durable broker such as a message queue, publish events as messages, and let subscribers consume them with delivery guarantees. This adds ordering, retry, and idempotency concerns that a local mediator does not have. Design handlers to be idempotent and to handle duplicates.",
+      "tags": ["mediator", "messaging"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/"]
+    },
+    {
+      "id": "observer-mediator-023",
+      "difficulty": "Advanced",
+      "question": "How does the Mediator pattern interact with dependency injection scopes?",
+      "answer": "Register the mediator as scoped so it lives for the request and can hold per-request handlers without leaking state. Handlers should also be scoped if they use scoped dependencies like a DbContext. This keeps the object graph consistent with the request lifetime.",
+      "tags": ["mediator", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "observer-mediator-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of a global event aggregator?",
+      "answer": "A global aggregator makes it easy for unrelated components to communicate, but it hides dependencies and can make control flow hard to trace. Events can also create unexpected feedback loops and ordering issues. Prefer scoped mediators or explicit interfaces when the interaction is local.",
+      "tags": ["mediator", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "observer-mediator-025",
+      "difficulty": "Advanced",
+      "question": "How do you combine Observer and Mediator to build a reactive UI layer?",
+      "answer": "Use a mediator to coordinate widgets in a view, and expose observables so the view model notifies the view of state changes. Observers subscribe to streams of changes, while the mediator routes interactions between components. This separates presentation logic from widget wiring and keeps updates unidirectional.",
+      "tags": ["observer", "mediator", "ui"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/maui/mvvm"]
+    }
+  ]
+}

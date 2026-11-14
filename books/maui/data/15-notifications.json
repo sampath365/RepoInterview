@@ -1,0 +1,210 @@
+{
+  "category": "Notifications & Background Tasks",
+  "slug": "notifications",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "notifications-001",
+      "difficulty": "Beginner",
+      "question": "What is a local notification in .NET MAUI?",
+      "answer": "A local notification is an alert scheduled and delivered by the app itself on the device, without a server push. It can appear while the app is in the foreground or background, or when it is not running. Local notifications are used for reminders, alarms, and time-based events. They differ from push notifications, which are sent from a remote service.",
+      "tags": ["notifications", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a local notification and a push notification?",
+      "answer": "A local notification is created and scheduled by the app on the device and needs no backend. A push notification is delivered from a remote server through a service such as Firebase Cloud Messaging or Apple Push Notification service, and can reach users even when the app has not run recently. Local notifications are simpler and offline-friendly, while push enables remote, server-driven messaging. Many apps use both.",
+      "tags": ["notifications", "push"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/push-notifications"]
+    },
+    {
+      "id": "notifications-003",
+      "difficulty": "Beginner",
+      "question": "How do you request notification permission?",
+      "answer": "Use the Permissions API with Permissions.PostNotifications, which on Android 13 and later and on iOS prompts the user to allow notifications. Check the returned PermissionStatus and only schedule notifications if granted. Explain why you need notifications before prompting to improve acceptance. If denied, respect the choice and avoid repeated prompts.",
+      "tags": ["notifications", "permissions"],
+      "code": "var status = await Permissions.RequestAsync<Permissions.PostNotifications>();\nif (status == PermissionStatus.Granted)\n{\n    // schedule notifications\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/permissions"]
+    },
+    {
+      "id": "notifications-004",
+      "difficulty": "Beginner",
+      "question": "What are the main components of a notification?",
+      "answer": "A notification typically has a title, a body message, and an optional payload of custom data. It can also include an icon, a sound, and actions or buttons. The payload is delivered back to the app when the user taps the notification. Designing clear titles and concise bodies improves engagement.",
+      "tags": ["notifications", "structure"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-005",
+      "difficulty": "Beginner",
+      "question": "What is a background task in a mobile app?",
+      "answer": "A background task is work the app performs while it is not in the foreground, such as syncing data or refreshing content. Mobile operating systems strictly limit background execution to protect battery and memory. You schedule tasks through platform mechanisms and the OS decides when to run them. Because timing is not guaranteed, background work should be deferrable.",
+      "tags": ["background", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-006",
+      "difficulty": "Beginner",
+      "question": "Why do mobile OSes restrict background execution?",
+      "answer": "Background execution consumes battery, memory, and network, and unrestricted background work would degrade the whole device. So platforms impose limits such as background time budgets, job scheduling, and user-visible indicators. This means you cannot rely on precise timing for background tasks. Design features to tolerate the OS deciding when to run them.",
+      "tags": ["background", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-007",
+      "difficulty": "Beginner",
+      "question": "How does a notification badge differ from a notification?",
+      "answer": "A notification is an alert shown in the notification center with text and actions, while a badge is a small numeric indicator on the app icon. Badges summarize unread counts without interrupting the user. You can set or clear badges from the app. They complement notifications by showing pending items at a glance.",
+      "tags": ["notifications", "badge"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-008",
+      "difficulty": "Beginner",
+      "question": "What happens when a user taps a notification?",
+      "answer": "Tapping a notification brings the app to the foreground and delivers the notification's payload and action so the app can respond, for example by navigating to a relevant page. The app must handle the event in its notification handling code. If the app is not running, it is launched and the event is delivered on startup. Routing the payload to the right screen is key to a good experience.",
+      "tags": ["notifications", "actions"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-009",
+      "difficulty": "Beginner",
+      "question": "What is a notification channel on Android?",
+      "answer": "A notification channel is a category that groups notifications and defines their importance and sound behavior on Android 8 and later. Users can control each channel's settings, so you should create meaningful channels such as reminders and promotions. Notifications must specify a channel id to be shown. On other platforms the concept does not apply, so guard it with platform checks.",
+      "tags": ["notifications", "android"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-010",
+      "difficulty": "Beginner",
+      "question": "How do you cancel a scheduled notification?",
+      "answer": "When scheduling a notification you receive an id or the notification object, and you can cancel it by that id before it fires. Cancelling is useful when the underlying event is no longer relevant, such as a cancelled appointment. Keep track of scheduled ids so you can cancel them reliably. Cleaning up stale schedules prevents confusing alerts.",
+      "tags": ["notifications", "scheduling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-011",
+      "difficulty": "Intermediate",
+      "question": "How do you schedule a local notification in .NET MAUI?",
+      "answer": "MAUI does not include a built-in local notification API, so you use a library such as Plugin.LocalNotification or write platform-specific code. You create a notification request with a title, body, schedule time, and id, then call Show or schedule it. Request permission first and create a channel on Android. The library abstracts the platform differences for you.",
+      "tags": ["notifications", "scheduling"],
+      "code": "var request = new NotificationRequest\n{\n    NotificationId = 100,\n    Title = \"Reminder\",\n    Description = \"Time to check in\",\n    Schedule = new NotificationRequestSchedule\n    {\n        NotifyTime = DateTime.Now.AddMinutes(10)\n    }\n};\nawait LocalNotificationCenter.Current.Show(request);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-012",
+      "difficulty": "Intermediate",
+      "question": "How do you send push notifications to a MAUI app?",
+      "answer": "Register the app with a push service such as Firebase Cloud Messaging for Android and Apple Push Notification service for iOS, typically through a provider like Azure Notification Hubs. On startup you obtain a device token and send it to your backend, which uses it to target messages. You handle incoming messages and taps through the platform SDK or a library such as the Firebase bindings. Push requires platform configuration and server-side integration.",
+      "tags": ["push", "notifications"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/push-notifications"]
+    },
+    {
+      "id": "notifications-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle notifications received while the app is in the foreground?",
+      "answer": "By default the OS may suppress alerts when the app is foregrounded, so the app can choose to show an in-app banner or handle the payload silently. Many push SDKs expose a callback for foreground messages where you decide how to present them. For local notifications you can display a banner or update the UI directly. Consistent handling avoids duplicate alerts.",
+      "tags": ["push", "notifications"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/push-notifications"]
+    },
+    {
+      "id": "notifications-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a periodic background refresh?",
+      "answer": "Use platform background scheduling: WorkManager on Android and BackgroundTasks or BGAppRefreshTask on iOS, accessed through a library or platform-specific code. Register the task at startup, and the OS runs it when conditions allow. The task performs the work and reports completion within the time budget. Because execution is opportunistic, design the refresh to be safe if it is delayed or skipped.",
+      "tags": ["background", "scheduling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-015",
+      "difficulty": "Intermediate",
+      "question": "How do you run work when the app is in the background on Android?",
+      "answer": "Use a foreground service for work that must continue and be visible to the user, showing an ongoing notification, or WorkManager for deferrable work. A foreground service requires a notification and the right permissions on recent Android versions. Background execution without a visible indicator is heavily restricted. Choose the mechanism that matches how urgent and visible the work should be.",
+      "tags": ["background", "android"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-016",
+      "difficulty": "Intermediate",
+      "question": "How do you keep long-running work alive on iOS?",
+      "answer": "iOS allows limited background time for specific use cases such as audio, location, or background fetch, each requiring declared background modes and entitlements. For general work you request a background task and finish within the allotted time or the OS suspends you. True long-running work is not permitted for arbitrary tasks. Design features around short, resumable units of work.",
+      "tags": ["background", "ios"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-017",
+      "difficulty": "Intermediate",
+      "question": "How do you deep link from a notification to a specific page?",
+      "answer": "Include a route or identifier in the notification payload, then on tap parse it and navigate using Shell routing such as GoToAsync with the route and parameters. Handle the case where the app was cold-started so navigation happens after the UI is ready. Keep the payload small and stable. This turns a notification into a direct path to relevant content.",
+      "tags": ["notifications", "navigation"],
+      "code": "if (e.Payload is string route)\n    await Shell.Current.GoToAsync(route);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "notifications-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test notifications and background tasks?",
+      "answer": "Use emulators and simulators with platform tools that can simulate push messages, and schedule local notifications a few seconds ahead for quick testing. Background tasks are harder to trigger on demand, so use platform debugging features or reduced intervals in development. Test on real devices because background policies differ from emulators. Always verify permission and cold-start paths.",
+      "tags": ["notifications", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-019",
+      "difficulty": "Intermediate",
+      "question": "How do you group or summarize multiple notifications?",
+      "answer": "On Android use notification groups and summary notifications so related alerts collapse into one expandable entry. On iOS use thread identifiers to group related notifications. Grouping reduces clutter when many alerts relate to the same context. Keep group keys consistent so related items collect correctly.",
+      "tags": ["notifications", "grouping"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-020",
+      "difficulty": "Intermediate",
+      "question": "How do you update or replace an existing notification?",
+      "answer": "Reuse the same notification id when scheduling so the new notification replaces the old one rather than adding a duplicate. This is useful for progress or status notifications that change over time. On Android the id maps to the notification, and on iOS a matching identifier updates the delivered one. Track ids carefully to update the intended notification.",
+      "tags": ["notifications", "scheduling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    },
+    {
+      "id": "notifications-021",
+      "difficulty": "Advanced",
+      "question": "How do you keep a device token current for push notifications?",
+      "answer": "Device tokens can change when the app is reinstalled, restored, or the OS refreshes them, so register on every startup and send the latest token to your backend. Handle token refresh callbacks from the push SDK and update the server. Store the token per user and device so you can target and clean up correctly. Removing stale tokens on logout prevents misdelivered notifications.",
+      "tags": ["push", "notifications"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/push-notifications"]
+    },
+    {
+      "id": "notifications-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle notification delivery reliability and ordering?",
+      "answer": "Push delivery is best-effort: messages can be delayed, dropped, or delivered out of order, and devices may be offline. Include a timestamp or sequence and reconcile state by re-fetching from the server when the app resumes. Do not treat a push as the source of truth for data. Local notifications scheduled by the OS are more reliable for time-based reminders but still subject to OS policy.",
+      "tags": ["push", "reliability"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/push-notifications"]
+    },
+    {
+      "id": "notifications-023",
+      "difficulty": "Advanced",
+      "question": "How do you securely handle notification payloads?",
+      "answer": "Treat notification payloads as untrusted input and never include secrets or sensitive data in plain text, because payloads may be visible or logged. Validate and sanitize any data you act on, such as routes or ids, before using it. For sensitive content, send an identifier and fetch the details over an authenticated channel. This prevents data leaks and injection through notifications.",
+      "tags": ["notifications", "security"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/push-notifications"]
+    },
+    {
+      "id": "notifications-024",
+      "difficulty": "Advanced",
+      "question": "How do you coordinate background sync with the app lifecycle?",
+      "answer": "Store pending changes locally and sync them from a background task, then reconcile when the app returns to the foreground so the UI reflects the latest state. Use a single source of truth, such as the local database, that both paths update. Guard against concurrent syncs with a lock or flag. This keeps data consistent regardless of when background work runs.",
+      "tags": ["background", "sync"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "notifications-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a notification library versus platform-specific code?",
+      "answer": "A library abstracts the platform differences, speeds development, and provides a single API for scheduling and handling notifications, but adds a dependency and may lag new OS features. Writing platform-specific code gives full control and access to the latest capabilities but multiplies work and testing across platforms. Use a library when your needs are common and stable, and drop to native code for advanced or cutting-edge features. Whichever you choose, isolate it behind an interface so it is easy to replace.",
+      "tags": ["notifications", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/local-notifications"]
+    }
+  ]
+}

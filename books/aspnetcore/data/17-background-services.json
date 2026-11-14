@@ -1,0 +1,217 @@
+{
+  "category": "Background Services & Hosted Services",
+  "slug": "background-services",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "background-services-001",
+      "difficulty": "Beginner",
+      "question": "What is a hosted service in ASP.NET Core?",
+      "answer": "A hosted service is a class implementing IHostedService that the host starts and stops with the application, providing a place to run background work. It has StartAsync and StopAsync methods tied to the app lifetime. Hosted services run in the same process as the web app and can be used for warm-up, polling, or queue processing.",
+      "tags": ["hosted-services", "background"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-002",
+      "difficulty": "Beginner",
+      "question": "What is BackgroundService?",
+      "answer": "BackgroundService is an abstract base class implementing IHostedService that gives you a single ExecuteAsync(CancellationToken) method to run long-running work. You register it with AddHostedService<T>. It simplifies background loops compared to implementing StartAsync and StopAsync yourself.",
+      "code": "public class Worker : BackgroundService\n{\n    protected override async Task ExecuteAsync(CancellationToken ct)\n        => await Task.Delay(Timeout.Infinite, ct);\n}",
+      "tags": ["backgroundservice", "hosted-services"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-003",
+      "difficulty": "Beginner",
+      "question": "How do you register a hosted service?",
+      "answer": "You call builder.Services.AddHostedService<MyService>() during startup, which registers it as a singleton and adds it to the host's list of hosted services. The host starts them in registration order and stops them in reverse order. Multiple hosted services can run in one app.",
+      "code": "builder.Services.AddHostedService<PublishWorker>();",
+      "tags": ["registration", "hosted-services"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between IHostedService and BackgroundService?",
+      "answer": "IHostedService is the interface with StartAsync and StopAsync, and BackgroundService is a convenience base class that implements it and exposes a single ExecuteAsync method for long-running work. Use IHostedService when you need precise control over start and stop, and BackgroundService for typical background loops. Both are registered the same way.",
+      "tags": ["ihostedservice", "backgroundservice"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-005",
+      "difficulty": "Beginner",
+      "question": "How does a background service receive a cancellation signal?",
+      "answer": "The host passes a CancellationToken to StartAsync and to ExecuteAsync, and it is signalled when the application is shutting down. Your loop should observe the token so it can exit promptly, and StopAsync should return when the work stops. Ignoring the token delays shutdown and can cause the process to be killed.",
+      "code": "while (!ct.IsCancellationRequested)\n{\n    await DoWorkAsync(ct);\n    await Task.Delay(1000, ct);\n}",
+      "tags": ["cancellation", "shutdown"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-006",
+      "difficulty": "Beginner",
+      "question": "When should you use a background service?",
+      "answer": "Use a background service for periodic tasks, queue processing, cache warm-up, outbox publishing, or other work that should run alongside the web app without blocking requests. It keeps the web tier responsive. For heavy or independent workloads, a separate worker process or service is often better.",
+      "tags": ["use-cases", "background"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a background service and a request handler?",
+      "answer": "A request handler runs per HTTP request and returns a response, while a background service runs independently of requests for the life of the app. Background work has no HttpContext and must use its own scope for scoped services. This distinction determines how you access dependencies and state.",
+      "tags": ["background", "requests"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-008",
+      "difficulty": "Beginner",
+      "question": "How do you run a periodic task on a timer?",
+      "answer": "You can use a PeriodicTimer inside a BackgroundService loop, awaiting WaitForNextTickAsync, or the Timer class with a callback, ensuring the loop observes cancellation. PeriodicTimer is preferred in modern .NET because it avoids overlapping executions and works with async. Always catch exceptions so one failure does not stop the loop.",
+      "code": "using var timer = new PeriodicTimer(TimeSpan.FromSeconds(30));\nwhile (await timer.WaitForNextTickAsync(ct))\n{\n    await ProcessAsync(ct);\n}",
+      "tags": ["timer", "background"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-009",
+      "difficulty": "Beginner",
+      "question": "Can a background service use scoped services?",
+      "answer": "Not directly, because a background service is a singleton and cannot inject scoped services. You inject IServiceScopeFactory and create a scope for each unit of work, resolving scoped services inside it. This gives each operation its own DbContext and other scoped dependencies.",
+      "code": "using var scope = _scopeFactory.CreateScope();\nvar db = scope.ServiceProvider.GetRequiredService<AppDb>();",
+      "tags": ["scopes", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-010",
+      "difficulty": "Beginner",
+      "question": "What happens if a background service throws an unhandled exception?",
+      "answer": "In modern .NET, an unhandled exception in ExecuteAsync is logged and, depending on HostOptions.BackgroundServiceExceptionBehavior, either stops the host or the service is stopped. The default is to stop the host, which is a deliberate fail-fast behavior. Wrap the loop body in try/catch to keep the service running after transient failures.",
+      "code": "builder.Services.Configure<HostOptions>(o =>\n    o.BackgroundServiceExceptionBehavior =\n        BackgroundServiceExceptionBehavior.Ignore);",
+      "tags": ["errors", "host-options"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a background task queue?",
+      "answer": "You create a bounded Channel<Func<CancellationToken, Task>>, expose an enqueue method through an interface, and have a BackgroundService read from the channel and execute the work items with a scope. Controllers or endpoints enqueue work and return immediately. This decouples request handling from slow processing.",
+      "code": "public interface IBackgroundQueue\n{\n    ValueTask EnqueueAsync(Func<CancellationToken, Task> work);\n    ValueTask<Func<CancellationToken, Task>> DequeueAsync(CancellationToken ct);\n}",
+      "tags": ["queue", "channels"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services#queued-background-tasks"]
+    },
+    {
+      "id": "background-services-012",
+      "difficulty": "Intermediate",
+      "question": "Why should background services avoid doing work in StartAsync?",
+      "answer": "StartAsync runs during host startup, so long or blocking work there delays the app from starting and serving requests. Instead, StartAsync should return quickly and the real work should happen in ExecuteAsync or on a separate task. This keeps startup fast and predictable.",
+      "tags": ["startup", "best-practices"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-013",
+      "difficulty": "Intermediate",
+      "question": "How do you make a background service resilient to transient failures?",
+      "answer": "You wrap each iteration in try/catch, log failures, and retry with a backoff, optionally using Polly for policies such as retry and circuit breaker. The loop must continue after a failed iteration and still observe cancellation. This prevents a single error from stopping the service.",
+      "code": "while (!ct.IsCancellationRequested)\n{\n    try { await WorkAsync(ct); }\n    catch (Exception ex) { _logger.LogError(ex, \"Iteration failed\"); }\n    await Task.Delay(5000, ct);\n}",
+      "tags": ["resilience", "retry"],
+      "references": ["https://learn.microsoft.com/dotnet/core/resilience/", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-014",
+      "difficulty": "Intermediate",
+      "question": "How do you run multiple background services and control their order?",
+      "answer": "You register each with AddHostedService, and the host starts them in registration order and stops them in reverse order. Each service should be independent and not assume another has finished starting. For coordinated work, use a shared channel or a single orchestrating service.",
+      "tags": ["ordering", "hosted-services"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-015",
+      "difficulty": "Intermediate",
+      "question": "How do you run background work on a schedule like cron?",
+      "answer": "You can use a library such as Quartz.NET, Hangfire, or Coravel for cron-style scheduling with persistence and clustering, or implement a simple scheduler with PeriodicTimer. Libraries handle misfires, clustering, and dashboards. For distributed systems, a scheduler with a shared store avoids duplicate executions.",
+      "tags": ["scheduling", "cron"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services", "https://learn.microsoft.com/dotnet/core/extensions/scoped-service"]
+    },
+    {
+      "id": "background-services-016",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent overlapping executions of a periodic task?",
+      "answer": "Use PeriodicTimer, which waits for the previous tick to be consumed before signalling the next, or guard the work with a SemaphoreSlim and skip a tick if the previous run is still active. Overlapping runs can cause duplicate work or race conditions. Logging skipped ticks helps diagnose slow processing.",
+      "code": "if (!await _gate.WaitAsync(0, ct)) return;\ntry { await WorkAsync(ct); } finally { _gate.Release(); }",
+      "tags": ["concurrency", "background"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-017",
+      "difficulty": "Intermediate",
+      "question": "How do you stop a background service gracefully on shutdown?",
+      "answer": "The host signals the cancellation token and calls StopAsync, giving the service a chance to finish or abandon work. Your loop should exit on the token, flush or persist state, and return promptly. Setting HostOptions.ShutdownTimeout controls how long the host waits before terminating.",
+      "tags": ["shutdown", "graceful"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services", "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"]
+    },
+    {
+      "id": "background-services-018",
+      "difficulty": "Intermediate",
+      "question": "How do you run background work only in one instance of a scaled-out app?",
+      "answer": "You use a distributed lock or leader election, for example a Redis lock, a SQL-based lock, or a scheduler that coordinates across instances, so only one node performs the work. Alternatively, deploy the work as a separate single-instance worker. Without coordination, every instance would run the task and duplicate side effects.",
+      "tags": ["distributed", "locks"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services", "https://learn.microsoft.com/dotnet/core/extensions/scoped-service"]
+    },
+    {
+      "id": "background-services-019",
+      "difficulty": "Intermediate",
+      "question": "How do you observe and monitor a background service?",
+      "answer": "You log start, stop, and iteration outcomes, expose metrics such as processed items and failures through OpenTelemetry or health checks, and add a health check that reports the service's liveness. Alerting on stalled or failing loops catches problems early. Tracing background work helps correlate it with originating requests.",
+      "tags": ["observability", "metrics"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services", "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"]
+    },
+    {
+      "id": "background-services-020",
+      "difficulty": "Intermediate",
+      "question": "When should background work be a separate worker service instead of a hosted service?",
+      "answer": "Choose a separate worker service when the workload needs independent scaling, its own deployment cadence, different resources, or isolation from the web tier's failures. Hosted services are convenient when the work is light and shares the app's lifecycle and dependencies. Many systems start with a hosted service and extract a worker as load grows.",
+      "tags": ["architecture", "worker-service"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/workers", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-021",
+      "difficulty": "Advanced",
+      "question": "How does the host start and stop hosted services internally?",
+      "answer": "When the host starts it resolves each registered IHostedService and calls StartAsync in registration order, and on shutdown it calls StopAsync in reverse order after the server stops accepting requests. Exceptions in StartAsync during startup abort the host, while ExecuteAsync exceptions follow BackgroundServiceExceptionBehavior. This ordering lets services depend on the app being up and clean up safely.",
+      "tags": ["internals", "hosted-services"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-022",
+      "difficulty": "Advanced",
+      "question": "How would you build a reliable outbox pattern with a background service?",
+      "answer": "You persist messages to an outbox table in the same transaction as the domain change, then a background service polls or is notified, publishes each message to the broker, and marks it sent, retrying with backoff and de-duplication. This guarantees at-least-once delivery without distributed transactions. Idempotent consumers and a unique message id handle duplicates.",
+      "tags": ["outbox", "reliability"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle backpressure and bounded queues in background processing?",
+      "answer": "You use a bounded channel so producers await when the queue is full, apply timeouts or rejection policies, and scale consumers or shed load when saturation persists. Bounded queues prevent unbounded memory growth under spikes. Metrics on queue depth guide capacity planning.",
+      "code": "var ch = Channel.CreateBounded<WorkItem>(\n    new BoundedChannelOptions(1000)\n    { FullMode = BoundedChannelFullMode.Wait });",
+      "tags": ["backpressure", "channels"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/channels", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-024",
+      "difficulty": "Advanced",
+      "question": "How do you ensure exactly-once or idempotent processing in background jobs?",
+      "answer": "Exactly-once delivery is generally impossible across distributed systems, so you design for at-least-once delivery with idempotent processing: unique message ids, deduplication stores, and operations that can be applied repeatedly without harm. Distributed locks or transactional state help avoid double execution. Recording processed ids in the same transaction as the side effect makes idempotency reliable.",
+      "tags": ["idempotency", "reliability"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "background-services-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between in-process hosted services and external queue-based workers?",
+      "answer": "In-process hosted services are simple to deploy and share configuration and DI but compete for resources with the web app and stop when the app restarts. External queue-based workers scale independently, isolate failures, and can retry and throttle, but add infrastructure, messaging semantics, and operational complexity. Choose based on workload size, reliability needs, and how much coupling you can tolerate.",
+      "tags": ["architecture", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/workers", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    }
+  ]
+}

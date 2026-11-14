@@ -1,0 +1,338 @@
+{
+  "category": "Authentication with JWT",
+  "slug": "authentication",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "authentication-001",
+      "difficulty": "Beginner",
+      "question": "What is authentication versus authorization?",
+      "answer": "Authentication establishes who the caller is, while authorization decides what that identity is allowed to do. Authentication runs first and populates the user principal, then authorization evaluates policies against it. Keeping the two separate clarifies the pipeline and the middleware order.",
+      "tags": [
+        "authentication",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-002",
+      "difficulty": "Beginner",
+      "question": "What is a JSON Web Token?",
+      "answer": "A JWT is a compact, self-contained token with three base64url parts: a header describing the algorithm, a payload of claims, and a signature. The signature lets the server verify that the token was issued by a trusted party and not modified. JWTs are commonly used as bearer tokens for APIs.",
+      "tags": [
+        "jwt",
+        "tokens"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-003",
+      "difficulty": "Beginner",
+      "question": "What are claims in a JWT?",
+      "answer": "Claims are name-value statements in the payload such as sub, iss, aud, exp, and custom roles or permissions. The server uses them to identify the user and make authorization decisions. Because the payload is only signed, not encrypted, it must not contain secrets.",
+      "tags": [
+        "jwt",
+        "claims"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/claims"
+      ]
+    },
+    {
+      "id": "authentication-004",
+      "difficulty": "Beginner",
+      "question": "How does bearer token authentication work?",
+      "answer": "The client sends the token in the Authorization header as Bearer <token>, and the authentication middleware validates it and creates the user principal. No session state is kept on the server. The token must be protected in transit and storage because possession grants access.",
+      "tags": [
+        "jwt",
+        "bearer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ],
+      "code": "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+    },
+    {
+      "id": "authentication-005",
+      "difficulty": "Beginner",
+      "question": "How do you enable JWT bearer authentication?",
+      "answer": "Call AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer with token validation parameters, then add UseAuthentication and UseAuthorization to the pipeline. The parameters specify the issuer, audience, signing key, and lifetime rules. Validation happens automatically for each request.",
+      "tags": [
+        "jwt",
+        "setup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ],
+      "code": "builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(o => o.Authority = \"https://login.example.com\");"
+    },
+    {
+      "id": "authentication-006",
+      "difficulty": "Beginner",
+      "question": "What is the WWW-Authenticate header?",
+      "answer": "It is returned with a 401 response to tell the client which authentication scheme to use and how to obtain a token, for example Bearer with an error description. Clients use it to trigger the right authentication flow. It complements the 401 status that signals missing credentials.",
+      "tags": [
+        "authentication",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between 401 and 403?",
+      "answer": "401 means the request is not authenticated or the credentials are invalid, while 403 means the identity is authenticated but lacks permission. A 401 should include a challenge header, and a 403 should not. Returning the correct code helps clients react appropriately.",
+      "tags": [
+        "authentication",
+        "status-codes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-008",
+      "difficulty": "Beginner",
+      "question": "Why must JWT payloads not contain secrets?",
+      "answer": "The payload is base64url encoded and only signed, not encrypted, so anyone holding the token can read its claims. Put only non-sensitive identifiers and claims in it. Sensitive data belongs on the server, looked up by the subject claim.",
+      "tags": [
+        "jwt",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a token's signature and its encryption?",
+      "answer": "A signature proves integrity and origin so tampering is detectable, while encryption provides confidentiality by hiding the content. A JWS is signed and readable, whereas a JWE is encrypted. Bearer JWTs for APIs are usually signed, not encrypted.",
+      "tags": [
+        "jwt",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-010",
+      "difficulty": "Beginner",
+      "question": "What is an access token versus a refresh token?",
+      "answer": "An access token is short-lived and presented on each API call, while a refresh token is longer-lived and exchanged for new access tokens without re-entering credentials. Refresh tokens are stored more securely and can be revoked. This limits the damage if an access token leaks.",
+      "tags": [
+        "tokens",
+        "oauth"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-011",
+      "difficulty": "Intermediate",
+      "question": "What claims should you validate on an incoming JWT?",
+      "answer": "Validate the signature, issuer, audience, and expiration, and reject tokens that fail any check. Optionally validate not-before and clock skew. Skipping issuer or audience validation enables token confusion attacks where a token for another service is accepted.",
+      "tags": [
+        "jwt",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ],
+      "code": "o.TokenValidationParameters = new TokenValidationParameters\n{\n    ValidateIssuer = true,\n    ValidateAudience = true\n};"
+    },
+    {
+      "id": "authentication-012",
+      "difficulty": "Intermediate",
+      "question": "How do you use symmetric versus asymmetric signing keys?",
+      "answer": "Symmetric algorithms such as HMAC use a shared secret for signing and verification, which is simple but requires distributing the secret to every verifier. Asymmetric algorithms such as RSA or ECDSA sign with a private key and verify with a public key, so verifiers only need the public key. Prefer asymmetric keys when many services verify tokens.",
+      "tags": [
+        "jwt",
+        "cryptography"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-013",
+      "difficulty": "Intermediate",
+      "question": "How does token validation work with an OpenID Connect provider?",
+      "answer": "The handler fetches the provider's discovery document to obtain signing keys and issuer metadata, then validates incoming tokens against them. This means your API does not need to manage signing keys directly. It also supports automatic key rotation.",
+      "tags": [
+        "oauth",
+        "openid-connect"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ],
+      "code": "o.Authority = \"https://login.microsoftonline.com/{tenant}/v2.0\";\no.Audience = \"api://my-api\";"
+    },
+    {
+      "id": "authentication-014",
+      "difficulty": "Intermediate",
+      "question": "How do you add custom claims to a token?",
+      "answer": "When issuing tokens, include claims such as roles, permissions, or a tenant identifier in the payload. Downstream services read them from the ClaimsPrincipal. Keep custom claims small and stable because they affect authorization decisions.",
+      "tags": [
+        "jwt",
+        "claims"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/claims"
+      ],
+      "code": "claims.Add(new Claim(ClaimTypes.Role, \"admin\"));"
+    },
+    {
+      "id": "authentication-015",
+      "difficulty": "Intermediate",
+      "question": "How do you store and protect tokens on the client?",
+      "answer": "Store tokens in memory or in a secure, httpOnly cookie where possible, and avoid localStorage for long-lived tokens because it is accessible to script. Use the backend-for-frontend pattern to keep tokens on the server. Always use HTTPS and short lifetimes.",
+      "tags": [
+        "security",
+        "tokens"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between authentication middleware and the [Authorize] attribute?",
+      "answer": "UseAuthentication parses and validates credentials for every request and sets HttpContext.User, while [Authorize] is an authorization filter that rejects requests whose principal does not meet the requirement. Authentication must be configured before authorization. They cooperate to protect endpoints.",
+      "tags": [
+        "authentication",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle token expiration?",
+      "answer": "Return 401 when a token is expired and let the client refresh it with a refresh token, or use sliding expiration within limits. Set a reasonable access token lifetime, typically minutes to an hour. Handle clock skew with a small allowance to avoid spurious failures.",
+      "tags": [
+        "jwt",
+        "tokens"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-018",
+      "difficulty": "Intermediate",
+      "question": "How do you revoke a JWT before it expires?",
+      "answer": "Because a signed JWT is valid until it expires, revocation needs extra state: a denylist of token identifiers, a short lifetime combined with refresh token revocation, or introspection against the authorization server. Design for short access tokens so revocation windows are small. Never rely on token expiry alone for immediate revocation.",
+      "tags": [
+        "jwt",
+        "revocation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-019",
+      "difficulty": "Intermediate",
+      "question": "How do you implement API key authentication?",
+      "answer": "Implement a custom authentication handler that reads the key from a header, validates it against a store, and builds a ClaimsPrincipal. Keys are simple but harder to rotate and scope than tokens. Use them for server-to-server scenarios where OAuth is overkill.",
+      "tags": [
+        "authentication",
+        "api-keys"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ],
+      "code": "public class ApiKeyHandler : AuthenticationHandler<ApiKeyOptions> { }"
+    },
+    {
+      "id": "authentication-020",
+      "difficulty": "Intermediate",
+      "question": "How do you log authentication failures safely?",
+      "answer": "Log the failure reason and a correlation identifier without logging the token or credentials. Distinguish expired, invalid signature, and missing token cases for diagnosis. Never write secrets to logs because logs are widely accessible.",
+      "tags": [
+        "logging",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "authentication-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement a backend-for-frontend with token handling?",
+      "answer": "The frontend calls a same-origin backend that holds tokens in a server-side session and forwards requests to the API, so tokens never reach the browser. This mitigates token theft via XSS. It adds a hop and requires session management but greatly simplifies client security.",
+      "tags": [
+        "security",
+        "bff"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-022",
+      "difficulty": "Advanced",
+      "question": "How do you prevent token replay attacks?",
+      "answer": "Use short-lived tokens, sender-constrained tokens such as DPoP or mTLS, and validate that tokens are used only for their intended audience and scope. Revoke refresh tokens on suspicious activity. Because bearer tokens are replayable by design, constraining them is the real defense.",
+      "tags": [
+        "jwt",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-023",
+      "difficulty": "Advanced",
+      "question": "How do you design fine-grained permissions with JWT?",
+      "answer": "Put coarse identity claims in the token and evaluate fine-grained rules against your own store using the subject identifier, so permissions can change without reissuing tokens. Combine policy-based authorization with resource-based handlers. Avoid stuffing large permission lists into the token.",
+      "tags": [
+        "jwt",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ]
+    },
+    {
+      "id": "authentication-024",
+      "difficulty": "Advanced",
+      "question": "How do you validate tokens issued by multiple authorities?",
+      "answer": "Configure multiple JWT bearer schemes or a single scheme that accepts several valid issuers and audiences, and ensure the token is validated against the correct authority. This supports multi-tenant or federated scenarios. Be explicit about which issuers are trusted to avoid accepting forged tokens.",
+      "tags": [
+        "jwt",
+        "multi-tenant"
+      ],
+      "references": [
+        "https://learn.microsoft.com/entra/identity-platform/"
+      ]
+    },
+    {
+      "id": "authentication-025",
+      "difficulty": "Advanced",
+      "question": "How do you integrate an external identity provider such as Microsoft Entra ID?",
+      "answer": "Register the API as an application, expose a scope, and configure the JWT bearer handler with the authority and audience so tokens issued by Entra ID are validated. Clients acquire tokens through the appropriate OAuth flow. This delegates identity management to the provider.",
+      "tags": [
+        "oauth",
+        "entra-id"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    }
+  ]
+}

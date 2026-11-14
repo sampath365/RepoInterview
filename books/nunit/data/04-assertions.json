@@ -1,0 +1,375 @@
+{
+  "category": "Assertions & Constraints",
+  "slug": "assertions",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "assertions-001",
+      "difficulty": "Beginner",
+      "question": "What is Assert.That and why is it the preferred assertion form?",
+      "answer": "Assert.That is the entry point for the constraint model: you pass the actual value and a constraint describing the expected condition, such as Assert.That(total, Is.EqualTo(90)). Because the expectation is an object, constraints can be composed, reused and given rich failure messages. NUnit recommends it over the older classic assertions.",
+      "code": "Assert.That(total, Is.EqualTo(90));",
+      "tags": [
+        "assert",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-002",
+      "difficulty": "Beginner",
+      "question": "How do you assert that two values are equal in NUnit?",
+      "answer": "Use Assert.That(actual, Is.EqualTo(expected)), which compares values using NUnit's equality comparer rather than reference identity. It handles strings, numbers, collections and types that implement equality sensibly. For floating point numbers you can add a tolerance with Within.",
+      "code": "Assert.That(result, Is.EqualTo(42));",
+      "tags": [
+        "equality",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/EqualConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-003",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a value is null or not null?",
+      "answer": "Use Is.Null to require a null value and Is.Not.Null to require a non-null value, as in Assert.That(item, Is.Null). These constraints also give a clear message showing the unexpected value. They are the standard way to check for missing results.",
+      "code": "Assert.That(found, Is.Not.Null);",
+      "tags": [
+        "null",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/NullConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-004",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a collection contains an item?",
+      "answer": "Use the Contains constraint with Has.Member or Does.Contain, for example Assert.That(names, Does.Contain(\"Ada\")). For dictionaries you can check keys with Contains.Key. The constraint reports which item was missing when it fails.",
+      "code": "Assert.That(names, Does.Contain(\"Ada\"));",
+      "tags": [
+        "collections",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/ContainsConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-005",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a string starts with a given prefix?",
+      "answer": "Use Does.StartWith for a prefix, Does.EndWith for a suffix and Does.Contain for a substring, as in Assert.That(message, Does.StartWith(\"Error\")). There are case-insensitive variants with IgnoreCase. These read more clearly than comparing substrings manually.",
+      "code": "Assert.That(message, Does.StartWith(\"Error\").IgnoreCase);",
+      "tags": [
+        "strings",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/StartsWithConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-006",
+      "difficulty": "Beginner",
+      "question": "How do you compare floating point values in NUnit?",
+      "answer": "Compare them with a tolerance using Is.EqualTo(expected).Within(tolerance), because exact floating point equality is usually wrong. The tolerance can be a fixed amount or a percentage. NUnit also lets you set a default tolerance for a whole fixture or assembly with [DefaultFloatingPointTolerance].",
+      "code": "Assert.That(Math.PI, Is.EqualTo(3.14159).Within(0.001));",
+      "tags": [
+        "floatingpoint",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Tolerance.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/defaultfloatingpointtolerance.html"
+      ]
+    },
+    {
+      "id": "assertions-007",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a boolean condition is true?",
+      "answer": "Use Assert.That(condition, Is.True) or Assert.That(condition, Is.False), or the boolean overload Assert.That(condition). Passing the boolean to Assert.That directly treats it as the condition to check. Prefer asserting on the actual value with a specific constraint when one exists, because the failure message is more informative.",
+      "tags": [
+        "booleans",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/TrueConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-008",
+      "difficulty": "Beginner",
+      "question": "What is the classic Assert.AreEqual and why is it discouraged in NUnit 4?",
+      "answer": "Classic assertions such as Assert.AreEqual were the original method-per-comparison API. In NUnit 4 they moved to the NUnit.Framework.Legacy namespace as ClassicAssert, so Assert.AreEqual no longer exists on the main Assert class. New code should use the constraint model, which composes better and produces clearer failures.",
+      "tags": [
+        "classic",
+        "nunit4"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/classic.html",
+        "https://docs.nunit.org/articles/nunit/release-notes/breaking-changes.html"
+      ]
+    },
+    {
+      "id": "assertions-009",
+      "difficulty": "Beginner",
+      "question": "How do you attach an explanatory message to an assertion?",
+      "answer": "Pass the message as an extra argument, for example Assert.That(total, Is.EqualTo(90), \"discount should be 10%\"), or supply a Func that builds the message lazily. The message is shown when the assertion fails. A well-written message turns a cryptic failure into a quick diagnosis.",
+      "code": "Assert.That(total, Is.EqualTo(90), $\"unexpected total {total}\");",
+      "tags": [
+        "messages",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "assertions-010",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a number falls within a range?",
+      "answer": "Use Is.InRange(low, high) for an inclusive range, as in Assert.That(score, Is.InRange(0, 100)). For open-ended checks use Is.GreaterThan and Is.LessThan, which can be combined. Range constraints are clearer than comparing with two separate booleans.",
+      "code": "Assert.That(score, Is.InRange(0, 100));",
+      "tags": [
+        "range",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/RangeConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-011",
+      "difficulty": "Intermediate",
+      "question": "How do you combine constraints with And, Or and Not?",
+      "answer": "Constraints expose And, Or and Not so you can build compound expectations such as Is.Not.Null.And.GreaterThan(0). You can also use the And and Or helper classes or the ampersand and pipe operators. Combining constraints keeps a single assertion expressive and still reports which part failed.",
+      "code": "Assert.That(value, Is.GreaterThan(0).And.LessThan(100));",
+      "tags": [
+        "constraints",
+        "composition"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/AndConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Is.EqualTo and Is.SameAs?",
+      "answer": "Is.EqualTo compares values using the type's equality semantics, so two distinct objects with equal contents match. Is.SameAs compares references and passes only when both variables point to the same object. Use EqualTo for value checks and SameAs when identity genuinely matters, such as caching or canonicalisation tests.",
+      "tags": [
+        "equality",
+        "identity"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/SameAsConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/EqualConstraint.html"
+      ]
+    },
+    {
+      "id": "assertions-013",
+      "difficulty": "Intermediate",
+      "question": "How do you compare collections for equivalence ignoring order?",
+      "answer": "Use Is.EquivalentTo, which passes when both collections contain the same items in any order, as in Assert.That(result, Is.EquivalentTo(new[] { 1, 2, 3 })). Is.EqualTo on collections is order-sensitive. Related constraints include Is.SubsetOf and Is.SupersetOf for partial comparisons.",
+      "code": "Assert.That(result, Is.EquivalentTo(new[] { 1, 2, 3 }));",
+      "tags": [
+        "collections",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/CollectionEquivalentConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-014",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on a property of an object?",
+      "answer": "Use Has.Property(name) to select a property and combine it with a value or nested constraint, for example Assert.That(order, Has.Property(\"Total\").EqualTo(90)). The property constraint reports the actual value when it fails. For nested objects you can chain Has.Property calls.",
+      "code": "Assert.That(order, Has.Property(\"Total\").EqualTo(90));",
+      "tags": [
+        "properties",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/PropertyConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-015",
+      "difficulty": "Intermediate",
+      "question": "How do you check several assertions at once without stopping at the first failure?",
+      "answer": "Wrap the assertions in a using block with Assert.EnterMultipleScope(), which collects all failures in the block and reports them together at the end. In older NUnit versions this was Assert.Multiple. It is useful for checking independent properties of a result so you see every problem in one run.",
+      "code": "using (Assert.EnterMultipleScope())\n{\n    Assert.That(order.Total, Is.EqualTo(90));\n    Assert.That(order.Items, Has.Count.EqualTo(3));\n}",
+      "tags": [
+        "multipleasserts",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/multiple-asserts.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-016",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that calling a method throws a specific exception?",
+      "answer": "Use Assert.Throws<TException> with the delegate or lambda to invoke, for example Assert.Throws<ArgumentNullException>(() => service.Run(null)). It returns the exception so you can assert further on it, and it fails if a different type is thrown or nothing is thrown. For asynchronous code use Assert.ThrowsAsync.",
+      "code": "var ex = Assert.Throws<ArgumentNullException>(() => service.Run(null));\nAssert.That(ex.ParamName, Is.EqualTo(\"input\"));",
+      "tags": [
+        "exceptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html"
+      ]
+    },
+    {
+      "id": "assertions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that a collection is in order?",
+      "answer": "Use Is.Ordered to require ascending order, or Is.Ordered.Descending for the reverse, as in Assert.That(numbers, Is.Ordered). You can also specify which property to order by for collections of objects. The constraint reports the first out-of-order element on failure.",
+      "code": "Assert.That(numbers, Is.Ordered);",
+      "tags": [
+        "collections",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/CollectionOrderedConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-018",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that every item in a collection satisfies a constraint?",
+      "answer": "Use Has.All followed by the constraint, for example Assert.That(scores, Has.All.GreaterThan(0)), or Has.Some for at least one and Has.None for none. These item constraints give precise messages about the offending element. Has.Exactly(n) combines a count with a per-item check.",
+      "code": "Assert.That(scores, Has.All.InRange(0, 100));",
+      "tags": [
+        "collections",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/AllItemsConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Is.Empty and Is.Null for collections?",
+      "answer": "Is.Empty passes for a collection with zero elements, including an empty list or an empty string, while Is.Null passes only for a null reference. They are not interchangeable: an empty list is not null and a null list is not empty. Choose the one that matches the contract you are testing.",
+      "tags": [
+        "collections",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/EmptyConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "assertions-020",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom NUnit constraint?",
+      "answer": "Derive from Constraint and override Matches to perform the comparison plus WriteDescriptionTo and WriteActualValueTo to produce messages. You can expose a factory method or property so the constraint reads fluently. Custom constraints are worthwhile when a domain rule is asserted in many places and deserves its own clear failure message.",
+      "code": "public class OddConstraint : Constraint\n{\n    public override bool Matches(object actual) => (int)actual % 2 == 1;\n    public override void WriteDescriptionTo(MessageWriter w) => w.Write(\"odd\");\n}",
+      "tags": [
+        "customization",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Constraints.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-021",
+      "difficulty": "Advanced",
+      "question": "How do constraints produce failure messages, and how do you customise them?",
+      "answer": "Each constraint writes a description of the expected condition through WriteDescriptionTo and the actual value through WriteActualValueTo, and the framework composes them into the failure message. You can override these in a custom constraint to tailor the wording. Using a clear description makes a failing suite self-documenting.",
+      "tags": [
+        "constraints",
+        "messages"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Constraints.html",
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-022",
+      "difficulty": "Advanced",
+      "question": "When would you use a ReusableConstraint?",
+      "answer": "A constraint object is consumed when it is resolved by an assertion, so reusing the same instance can misbehave. Wrap it in ReusableConstraint to declare that it may be resolved more than once, for example when stored in a field or looped over. It also lets you type a helper's parameter as IResolveConstraint and accept either a constraint or a value.",
+      "code": "private static readonly ReusableConstraint Positive =\n    new ReusableConstraint(Is.GreaterThan(0));",
+      "tags": [
+        "constraints",
+        "reuse"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/ReusableConstraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Constraints.html"
+      ]
+    },
+    {
+      "id": "assertions-023",
+      "difficulty": "Advanced",
+      "question": "How do the classic assertion extension methods differ from the constraint model?",
+      "answer": "NUnit 4 ships classic extension methods that map older assertion styles onto constraints, and the classic_extensions documentation describes the string and collection helpers. They exist to ease migration and produce similar results, but they are not as composable as the constraint model. New code should prefer the constraint model for consistency.",
+      "tags": [
+        "classic",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/classic.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/classic_extensions.html"
+      ]
+    },
+    {
+      "id": "assertions-024",
+      "difficulty": "Advanced",
+      "question": "How does NUnit compare floating point numbers and what does [DefaultFloatingPointTolerance] change?",
+      "answer": "Floating point equality uses a tolerance; without one, values must be exactly equal, which is rarely what you want. [DefaultFloatingPointTolerance] sets a tolerance for all comparisons in a method, fixture or assembly unless a comparison specifies its own with Within. The explicit tolerance always wins over the default.",
+      "code": "[TestFixture]\n[DefaultFloatingPointTolerance(0.001)]\npublic class GeometryTests { }",
+      "tags": [
+        "floatingpoint",
+        "tolerance"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/defaultfloatingpointtolerance.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/constraints/Tolerance.html"
+      ]
+    },
+    {
+      "id": "assertions-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of Assert.EnterMultipleScope versus splitting into several tests?",
+      "answer": "Multiple-scope keeps related checks in one test and reports every failure in a single run, which speeds up fixing an initialisation-heavy object. Splitting into separate tests gives clearer pass/fail attribution and independent filtering but may repeat expensive setup. Use multiple scope for independent facts about one result and separate tests when the checks represent distinct behaviours.",
+      "tags": [
+        "multipleasserts",
+        "design"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/multiple-asserts.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    }
+  ]
+}

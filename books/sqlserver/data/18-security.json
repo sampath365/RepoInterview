@@ -1,0 +1,213 @@
+{
+  "category": "Security, Logins, Roles & Permissions",
+  "slug": "security",
+  "icon": "lock",
+  "questions": [
+    {
+      "id": "security-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a login and a user?",
+      "answer": "A login authenticates at the server level and grants access to the instance. A database user maps to a login inside a specific database and is the principal that owns permissions on objects. A login can be mapped to users in several databases, but a user belongs to one database.",
+      "tags": ["login", "user"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/authentication-access/create-a-database-user"]
+    },
+    {
+      "id": "security-002",
+      "difficulty": "Beginner",
+      "question": "What are the SQL Server authentication modes?",
+      "answer": "Windows authentication uses Active Directory accounts and does not send a password to SQL Server, and is the most secure. Mixed mode allows both Windows and SQL Server logins with passwords. Azure SQL Database relies on Microsoft Entra ID and SQL logins rather than Windows accounts in the classic sense.",
+      "tags": ["authentication", "windows"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/choose-an-authentication-mode"]
+    },
+    {
+      "id": "security-003",
+      "difficulty": "Beginner",
+      "question": "What is a server role?",
+      "answer": "A server role is a collection of server-level permissions that can be granted to logins, such as sysadmin, securityadmin, or dbcreator. Fixed server roles have predefined permissions, and you can create user-defined server roles. Membership in sysadmin grants complete control over the instance.",
+      "tags": ["server-role", "permissions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/authentication-access/server-level-roles"]
+    },
+    {
+      "id": "security-004",
+      "difficulty": "Beginner",
+      "question": "What is a database role?",
+      "answer": "A database role groups database-level permissions and can be granted to users, simplifying administration. Fixed roles include db_datareader, db_datawriter, and db_owner. User-defined roles let you model your own permission sets.",
+      "tags": ["database-role", "permissions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/authentication-access/database-level-roles"]
+    },
+    {
+      "id": "security-005",
+      "difficulty": "Beginner",
+      "question": "What do GRANT, REVOKE, and DENY do?",
+      "answer": "GRANT gives a permission to a principal, REVOKE removes a previously granted or denied permission, and DENY explicitly forbids a permission. DENY takes precedence over GRANT, even when the permission is granted through a role. This precedence is important when troubleshooting why a user cannot do something.",
+      "code": "GRANT SELECT ON dbo.Orders TO SalesReader;\nDENY DELETE ON dbo.Orders TO SalesReader;",
+      "tags": ["grant", "deny"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/grant-transact-sql"]
+    },
+    {
+      "id": "security-006",
+      "difficulty": "Beginner",
+      "question": "What is the principle of least privilege?",
+      "answer": "Least privilege means granting each principal only the permissions needed to do its job, and no more. This limits the damage from a compromised account or a bug. Applying it means using roles, specific object permissions, and avoiding blanket sysadmin or db_owner membership.",
+      "tags": ["least-privilege", "security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/securing-sql-server"]
+    },
+    {
+      "id": "security-007",
+      "difficulty": "Beginner",
+      "question": "What is SQL injection and how do you prevent it?",
+      "answer": "SQL injection occurs when user input is concatenated into a query and changes its logic, letting an attacker read or modify data. Prevent it by using parameterized queries and sp_executesql with parameters, never concatenating input, and validating and constraining input. Application code, not just the database, is the primary defense.",
+      "tags": ["sql-injection", "security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/sql-injection"]
+    },
+    {
+      "id": "security-008",
+      "difficulty": "Beginner",
+      "question": "What is a contained database user?",
+      "answer": "A contained database user lives entirely inside the database and authenticates there, so it does not need a server-level login. This makes the database portable and reduces the impact of moving it to another server. Contained users are enabled with ALTER DATABASE ... SET CONTAINMENT = PARTIAL.",
+      "code": "CREATE USER SalesApp WITH PASSWORD = 'Str0ng!Pass';\nALTER ROLE db_datareader ADD MEMBER SalesApp;",
+      "tags": ["contained-user", "security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/contained-database-users-making-your-database-portable"]
+    },
+    {
+      "id": "security-009",
+      "difficulty": "Beginner",
+      "question": "What is a certificate or asymmetric key used for in SQL Server?",
+      "answer": "Certificates and asymmetric keys provide strong encryption and signing for modules, backups, and column encryption. They can sign stored procedures so permissions follow the signature rather than the caller. They are also the basis of Transparent Data Encryption and Always Encrypted key hierarchies.",
+      "tags": ["certificate", "encryption"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/encryption/sql-server-encryption"]
+    },
+    {
+      "id": "security-010",
+      "difficulty": "Beginner",
+      "question": "What is the public role?",
+      "answer": "The public role is a special fixed database role that every user belongs to and that you cannot drop. Permissions granted to public apply to all users, so it should be granted only what everyone truly needs. Reviewing public permissions is a common security audit step.",
+      "tags": ["public-role", "permissions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/authentication-access/database-level-roles"]
+    },
+    {
+      "id": "security-011",
+      "difficulty": "Intermediate",
+      "question": "What is Transparent Data Encryption (TDE)?",
+      "answer": "TDE encrypts data and log files at rest, so the files and backups cannot be read without the certificate, while applications see no change. It is enabled per database and relies on a server certificate protected by the database master key. TDE does not protect data in memory or from a user with query access.",
+      "code": "CREATE DATABASE ENCRYPTION KEY\nWITH ALGORITHM = AES_256\nENCRYPTION BY SERVER CERTIFICATE MyTdeCert;\nALTER DATABASE Sales SET ENCRYPTION ON;",
+      "tags": ["tde", "encryption"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/encryption/transparent-data-encryption"]
+    },
+    {
+      "id": "security-012",
+      "difficulty": "Intermediate",
+      "question": "What is Always Encrypted?",
+      "answer": "Always Encrypted keeps sensitive columns encrypted end to end: the keys are held by the client, and SQL Server never sees the plaintext, so even a DBA cannot read the data. Deterministic encryption allows equality searches but leaks patterns, while randomized encryption is more secure but supports fewer operations. It is ideal for protecting specific sensitive columns such as credit card numbers.",
+      "tags": ["always-encrypted", "encryption"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/encryption/always-encrypted-database-engine"]
+    },
+    {
+      "id": "security-013",
+      "difficulty": "Intermediate",
+      "question": "What is row-level security?",
+      "answer": "Row-level security uses an inline table-valued function as a security policy to filter rows based on the current user, so a user sees only the rows they are allowed to see. It is enforced by the engine regardless of how the query is written, unlike a view filter. It is useful for multi-tenant or per-region data isolation.",
+      "code": "CREATE SECURITY POLICY SalesFilter\nADD FILTER PREDICATE dbo.fn_TenantFilter(TenantId) ON dbo.Orders\nWITH (STATE = ON);",
+      "tags": ["row-level-security", "security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/row-level-security"]
+    },
+    {
+      "id": "security-014",
+      "difficulty": "Intermediate",
+      "question": "What is dynamic data masking?",
+      "answer": "Dynamic data masking obscures sensitive values in query results for users without the UNMASK permission, showing a masked form such as a partial email or a default value. The underlying data is unchanged, so it is a presentation-layer protection rather than true encryption. It is useful to limit exposure without changing the schema.",
+      "code": "ALTER TABLE dbo.Customers\nALTER COLUMN Email ADD MASKED WITH (FUNCTION = 'email()');",
+      "tags": ["masking", "security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/dynamic-data-masking"]
+    },
+    {
+      "id": "security-015",
+      "difficulty": "Intermediate",
+      "question": "What is ownership chaining?",
+      "answer": "When a view or procedure and the objects it references have the same owner, the engine does not check permissions on the referenced objects, so a user needs only permission on the module. This lets you expose data through a procedure without granting direct table access. Chaining breaks when the ownership differs or when dynamic SQL is used.",
+      "tags": ["ownership-chaining", "permissions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tutorial-ownership-chains-and-context-switching"]
+    },
+    {
+      "id": "security-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a certificate and a symmetric key for encryption?",
+      "answer": "A symmetric key is fast and used to encrypt the actual data, while a certificate or asymmetric key uses a public-private key pair that is slower but solves key distribution. In practice you use an asymmetric key or certificate to protect a symmetric key, which then encrypts the data. This hybrid approach balances speed and security.",
+      "tags": ["encryption", "keys"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/encryption/sql-server-encryption"]
+    },
+    {
+      "id": "security-017",
+      "difficulty": "Intermediate",
+      "question": "How do you audit activity in SQL Server?",
+      "answer": "SQL Server Audit lets you capture server and database level events to a file or the Windows event log, and Extended Events can capture fine-grained activity. Azure SQL provides auditing to storage or Log Analytics. Auditing is required for many compliance regimes and helps with forensic investigation.",
+      "tags": ["audit", "compliance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/auditing/sql-server-audit-database-engine"]
+    },
+    {
+      "id": "security-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between EXECUTE AS CALLER and EXECUTE AS USER?",
+      "answer": "EXECUTE AS CALLER runs the module with the caller's permissions, which is the default and respects least privilege. EXECUTE AS USER runs it with a specified user's permissions, letting you elevate temporarily for a controlled task. EXECUTE AS OWNER runs with the module owner's permissions to enable ownership chaining.",
+      "tags": ["execute-as", "permissions"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/execute-as-clause-transact-sql"]
+    },
+    {
+      "id": "security-019",
+      "difficulty": "Intermediate",
+      "question": "How do you check the effective permissions of a user?",
+      "answer": "The fn_my_permissions function returns the effective permissions of the current user on a securable, and sys.fn_my_permissions can be run for another principal by an administrator. sys.database_permissions and sys.server_permissions list explicit grants. These tools resolve the DENY-over-GRANT precedence for you.",
+      "code": "SELECT * FROM fn_my_permissions('dbo.Orders', 'OBJECT');",
+      "tags": ["permissions", "troubleshooting"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-functions/sys-fn-my-permissions-transact-sql"]
+    },
+    {
+      "id": "security-020",
+      "difficulty": "Intermediate",
+      "question": "What is a schema as a security boundary?",
+      "answer": "A schema can own objects and be granted permissions as a unit, so you can grant SELECT on a schema to a role instead of on each object. This simplifies administration and keeps permissions consistent as objects are added. Schemas are the recommended unit of permission management for groups of related objects.",
+      "tags": ["schema", "permissions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/authentication-access/create-a-database-schema"]
+    },
+    {
+      "id": "security-021",
+      "difficulty": "Advanced",
+      "question": "How does Always Encrypted with secure enclaves differ from the client-side version?",
+      "answer": "Client-side Always Encrypted requires the client to do all decryption, so many operations on encrypted columns are not possible server-side. Always Encrypted with secure enclaves moves decryption into a protected enclave on the server, enabling richer operations such as range queries and pattern matching on encrypted data. It requires enclave-enabled keys and a compatible host.",
+      "tags": ["always-encrypted", "enclave"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/encryption/always-encrypted-enclaves"]
+    },
+    {
+      "id": "security-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a server certificate and a database master key?",
+      "answer": "The database master key is a symmetric key that protects other keys and certificates inside a database, and it is itself protected by the service master key or a password. A server certificate is an asymmetric key used for encryption such as TDE and for signing. The hierarchy is service master key, then database master key, then certificates and symmetric keys.",
+      "tags": ["keys", "encryption"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/encryption/sql-server-encryption"]
+    },
+    {
+      "id": "security-023",
+      "difficulty": "Advanced",
+      "question": "How does Ledger in SQL Server 2022 help with tamper evidence?",
+      "answer": "Ledger tables maintain a cryptographically chained history of changes, either as updatable ledger tables with a companion history or as append-only ledger tables, so any tampering can be detected. A digest is stored outside the database to prove integrity. It provides tamper-evident auditing for compliance-sensitive data.",
+      "tags": ["ledger", "tamper-evidence"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/ledger/ledger-overview"]
+    },
+    {
+      "id": "security-024",
+      "difficulty": "Advanced",
+      "question": "How do you secure a database for an application that only needs specific operations?",
+      "answer": "Create a dedicated login or contained user, map it to a user in the database, add it to a custom role with only the needed object permissions, and expose data through procedures or views using ownership chaining so direct table access is unnecessary. Avoid db_owner and sysadmin for applications. This least-privilege design limits the blast radius of a compromise.",
+      "tags": ["least-privilege", "application-security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/securing-sql-server"]
+    },
+    {
+      "id": "security-025",
+      "difficulty": "Advanced",
+      "question": "What are the security implications of cross-database ownership chaining?",
+      "answer": "Cross-database ownership chaining allows a module in one database to access objects in another without permission checks when both are owned by the same login, which is convenient but risky because a compromise in one database can reach another. It is off by default and should be enabled only when required and understood. Azure SQL Database does not support it, so designs must avoid depending on it.",
+      "tags": ["ownership-chaining", "security"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tutorial-ownership-chains-and-context-switching"]
+    }
+  ]
+}

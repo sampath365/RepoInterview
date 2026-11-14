@@ -1,0 +1,332 @@
+{
+  "category": "Web API Fundamentals & REST",
+  "slug": "fundamentals",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is a Web API in ASP.NET Core?",
+      "answer": "A Web API is an HTTP service that exposes application functionality as endpoints returning data, most often JSON, rather than HTML views. In ASP.NET Core you build it with controllers or minimal APIs on the same request pipeline used for web pages. Clients such as browsers, mobile apps, and other services call these endpoints over HTTP.",
+      "tags": [
+        "web-api",
+        "rest"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What is REST?",
+      "answer": "REST is an architectural style for distributed systems defined by constraints: client-server separation, statelessness, cacheability, a uniform interface, a layered system, and optional code-on-demand. In practice a REST API models resources identified by URIs and manipulates them with standard HTTP methods and representations. It is a set of constraints, not a protocol or a standard.",
+      "tags": [
+        "rest",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What are the main HTTP methods and their semantics?",
+      "answer": "GET retrieves a representation, POST creates or submits data, PUT replaces a resource, PATCH applies a partial update, and DELETE removes a resource. HEAD is like GET without a body, and OPTIONS describes communication options for the target. Each method carries defined safety and idempotency semantics that clients and intermediaries rely on.",
+      "tags": [
+        "http",
+        "methods"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What is idempotency and why does it matter in REST APIs?",
+      "answer": "An operation is idempotent if performing it once or many times leaves the server in the same state, so GET, PUT, and DELETE are idempotent while POST generally is not. Idempotency lets clients safely retry failed requests without duplicating side effects. This matters over unreliable networks and is often supported with idempotency keys for POST.",
+      "tags": [
+        "idempotency",
+        "http"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "Which HTTP status codes are most common in a Web API?",
+      "answer": "2xx signals success (200 OK, 201 Created, 204 No Content), 3xx redirection, 4xx client errors (400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict), and 5xx server errors. Returning accurate codes lets clients and intermediaries react correctly. ASP.NET Core exposes them through helpers such as Ok, Created, and NotFound.",
+      "tags": [
+        "status-codes",
+        "http"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between PUT and PATCH?",
+      "answer": "PUT replaces the target resource with the representation in the request, so omitted fields are typically cleared, while PATCH applies a partial modification described by the request body. PUT is idempotent by definition; PATCH is not required to be. Use PUT when the client sends the full resource and PATCH for targeted updates.",
+      "tags": [
+        "put",
+        "patch"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is a resource in REST?",
+      "answer": "A resource is any named entity that can be identified and manipulated, such as a customer, an order, or a collection of orders. Each resource has a URI and clients exchange representations of it, usually JSON. Well-designed resources are nouns, and their relationships are expressed through URI structure or hypermedia links.",
+      "tags": [
+        "resources",
+        "rest"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What is HATEOAS?",
+      "answer": "HATEOAS (Hypermedia as the Engine of Application State) means responses include links describing available transitions so clients can navigate the API dynamically. It is the highest level of the Richardson Maturity Model but is rarely fully implemented because clients tend to hard-code URIs. It improves discoverability at the cost of larger payloads and more design effort.",
+      "tags": [
+        "hateoas",
+        "hypermedia"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What does statelessness mean in REST?",
+      "answer": "Statelessness means each request contains all the information needed to process it and the server keeps no client session between requests. Any state lives on the client or in a shared store such as a database or cache. This makes horizontal scaling and load balancing straightforward because any server can handle any request.",
+      "tags": [
+        "stateless",
+        "rest"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "Why is JSON the default format for most Web APIs?",
+      "answer": "JSON is compact, human-readable, language-neutral, and natively supported by browsers and JavaScript, which makes it convenient for web clients. ASP.NET Core serializes with System.Text.Json by default and negotiates the format from the Accept header. XML and other formats can be added through custom formatters.",
+      "tags": [
+        "json",
+        "formatting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "When should you use POST versus PUT when creating a resource?",
+      "answer": "Use POST to a collection URI when the server assigns the identifier, and PUT to a client-known URI when the client controls the identifier. POST is the safe default for creation because it is not idempotent and can return 201 with a Location header. PUT to an existing URI should replace the resource and is naturally idempotent.",
+      "tags": [
+        "post",
+        "put"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What is content negotiation and how does ASP.NET Core implement it?",
+      "answer": "Content negotiation selects the response representation based on the request's Accept header and, for the body, the Content-Type. ASP.NET Core performs it with output formatters such as SystemTextJsonOutputFormatter and returns 406 Not Acceptable when no formatter can satisfy the request. Supported formats are configured on MvcOptions.",
+      "tags": [
+        "content-negotiation",
+        "formatters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What are the Richardson Maturity Model levels?",
+      "answer": "Level 0 uses HTTP as a tunnel with a single endpoint, level 1 introduces resources, level 2 uses HTTP verbs and status codes correctly, and level 3 adds hypermedia controls. Most pragmatic APIs target level 2, which balances clarity and effort. Level 3 adds discoverability but requires clients to follow links.",
+      "tags": [
+        "rest",
+        "maturity-model"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "How do you design good resource URIs?",
+      "answer": "Use nouns rather than verbs, keep identifiers stable, use plural collection names, and express hierarchy with path segments such as /customers/42/orders. Filtering, sorting, and paging belong in query strings rather than the path. Avoid exposing implementation details or file extensions in the URI.",
+      "tags": [
+        "uris",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "How does REST differ from gRPC-style RPC?",
+      "answer": "REST models resources and uses the uniform HTTP interface with text-based representations, while gRPC defines service methods and uses HTTP/2 with protocol buffers for compact binary messages. gRPC offers strong contracts and streaming but has weaker browser support, whereas REST is ubiquitous and easy to consume. Many systems expose REST publicly and gRPC internally.",
+      "tags": [
+        "rest",
+        "grpc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/grpc/"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "Should validation errors return 400 or 422?",
+      "answer": "400 Bad Request means the request is malformed or fails basic model binding, while 422 Unprocessable Entity means the syntax is valid but the semantics fail validation. The [ApiController] attribute returns 400 with a ValidationProblemDetails by default for model-state errors. Many teams still standardize on 400 for all client errors for simplicity.",
+      "tags": [
+        "validation",
+        "status-codes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/#configure-model-validation-response"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "How should a REST API handle partial updates?",
+      "answer": "PATCH with a media type such as application/merge-patch+json or application/json-patch+json expresses the intended changes explicitly. A merge patch replaces only the supplied fields, while a JSON Patch is an ordered list of operations. Both avoid the lost-update problems of sending a full representation built from stale data.",
+      "tags": [
+        "patch",
+        "json-patch"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "What are safe and unsafe HTTP methods?",
+      "answer": "Safe methods such as GET, HEAD, and OPTIONS do not change server state and can be prefetched or cached. Unsafe methods such as POST, PUT, PATCH, and DELETE may modify state and must not be triggered by a simple link or crawler. Idempotency is a separate property, so DELETE is unsafe but idempotent.",
+      "tags": [
+        "http",
+        "safety"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "How do you express operations that do not map neatly to CRUD?",
+      "answer": "Model them as sub-resources or a dedicated resource that represents the operation, for example POST /orders/42/cancel or POST /payments/42/refunds. This keeps URIs noun-based while allowing side effects. Avoid verbs in paths when a resource plus an HTTP method communicates the intent.",
+      "tags": [
+        "rest",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "What role do HTTP headers play in API design?",
+      "answer": "Headers carry metadata such as content type, authentication, caching directives, correlation identifiers, and pagination links. They let you express cross-cutting concerns without polluting the body. Standard headers such as ETag, Cache-Control, and Location make APIs interoperable with caches and proxies.",
+      "tags": [
+        "http",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-context"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "When is REST not the right architectural choice?",
+      "answer": "REST is a poor fit for high-frequency, low-latency calls, bidirectional streaming, or when a strongly typed contract with code generation matters most, where gRPC or SignalR is better. It is also awkward for operations that are naturally RPC-shaped or transactional across many resources. Choose REST for resource-oriented, cacheable, broadly consumable APIs.",
+      "tags": [
+        "rest",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/grpc/"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle long-running operations in a REST API?",
+      "answer": "Accept the request, return 202 Accepted with a Location header pointing to a status resource, and let the client poll or subscribe for completion. The status resource reports progress and eventually links to the result or an error. This avoids holding connections open and keeps the initial request fast and retry-safe.",
+      "tags": [
+        "async",
+        "202"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between chatty and coarse-grained APIs?",
+      "answer": "Chatty APIs make many small calls that are easy to cache and evolve but incur latency and connection overhead. Coarse-grained APIs return composite resources in one call, reducing round trips at the cost of larger payloads, tighter coupling, and harder cache invalidation. Balance by exposing canonical resources plus purpose-built aggregate endpoints.",
+      "tags": [
+        "design",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "How do you maintain backward compatibility in a public API?",
+      "answer": "Treat the contract as a promise: add optional fields rather than removing or renaming them, never change a field's meaning or type, and ignore unknown members during deserialization. Introduce breaking changes only behind a new version and document deprecation timelines with Deprecation and Sunset headers. Automated contract tests help catch accidental breaks.",
+      "tags": [
+        "versioning",
+        "compatibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "How do you design APIs for eventual consistency in distributed systems?",
+      "answer": "Use idempotent operations and idempotency keys so retries do not duplicate effects, and expose resources that reflect the eventual state rather than assuming immediate consistency. Return 202 with a status resource for asynchronous work and propagate correlation identifiers for tracing. Prefer compensating actions and clear conflict responses over distributed transactions.",
+      "tags": [
+        "distributed",
+        "consistency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/microservices/"
+      ]
+    }
+  ]
+}

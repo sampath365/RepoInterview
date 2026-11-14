@@ -1,0 +1,376 @@
+{
+  "category": "Assertions with FluentAssertions",
+  "slug": "fluent-assertions",
+  "icon": "text",
+  "questions": [
+    {
+      "id": "fluent-assertions-001",
+      "difficulty": "Beginner",
+      "question": "What is FluentAssertions?",
+      "answer": "FluentAssertions is a .NET library that provides an expressive, chainable assertion syntax such as actual.Should().Be(expected). It works with any test framework, including NUnit, and produces detailed failure messages. It is an alternative to NUnit's own constraint model rather than a replacement for the test runner.",
+      "tags": [
+        "fluentassertions",
+        "overview"
+      ],
+      "references": [
+        "https://fluentassertions.com/introduction",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "fluent-assertions-002",
+      "difficulty": "Beginner",
+      "question": "How do you make a basic assertion with FluentAssertions?",
+      "answer": "Call Should() on the value under test and then chain the expectation, for example result.Should().Be(42). A failed assertion throws with a message describing expected and actual values. This reads like a sentence, which many teams find clearer than classic assertions.",
+      "code": "result.Should().Be(42);",
+      "tags": [
+        "fluentassertions",
+        "basics"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-003",
+      "difficulty": "Beginner",
+      "question": "How do you assert that an object is null or not null with FluentAssertions?",
+      "answer": "Use Should().BeNull() and Should().NotBeNull() on the object. These replace the classic Is.Null and Is.Not.Null constraints. The failure messages clearly state whether a value was unexpectedly null.",
+      "code": "order.Should().NotBeNull();",
+      "tags": [
+        "fluentassertions",
+        "null"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-004",
+      "difficulty": "Beginner",
+      "question": "How do you assert on a collection with FluentAssertions?",
+      "answer": "Use Should().HaveCount(n), Should().Contain(item) or Should().BeEquivalentTo(expected) for order-insensitive comparison. BeEquivalentTo compares elements structurally rather than by reference. This makes collection assertions concise and informative.",
+      "code": "orders.Should().HaveCount(3);\norders.Should().Contain(o => o.Id == 1);",
+      "tags": [
+        "fluentassertions",
+        "collections"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-005",
+      "difficulty": "Beginner",
+      "question": "What does Should().BeEquivalentTo do?",
+      "answer": "It compares two objects or collections by their members rather than by reference or equality operators, so two distinct instances with the same property values are considered equivalent. For collections it matches elements regardless of order by default. This is very convenient for DTO and entity comparisons.",
+      "code": "actual.Should().BeEquivalentTo(new { Id = 1, Total = 90m });",
+      "tags": [
+        "fluentassertions",
+        "equivalence"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-006",
+      "difficulty": "Beginner",
+      "question": "How do you assert that an action throws an exception with FluentAssertions?",
+      "answer": "Use the Invoking or Awaiting form, for example action.Invoking(a => a.Run()).Should().Throw<InvalidOperationException>(). It returns the exception so you can chain further assertions such as WithMessage. The async variant is Awaiting.",
+      "code": "sut.Invoking(s => s.Run())\n    .Should().Throw<InvalidOperationException>()\n    .WithMessage(\"*closed*\");",
+      "tags": [
+        "fluentassertions",
+        "exceptions"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-007",
+      "difficulty": "Beginner",
+      "question": "How do you assert on an exception message with FluentAssertions?",
+      "answer": "Chain WithMessage after Throw or ThrowAsync, and use wildcards such as \"*closed*\" to match a substring. The comparison is case-insensitive by default. This avoids brittle exact matches while still checking the important text.",
+      "code": ".WithMessage(\"*closed*\");",
+      "tags": [
+        "fluentassertions",
+        "exceptions"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-008",
+      "difficulty": "Beginner",
+      "question": "How do you assert that no exception is thrown with FluentAssertions?",
+      "answer": "Use Should().NotThrow(), for example action.Invoking(a => a.Run()).Should().NotThrow(). The async form is NotThrowAsync. This documents the expectation that the call succeeds.",
+      "code": "sut.Invoking(s => s.Validate(order)).Should().NotThrow();",
+      "tags": [
+        "fluentassertions",
+        "exceptions"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-009",
+      "difficulty": "Beginner",
+      "question": "How do you assert on a string with FluentAssertions?",
+      "answer": "Use Should().Contain, Should().StartWith, Should().EndWith or Should().Match with a wildcard pattern. These are more readable than raw comparison. They also produce clear messages on failure.",
+      "code": "message.Should().Contain(\"error\").And.StartWith(\"The\");",
+      "tags": [
+        "fluentassertions",
+        "strings"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-010",
+      "difficulty": "Beginner",
+      "question": "Can FluentAssertions and NUnit assertions be mixed in one test?",
+      "answer": "Yes, FluentAssertions is a library used inside test methods and is independent of the test framework, so you can use both. Many teams standardise on one style for consistency. Mixing is fine technically but a consistent style reads better.",
+      "tags": [
+        "fluentassertions",
+        "nunit"
+      ],
+      "references": [
+        "https://fluentassertions.com/introduction",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "fluent-assertions-011",
+      "difficulty": "Intermediate",
+      "question": "How do you chain multiple assertions in FluentAssertions?",
+      "answer": "Use the And connector, for example value.Should().BePositive().And.BeLessThan(100). This keeps several expectations in one expression. Each link still reports a precise failure.",
+      "code": "value.Should().BePositive().And.BeLessThan(100);",
+      "tags": [
+        "fluentassertions",
+        "chaining"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-012",
+      "difficulty": "Intermediate",
+      "question": "How does FluentAssertions report multiple failures?",
+      "answer": "By default a chained assertion stops at the first failure, but you can use AssertionScope to collect several failures and report them together. This mirrors NUnit's Assert.Multiple. It gives complete feedback in one run.",
+      "code": "using (new AssertionScope())\n{\n    total.Should().Be(90);\n    count.Should().Be(2);\n}",
+      "tags": [
+        "fluentassertions",
+        "scopes"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "fluent-assertions-013",
+      "difficulty": "Intermediate",
+      "question": "How do you compare objects by selected properties only?",
+      "answer": "Use BeEquivalentTo with options such as Excluding or Including, for example actual.Should().BeEquivalentTo(expected, o => o.Excluding(x => x.Id)). This lets you ignore generated fields like timestamps or identifiers. It keeps comparisons focused on meaningful data.",
+      "code": "actual.Should().BeEquivalentTo(expected, o => o.Excluding(x => x.Id));",
+      "tags": [
+        "fluentassertions",
+        "equivalence"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-014",
+      "difficulty": "Intermediate",
+      "question": "How do you assert approximate numeric equality with FluentAssertions?",
+      "answer": "Use BeApproximately(expected, precision) for doubles and decimals, which replaces manual tolerance comparisons. This is the clean way to assert on computed floating point values. It reads clearly and reports the difference on failure.",
+      "code": "result.Should().BeApproximately(3.14, 0.01);",
+      "tags": [
+        "fluentassertions",
+        "numbers"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-015",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on a date or time with a tolerance?",
+      "answer": "Use BeCloseTo(expected, precision) for DateTime and DateTimeOffset, which allows a tolerance. This avoids exact-match flakiness when a value is generated close to a known instant. It is the temporal counterpart of BeApproximately.",
+      "code": "createdAt.Should().BeCloseTo(DateTime.UtcNow, TimeSpan.FromSeconds(2));",
+      "tags": [
+        "fluentassertions",
+        "dates"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-016",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on dictionaries with FluentAssertions?",
+      "answer": "Use Should().ContainKey(key) and Should().ContainValue(value), or Should().Equal for the full comparison. These express dictionary expectations clearly. They also handle nested dictionaries through equivalence.",
+      "code": "map.Should().ContainKey(\"total\").WhoseValue.Should().Be(90);",
+      "tags": [
+        "fluentassertions",
+        "dictionaries"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that a collection is ordered?",
+      "answer": "Use Should().BeInAscendingOrder() or BeInDescendingOrder(), optionally with a selector. This verifies ordering without manual comparison of sequences. It is useful when ordering is part of the contract.",
+      "code": "orders.Should().BeInAscendingOrder(o => o.CreatedAt);",
+      "tags": [
+        "fluentassertions",
+        "collections"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-018",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on async exceptions with FluentAssertions?",
+      "answer": "Use Awaiting, for example await act.Should().ThrowAsync<InvalidOperationException>(). It awaits the delegate and returns the exception for further chaining. This is the async counterpart of Invoking.",
+      "code": "await sut.Awaiting(s => s.RunAsync())\n    .Should().ThrowAsync<InvalidOperationException>();",
+      "tags": [
+        "fluentassertions",
+        "async"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "fluent-assertions-019",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that an object matches a predicate?",
+      "answer": "Use Should().Match(predicate) or Match<T>(expression), for example order.Should().Match<Order>(o => o.Total > 0). This lets you express a condition rather than a specific value. It is convenient for invariants.",
+      "code": "order.Should().Match<Order>(o => o.Total > 0);",
+      "tags": [
+        "fluentassertions",
+        "predicates"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-020",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on an event being raised?",
+      "answer": "Use Should().Raise, for example monitor.Should().Raise(\"Completed\").WithSender(sut). This subscribes to the event and verifies it fires. It is a concise way to test event-driven code.",
+      "tags": [
+        "fluentassertions",
+        "events"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://learn.microsoft.com/en-us/dotnet/standard/events/"
+      ]
+    },
+    {
+      "id": "fluent-assertions-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of FluentAssertions versus NUnit constraints?",
+      "answer": "FluentAssertions offers very readable, feature-rich assertions and excellent messages, especially for object and collection equivalence, but it adds a third-party dependency and its own idiom. NUnit constraints are built in, require no extra package, and compose with NUnit features. Choose one style and apply it consistently across the suite.",
+      "tags": [
+        "fluentassertions",
+        "design"
+      ],
+      "references": [
+        "https://fluentassertions.com/introduction",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "fluent-assertions-022",
+      "difficulty": "Advanced",
+      "question": "How does AssertionScope change failure reporting and when should you use it?",
+      "answer": "AssertionScope aggregates the failures that occur inside it and reports them together at the end of the scope instead of stopping at the first. This is valuable when several independent facts about one result should all be checked. Use it to shorten feedback cycles on initialisation-heavy objects.",
+      "tags": [
+        "fluentassertions",
+        "scopes"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "fluent-assertions-023",
+      "difficulty": "Advanced",
+      "question": "How does BeEquivalentTo handle recursion and cyclic object graphs?",
+      "answer": "BeEquivalentTo compares members recursively and can be configured with options to ignore cyclic references or limit depth, so self-referencing graphs do not cause infinite loops. You can also exclude specific members. Configuring these options keeps equivalence checks practical for complex models.",
+      "tags": [
+        "fluentassertions",
+        "equivalence"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    },
+    {
+      "id": "fluent-assertions-024",
+      "difficulty": "Advanced",
+      "question": "How do you customise failure messages or write a custom assertion?",
+      "answer": "Use because and becauseArgs to add context to a failure message, or extend the assertion classes to add a domain-specific assertion method. Both improve the diagnostic value of failures. Custom assertions are worth it when the same check recurs across the suite.",
+      "code": "total.Should().Be(90, because: \"two items at 45 each were expected\");",
+      "tags": [
+        "fluentassertions",
+        "extensibility"
+      ],
+      "references": [
+        "https://fluentassertions.com/introduction",
+        "https://fluentassertions.com/basicassertions/"
+      ]
+    },
+    {
+      "id": "fluent-assertions-025",
+      "difficulty": "Advanced",
+      "question": "How do you assert that two collections contain the same elements in any order?",
+      "answer": "Use Should().BeEquivalentTo(expected) for order-insensitive, structural comparison, or Should().BeEquivalentTo with a strict ordering option when order matters. The default ignores order, which suits sets of results. Choosing the right option documents whether order is part of the contract.",
+      "code": "actual.Should().BeEquivalentTo(expected);",
+      "tags": [
+        "fluentassertions",
+        "collections"
+      ],
+      "references": [
+        "https://fluentassertions.com/basicassertions/",
+        "https://fluentassertions.com/introduction"
+      ]
+    }
+  ]
+}

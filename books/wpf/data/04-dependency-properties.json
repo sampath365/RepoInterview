@@ -1,0 +1,219 @@
+{
+  "category": "Dependency Properties",
+  "slug": "dependency-properties",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "dependency-properties-001",
+      "difficulty": "Beginner",
+      "question": "What is a dependency property?",
+      "answer": "A dependency property is a property whose value is resolved dynamically by WPF's property system instead of being stored in a normal field. It is registered with DependencyProperty.Register and exposed through a static DependencyProperty field and a CLR wrapper. Dependency properties enable data binding, styling, animation, inheritance, and change notification.",
+      "tags": ["dependency-properties", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-properties-overview"]
+    },
+    {
+      "id": "dependency-properties-002",
+      "difficulty": "Beginner",
+      "question": "How do you register a dependency property?",
+      "answer": "Call DependencyProperty.Register with the property name, the owner type, the property type, and optional metadata. Store the returned value in a public static readonly field. Expose the property with a CLR wrapper that calls GetValue and SetValue.",
+      "code": "public static readonly DependencyProperty LabelProperty =\n    DependencyProperty.Register(\"Label\", typeof(string),\n        typeof(MyControl), new PropertyMetadata(string.Empty));\n\npublic string Label\n{\n    get => (string)GetValue(LabelProperty);\n    set => SetValue(LabelProperty, value);\n}",
+      "tags": ["registration", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/custom-dependency-properties"]
+    },
+    {
+      "id": "dependency-properties-003",
+      "difficulty": "Beginner",
+      "question": "Why does WPF use dependency properties instead of normal CLR properties?",
+      "answer": "Dependency properties support features that plain fields cannot, such as data binding, styling, animation, and property value inheritance. They compute values lazily and store only non-default values, which saves memory across many elements. They also integrate with the property system for change notification and metadata.",
+      "tags": ["dependency-properties", "benefits"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-properties-overview"]
+    },
+    {
+      "id": "dependency-properties-004",
+      "difficulty": "Beginner",
+      "question": "What is the CLR wrapper around a dependency property?",
+      "answer": "The CLR wrapper is a normal property whose getter calls GetValue and whose setter calls SetValue. It lets C# code use the property like any other while the real storage and logic live in the property system. You should never add extra logic in the wrapper because WPF bypasses it when setting values internally.",
+      "tags": ["clr-wrapper", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/custom-dependency-properties"]
+    },
+    {
+      "id": "dependency-properties-005",
+      "difficulty": "Beginner",
+      "question": "What is an attached property?",
+      "answer": "An attached property is a dependency property that can be set on objects other than its declaring type, using the owner's type as a qualifier. Examples include Grid.Row and Canvas.Left. It is registered with RegisterAttached and provides static Get and Set accessors.",
+      "code": "public static readonly DependencyProperty Tag2Property =\n    DependencyProperty.RegisterAttached(\"Tag2\", typeof(string),\n        typeof(Helper), new PropertyMetadata(null));\n\npublic static void SetTag2(DependencyObject d, string v)\n    => d.SetValue(Tag2Property, v);",
+      "tags": ["attached-properties", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/attached-properties-overview"]
+    },
+    {
+      "id": "dependency-properties-006",
+      "difficulty": "Beginner",
+      "question": "How do you read a dependency property value in code?",
+      "answer": "Use the GetValue method on the DependencyObject and cast the result, or use the CLR wrapper if one exists. The property system returns the effective value after applying precedence rules. For attached properties use the static Get method provided by the declaring type.",
+      "code": "var text = (string)myTextBlock.GetValue(TextBlock.TextProperty);\nvar row = Grid.GetRow(myButton);",
+      "tags": ["getvalue", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-properties-overview"]
+    },
+    {
+      "id": "dependency-properties-007",
+      "difficulty": "Beginner",
+      "question": "What is property metadata in a dependency property?",
+      "answer": "Metadata is an optional PropertyMetadata object that supplies a default value and change callbacks when you register the property. For framework types you can also use FrameworkPropertyMetadata to specify inheritance, binding, and rendering flags. Metadata controls how the property behaves in the property system.",
+      "tags": ["metadata", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-metadata"]
+    },
+    {
+      "id": "dependency-properties-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a CLR property and a dependency property?",
+      "answer": "A CLR property stores its value in a backing field and is read and written directly. A dependency property stores values in the property system's effective-value table and supports binding, styling, animation, and inheritance. Dependency properties are more flexible but have more overhead per access.",
+      "tags": ["comparison", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-properties-overview"]
+    },
+    {
+      "id": "dependency-properties-009",
+      "difficulty": "Beginner",
+      "question": "How do you set a dependency property in XAML?",
+      "answer": "You set it like any attribute using the property name, and the XAML parser converts the string to the correct type. For attached properties you qualify the name with the owner type, such as Grid.Row. Markup extensions can supply the value when it is dynamic.",
+      "code": "<Button Content=\"OK\" Grid.Row=\"1\" Background=\"SteelBlue\"/>",
+      "tags": ["xaml", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-loading-and-dependency-properties"]
+    },
+    {
+      "id": "dependency-properties-010",
+      "difficulty": "Beginner",
+      "question": "What is the default value of a dependency property?",
+      "answer": "The default value is specified in the property metadata and is returned by GetValue when no other source has set the property. It avoids allocating a value for every instance. You can supply a different default when registering or override it for a derived type with OverrideMetadata.",
+      "tags": ["default-value", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-metadata"]
+    },
+    {
+      "id": "dependency-properties-011",
+      "difficulty": "Intermediate",
+      "question": "How does dependency property value precedence work?",
+      "answer": "WPF resolves a property value from a list of sources in priority order. Local values outrank triggers, which outrank template and style setters, which outrank inheritance, which outrank the default value. The highest-priority source that is set determines the effective value.",
+      "tags": ["value-precedence", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-value-precedence"]
+    },
+    {
+      "id": "dependency-properties-012",
+      "difficulty": "Intermediate",
+      "question": "What is property value inheritance?",
+      "answer": "Property value inheritance lets a dependency property's value flow from a parent to its children in the element tree when the property is registered with the Inherits flag. Examples include FontSize, FontFamily, and DataContext. The child's own local value or other higher-precedence source overrides the inherited value.",
+      "tags": ["inheritance", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/property-value-inheritance"]
+    },
+    {
+      "id": "dependency-properties-013",
+      "difficulty": "Intermediate",
+      "question": "How do you add a change callback to a dependency property?",
+      "answer": "Pass a PropertyMetadata that includes a PropertyChangedCallback delegate when you register the property. The callback receives the DependencyObject and the change arguments containing the old and new values. Use it to trigger side effects such as invalidating layout or updating other properties.",
+      "code": "new PropertyMetadata(0, OnValueChanged)\n\nstatic void OnValueChanged(DependencyObject d,\n    DependencyPropertyChangedEventArgs e) { }",
+      "tags": ["callbacks", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-callbacks-and-validation"]
+    },
+    {
+      "id": "dependency-properties-014",
+      "difficulty": "Intermediate",
+      "question": "How do you validate the value of a dependency property?",
+      "answer": "Pass a ValidateValueCallback delegate as the last argument to Register. The callback returns true when the value is acceptable, and WPF throws an ArgumentException when it returns false. Validation runs before the value is applied and before change callbacks.",
+      "code": "DependencyProperty.Register(\"Level\", typeof(int), typeof(MyControl),\n    new PropertyMetadata(0), OnValidate);\n\nstatic bool OnValidate(object value) => (int)value >= 0;",
+      "tags": ["validation", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-callbacks-and-validation"]
+    },
+    {
+      "id": "dependency-properties-015",
+      "difficulty": "Intermediate",
+      "question": "What is a read-only dependency property and how do you create one?",
+      "answer": "A read-only dependency property can only be set by the owning type, not by external code. You register it with RegisterReadOnly, keep the DependencyPropertyKey private, and expose a public DependencyProperty field. The owner sets values through the key using SetValue.",
+      "code": "private static readonly DependencyPropertyKey CountKey =\n    DependencyProperty.RegisterReadOnly(\"Count\", typeof(int),\n        typeof(MyControl), new PropertyMetadata(0));\npublic static readonly DependencyProperty CountProperty = CountKey.DependencyProperty;",
+      "tags": ["read-only", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/read-only-dependency-properties"]
+    },
+    {
+      "id": "dependency-properties-016",
+      "difficulty": "Intermediate",
+      "question": "How do you override metadata for a dependency property in a derived class?",
+      "answer": "Call OverrideMetadata on the dependency property identifier, passing the type of the derived class and a new PropertyMetadata. This lets a derived control change the default value or add callbacks without re-registering the property. The override affects only the derived type and its subclasses.",
+      "code": "static MyButton()\n{\n    DefaultStyleKeyProperty.OverrideMetadata(typeof(MyButton),\n        new FrameworkPropertyMetadata(typeof(MyButton)));\n}",
+      "tags": ["metadata", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-metadata"]
+    },
+    {
+      "id": "dependency-properties-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between PropertyMetadata and FrameworkPropertyMetadata?",
+      "answer": "PropertyMetadata is the base class that holds a default value and change and coercion callbacks. FrameworkPropertyMetadata adds WPF-specific flags such as AffectsMeasure, BindsTwoWayByDefault, Inherits, and Journal, plus the framework callbacks. Use FrameworkPropertyMetadata when you need layout, binding, or inheritance behavior.",
+      "tags": ["metadata", "framework"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/framework-property-metadata"]
+    },
+    {
+      "id": "dependency-properties-018",
+      "difficulty": "Intermediate",
+      "question": "How do you clear a local value so a lower-precedence source applies?",
+      "answer": "Call ClearValue on the DependencyObject to remove the local value. The property system then recomputes the effective value from the remaining sources, such as a style or the default. This is useful to reset a property that was set imperatively.",
+      "code": "myButton.ClearValue(Button.BackgroundProperty);",
+      "tags": ["clearvalue", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-value-precedence"]
+    },
+    {
+      "id": "dependency-properties-019",
+      "difficulty": "Intermediate",
+      "question": "What are collection-type dependency properties and how should they be implemented?",
+      "answer": "A collection-type dependency property exposes a collection such as an ObservableCollection. Its default value should be null and the getter should lazily create and assign an instance to avoid sharing one collection across all instances. Raising change notifications is not automatic, so the collection should implement INotifyCollectionChanged.",
+      "code": "public ObservableCollection<string> Items\n{\n    get => (ObservableCollection<string>)GetValue(ItemsProperty)\n           ?? (ObservableCollection<string>)(SetValue(ItemsProperty,\n                new ObservableCollection<string>()) ?? GetValue(ItemsProperty));\n    set => SetValue(ItemsProperty, value);\n}",
+      "tags": ["collections", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/collection-type-dependency-properties"]
+    },
+    {
+      "id": "dependency-properties-020",
+      "difficulty": "Intermediate",
+      "question": "Why should you avoid putting logic in a dependency property CLR wrapper?",
+      "answer": "WPF often sets property values by calling SetValue directly, bypassing the CLR wrapper entirely, for example during binding or styling. Logic in the wrapper therefore runs inconsistently. Put side effects in the property changed callback instead so they always run.",
+      "tags": ["clr-wrapper", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/custom-dependency-properties"]
+    },
+    {
+      "id": "dependency-properties-021",
+      "difficulty": "Advanced",
+      "question": "What is value coercion in the dependency property system?",
+      "answer": "Coercion lets a property adjust the value that other sources request before it is applied, using a CoerceValueCallback. This is how properties such as MinWidth or a slider's Value enforce a relationship with another property. The coerced value is what change callbacks observe.",
+      "code": "new FrameworkPropertyMetadata(0.0, null, OnCoerce)\n\nstatic object OnCoerce(DependencyObject d, object baseValue)\n    => Math.Max(0.0, (double)baseValue);",
+      "tags": ["coercion", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-callbacks-and-validation"]
+    },
+    {
+      "id": "dependency-properties-022",
+      "difficulty": "Advanced",
+      "question": "What is the recommended pattern for a DependencyObject constructor?",
+      "answer": "Avoid calling virtual methods, accessing other objects' dependency properties, or using most instance methods in a DependencyObject constructor because they can run before the object is fully initialized. The safe constructor pattern restricts construction to setting local values and calling base constructors. Violations can cause subtle errors during XAML parsing.",
+      "tags": ["constructor", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/safe-constructor-patterns-for-dependencyobjects"]
+    },
+    {
+      "id": "dependency-properties-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement a dependency property that affects layout?",
+      "answer": "Register the property with FrameworkPropertyMetadata and set the AffectsMeasure or AffectsArrange flags. When the property changes, WPF automatically invalidates layout for the element and re-runs measure or arrange. This avoids manual InvalidateMeasure calls and keeps layout correct.",
+      "code": "new FrameworkPropertyMetadata(0.0, FrameworkPropertyMetadataOptions.AffectsMeasure)",
+      "tags": ["layout", "metadata"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/framework-property-metadata"]
+    },
+    {
+      "id": "dependency-properties-024",
+      "difficulty": "Advanced",
+      "question": "What happens when the same dependency property is set by multiple sources?",
+      "answer": "The property system keeps the value from the highest-precedence active source and stores the others for later. If the highest source is cleared, the next source becomes effective. This layered model is why a local value overrides a style setter but a style setter overrides inheritance.",
+      "tags": ["value-precedence", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-value-precedence"]
+    },
+    {
+      "id": "dependency-properties-025",
+      "difficulty": "Advanced",
+      "question": "How does XAML loading interact with dependency properties?",
+      "answer": "When XAML sets an attribute that maps to a dependency property, the parser calls SetValue through the property system rather than the CLR wrapper. This ensures precedence, callbacks, and binding all behave correctly. Attributes that are not dependency properties are set through reflection or type converters instead.",
+      "tags": ["xaml", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/xaml-loading-and-dependency-properties"]
+    }
+  ]
+}

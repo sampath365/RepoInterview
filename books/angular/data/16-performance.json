@@ -1,0 +1,381 @@
+{
+  "category": "Performance Optimization",
+  "slug": "performance",
+  "icon": "gauge",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between runtime and build-time performance?",
+      "answer": "Runtime performance concerns how fast the application runs and responds in the browser, while build-time performance concerns bundle size, load time, and build speed. Both affect the user experience, since a fast app that takes seconds to download still feels slow. Optimizing requires measuring both.",
+      "tags": [
+        "performance",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "How does OnPush change detection improve performance?",
+      "answer": "OnPush tells Angular to check a component only when a known trigger occurs, such as an input reference change, an event, or a signal update. This lets Angular skip whole subtrees that cannot have changed. In large applications the savings are substantial.",
+      "tags": [
+        "onpush",
+        "change-detection",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/api/core/ChangeDetectionStrategy"
+      ]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "Why are lazy-loaded routes important for performance?",
+      "answer": "Lazy loading splits the application so users download only the code for the routes they visit, which reduces the initial bundle and improves startup. The first meaningful paint arrives sooner because less JavaScript must be parsed and executed. Preloading can then fetch the rest in the background.",
+      "tags": [
+        "lazy-loading",
+        "performance",
+        "bundles"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/lazy-loading",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "How do pure pipes help performance?",
+      "answer": "A pure pipe runs only when its input reference or parameters change, so its transformation is skipped on unrelated change detection passes. This is much cheaper than a method call in the template that runs every pass. Moving formatting into a pure pipe or a computed signal reduces rendering work.",
+      "tags": [
+        "pipes",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/pipes",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "What is the trackBy or track expression in a list and why does it matter?",
+      "answer": "Tracking lets Angular identify which items in a list changed, moved, or were removed so it can reuse DOM nodes instead of recreating them. The @for block requires a track expression, and the older ngFor uses trackBy. Good tracking prevents expensive re-rendering when lists update.",
+      "code": "@for (item of items; track item.id) {\n  <app-row [item]=\"item\" />\n}",
+      "tags": [
+        "trackby",
+        "performance",
+        "lists"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/control-flow",
+        "https://angular.dev/api/core/@for"
+      ]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "What is the @defer block used for?",
+      "answer": "The @defer block lazily loads a portion of the template and its JavaScript, showing placeholder, loading, and error blocks while it resolves. It can be triggered by viewport, idle, interaction, hover, or a timer. This reduces the initial bundle for heavy components such as editors or charts.",
+      "tags": [
+        "defer",
+        "lazy-loading",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/defer",
+        "https://angular.dev/guide/defer"
+      ]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "How can images be optimized in an Angular application?",
+      "answer": "Use the NgOptimizedImage directive, which enforces best practices such as width and height, priority hints for above-the-fold images, and lazy loading for the rest. It also helps with correct srcset generation for responsive images. These steps reduce layout shift and bandwidth.",
+      "code": "<img ngSrc=\"hero.jpg\" width=\"1200\" height=\"600\" priority />",
+      "tags": [
+        "images",
+        "performance",
+        "ngoptimizedimage"
+      ],
+      "references": [
+        "https://angular.dev/guide/image-optimization",
+        "https://angular.dev/api/common/NgOptimizedImage"
+      ]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "What is a production build and why does it matter for performance?",
+      "answer": "A production build enables optimizations such as minification, dead-code elimination, and build-time inlining, and it removes development checks. Development builds are intentionally unoptimized for debugging. Always measure performance against a production build.",
+      "tags": [
+        "build",
+        "optimization"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "How does tree-shaking affect bundle size?",
+      "answer": "Tree-shaking removes code that is never referenced, which is why explicit standalone imports and providedIn: 'root' help the bundler drop unused services and components. Eagerly imported modules can defeat tree-shaking by pulling in everything they export. Keeping imports precise keeps bundles small.",
+      "tags": [
+        "tree-shaking",
+        "bundles",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "What tools can you use to measure Angular performance?",
+      "answer": "The browser's performance and network panels, Lighthouse, and the Angular DevTools profiler reveal rendering hot spots and change detection cycles. The build output reports bundle sizes, and source maps let you trace large chunks. Measuring before optimizing is essential.",
+      "tags": [
+        "profiling",
+        "tools",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/tools/devtools",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "Why is calling functions in templates a performance problem?",
+      "answer": "Template expressions run on every change detection pass for the views that are checked, so a function call is repeated many times and its cost multiplies across the tree. It also breaks reference-equality checks that could otherwise skip work. Prefer computed signals or pure pipes for derived values.",
+      "tags": [
+        "templates",
+        "performance",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "How do signals improve rendering performance?",
+      "answer": "Signals track exactly which consumers depend on a value, so a change invalidates only the views and computed values that read it. This fine-grained notification replaces broad checks and pairs with zoneless change detection. It also makes derived values cacheable through computed.",
+      "tags": [
+        "signals",
+        "performance",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/zoneless"
+      ]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How does the @defer block decide when to load?",
+      "answer": "Defer triggers such as on idle, on viewport, on interaction, on hover, on timer, and on a custom when condition control when the block loads. You can also prefetch the code earlier with a prefetch trigger while delaying rendering. Choosing triggers by how soon the content is needed balances startup and responsiveness.",
+      "tags": [
+        "defer",
+        "triggers",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/defer",
+        "https://angular.dev/guide/templates/defer"
+      ]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid memory leaks that degrade performance over time?",
+      "answer": "Unsubscribe from long-lived streams with takeUntilDestroyed, the async pipe, or toSignal, and clear timers and listeners in cleanup. Leaked subscriptions keep callbacks and retained data alive, which slowly increases memory and can slow change detection. Regular profiling of heap snapshots catches leaks early.",
+      "tags": [
+        "memory",
+        "performance",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed",
+        "https://angular.dev/api/core/DestroyRef"
+      ]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "How does NgOptimizedImage improve loading?",
+      "answer": "NgOptimizedImage requires explicit dimensions to prevent layout shift, adds priority hints so the largest image loads early, and lazy-loads offscreen images by default. It also warns about common mistakes at build time. These defaults make image loading measurably better without manual tuning.",
+      "tags": [
+        "images",
+        "ngoptimizedimage",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/image-optimization",
+        "https://angular.dev/api/common/NgOptimizedImage"
+      ]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce the initial bundle size?",
+      "answer": "Lazy load feature routes, defer heavy components, remove unused dependencies, and import only what each component needs so tree-shaking works. Avoiding large third-party libraries in the critical path also helps. Inspecting the build report identifies the biggest contributors.",
+      "tags": [
+        "bundles",
+        "performance",
+        "lazy-loading"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How does the build output analysis help performance work?",
+      "answer": "The build report shows the size of each chunk and can list the largest dependencies, which directs optimization where it matters most. Comparing reports across changes reveals regressions early. It is the fastest way to find a dependency that has crept into the initial bundle.",
+      "tags": [
+        "build",
+        "analysis",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "What is the effect of change detection strategy on list rendering?",
+      "answer": "With Default strategy, every item in a list is checked on each pass, so long lists amplify any per-item cost. OnPush plus proper tracking lets Angular skip unchanged items entirely. Signals give the same precision by updating only the rows whose data changed.",
+      "tags": [
+        "change-detection",
+        "lists",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/templates/control-flow"
+      ]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize data fetching for perceived performance?",
+      "answer": "Fetch only the fields you need, paginate or virtualize long lists, and show skeleton or placeholder states so the interface responds immediately. Prefetching data for likely next routes reduces waiting. Perceived speed often matters as much as raw request time.",
+      "tags": [
+        "http",
+        "ux",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/http/making-requests"
+      ]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "What is the role of server-side rendering and hydration in performance?",
+      "answer": "Server-side rendering sends fully rendered HTML so users see content before JavaScript loads, and hydration makes that HTML interactive on the client. Angular supports both through its SSR tooling, including incremental hydration for defer blocks. This improves first contentful paint and perceived speed on slow networks.",
+      "tags": [
+        "ssr",
+        "hydration",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/ssr",
+        "https://angular.dev/guide/hydration"
+      ]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How would you profile and fix a slow change detection cycle?",
+      "answer": "Use Angular DevTools to identify components that are checked most and take the longest, then look for missing OnPush, functions in templates, or large lists without tracking. Convert derived values to computed signals and ensure immutable inputs so OnPush can skip work. Re-measure after each change to confirm the improvement.",
+      "tags": [
+        "profiling",
+        "change-detection",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/tools/devtools",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of virtual scrolling?",
+      "answer": "Virtual scrolling renders only the visible items of a long list, which keeps the DOM small and scrolling smooth, but it complicates variable-height rows, accessibility, and features such as find-in-page. The Angular CDK provides a virtual scroll viewport to implement it. Use it when lists are genuinely large.",
+      "tags": [
+        "virtual-scroll",
+        "cdk",
+        "performance"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/scrolling/overview",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How does zoneless change detection affect performance and complexity?",
+      "answer": "Zoneless change detection removes the overhead of zone.js patching and full application checks, and it makes update timing explicit and predictable. The cost is that any asynchronous code that mutates state must notify Angular, usually through signals. For most signal-based applications this is a net improvement.",
+      "tags": [
+        "zoneless",
+        "performance",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you decide between defer, lazy routes, and dynamic imports?",
+      "answer": "Use defer for parts of a template that are heavy but belong to the current view, lazy routes for whole feature areas reached by navigation, and dynamic imports for programmatic loading of code on demand. Each defers a different unit, and they compose. The right choice follows from when and where the code is actually needed.",
+      "tags": [
+        "defer",
+        "lazy-loading",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/defer",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "What is a performance budget and how do you enforce one in an Angular project?",
+      "answer": "A performance budget sets limits such as a maximum initial bundle size or a largest contentful paint target, and the build fails or warns when the limits are exceeded. Angular's build configuration supports budget thresholds for different bundle types. Enforcing budgets in CI prevents gradual regressions that are hard to notice otherwise.",
+      "tags": [
+        "budgets",
+        "ci",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/reference/configs/workspace-config",
+        "https://angular.dev/tools/cli/build"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,222 @@
+{
+  "category": "Styles, Templates & Triggers",
+  "slug": "styling",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "styling-001",
+      "difficulty": "Beginner",
+      "question": "What is a Style in WPF?",
+      "answer": "A Style groups property values and resources that can be applied to an element to give it a consistent appearance. It has a TargetType and a collection of Setters, and can contain triggers. Styles reduce duplication by centralizing property settings.",
+      "tags": ["styles", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-002",
+      "difficulty": "Beginner",
+      "question": "How do you define and apply a Style in XAML?",
+      "answer": "Declare the Style in a resources collection with a key and TargetType, then reference it with the Style property using StaticResource. If you set x:Key to a type and no key, the style becomes an implicit style for all elements of that type in scope.",
+      "code": "<Window.Resources>\n  <Style x:Key=\"Header\" TargetType=\"TextBlock\">\n    <Setter Property=\"FontSize\" Value=\"20\"/>\n    <Setter Property=\"FontWeight\" Value=\"Bold\"/>\n  </Style>\n</Window.Resources>\n<TextBlock Style=\"{StaticResource Header}\" Text=\"Title\"/>",
+      "tags": ["styles", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-003",
+      "difficulty": "Beginner",
+      "question": "What is an implicit style?",
+      "answer": "An implicit style has no x:Key and uses the TargetType as its key, so it applies automatically to every element of that type within its scope. This is convenient for app-wide defaults but can be overridden by explicit styles. Implicit styles are common in theme dictionaries.",
+      "code": "<Style TargetType=\"Button\">\n  <Setter Property=\"Padding\" Value=\"8\"/>\n</Style>",
+      "tags": ["styles", "implicit"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-004",
+      "difficulty": "Beginner",
+      "question": "What is a ControlTemplate?",
+      "answer": "A ControlTemplate defines the visual structure and appearance of a control. It replaces the control's default look while the control's behavior stays the same. Templates use TemplateBinding and named parts to connect visuals to the control's properties and logic.",
+      "code": "<ControlTemplate TargetType=\"Button\">\n  <Border Background=\"{TemplateBinding Background}\"\n          CornerRadius=\"4\" Padding=\"{TemplateBinding Padding}\">\n    <ContentPresenter HorizontalAlignment=\"Center\"/>\n  </Border>\n</ControlTemplate>",
+      "tags": ["controltemplate", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a Style and a ControlTemplate?",
+      "answer": "A Style sets property values on a control and may include a template. A ControlTemplate defines the visual tree that makes up the control's appearance. Styles are about values and reuse, while templates are about look and structure.",
+      "tags": ["styles", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-006",
+      "difficulty": "Beginner",
+      "question": "What is a DataTemplate?",
+      "answer": "A DataTemplate describes how a data object is displayed, typically inside an ItemsControl. It is applied to each item and can bind to the item's properties. Unlike a ControlTemplate, it has no TargetType control and is chosen by content type or a selector.",
+      "code": "<DataTemplate DataType=\"{x:Type local:Person}\">\n  <TextBlock Text=\"{Binding Name}\"/>\n</DataTemplate>",
+      "tags": ["datatemplate", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "styling-007",
+      "difficulty": "Beginner",
+      "question": "What is a trigger in a Style?",
+      "answer": "A trigger changes property values when a condition is met, such as when the mouse is over the control. PropertyTrigger watches a dependency property, while DataTrigger watches a bound value and EventTrigger responds to an event. Triggers keep conditional styling declarative.",
+      "code": "<Style.Triggers>\n  <Trigger Property=\"IsMouseOver\" Value=\"True\">\n    <Setter Property=\"Background\" Value=\"LightBlue\"/>\n  </Trigger>\n</Style.Triggers>",
+      "tags": ["triggers", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-008",
+      "difficulty": "Beginner",
+      "question": "What is a Setter?",
+      "answer": "A Setter assigns a value to a property inside a Style or template trigger. It specifies the Property and the Value. Setters can reference resources or markup extensions for their values.",
+      "tags": ["setters", "styles"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-009",
+      "difficulty": "Beginner",
+      "question": "What is TemplateBinding used for?",
+      "answer": "TemplateBinding links a property in a control template to a property of the templated control, such as binding a Border's Background to the control's Background. It is a lightweight, one-way binding used only inside templates. For two-way or converter scenarios you use a regular Binding with RelativeSource TemplatedParent.",
+      "tags": ["templatebinding", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/templatebinding-markup-extension"]
+    },
+    {
+      "id": "styling-010",
+      "difficulty": "Beginner",
+      "question": "How do you override the default template of a control?",
+      "answer": "Set the control's Template property to a new ControlTemplate, or include a Template setter in its style. You can start from the default template by editing a copy in the designer. Overriding the template changes the appearance while keeping the control's behavior.",
+      "code": "<Style TargetType=\"Button\">\n  <Setter Property=\"Template\">\n    <Setter.Value>\n      <ControlTemplate TargetType=\"Button\">\n        <Border Background=\"{TemplateBinding Background}\">\n          <ContentPresenter/>\n        </Border>\n      </ControlTemplate>\n    </Setter.Value>\n  </Setter>\n</Style>",
+      "tags": ["controltemplate", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "styling-011",
+      "difficulty": "Intermediate",
+      "question": "How do styles inherit from one another?",
+      "answer": "A style can set its BasedOn property to another style, inheriting all its setters and triggers. The derived style can add or override values. BasedOn requires the styles to target the same type or a base type.",
+      "code": "<Style x:Key=\"BigHeader\" TargetType=\"TextBlock\"\n       BasedOn=\"{StaticResource Header}\">\n  <Setter Property=\"FontSize\" Value=\"32\"/>\n</Style>",
+      "tags": ["styles", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a Trigger and a DataTrigger?",
+      "answer": "A Trigger watches a dependency property of the templated or styled element for a specific value. A DataTrigger watches a data-bound value instead, so it can respond to ViewModel state. Both apply setters when their condition matches.",
+      "code": "<DataTrigger Binding=\"{Binding Status}\" Value=\"Closed\">\n  <Setter Property=\"Foreground\" Value=\"Red\"/>\n</DataTrigger>",
+      "tags": ["triggers", "datatrigger"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-013",
+      "difficulty": "Intermediate",
+      "question": "What is a MultiTrigger and MultiDataTrigger?",
+      "answer": "MultiTrigger applies setters when several property conditions are all true. MultiDataTrigger does the same for multiple data-bound conditions. They let you express combinations such as a control that is both focused and read-only.",
+      "tags": ["triggers", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-014",
+      "difficulty": "Intermediate",
+      "question": "What is an EventTrigger used for?",
+      "answer": "An EventTrigger starts an action, usually a Storyboard animation, in response to an event such as MouseEnter. It is defined in the triggers collection of a style or template. EventTrigger only supports actions, not setters.",
+      "code": "<EventTrigger RoutedEvent=\"MouseEnter\">\n  <BeginStoryboard>\n    <Storyboard>\n      <DoubleAnimation Storyboard.TargetProperty=\"Opacity\"\n                       To=\"0.5\" Duration=\"0:0:0.2\"/>\n    </Storyboard>\n  </BeginStoryboard>\n</EventTrigger>",
+      "tags": ["eventtrigger", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-015",
+      "difficulty": "Intermediate",
+      "question": "What are the named parts of a control template?",
+      "answer": "Control authors mark template elements with x:Name and, for part-based controls, declare them with TemplatePartAttribute. The control's OnApplyTemplate method then retrieves these parts with GetTemplateChild. This lets the control interact with its template visuals.",
+      "code": "public override void OnApplyTemplate()\n{\n    base.OnApplyTemplate();\n    _border = GetTemplateChild(\"PART_Border\") as Border;\n}",
+      "tags": ["template-parts", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "styling-016",
+      "difficulty": "Intermediate",
+      "question": "What is a ContentPresenter and where is it used?",
+      "answer": "ContentPresenter is the element in a control template that displays the control's content using the appropriate template. It automatically binds to Content, ContentTemplate, and ContentTemplateSelector of the templated parent. It is required in templates for ContentControl-derived types to show their content.",
+      "tags": ["contentpresenter", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "styling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you change a control's appearance when it is disabled?",
+      "answer": "Use a trigger on the IsEnabled property to set a different look, such as a gray foreground. Alternatively, template elements can bind their appearance to the control's IsEnabled. The default templates already provide disabled visuals you can override.",
+      "code": "<Trigger Property=\"IsEnabled\" Value=\"False\">\n  <Setter Property=\"Foreground\" Value=\"Gray\"/>\n</Trigger>",
+      "tags": ["triggers", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-018",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the FocusVisualStyle property?",
+      "answer": "FocusVisualStyle defines the visual shown when a control has keyboard focus, drawn as an adorner. It is separate from the control template so focus visuals are consistent. You can set it to null to remove the focus rectangle or supply a custom style.",
+      "tags": ["focus", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/styling-for-focus-in-controls-and-focusvisualstyle"]
+    },
+    {
+      "id": "styling-019",
+      "difficulty": "Intermediate",
+      "question": "How do you apply a style to a specific control instance?",
+      "answer": "Set the control's Style property to a keyed style with StaticResource, or define the style inline in the element. An explicit style overrides an implicit style. Inline setters have higher precedence than style setters.",
+      "code": "<Button Style=\"{StaticResource PrimaryButton}\" Content=\"OK\"/>",
+      "tags": ["styles", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between inline styling and style resources?",
+      "answer": "Inline styling sets properties directly on an element, which affects only that instance. Style resources centralize values so many elements share the same look and can be updated in one place. For maintainability, reusable styles in resource dictionaries are preferred.",
+      "tags": ["styles", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/inline-styles-and-templates"]
+    },
+    {
+      "id": "styling-021",
+      "difficulty": "Advanced",
+      "question": "How do you create a custom control with a default template?",
+      "answer": "Derive from Control, override the static constructor to call DefaultStyleKeyProperty.OverrideMetadata with your type, and provide a themes/generic.xaml resource dictionary with an implicit style containing the template. The control then picks up the template automatically at runtime.",
+      "code": "static MyControl()\n{\n    DefaultStyleKeyProperty.OverrideMetadata(typeof(MyControl),\n        new FrameworkPropertyMetadata(typeof(MyControl)));\n}",
+      "tags": ["custom-control", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "styling-022",
+      "difficulty": "Advanced",
+      "question": "How does template binding differ from a regular binding inside a template?",
+      "answer": "TemplateBinding is a compiled, one-way shortcut for binding to the templated parent and is limited to direct property mapping. A regular Binding with RelativeSource TemplatedParent supports two-way mode, converters, and nested paths. Use TemplateBinding for simple cases and Binding when you need more control.",
+      "code": "<Border Background=\"{Binding Background,\n    RelativeSource={RelativeSource TemplatedParent}}\"/>",
+      "tags": ["templatebinding", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/templatebinding-markup-extension"]
+    },
+    {
+      "id": "styling-023",
+      "difficulty": "Advanced",
+      "question": "How do you animate a control using triggers and storyboards?",
+      "answer": "Define an EventTrigger or a trigger with EnterActions and ExitActions, each starting a Storyboard. The storyboard animates template or control properties. Because the animation targets a dependency property, it composes with the template visuals.",
+      "code": "<Trigger Property=\"IsMouseOver\" Value=\"True\">\n  <Trigger.EnterActions>\n    <BeginStoryboard>\n      <Storyboard>\n        <DoubleAnimation Storyboard.TargetProperty=\"Opacity\" To=\"1\"/>\n      </Storyboard>\n    </BeginStoryboard>\n  </Trigger.EnterActions>\n</Trigger>",
+      "tags": ["animation", "triggers"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/storyboards-overview"]
+    },
+    {
+      "id": "styling-024",
+      "difficulty": "Advanced",
+      "question": "How does style inheritance interact with implicit styles and BasedOn?",
+      "answer": "Implicit styles apply to a type automatically, and a derived type does not automatically inherit its base type's implicit style unless it is defined for the base type and the lookup reaches it. BasedOn explicitly chains styles so setters accumulate. Be careful to avoid accidental overrides when mixing both.",
+      "tags": ["styles", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "styling-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of templates and styles?",
+      "answer": "Complex templates increase the visual tree size and layout cost, so keep them lean. Implicit styles and resource lookups traverse the resource tree, so placing shared styles at application scope avoids repeated work. Freeze and reuse brushes and avoid triggers that invalidate layout frequently.",
+      "tags": ["performance", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    }
+  ]
+}

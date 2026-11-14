@@ -1,0 +1,340 @@
+{
+  "category": "Components & Props",
+  "slug": "components",
+  "icon": "box",
+  "questions": [
+    {
+      "id": "components-001",
+      "difficulty": "Beginner",
+      "question": "What are props in React?",
+      "answer": "Props are the inputs a parent passes to a child component, similar to function arguments. They are read-only from the child perspective, so a component must never modify its own props. Props can be any JavaScript value, including strings, numbers, objects, arrays, functions and elements. They make components reusable and configurable.",
+      "tags": [
+        "props",
+        "inputs"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-002",
+      "difficulty": "Beginner",
+      "question": "How do you pass a function as a prop?",
+      "answer": "You pass a function just like any other value, but as a reference rather than a call. For example you write onClick={handleClick} instead of onClick={handleClick()}, because the latter would call it during render. The child then invokes the function, often in response to an event. This is the standard way to let children communicate upward.",
+      "code": "function Button({ onSave }) {\n  return <button onClick={onSave}>Save</button>;\n}",
+      "tags": [
+        "props",
+        "functions"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-003",
+      "difficulty": "Beginner",
+      "question": "What are default props and default parameters?",
+      "answer": "Default values for props are usually expressed with JavaScript default parameters in the function signature, such as function Card({ title = 'Untitled' }). This replaces the older static defaultProps field, which is not supported for function components in the same way. Defaults make a component resilient when a prop is omitted. They also document the expected shape of the input.",
+      "code": "function Card({ title = 'Untitled', children }) {\n  return <h2>{title}{children}</h2>;\n}",
+      "tags": [
+        "props",
+        "defaults"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-004",
+      "difficulty": "Beginner",
+      "question": "What is component composition?",
+      "answer": "Composition means building larger UIs by combining smaller components rather than through inheritance. A component can render other components as children or as named props, which keeps concerns separated. This favors flexibility because the parent decides what to render inside a reusable shell. React deliberately favors composition over class inheritance.",
+      "tags": [
+        "composition",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between function and class components?",
+      "answer": "Function components are plain JavaScript functions that return JSX and use hooks for state and effects. Class components extend React.Component and use this.state, lifecycle methods and this.setState. Function components with hooks are the modern recommended approach because they are simpler and avoid this-binding pitfalls. Class components still work but are largely legacy in new code.",
+      "tags": [
+        "components",
+        "hooks"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "components-006",
+      "difficulty": "Beginner",
+      "question": "How do you conditionally render one of several components?",
+      "answer": "You can return different components based on a condition using a ternary, a switch statement or a lookup object. Extracting the branching into a variable before the return keeps JSX clean. Returning null renders nothing, which is useful when a component should be hidden. Avoid deeply nested ternaries by splitting logic into smaller components.",
+      "tags": [
+        "components",
+        "conditional-rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "components-007",
+      "difficulty": "Beginner",
+      "question": "What is a presentational versus a container component?",
+      "answer": "Presentational components focus on how things look and receive data through props. Container components focus on how things work, fetching data and managing state, then passing it down. This split improves reuse and testability by separating concerns. Modern React often expresses the same idea with custom hooks instead of container components.",
+      "tags": [
+        "components",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/thinking-in-react"
+      ]
+    },
+    {
+      "id": "components-008",
+      "difficulty": "Beginner",
+      "question": "How do you render a component dynamically?",
+      "answer": "Because a component is just a value, you can store it in a variable and render it with JSX using a capitalized name. For example const Comp = isOn ? On : Off; then return <Comp />. You can also map a string type to a component through a lookup object. This pattern is common for tabs, modals and icon registries.",
+      "code": "const Comp = isOn ? On : Off;\nreturn <Comp />;",
+      "tags": [
+        "components",
+        "dynamic"
+      ],
+      "references": [
+        "https://react.dev/learn/your-first-component"
+      ]
+    },
+    {
+      "id": "components-009",
+      "difficulty": "Beginner",
+      "question": "What is a higher-order component?",
+      "answer": "A higher-order component is a function that takes a component and returns a new component with added behavior, such as injecting props or handling authorization. It was a popular reuse pattern before hooks. HOCs can make prop flow harder to trace and lead to wrapper nesting. Custom hooks are usually preferred today for sharing logic.",
+      "tags": [
+        "hoc",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "components-010",
+      "difficulty": "Beginner",
+      "question": "What is the children prop used for in layout components?",
+      "answer": "The children prop lets a component act as a shell that wraps whatever the parent places inside it. Layout components such as Card, Modal and Page use children to stay generic. This keeps the shell reusable while the parent controls the content. It is a core example of composition in React.",
+      "code": "function Card({ children }) {\n  return <section className='card'>{children}</section>;\n}",
+      "tags": [
+        "children",
+        "composition"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-011",
+      "difficulty": "Intermediate",
+      "question": "How can you avoid prop drilling?",
+      "answer": "Prop drilling is passing data through many intermediate components that do not use it themselves. You can avoid it with the context API for widely shared values, by composing components so children are passed directly, or by using a state library. Choosing the lightest option that fits keeps the tree understandable. Composition is often enough when only a subtree needs the data.",
+      "tags": [
+        "props",
+        "context"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "components-012",
+      "difficulty": "Intermediate",
+      "question": "What is a render prop or function as a child?",
+      "answer": "A render prop is a prop whose value is a function that returns elements, letting the parent decide what to render. The component calls that function with data or helpers it manages. This inverts control so logic can be shared while the markup stays customizable. Custom hooks largely replace this pattern but the idea remains useful.",
+      "code": "function Mouse({ render }) {\n  const pos = useMouse();\n  return render(pos);\n}",
+      "tags": [
+        "render-prop",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "components-013",
+      "difficulty": "Intermediate",
+      "question": "How do you forward a ref to a child component?",
+      "answer": "By default refs are not passed through as props. You wrap the component with forwardRef and accept ref as the second argument, then attach it to a DOM node or another component. This lets parent code focus or measure the underlying element. In React 19 ref can be passed as a regular prop, which simplifies many cases.",
+      "code": "const Input = forwardRef((props, ref) => (\n  <input ref={ref} {...props} />\n));",
+      "tags": [
+        "refs",
+        "forwardRef"
+      ],
+      "references": [
+        "https://react.dev/reference/react/forwardRef"
+      ]
+    },
+    {
+      "id": "components-014",
+      "difficulty": "Intermediate",
+      "question": "When should you use React.memo?",
+      "answer": "React.memo is a higher-order component that skips re-rendering a component when its props are shallowly equal to the previous render. It helps when a component renders often with the same props and is expensive to render. It adds a comparison cost, so it is not automatically beneficial for cheap components. Combine it with stable props or it will rarely help.",
+      "tags": [
+        "memo",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo"
+      ]
+    },
+    {
+      "id": "components-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between children and other props?",
+      "answer": "children is just a special prop that holds the content placed between a component tags, and it is otherwise no different from a named prop. Named props such as header or footer let you place multiple distinct slots. Using children for the primary content and named props for secondary slots keeps APIs intuitive. Both approaches rely on composition.",
+      "tags": [
+        "children",
+        "props"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-016",
+      "difficulty": "Intermediate",
+      "question": "How do you spread a subset of props to a child?",
+      "answer": "You can destructure the props you want to keep and collect the rest with the rest syntax, then spread the rest onto the child. This forwards unknown props without listing them all. Be careful not to leak props that the child or DOM should not receive. Explicitly naming forwarded props is clearer when the set is small.",
+      "code": "function Field({ label, ...rest }) {\n  return <input aria-label={label} {...rest} />;\n}",
+      "tags": [
+        "props",
+        "spread"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-017",
+      "difficulty": "Intermediate",
+      "question": "What is a compound component pattern?",
+      "answer": "Compound components are a group of components that work together and share implicit state, such as Tabs and Tab or Select and Option. The parent coordinates state and passes it to children through context so the API stays expressive. This gives consumers flexible composition while hiding the wiring. It is common in design systems.",
+      "tags": [
+        "patterns",
+        "composition"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "components-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle props that are optional versus required?",
+      "answer": "In plain JavaScript you use default parameters for optional props and rely on documentation or runtime checks for required ones. With TypeScript you express required props as non-optional fields and optional ones with a question mark. Clear types or defaults prevent undefined values from surprising consumers. Whichever you use, keep the contract explicit.",
+      "tags": [
+        "props",
+        "typescript"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "components-019",
+      "difficulty": "Intermediate",
+      "question": "Why should you not mutate props?",
+      "answer": "Props are owned by the parent, so mutating them breaks the one-way data flow and can produce output that does not match the parent state. It also makes rendering unpredictable and can break memoization, because React compares props by reference. If a component needs a modified value, copy it locally or ask the parent to update the source. Treat props as read-only inputs.",
+      "tags": [
+        "props",
+        "immutability"
+      ],
+      "references": [
+        "https://react.dev/learn/keeping-components-pure"
+      ]
+    },
+    {
+      "id": "components-020",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data from a child back to a parent?",
+      "answer": "You pass a callback function down as a prop and the child calls it with the data the parent needs. The parent owns the state and updates it in response, which then flows back down as new props. This keeps the single source of truth in the parent. It is the standard way to implement upward communication in React.",
+      "tags": [
+        "props",
+        "callbacks"
+      ],
+      "references": [
+        "https://react.dev/learn/sharing-state-between-components"
+      ]
+    },
+    {
+      "id": "components-021",
+      "difficulty": "Advanced",
+      "question": "When is inheritance appropriate in React?",
+      "answer": "React strongly favors composition over inheritance, and class inheritance between components is rarely needed. The main legitimate use is extending the base React.Component class itself. For sharing behavior, custom hooks or higher-order components are more flexible and easier to test. Inheritance couples components tightly and makes reuse brittle.",
+      "tags": [
+        "composition",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/learn/your-first-component"
+      ]
+    },
+    {
+      "id": "components-022",
+      "difficulty": "Advanced",
+      "question": "How does React treat component identity across renders?",
+      "answer": "React identifies a component instance by its type and its position in the tree, not by the props it receives. If the type or position changes, React unmounts the old instance and mounts a new one, discarding state. Keys extend this identity mechanism to lists and siblings. Understanding identity explains state resets and remount behavior.",
+      "tags": [
+        "identity",
+        "reconciliation"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "components-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of very small versus very large components?",
+      "answer": "Very small components are easier to reuse and test but can fragment logic and increase indirection. Very large components concentrate logic in one place but become hard to read, test and optimize. A useful heuristic is to split when a component has multiple reasons to change or when a subtree can be reused. Let clarity and reuse drive the split rather than a fixed size rule.",
+      "tags": [
+        "components",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/learn/thinking-in-react"
+      ]
+    },
+    {
+      "id": "components-024",
+      "difficulty": "Advanced",
+      "question": "How do you design a component API that stays stable?",
+      "answer": "Keep required props minimal and provide sensible defaults so callers only supply what they need. Prefer composition through children and slots over adding many boolean flags, which multiply edge cases. Accept a className or style escape hatch for styling without new props. Document the contract with types so changes surface at compile time.",
+      "tags": [
+        "components",
+        "api-design"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "components-025",
+      "difficulty": "Advanced",
+      "question": "What is the significance of the special key and ref props?",
+      "answer": "key and ref are reserved props that React handles specially rather than forwarding to your component. key controls identity for reconciliation, and ref provides access to a DOM node or imperative handle. They are not readable inside the component unless you forward ref explicitly. Treating them as ordinary props leads to subtle bugs.",
+      "tags": [
+        "props",
+        "refs"
+      ],
+      "references": [
+        "https://react.dev/reference/react/forwardRef",
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    }
+  ]
+}

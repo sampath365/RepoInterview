@@ -1,0 +1,217 @@
+{
+  "category": "Error Handling & TRY/CATCH",
+  "slug": "error-handling",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "error-handling-001",
+      "difficulty": "Beginner",
+      "question": "What is the TRY/CATCH construct in T-SQL?",
+      "answer": "TRY/CATCH wraps statements in a BEGIN TRY block and provides a BEGIN CATCH block that runs if an error with severity above 10 occurs. It lets you handle errors gracefully instead of aborting the batch. Errors inside the TRY block transfer control to CATCH, where you can log, compensate, and rethrow.",
+      "code": "BEGIN TRY\n  SELECT 1 / 0;\nEND TRY\nBEGIN CATCH\n  PRINT ERROR_MESSAGE();\nEND CATCH",
+      "tags": ["try-catch", "error-handling"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/try-catch-transact-sql"]
+    },
+    {
+      "id": "error-handling-002",
+      "difficulty": "Beginner",
+      "question": "Which errors are caught by TRY/CATCH?",
+      "answer": "TRY/CATCH catches errors with a severity greater than 10 that do not close the connection. It does not catch compile-time errors, such as a missing object referenced in the same batch, because those prevent the batch from running. It also does not catch informational messages with severity 10 or lower.",
+      "tags": ["try-catch", "severity"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/try-catch-transact-sql"]
+    },
+    {
+      "id": "error-handling-003",
+      "difficulty": "Beginner",
+      "question": "What functions are available inside a CATCH block?",
+      "answer": "ERROR_NUMBER, ERROR_MESSAGE, ERROR_SEVERITY, ERROR_STATE, ERROR_LINE, and ERROR_PROCEDURE provide details about the caught error. They return values only within the CATCH block and are NULL outside it. Capture them into variables if you need to log or rethrow the error.",
+      "code": "SELECT ERROR_NUMBER(), ERROR_MESSAGE(), ERROR_LINE();",
+      "tags": ["error-functions", "catch"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/error-message-transact-sql"]
+    },
+    {
+      "id": "error-handling-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between RAISERROR and THROW?",
+      "answer": "RAISERROR is the legacy way to raise a custom error, supporting formatted messages and severity levels. THROW is the modern statement introduced in SQL Server 2012 that rethrows or raises an error with an error number, message, and state, and it preserves the original error when used without arguments. THROW is preferred for new code.",
+      "code": "THROW 50000, 'Custom error', 1;",
+      "tags": ["throw", "raiserror"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-005",
+      "difficulty": "Beginner",
+      "question": "How do you rethrow the original error from a CATCH block?",
+      "answer": "Use THROW with no arguments, which re-raises the error that was caught, preserving its number, message, and state. This lets you log the error and still let it propagate to the caller. Rethrowing is better than swallowing the error silently.",
+      "code": "BEGIN CATCH\n  -- log details\n  THROW;\nEND CATCH",
+      "tags": ["throw", "rethrow"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-006",
+      "difficulty": "Beginner",
+      "question": "What is @@ERROR and is it still needed?",
+      "answer": "@@ERROR returns the error number of the last statement and is reset by each statement, so it must be checked immediately. It predates TRY/CATCH and is largely obsolete for new code. Use TRY/CATCH and the ERROR_ functions instead.",
+      "tags": ["error-variable", "legacy"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/error-transact-sql"]
+    },
+    {
+      "id": "error-handling-007",
+      "difficulty": "Beginner",
+      "question": "What is XACT_STATE and why is it important in error handling?",
+      "answer": "XACT_STATE returns 1 for a committable transaction, 0 when there is no transaction, and -1 when an uncommittable transaction exists due to a severe error. In a CATCH block you should check XACT_STATE before deciding to commit or roll back. Trying to commit an uncommittable transaction fails.",
+      "code": "BEGIN CATCH\n  IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;\n  THROW;\nEND CATCH",
+      "tags": ["xact-state", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/xact-state-transact-sql"]
+    },
+    {
+      "id": "error-handling-008",
+      "difficulty": "Beginner",
+      "question": "How do you raise a custom error message?",
+      "answer": "You use THROW with an error number of 50000 or higher, a message, and a state, or RAISERROR with a message string. Custom error numbers must be at least 50000 to avoid colliding with system errors. Adding a clear message helps callers understand the failure.",
+      "code": "IF NOT EXISTS (SELECT 1 FROM dbo.Users WHERE Id = @id)\n  THROW 50001, 'User not found', 1;",
+      "tags": ["custom-error", "throw"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-009",
+      "difficulty": "Beginner",
+      "question": "What does SET XACT_ABORT ON do?",
+      "answer": "SET XACT_ABORT ON makes the entire transaction roll back and the batch abort when a runtime error occurs. Without it, some errors roll back only the failing statement, leaving the transaction in an inconsistent state. Many stored procedures set XACT_ABORT ON for predictable behavior.",
+      "tags": ["xact-abort", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-xact-abort-transact-sql"]
+    },
+    {
+      "id": "error-handling-010",
+      "difficulty": "Beginner",
+      "question": "Why should you log errors to a table?",
+      "answer": "Logging errors to a table captures what happened, when, in which procedure, and with what parameters, which is essential for diagnosing production issues after the fact. The log should be written outside the failed transaction so it survives a rollback. Include the error number, message, line, and a timestamp.",
+      "tags": ["logging", "error-handling"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/error-number-transact-sql"]
+    },
+    {
+      "id": "error-handling-011",
+      "difficulty": "Intermediate",
+      "question": "How do you write a robust TRY/CATCH with a transaction?",
+      "answer": "Open the transaction inside TRY, commit at the end of TRY, and in CATCH check XACT_STATE, roll back if needed, log the error, and rethrow. Use SET XACT_ABORT ON for predictable rollbacks. This pattern guarantees the transaction is not left open.",
+      "code": "SET XACT_ABORT ON;\nBEGIN TRY\n  BEGIN TRAN;\n  -- work\n  COMMIT;\nEND TRY\nBEGIN CATCH\n  IF XACT_STATE() <> 0 ROLLBACK;\n  INSERT dbo.ErrorLog(Err, Msg, Dt)\n  VALUES (ERROR_NUMBER(), ERROR_MESSAGE(), SYSUTCDATETIME());\n  THROW;\nEND CATCH",
+      "tags": ["transaction", "try-catch"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/try-catch-transact-sql"]
+    },
+    {
+      "id": "error-handling-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a batch-aborting and a statement-aborting error?",
+      "answer": "A statement-aborting error stops the current statement but continues the batch, while a batch-aborting error terminates the whole batch. The behavior often depends on SET XACT_ABORT. Understanding which category an error falls into explains why some code continues after an error and some does not.",
+      "tags": ["error-scope", "xact-abort"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-xact-abort-transact-sql"]
+    },
+    {
+      "id": "error-handling-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors in a loop without aborting the whole process?",
+      "answer": "Put the TRY/CATCH inside the loop body so each iteration is handled independently, logging the error and continuing rather than failing the whole loop. Keep the transaction per iteration or avoid a transaction if partial success is acceptable. This is common in batch processing where some rows may fail.",
+      "tags": ["loop", "error-handling"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/try-catch-transact-sql"]
+    },
+    {
+      "id": "error-handling-014",
+      "difficulty": "Intermediate",
+      "question": "What does ERROR_STATE represent?",
+      "answer": "ERROR_STATE is an integer that indicates the state of the error, which for system errors helps identify the exact condition that produced it. It is part of the full error signature along with number, severity, and message. Logging the state aids precise diagnosis.",
+      "tags": ["error-state", "catch"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/error-state-transact-sql"]
+    },
+    {
+      "id": "error-handling-015",
+      "difficulty": "Intermediate",
+      "question": "How do you validate input parameters and raise a clear error?",
+      "answer": "At the top of a procedure, check parameters against expected conditions and raise a custom error with THROW when they are invalid. Failing fast with a clear message is better than letting bad data cause a confusing error deep in the logic. This is a form of defensive programming.",
+      "code": "IF @qty <= 0\n  THROW 50002, 'Quantity must be positive', 1;",
+      "tags": ["validation", "throw"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between @@TRANCOUNT and nesting transactions?",
+      "answer": "@@TRANCOUNT returns the number of active transactions, incrementing with each BEGIN TRAN and decrementing with COMMIT. A COMMIT only fully commits when @@TRANCOUNT returns to zero, so nested BEGIN TRAN calls do not create independent transactions. This is why procedures should check @@TRANCOUNT before starting one.",
+      "code": "IF @@TRANCOUNT = 0\n  BEGIN TRAN;",
+      "tags": ["trancount", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/trancount-transact-sql"]
+    },
+    {
+      "id": "error-handling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use a savepoint with TRY/CATCH?",
+      "answer": "Create a savepoint inside the transaction, and in the CATCH block roll back to the savepoint if the transaction is still committable, then decide whether to continue or abort. This lets you recover from a partial failure without discarding everything. Check XACT_STATE first because a severe error makes the transaction uncommittable.",
+      "tags": ["savepoint", "try-catch"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/save-transaction-transact-sql"]
+    },
+    {
+      "id": "error-handling-018",
+      "difficulty": "Intermediate",
+      "question": "What happens if an error occurs inside a CATCH block?",
+      "answer": "If an error occurs inside a CATCH block, it is raised to the caller, since a CATCH cannot catch its own errors. You should keep CATCH logic simple, particularly the logging, and wrap risky operations carefully. A failure in the error handler itself is difficult to diagnose.",
+      "tags": ["catch", "error-handling"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/try-catch-transact-sql"]
+    },
+    {
+      "id": "error-handling-019",
+      "difficulty": "Intermediate",
+      "question": "How do you convert an error into a friendly message for the application?",
+      "answer": "In the CATCH block, map the error number to a user-facing message and raise it with THROW, optionally logging the technical detail. Avoid leaking stack traces or internal table names to end users. This keeps the API contract clean while preserving diagnostics.",
+      "tags": ["error-mapping", "api"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-020",
+      "difficulty": "Intermediate",
+      "question": "Why does THROW require a preceding statement with a semicolon?",
+      "answer": "THROW must be preceded by a statement terminator, so the statement before it must end with a semicolon. Forgetting this causes a syntax error. This is a small but common gotcha when adding THROW to existing code.",
+      "code": "IF @x = 0\n  THROW 50003, 'Bad value', 1;",
+      "tags": ["throw", "syntax"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-021",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a rethrow with THROW and RAISERROR with the original error?",
+      "answer": "THROW with no arguments re-raises the exact caught error with its original number, message, and state, which preserves the error identity. RAISERROR requires you to capture the original values and re-raise them manually, and it resets the error number unless you pass it explicitly. THROW is the correct tool for rethrowing.",
+      "tags": ["throw", "raiserror"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/throw-transact-sql"]
+    },
+    {
+      "id": "error-handling-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle errors across nested stored procedures?",
+      "answer": "Each procedure should handle its own transaction state and rethrow errors so the caller can decide. Because transactions nest by incrementing @@TRANCOUNT, the outer procedure should only commit when it started the transaction. Consistency in this pattern prevents orphaned transactions and confusing partial commits.",
+      "tags": ["nested-procedures", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/trancount-transact-sql"]
+    },
+    {
+      "id": "error-handling-023",
+      "difficulty": "Advanced",
+      "question": "What makes a transaction uncommittable?",
+      "answer": "Certain severe errors, such as a constraint violation under XACT_ABORT ON or a doomed transaction, mark the transaction uncommittable, and XACT_STATE returns -1. In that state you can only roll back, not commit. Failing to detect this leads to errors when the code tries to commit.",
+      "tags": ["xact-state", "uncommittable"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/xact-state-transact-sql"]
+    },
+    {
+      "id": "error-handling-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement retry logic for transient errors?",
+      "answer": "Catch specific transient error numbers such as 1205 for deadlock, 3960 for snapshot conflict, or connection errors, and retry the operation with an increasing delay and jitter. Limit the number of attempts and give up after that. Built-in retry logic in many client libraries and in Azure SQL connectors can also help.",
+      "tags": ["retry", "transient"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/errors-events/database-engine-events-and-errors"]
+    },
+    {
+      "id": "error-handling-025",
+      "difficulty": "Advanced",
+      "question": "How do you log errors without being blocked by the failed transaction?",
+      "answer": "Write the log entry outside the transaction that failed, or use a separate connection so the insert is not part of the doomed transaction. In SQL Server 2022 and Azure SQL you can use the sp_invoke_external_rest_endpoint or a queue for out-of-band logging. Ensuring the log survives rollback is essential for accurate diagnostics.",
+      "tags": ["logging", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/error-number-transact-sql"]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "category": "Decorator & Proxy",
+  "slug": "decorator-proxy",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "decorator-proxy-001",
+      "difficulty": "Beginner",
+      "question": "How would you describe the Decorator pattern to a colleague?",
+      "answer": "Decorator attaches additional responsibilities to an object dynamically by wrapping it in a class that implements the same interface. Because the decorator forwards calls to the wrapped object, it can add behavior before or after. Multiple decorators can be stacked to compose behaviors.",
+      "tags": ["decorator", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-002",
+      "difficulty": "Beginner",
+      "question": "How does the Proxy pattern control access to an object?",
+      "answer": "Proxy provides a placeholder or surrogate for another object to control access to it. It implements the same interface as the real subject and can add lazy loading, access control, caching, or remote invocation. Clients interact with the proxy as if it were the real object.",
+      "tags": ["proxy", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "decorator-proxy-003",
+      "difficulty": "Beginner",
+      "question": "How do Decorator and Proxy differ in intent?",
+      "answer": "Decorator adds behavior and is composed by the client, which chooses which decorators to apply. Proxy controls access to the subject and typically manages its lifecycle, often created by a framework rather than the client. The structures look similar, but the purpose is different.",
+      "tags": ["decorator", "proxy"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-004",
+      "difficulty": "Beginner",
+      "question": "Why is Decorator preferred over subclassing for adding behavior?",
+      "answer": "Subclassing fixes behavior at compile time and needs a new class for every combination of features. Decorator composes behavior at runtime and lets you apply only the combination you need per instance. This avoids a combinatorial explosion of subclasses.",
+      "tags": ["decorator", "inheritance"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-005",
+      "difficulty": "Beginner",
+      "question": "How do .NET streams demonstrate the Decorator pattern?",
+      "answer": "GZipStream, CryptoStream, and BufferedStream wrap another Stream and add behavior while exposing the same Stream interface. They can be layered, such as compressing then encrypting a file. This is a classic example because the interface is unchanged.",
+      "tags": ["decorator", "streams"],
+      "code": "using var file = File.Create(\"data.gz\");\nusing var gzip = new GZipStream(file, CompressionLevel.Optimal);\nawait gzip.WriteAsync(payload);",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.compression.gzipstream"]
+    },
+    {
+      "id": "decorator-proxy-006",
+      "difficulty": "Beginner",
+      "question": "What is a virtual proxy?",
+      "answer": "A virtual proxy defers creating an expensive object until it is first needed. It holds a reference that is null until the first call, then initializes the real subject. This is common for large images, remote data, or costly services.",
+      "tags": ["proxy", "lazy"],
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "decorator-proxy-007",
+      "difficulty": "Beginner",
+      "question": "What is a protection proxy?",
+      "answer": "A protection proxy controls access to an object based on permissions or roles. It checks the caller's authorization before forwarding the call to the real subject. This keeps access rules in one place and out of the subject itself.",
+      "tags": ["proxy", "security"],
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "decorator-proxy-008",
+      "difficulty": "Beginner",
+      "question": "What is a remote proxy?",
+      "answer": "A remote proxy represents an object that lives in a different process or machine, hiding the network communication. The proxy marshals calls over the wire and returns results as if the object were local. RPC frameworks and gRPC clients are examples of this idea.",
+      "tags": ["proxy", "remote"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/grpc-for-wcf-developers/"]
+    },
+    {
+      "id": "decorator-proxy-009",
+      "difficulty": "Beginner",
+      "question": "How does a caching proxy work?",
+      "answer": "A caching proxy stores results of previous calls and returns the cached value when the same request occurs again. It forwards to the real subject only on a cache miss. This reduces load on expensive or slow subjects.",
+      "tags": ["proxy", "caching"],
+      "code": "public async Task<Report> GetAsync(int id)\n{\n    if (_cache.TryGetValue(id, out Report r)) return r;\n    return _cache[id] = await _inner.GetAsync(id);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache"]
+    },
+    {
+      "id": "decorator-proxy-010",
+      "difficulty": "Beginner",
+      "question": "What does a decorator do when it does not need to change a call?",
+      "answer": "It simply forwards the call to the wrapped object, preserving the original behavior. This pass-through is what allows decorators to be transparent to clients. The decorator only intervenes on the operations it cares about.",
+      "tags": ["decorator", "delegation"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a logging decorator with DI?",
+      "answer": "Define the decorator to implement the same interface, inject the inner service and a logger, and wrap the inner call with log statements. Register the concrete service and then register the decorator to replace it for the interface. Some containers offer a Decorate method; with the built-in container you use a factory.",
+      "tags": ["decorator", "logging"],
+      "code": "public sealed class LoggingHandler(IHandler inner, ILogger<LoggingHandler> log)\n    : IHandler\n{\n    public Task Handle(Command c)\n    {\n        log.LogInformation(\"Handling {Type}\", c.GetType().Name);\n        return inner.Handle(c);\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/logging"]
+    },
+    {
+      "id": "decorator-proxy-012",
+      "difficulty": "Intermediate",
+      "question": "How does the ASP.NET Core middleware pipeline use the Decorator idea?",
+      "answer": "Each middleware component wraps the next delegate and can run code before and after calling it. This is decoration of the request handler at the pipeline level. The order in which middleware is registered determines the nesting.",
+      "tags": ["decorator", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "decorator-proxy-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a decorator and an interceptor?",
+      "answer": "A decorator is a static composition applied at wiring time around a specific service. An interceptor hooks into calls at runtime, often through dynamic proxies or a framework, and can apply cross-cutting behavior broadly. Decorators are explicit and type-safe; interceptors are more dynamic but less transparent.",
+      "tags": ["decorator", "interceptor"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-014",
+      "difficulty": "Intermediate",
+      "question": "How do you stack multiple decorators in the correct order?",
+      "answer": "Order matters because the outermost decorator runs first on the way in and last on the way out. For example, cache outside logging to avoid logging cache hits, or the reverse depending on intent. Register them so the innermost wraps the concrete service and each outer one wraps the previous.",
+      "tags": ["decorator", "composition"],
+      "code": "builder.Services.AddScoped<IReport, ReportService>();\nbuilder.Services.AddScoped<IReport>(sp =>\n    new CachedReport(sp.GetRequiredService<IReport>()));",
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a decorator in isolation?",
+      "answer": "Provide a fake inner implementation that records calls, then assert the decorator invokes it correctly and adds the expected behavior. Test that pass-through methods preserve arguments and results. This confirms the decorator is transparent except for its intended concern.",
+      "tags": ["decorator", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "decorator-proxy-016",
+      "difficulty": "Intermediate",
+      "question": "How does a proxy handle lazy initialization safely under concurrency?",
+      "answer": "Use Lazy<T> with an appropriate thread-safety mode or a lock around initialization to ensure the real subject is created once. Without synchronization, multiple threads may create duplicates or see a partially built object. Lazy<T> handles publication safely.",
+      "tags": ["proxy", "threading"],
+      "code": "private readonly Lazy<Service> _inner =\n    new(() => new Service(), LazyThreadSafetyMode.ExecutionAndPublication);",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.lazy-1"]
+    },
+    {
+      "id": "decorator-proxy-017",
+      "difficulty": "Intermediate",
+      "question": "How do you build a generic caching decorator for multiple services?",
+      "answer": "Use a generic decorator class parameterized by the interface and a key function, or use a library like a caching proxy generator. The decorator computes a cache key from the method arguments and stores results in a shared cache. This avoids writing a decorator per service.",
+      "tags": ["decorator", "caching"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache"]
+    },
+    {
+      "id": "decorator-proxy-018",
+      "difficulty": "Intermediate",
+      "question": "How do you decorate an interface that has many members?",
+      "answer": "You must implement every member, forwarding to the inner instance, which is verbose and error-prone. To reduce boilerplate, use an abstract base decorator that implements all members as pass-through and let subclasses override only the ones they change. Some libraries can generate forwarding code.",
+      "tags": ["decorator", "boilerplate"],
+      "code": "public abstract class HandlerDecorator(IHandler inner) : IHandler\n{\n    public virtual Task Handle(Command c) => inner.Handle(c);\n}",
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "decorator-proxy-019",
+      "difficulty": "Intermediate",
+      "question": "What is a smart proxy?",
+      "answer": "A smart proxy adds extra logic when the subject is accessed, such as reference counting, copy-on-write, or logging. It transparently enhances behavior without the client knowing. Caching and lazy proxies are common variants of this idea.",
+      "tags": ["proxy", "smart-proxy"],
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "decorator-proxy-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid decorator order bugs in large systems?",
+      "answer": "Document the intended order and centralize registration so the stack is built in one place. Name decorators by their concern so the ordering intent is obvious. Add tests that assert the effective order for critical paths.",
+      "tags": ["decorator", "composition"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "decorator-proxy-021",
+      "difficulty": "Advanced",
+      "question": "How does dynamic proxy generation work for interceptors?",
+      "answer": "Frameworks like DispatchProxy or Castle DynamicProxy generate a subclass at runtime that overrides virtual members to run interceptors. Interceptors receive invocation details and can call the target or short-circuit. This enables cross-cutting behavior without hand-written decorators but requires virtual or interface members.",
+      "tags": ["proxy", "interception"],
+      "code": "public sealed class AuditProxy<T> : DispatchProxy\n{\n    protected override object? Invoke(MethodInfo m, object?[]? args) => m.Invoke(_target, args);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.reflection.dispatchproxy"]
+    },
+    {
+      "id": "decorator-proxy-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of caching in a proxy for mutable data?",
+      "answer": "Caching without invalidation returns stale data when the underlying state changes. You need a strategy such as time-based expiry, explicit invalidation on writes, or versioned keys. Also consider that caching keyed only on arguments can collide across tenants or users if the key is incomplete.",
+      "tags": ["proxy", "caching"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache"]
+    },
+    {
+      "id": "decorator-proxy-023",
+      "difficulty": "Advanced",
+      "question": "How do you apply a decorator only for certain configurations at runtime?",
+      "answer": "Register the decorated and undecorated variants and select between them with a factory or keyed service based on configuration. This keeps the decision in the composition root. Avoid branching inside the decorator itself, which would couple it to configuration.",
+      "tags": ["decorator", "configuration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "decorator-proxy-024",
+      "difficulty": "Advanced",
+      "question": "How do decorators interact with scoped lifetimes and disposal?",
+      "answer": "The decorator and the inner service should share a lifetime so they are created and disposed together per scope. If the decorator holds IDisposable resources, register it so the container disposes it. Mixing lifetimes can cause captive dependencies or leaks.",
+      "tags": ["decorator", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "decorator-proxy-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose between decorator, proxy, and middleware for a cross-cutting concern?",
+      "answer": "Use a decorator when the concern applies to a specific service and should be explicit and type-safe. Use a proxy when you need to control access or lifecycle of a subject, often generated dynamically. Use middleware when the concern is tied to the request pipeline, such as authentication or error handling.",
+      "tags": ["decorator", "proxy", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    }
+  ]
+}

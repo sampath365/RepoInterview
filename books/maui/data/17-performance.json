@@ -1,0 +1,215 @@
+{
+  "category": "Performance & Memory",
+  "slug": "performance",
+  "icon": "memory",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "Why does startup time matter in a mobile app?",
+      "answer": "Startup time shapes first impressions, and users may abandon an app that feels slow to launch. Cold start includes loading the runtime, initializing the app, and rendering the first page. Reducing work done before the first frame, such as deferring heavy services, improves perceived speed. Measure startup on real devices because emulators are not representative.",
+      "tags": ["performance", "startup"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "What is the UI thread and why should you keep it free?",
+      "answer": "The UI thread processes input, layout, and rendering, so any long-running work on it blocks interaction and causes jank or freezes. Move CPU-bound and IO work to background threads with Task.Run or async APIs. Only update UI state back on the main thread. Keeping the UI thread responsive is the single most important performance rule.",
+      "tags": ["performance", "threading"],
+      "code": "var data = await Task.Run(() => ComputeHeavyResult());\nMainThread.BeginInvokeOnMainThread(() => Items = data);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "What is virtualization in a list control?",
+      "answer": "Virtualization creates UI elements only for the items currently visible and reuses them as the user scrolls, instead of building every row up front. This keeps memory use and render time bounded regardless of list size. CollectionView and ListView virtualize by default. Virtualization is why large lists can scroll smoothly.",
+      "tags": ["performance", "lists"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/"]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "How do images affect performance?",
+      "answer": "Large images consume memory and decoding time, and loading them at full resolution when displayed small wastes both. Resize images to the size you display and choose efficient formats such as WebP or appropriately compressed JPEG or PNG. Decoding on a background thread avoids blocking the UI. Reusing and caching images reduces repeated work in lists.",
+      "tags": ["performance", "images"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/images/images"]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "What is a memory leak and why is it a problem on mobile?",
+      "answer": "A memory leak is memory that is no longer needed but is still referenced, so it cannot be reclaimed. On mobile, leaked objects accumulate and eventually cause slowdowns or out-of-memory crashes. Common causes are event handlers and subscriptions that are never unsubscribed, and long-lived references to pages or view models. Devices have tighter memory limits than desktops, so leaks surface sooner.",
+      "tags": ["memory", "leaks"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "Why is string concatenation in a loop inefficient?",
+      "answer": "Strings are immutable, so each concatenation allocates a new string and copies the previous content, making a loop quadratic in total work. Use StringBuilder for repeated appends to allocate and grow one buffer. This reduces garbage collection pressure. It matters most in hot paths such as building large text or logs.",
+      "tags": ["performance", "strings"],
+      "code": "var sb = new StringBuilder();\nforeach (var item in items)\n    sb.AppendLine(item.Name);\nvar text = sb.ToString();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "What is garbage collection and how does it affect apps?",
+      "answer": "The garbage collector automatically reclaims memory for objects no longer referenced, freeing developers from manual memory management. It runs in generations to optimize for short-lived objects, and collections pause execution briefly. Frequent allocations increase collection frequency and can cause stutter. Reducing unnecessary allocations, especially in hot paths, keeps GC pressure low.",
+      "tags": ["memory", "gc"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "How do async and await help performance?",
+      "answer": "Async and await free the calling thread while an IO-bound operation completes instead of blocking it, which keeps the UI responsive. The thread can do other work or return to the pool. Async does not create threads for the operation; it uses callbacks. Use it for IO and avoid using it to wrap CPU-bound work, which belongs on Task.Run.",
+      "tags": ["performance", "async"],
+      "code": "var text = await File.ReadAllTextAsync(path);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "What is lazy loading and when is it useful?",
+      "answer": "Lazy loading defers creating or loading a resource until it is actually needed, reducing startup work and memory use. It is useful for heavy objects or data not immediately visible. You can implement it with Lazy<T> or by loading on demand. Avoid overusing it when the resource is almost always needed, since it adds complexity and delay.",
+      "tags": ["performance", "lazy"],
+      "code": "private readonly Lazy<HeavyService> _service =\n    new(() => new HeavyService());",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid deep visual hierarchies?",
+      "answer": "Each nested layout adds measure and arrange work during layout passes, so deep hierarchies slow rendering and increase memory. Flatten layouts by using a single Grid with rows and columns instead of nested stacks where possible. Fewer elements also mean less work when properties change. Simpler hierarchies are easier to maintain and render faster.",
+      "tags": ["performance", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use the .NET profiler to find performance issues in MAUI?",
+      "answer": "Run the app under the Visual Studio or .NET profiling tools and capture CPU and memory traces while exercising the slow scenario. The CPU profiler shows hot methods, and the memory profiler shows allocation sites and retained objects. Compare snapshots to find leaks. Profile release builds on a device for realistic results.",
+      "tags": ["performance", "profiling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize CollectionView performance?",
+      "answer": "Use a simple DataTemplate with few nested layouts, set a fixed or estimated item size where supported, and avoid binding converters that run expensive logic per item. Recycle elements by keeping templates lightweight. Load data in pages rather than all at once, and update the collection incrementally. Measure scrolling frame rate to confirm improvements.",
+      "tags": ["performance", "collectionview"],
+      "code": "<CollectionView ItemsSource=\"{Binding Items}\"\n                ItemSizingStrategy=\"MeasureFirstItem\">\n  <CollectionView.ItemTemplate>\n    <DataTemplate>\n      <Label Text=\"{Binding Name}\" />\n    </DataTemplate>\n  </CollectionView.ItemTemplate>\n</CollectionView>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/"]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce startup work in a MAUI app?",
+      "answer": "Register only the services you need and defer heavy initialization until first use, use compiled XAML, and avoid blocking calls in MauiProgram. Trim unused code and enable AOT for release where feasible. Load the first page with minimal data and populate the rest asynchronously. Measuring startup with platform tools shows where the time goes.",
+      "tags": ["performance", "startup"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "What causes event handler memory leaks and how do you fix them?",
+      "answer": "Subscribing to events on long-lived objects such as a singleton service or a static event keeps the subscriber alive, so pages and view models that subscribe never get collected. Unsubscribe in OnDisappearing or when the view model is disposed, or use weak event patterns. Prefer scoped subscriptions and dispose them with the owning object. Checking retained instances in a memory profiler confirms the fix.",
+      "tags": ["memory", "leaks"],
+      "code": "protected override void OnDisappearing()\n{\n    base.OnDisappearing();\n    Connectivity.ConnectivityChanged -= OnConnectivityChanged;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "How do you measure and reduce memory usage in a MAUI app?",
+      "answer": "Take memory snapshots with the profiler at key points, such as after navigating to and away from pages, and compare retained object counts. Look for unexpected retention of pages, view models, or images. Reduce memory by resizing images, disposing streams, and avoiding caching large collections. Verify that navigating away frees the previous page.",
+      "tags": ["memory", "profiling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How does compiled XAML improve performance?",
+      "answer": "XAML compilation converts XAML into generated code at build time instead of parsing markup at runtime, which speeds page creation and surfaces errors earlier. It is enabled by default for release builds. Compiled bindings further reduce reflection by resolving binding paths at compile time. Together they lower startup and navigation cost.",
+      "tags": ["performance", "xamlc"],
+      "code": "<Label Text=\"{Binding Name, x:DataType=vm:ItemViewModel}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings"]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid unnecessary layout passes?",
+      "answer": "Set explicit sizes or use star sizing instead of relying on measure of complex content, and avoid changing layout-affecting properties during scrolling or animation. Batch property changes so layout runs once rather than per change. Prefer transforms over changing WidthRequest or Margin for animations. Fewer layout passes mean smoother interaction.",
+      "tags": ["performance", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "How do you cache remote data to improve perceived performance?",
+      "answer": "Store fetched data locally and render it immediately on subsequent visits while refreshing in the background. This makes navigation feel instant and supports offline use. Include timestamps to decide when to refresh and to expire stale entries. Present cached content with an indication when it may be outdated.",
+      "tags": ["performance", "caching"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "What is the benefit of using source-generated code for JSON?",
+      "answer": "Source-generated JSON serialization avoids runtime reflection, which makes serialization faster and compatible with trimming and Native AOT. It also reduces startup cost because no reflection metadata is resolved on first use. You define a JsonSerializerContext with the types you serialize. This is recommended for release builds of mobile apps.",
+      "tags": ["performance", "json"],
+      "code": "[JsonSerializable(typeof(List<Item>))]\ninternal partial class AppJsonContext : JsonSerializerContext { }",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/nativeaot"]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle large data sets in the UI?",
+      "answer": "Page or virtualize the data rather than loading everything at once, using incremental loading or paging in the list control. Keep only what is needed in memory and release the rest. Show placeholders or skeletons while loading. This keeps memory bounded and scrolling smooth even with thousands of records.",
+      "tags": ["performance", "data"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/"]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How does trimming affect MAUI apps and what should you watch for?",
+      "answer": "Trimming removes unused code from the app to reduce size, but reflection-based code can be trimmed incorrectly, causing runtime errors. Mark types with the appropriate attributes or use trimming-safe patterns such as source generators and compiled bindings. Test the trimmed release build thoroughly because issues may not appear in debug. The .NET SDK warns about potentially trimmed members.",
+      "tags": ["performance", "trimming"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/trimming"]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "What are the benefits and costs of Native AOT for MAUI?",
+      "answer": "Native AOT compiles the app ahead of time to native code, improving startup time and reducing memory use, and it removes the need for a runtime JIT. The costs include longer build times, larger restrictions on reflection and dynamic code, and current platform limitations. It requires trimming-safe code and source-generated serialization. Evaluate it against your need for faster cold start.",
+      "tags": ["performance", "aot"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/nativeaot"]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How do you diagnose and fix jank during scrolling?",
+      "answer": "Profile the frame timing while scrolling to find long operations on the UI thread, then remove or offload them. Common culprits are heavy converters, image decoding, and creating controls in templates. Simplify templates, precompute values, and use recycling. Target a steady frame rate and re-measure after each change to confirm the improvement.",
+      "tags": ["performance", "scrolling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you reduce battery and network usage in a MAUI app?",
+      "answer": "Batch network requests, cache aggressively, and back off polling when the app is idle or backgrounded. Use platform-efficient mechanisms such as background fetch rather than tight loops, and stop sensors and location when not needed. Prefer push over polling for timely updates. Battery-friendly design also improves perceived performance.",
+      "tags": ["performance", "battery"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "What is the trade-off between optimizing for startup, memory, and app size?",
+      "answer": "Optimizations can conflict: trimming and AOT reduce size and improve startup but restrict reflection and can break libraries, and aggressive caching speeds perceived performance while increasing memory. Similarly, loading everything eagerly helps first-screen speed but raises startup time and memory. Decide which metric matters most for your app and measure each change against real workloads. Balanced, measured tuning beats optimizing one dimension blindly.",
+      "tags": ["performance", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    }
+  ]
+}

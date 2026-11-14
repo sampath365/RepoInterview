@@ -1,0 +1,353 @@
+{
+  "category": "Health Checks & Resilience",
+  "slug": "health-checks",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "health-checks-001",
+      "difficulty": "Beginner",
+      "question": "What are health checks in ASP.NET Core?",
+      "answer": "Health checks are endpoints that report whether the app and its dependencies are healthy, used by orchestrators, load balancers, and monitoring to decide whether to route traffic or restart an instance. You register them with AddHealthChecks and expose them with MapHealthChecks. They can check databases, caches, external services, and custom conditions.",
+      "tags": [
+        "health-checks",
+        "monitoring"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-002",
+      "difficulty": "Beginner",
+      "question": "How do you register a basic health check?",
+      "answer": "You call builder.Services.AddHealthChecks() to register the service and app.MapHealthChecks(\"/health\") to expose an endpoint. The endpoint returns Healthy, Degraded, or Unhealthy with the appropriate status code. Additional checks are chained onto AddHealthChecks.",
+      "code": "builder.Services.AddHealthChecks();\n...\napp.MapHealthChecks(\"/health\");",
+      "tags": [
+        "setup",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-003",
+      "difficulty": "Beginner",
+      "question": "What are the three health status values?",
+      "answer": "HealthStatus has Healthy, Degraded, and Unhealthy, mapped by default to HTTP 200, 200, and 503 respectively. Degraded signals a working but impaired state that should be investigated. You can customize the status code mapping per status.",
+      "tags": [
+        "healthstatus",
+        "monitoring"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between liveness and readiness checks?",
+      "answer": "A liveness check tells the orchestrator whether the process is alive and should be restarted if not, while a readiness check tells it whether the app is ready to receive traffic. Liveness should be shallow to avoid restarts during transient dependency failures, and readiness can include dependency checks. Kubernetes uses separate endpoints for each.",
+      "tags": [
+        "liveness",
+        "readiness"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-005",
+      "difficulty": "Beginner",
+      "question": "How do you add a database health check?",
+      "answer": "You add the AspNetCore.HealthChecks package for your database and chain AddSqlServer, AddNpgSql, or AddDbContextCheck with a connection string. The check opens a connection or runs a lightweight query. This verifies the dependency is reachable and responds.",
+      "code": "builder.Services.AddHealthChecks()\n    .AddDbContextCheck<AppDb>(\"db\");",
+      "tags": [
+        "database",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-006",
+      "difficulty": "Beginner",
+      "question": "How do you write a custom health check?",
+      "answer": "You implement IHealthCheck with a CheckHealthAsync method that returns a HealthCheckResult of Healthy, Degraded, or Unhealthy with an optional description and exception, then register it with AddCheck. Custom checks cover things like disk space, queue depth, or an internal invariant. Keep them fast because they run on every probe.",
+      "code": "public class DiskHealthCheck : IHealthCheck\n{\n    public Task<HealthCheckResult> CheckHealthAsync(\n        HealthCheckContext ctx, CancellationToken ct = default)\n        => Task.FromResult(HealthCheckResult.Healthy());\n}",
+      "tags": [
+        "custom-check",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-007",
+      "difficulty": "Beginner",
+      "question": "How do you tag health checks?",
+      "answer": "You pass tags when registering a check, then filter which checks run on an endpoint with the Predicate option, for example exposing only the ready tag at the readiness endpoint. Tags group checks by purpose. This lets one set of checks serve multiple endpoints.",
+      "code": "builder.Services.AddHealthChecks()\n    .AddCheck<DiskHealthCheck>(\"disk\", tags: new[] { \"ready\" });",
+      "tags": [
+        "tags",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-008",
+      "difficulty": "Beginner",
+      "question": "What is resilience in ASP.NET Core?",
+      "answer": "Resilience is the ability of an app to keep working and recover when dependencies fail, using patterns such as retry, timeout, circuit breaker, and fallback. In .NET the recommended approach is the Microsoft.Extensions.Http.Resilience package built on Polly. Applying resilience to outbound calls prevents one slow dependency from taking down the app.",
+      "tags": [
+        "resilience",
+        "polly"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests",
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "health-checks-009",
+      "difficulty": "Beginner",
+      "question": "Why should health checks be fast?",
+      "answer": "Health checks run frequently, often every few seconds, so slow checks consume resources and can cause false failures and unnecessary restarts. They should do lightweight, bounded work with short timeouts. Deep diagnostics belong in separate endpoints or monitoring, not in the liveness probe.",
+      "tags": [
+        "performance",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-010",
+      "difficulty": "Beginner",
+      "question": "How do health checks integrate with container orchestrators?",
+      "answer": "Kubernetes and similar orchestrators call liveness, readiness, and startup probes over HTTP, using the status code to decide whether to restart the pod or send traffic. Readiness failures remove the pod from load balancing, and liveness failures trigger a restart. Correct endpoints and timeouts keep rolling deployments safe.",
+      "tags": [
+        "kubernetes",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use the health checks UI dashboard?",
+      "answer": "You add the AspNetCore.HealthChecks.UI package and client, register the UI with AddHealthChecksUI, and configure the endpoints to monitor, then map the dashboard. It shows the status and history of multiple services in one view. The UI is intended for internal monitoring and should be secured.",
+      "code": "builder.Services.AddHealthChecksUI().AddInMemoryStorage();\n...\napp.MapHealthChecksUI();",
+      "tags": [
+        "dashboard",
+        "monitoring"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure timeouts for health checks?",
+      "answer": "You set the Timeout option on HealthCheckOptions and use cancellation in your checks so slow dependencies do not hang the probe. A short timeout ensures the orchestrator gets a timely answer. You can also set per-check timeouts in third-party packages.",
+      "code": "app.MapHealthChecks(\"/health\", new HealthCheckOptions\n{\n    Timeout = TimeSpan.FromSeconds(3)\n});",
+      "tags": [
+        "timeout",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-013",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom health check response writer?",
+      "answer": "You set the ResponseWriter in HealthCheckOptions to a function that writes a custom JSON payload including status, duration, and per-check details. This makes the endpoint machine-readable for monitoring systems. You must set the content type and status code yourself.",
+      "code": "app.MapHealthChecks(\"/health\", new HealthCheckOptions\n{\n    ResponseWriter = async (ctx, report) =>\n    {\n        ctx.Response.ContentType = \"application/json\";\n        await ctx.Response.WriteAsJsonAsync(new { status = report.Status.ToString() });\n    }\n});",
+      "tags": [
+        "response-writer",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a retry policy for outbound HTTP calls?",
+      "answer": "You use AddStandardResilienceHandler or configure a Polly retry strategy on an HttpClient registered with AddHttpClient, retrying transient errors with exponential backoff and jitter. You should only retry idempotent operations and cap attempts. Resilience handlers combine retry, timeout, circuit breaker, and rate limiting.",
+      "code": "builder.Services.AddHttpClient<ApiClient>(c =>\n    c.BaseAddress = new Uri(\"https://api.example.com\"))\n    .AddStandardResilienceHandler();",
+      "tags": [
+        "retry",
+        "http-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests",
+        "https://learn.microsoft.com/dotnet/core/resilience/http-resilience"
+      ]
+    },
+    {
+      "id": "health-checks-015",
+      "difficulty": "Intermediate",
+      "question": "What is the circuit breaker pattern?",
+      "answer": "A circuit breaker stops calling a failing dependency after a threshold of failures, failing fast for a period before probing again, which prevents cascading failures and gives the dependency time to recover. It has closed, open, and half-open states. Polly and the resilience handler implement it with configurable thresholds and break durations.",
+      "tags": [
+        "circuit-breaker",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests",
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "health-checks-016",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a timeout for outbound calls?",
+      "answer": "You set a per-attempt timeout in the resilience pipeline or pass a CancellationToken with CancelAfter to the call, ensuring slow dependencies do not exhaust threads or exceed the caller's deadline. Timeouts should be shorter than the overall request timeout. Combining timeout with retry requires care so total time stays bounded.",
+      "code": "using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(2));\nvar res = await _http.GetAsync(url, cts.Token);",
+      "tags": [
+        "timeout",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests",
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "health-checks-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use a Typed HttpClient?",
+      "answer": "You create a class that takes HttpClient in its constructor and register it with AddHttpClient<MyClient>, which configures the base address and handlers and manages the handler lifetime. Typed clients keep HTTP logic out of controllers and are easy to test with a fake handler. Resilience and logging can be attached in the registration.",
+      "code": "public class WeatherClient\n{\n    private readonly HttpClient _http;\n    public WeatherClient(HttpClient http) => _http = http;\n    public Task<string> GetAsync() => _http.GetStringAsync(\"/weather\");\n}",
+      "tags": [
+        "http-client",
+        "typed-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ]
+    },
+    {
+      "id": "health-checks-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle degraded dependencies in a health check?",
+      "answer": "You return HealthStatus.Degraded when a non-critical dependency is slow or partially failing so the orchestrator keeps the app in service but alerts are raised. Critical dependencies should return Unhealthy to remove the instance from traffic. Distinguishing severity avoids unnecessary restarts.",
+      "code": "return result.IsSuccess\n    ? HealthCheckResult.Healthy()\n    : HealthCheckResult.Degraded(\"Cache slow\");",
+      "tags": [
+        "degraded",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-019",
+      "difficulty": "Intermediate",
+      "question": "How do you secure health check endpoints?",
+      "answer": "Health endpoints often need to be reachable by the orchestrator without authentication, so you either expose only a minimal liveness endpoint publicly and protect detailed endpoints with authorization, or restrict them to internal networks. Detailed output can leak versions and dependency names. Using a dedicated port or path with network controls is common.",
+      "code": "app.MapHealthChecks(\"/healthz\").AllowAnonymous();\napp.MapHealthChecks(\"/healthz/detail\").RequireAuthorization();",
+      "tags": [
+        "security",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between health checks and metrics?",
+      "answer": "Health checks give a coarse, current status for routing and restart decisions, while metrics are numeric time series used to observe trends and trigger alerts. Health checks answer whether to serve traffic now; metrics answer how the system is behaving over time. Both are part of a complete monitoring strategy along with logs and traces.",
+      "tags": [
+        "metrics",
+        "monitoring"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks",
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "health-checks-021",
+      "difficulty": "Advanced",
+      "question": "How does the health check middleware aggregate multiple checks?",
+      "answer": "HealthCheckService runs all matching checks, which may execute in parallel, and aggregates the results: any Unhealthy makes the overall status Unhealthy, otherwise any Degraded makes it Degraded, otherwise Healthy. Each check is registered with a name and optional tags, and results include duration and exception details. The response writer or the default writer formats the aggregated report.",
+      "tags": [
+        "internals",
+        "health-checks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement a resilience pipeline for a microservice call chain?",
+      "answer": "You combine per-attempt timeouts, retries with jittered backoff for transient faults, a circuit breaker per dependency, and bulkhead or rate limiting to cap concurrency, plus fallbacks where a degraded response is acceptable. Bulkhead isolation prevents one dependency from consuming all threads. Policies should be tuned per dependency based on its failure modes and SLAs.",
+      "code": "builder.Services.AddHttpClient(\"inventory\")\n    .AddResilienceHandler(\"inventory\", b =>\n    {\n        b.AddRetry(new HttpRetryStrategyOptions\n        {\n            MaxRetryAttempts = 3,\n            BackoffType = DelayBackoffType.Exponential,\n            UseJitter = true\n        });\n        b.AddCircuitBreaker(new HttpCircuitBreakerStrategyOptions());\n    });",
+      "tags": [
+        "resilience",
+        "microservices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests",
+        "https://learn.microsoft.com/dotnet/core/resilience/http-resilience"
+      ]
+    },
+    {
+      "id": "health-checks-023",
+      "difficulty": "Advanced",
+      "question": "How do you avoid health check flapping and cascading restarts?",
+      "answer": "You separate liveness from readiness so a dependency outage does not restart pods, use Degraded for partial failures, add timeouts and retries inside checks, and require consecutive failures before acting. Keeping liveness shallow and readiness dependency-aware prevents a slow database from triggering restart loops. Monitoring the probes themselves catches misconfiguration.",
+      "tags": [
+        "resilience",
+        "orchestration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "health-checks-024",
+      "difficulty": "Advanced",
+      "question": "How do you test health checks and resilience policies?",
+      "answer": "You unit test custom health checks by calling CheckHealthAsync with controlled dependencies, and test resilience by injecting failing handlers that simulate transient and persistent faults, asserting on retry counts and final outcomes. Integration tests can exercise the health endpoints with WebApplicationFactory. Simulating faults is the only reliable way to verify behavior under failure.",
+      "tags": [
+        "testing",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/",
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "health-checks-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of aggressive retries and timeouts in a distributed system?",
+      "answer": "Aggressive retries can amplify load during an outage and cause retry storms, while timeouts that are too short cause spurious failures and too long ones tie up resources and delay failure detection. Jitter, backoff, circuit breakers, and budgets based on the caller's deadline balance these forces. Retries should be reserved for idempotent operations and transient faults.",
+      "tags": [
+        "trade-offs",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests",
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    }
+  ]
+}

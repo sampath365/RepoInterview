@@ -1,0 +1,218 @@
+{
+  "category": "Parameterization & Custom Data",
+  "slug": "parameterization",
+  "icon": "list",
+  "questions": [
+    {
+      "id": "parameterization-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [Fact] and [Theory]?",
+      "answer": "A [Fact] is a single, always-run test with no parameters. A [Theory] is a parameterised test that runs once for each data row supplied by a data attribute, so the same logic is verified against many inputs. Each theory data row is reported as a separate test case, which makes failures easy to pinpoint.",
+      "tags": ["theory", "fact"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-002",
+      "difficulty": "Beginner",
+      "question": "How do you pass simple data to a theory with [InlineData]?",
+      "answer": "Apply one or more [InlineData] attributes to the test method, each supplying the arguments for one run, and add matching parameters to the method signature. This is the simplest way to cover a handful of literal cases. Use a more flexible data source when the data is large or computed.",
+      "code": "[Theory]\n[InlineData(2, 3, 5)]\n[InlineData(-1, 1, 0)]\npublic void Adds(int a, int b, int expected)\n    => Assert.Equal(expected, a + b);",
+      "tags": ["inlinedata", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-003",
+      "difficulty": "Beginner",
+      "question": "How do you supply data from a static property with [MemberData]?",
+      "answer": "Create a public static property or method that returns IEnumerable<object[]> and reference it with [MemberData(nameof(Data))], where each object array is one test case. MemberData is ideal when the data is computed or too long for attributes. Use TheoryData<T> for a type-safe alternative to object arrays.",
+      "code": "public static TheoryData<int, int> Cases => new()\n{\n    { 2, 3 },\n    { 5, 7 }\n};\n\n[Theory]\n[MemberData(nameof(Cases))]\npublic void Runs(int a, int b) => Assert.True(a < b);",
+      "tags": ["memberdata", "theorydata"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-004",
+      "difficulty": "Beginner",
+      "question": "How do you read theory data from a file with [ClassData]?",
+      "answer": "Implement a class that inherits from IEnumerable<object[]> or TheoryData and returns the rows, then reference it with [ClassData(typeof(MyData))]. This lets you load data from a file or build it programmatically while keeping the test method clean. Prefer MemberData when the data does not need its own class.",
+      "code": "public class FileData : TheoryData<string>\n{\n    public FileData() => Add(File.ReadAllText(\"cases.txt\"));\n}\n\n[Theory]\n[ClassData(typeof(FileData))]\npublic void Runs(string input) { }",
+      "tags": ["classdata", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-005",
+      "difficulty": "Beginner",
+      "question": "What is TheoryData<T> and why use it?",
+      "answer": "TheoryData<T> is a helper type that provides strongly typed Add methods and implements the required enumerable interface, so the compiler checks your data rows against the test signature. This prevents the silent failures that occur when an object array has the wrong length or type. It also supports multiple generic parameters for multi-argument theories.",
+      "tags": ["theorydata", "type-safety"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-006",
+      "difficulty": "Beginner",
+      "question": "How many data rows does a theory need?",
+      "answer": "A theory must have at least one row of data, otherwise the runner reports an error because there is nothing to run. If you want a test that always runs with no parameters, use a [Fact] instead. Some teams add a guard data row to document the expected behaviour even when the input list is empty.",
+      "tags": ["data-rows", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-007",
+      "difficulty": "Beginner",
+      "question": "How do you give a theory data row a readable display name?",
+      "answer": "Use the DisplayName property on the data attribute or pass a name to the TheoryData row, and v3 also supports the [DisplayName] style attributes and message formatting with placeholders. A clear display name makes failures easy to identify in the test report. Without one the runner shows the argument values, which may be unreadable for complex objects.",
+      "code": "[Theory]\n[InlineData(1, 2, DisplayName = \"one plus two\")]\npublic void Adds(int a, int b) => Assert.True(a + b == 3);",
+      "tags": ["display-name", "reporting"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-008",
+      "difficulty": "Beginner",
+      "question": "Can a theory have optional parameters?",
+      "answer": "Yes, a theory method can have optional parameters and a data row may omit them if the data source allows it, but the number of supplied values must match the non-optional parameters. In practice it is clearer to always supply every argument so the data row is unambiguous. Relying on defaults in theory data is unusual and can confuse readers.",
+      "tags": ["optional-parameters", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-009",
+      "difficulty": "Beginner",
+      "question": "How do you share theory data between test classes?",
+      "answer": "Put the data in a public static property or a public data class in a shared location and reference it from each test with MemberData or ClassData. This avoids duplicating large data sets. Keep the shared data type-safe with TheoryData so all consumers get compile-time checking.",
+      "tags": ["sharing", "data"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-010",
+      "difficulty": "Beginner",
+      "question": "How do you parameterise a test that needs a complex object?",
+      "answer": "Supply the object from MemberData or ClassData, which can construct the object in code, rather than trying to express it in an InlineData attribute that only accepts constants. If the object must be serialised for the test runner, implement IXunitSerializable so it can round-trip. MemberData with TheoryData<MyType> is the most readable option.",
+      "tags": ["complex-data", "serialization"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement IXunitSerializable for custom theory data?",
+      "answer": "Implement IXunitSerializable by writing the values you need into the serialization info in Serialize and reading them back in Deserialize, and pass the object through a theory data row. This lets the runner display and transport the value between discovery and execution. It is required for custom types that the runner cannot otherwise serialise.",
+      "code": "public class Money : IXunitSerializable\n{\n    public decimal Amount { get; private set; }\n    public void Serialize(IXunitSerializationInfo info)\n        => info.AddValue(nameof(Amount), Amount);\n    public void Deserialize(IXunitSerializationInfo info)\n        => Amount = info.GetValue<decimal>(nameof(Amount));\n}",
+      "tags": ["ixunitserializable", "serialization"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-012",
+      "difficulty": "Intermediate",
+      "question": "What data types does xUnit v3 serialise out of the box?",
+      "answer": "v3 adds built-in serialization for Guid, Index, Range, Uri, and the usual primitives and strings, so these can appear directly in theory data without custom serialization. Arrays and many collection types are also supported. For your own types, implement IXunitSerializable or register an external serializer.",
+      "tags": ["serialization", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "parameterization-013",
+      "difficulty": "Intermediate",
+      "question": "How do you pass a DateTime to a theory without flakiness?",
+      "answer": "Pass fixed values as data rows and avoid using DateTime.Now or DateTime.UtcNow inside the data source, because the value is captured at discovery and can differ from execution. If the test depends on the current time, inject a TimeProvider and control it instead. Deterministic inputs keep theory rows reproducible.",
+      "tags": ["datetime", "determinism"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use [MemberData] with a method that takes parameters?",
+      "answer": "Reference the member by name and supply the parameter values through the MemberData attribute's arguments, which xUnit passes to the method when building the data. This lets one data-producing method serve several theories with different configuration. Keep the parameter list small so the intent stays clear.",
+      "code": "[Theory]\n[MemberData(nameof(Rows), 5)]\npublic void Runs(int value) { }\n\npublic static TheoryData<int> Rows(int count)\n{\n    var data = new TheoryData<int>();\n    for (var i = 0; i < count; i++) data.Add(i);\n    return data;\n}",
+      "tags": ["memberdata", "arguments"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid duplicating data between related theories?",
+      "answer": "Extract the shared rows into a static TheoryData property and reference it from each theory, or compose smaller data sets with AddRange. Composing data keeps each test focused while avoiding copy-paste drift. Type-safe composition is one of the main benefits of TheoryData over raw object arrays.",
+      "code": "public static TheoryData<int> Positive => new() { 1, 2, 3 };\npublic static TheoryData<int> Negative => new() { -1, -2 };\npublic static TheoryData<int> All => Merge(Positive, Negative);",
+      "tags": ["composition", "data"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test with null values in theory data?",
+      "answer": "Include null as a row in InlineData or TheoryData and declare the parameter as nullable so the compiler accepts it. This is a common way to test guard clauses and null handling. Make sure the display name or the data itself makes the null case obvious in the report.",
+      "code": "[Theory]\n[InlineData(null)]\n[InlineData(\"value\")]\npublic void Handles(string? input)\n    => Assert.NotNull(input is null ? \"\" : input);",
+      "tags": ["null", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between MemberData and ClassData in terms of lifecycle?",
+      "answer": "A MemberData source is a static member evaluated when the runner enumerates the data, so it should be cheap and side-effect free. A ClassData type is instantiated by the runner, so its constructor runs during enumeration and it can hold instance state, but that also means it may run in a different context than the test. Prefer static MemberData for simple cases and ClassData when the data source genuinely needs its own type.",
+      "tags": ["memberdata", "classdata"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-018",
+      "difficulty": "Intermediate",
+      "question": "How do you generate theory data randomly but reproducibly?",
+      "answer": "Generate the data from a seeded Random so the same seed produces the same rows on every run, and log the seed so a failure can be reproduced. Determinism is essential because a failing row must be reproducible. Some teams also expose the seed as a fixed value in the data source for documentation.",
+      "code": "var rng = new Random(1234);\nvar data = new TheoryData<int>();\nfor (var i = 0; i < 20; i++) data.Add(rng.Next());",
+      "tags": ["random", "reproducibility"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-019",
+      "difficulty": "Intermediate",
+      "question": "How do you combine traits with parameterised tests?",
+      "answer": "Apply trait attributes at the method or class level and they carry to every data row, or set them on individual rows when the data attribute supports it. Traits let you filter parameterised tests in CI, for example to run only a category. Keep trait names consistent so filters remain simple.",
+      "tags": ["traits", "filtering"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "parameterization-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test a method that accepts a delegate or function as a parameter?",
+      "answer": "Supply the delegate through MemberData or ClassData, where you can construct it in code, and invoke it inside the test. This is useful for testing higher-order functions and pipelines. Keep the delegates simple and named so the data row is readable.",
+      "code": "public static TheoryData<Func<int, int>, int> Cases => new()\n{\n    { x => x + 1, 2 },\n    { x => x * 2, 4 }\n};",
+      "tags": ["delegates", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-021",
+      "difficulty": "Advanced",
+      "question": "How do you create a custom data attribute?",
+      "answer": "Derive from DataAttribute and override GetData, returning a ValueTask of theory data rows built from whatever source you need, such as a database or a CSV file. This encapsulates a data source so tests stay clean and the logic is reusable. Remember that GetData runs at discovery, so it must be fast and must not depend on test fixtures.",
+      "code": "public sealed class CsvDataAttribute(string path) : DataAttribute\n{\n    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(\n        MethodInfo testMethod, DisposalTracker disposalTracker)\n    {\n        IReadOnlyCollection<ITheoryDataRow> rows = File.ReadLines(path)\n            .Select(l => new TheoryDataRow(l.Split(','))).ToArray();\n        return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(rows);\n    }\n}",
+      "tags": ["data-attribute", "extensibility"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "parameterization-022",
+      "difficulty": "Advanced",
+      "question": "Why can custom theory data break at discovery time, and how do you avoid it?",
+      "answer": "Theory data is enumerated during discovery, which runs in a separate context before any test executes, so it cannot rely on fixtures, dependency injection, or a database that is not yet started. If the data source throws or returns nothing, discovery fails and the tests are not run. Avoid I/O in data sources or move it into the test body, and return at least one row.",
+      "tags": ["discovery", "pitfalls"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-023",
+      "difficulty": "Advanced",
+      "question": "How do you share theory data across assemblies?",
+      "answer": "Move the data definitions and TheoryData properties into a shared library that both test assemblies reference. Because MemberData requires a static member, the shared type must expose the data publicly. This keeps a large data set consistent across projects without duplication.",
+      "tags": ["sharing", "assemblies"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep a large theory suite readable?",
+      "answer": "Give every row a meaningful display name, group related rows in a named TheoryData property, and keep the assertion generic so it applies to all rows rather than branching on the input. Split a theory when the cases need fundamentally different assertions, because a theory with per-row conditionals is really several tests. Readable data is what makes a parameterised test maintainable.",
+      "tags": ["readability", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "parameterization-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of parameterised tests versus separate test methods?",
+      "answer": "A theory reduces duplication and makes the covered cases visible in one place, which is ideal when the logic is identical and only the data differs. Separate methods are better when each case needs a different setup, a different assertion, or a distinct name that documents the behaviour. Over-parameterising turns a test into a table that hides intent, so split when the cases stop being variations of one behaviour.",
+      "tags": ["trade-offs", "design"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    }
+  ]
+}

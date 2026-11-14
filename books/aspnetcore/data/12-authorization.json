@@ -1,0 +1,218 @@
+{
+  "category": "Authorization & Policies",
+  "slug": "authorization",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "authorization-001",
+      "difficulty": "Beginner",
+      "question": "What is authorization in ASP.NET Core?",
+      "answer": "Authorization determines whether an authenticated user may perform an action or access a resource, and it is expressed as requirements evaluated against a policy. The authorization middleware evaluates endpoint metadata such as [Authorize] or RequireAuthorization. If the check fails the request is challenged or forbidden with a 401 or 403.",
+      "tags": ["authorization", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/introduction"]
+    },
+    {
+      "id": "authorization-002",
+      "difficulty": "Beginner",
+      "question": "What does the [Authorize] attribute do?",
+      "answer": "The [Authorize] attribute requires the user to be authenticated and optionally to satisfy a policy or role before the action or endpoint runs. Applying it at the controller level protects all actions unless individually marked [AllowAnonymous]. It is enforced by the authorization middleware based on endpoint metadata.",
+      "tags": ["authorize", "attributes"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/simple"]
+    },
+    {
+      "id": "authorization-003",
+      "difficulty": "Beginner",
+      "question": "What is role-based authorization?",
+      "answer": "Role-based authorization checks whether the user is a member of a role using [Authorize(Roles = \"Admin\")] or a RequireRole policy. Roles are just claims of type role in the principal. It is simple but can become rigid, so claims and policies are often preferred for finer control.",
+      "tags": ["roles", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/roles"]
+    },
+    {
+      "id": "authorization-004",
+      "difficulty": "Beginner",
+      "question": "What is claims-based authorization?",
+      "answer": "Claims-based authorization checks for the presence of a claim with a specific type and optionally a value, using [Authorize(Policy = ...)] with a RequireClaim requirement. Claims describe attributes of the user such as department or subscription level. This is more flexible than roles because policies can combine many claims.",
+      "tags": ["claims", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/claims"]
+    },
+    {
+      "id": "authorization-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between 401 Unauthorized and 403 Forbidden?",
+      "answer": "A 401 means the request lacks valid authentication credentials, so the client should authenticate, while a 403 means the user is authenticated but not permitted, so re-authenticating will not help. The authentication handler produces 401 on challenge and 403 on forbid. Returning the correct code helps clients and security tooling.",
+      "tags": ["http-status", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/introduction"]
+    },
+    {
+      "id": "authorization-006",
+      "difficulty": "Beginner",
+      "question": "How do you allow anonymous access to an endpoint?",
+      "answer": "You apply [AllowAnonymous] to a controller or action, or call AllowAnonymous() on a minimal API endpoint, which overrides any [Authorize] metadata for that endpoint. This is useful for login, health, and public endpoints. Keep the number of anonymous endpoints small and review them regularly.",
+      "code": "[AllowAnonymous]\n[HttpPost(\"login\")]\npublic IActionResult Login(LoginDto dto) => Ok();",
+      "tags": ["allowanonymous", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/simple"]
+    },
+    {
+      "id": "authorization-007",
+      "difficulty": "Beginner",
+      "question": "What is a policy in authorization?",
+      "answer": "A policy is a named collection of requirements that must all be satisfied for authorization to succeed, along with the schemes used to authenticate. You register policies in AddAuthorization with a builder that adds requirements and handlers. Endpoints reference policies by name, decoupling rules from attributes.",
+      "code": "builder.Services.AddAuthorization(o =>\n    o.AddPolicy(\"AtLeast21\", p => p.RequireClaim(\"age\", \"21\")));",
+      "tags": ["policies", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-008",
+      "difficulty": "Beginner",
+      "question": "How do you apply a policy to a controller or action?",
+      "answer": "You use [Authorize(Policy = \"PolicyName\")] on the controller or action, or call RequireAuthorization(\"PolicyName\") on a minimal API endpoint or group. Multiple policies can be combined and all must pass. Policies can also be applied globally through a fallback policy.",
+      "code": "[Authorize(Policy = \"AtLeast21\")]\n[HttpGet(\"alcohol\")]\npublic IActionResult Get() => Ok();",
+      "tags": ["policies", "attributes"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-009",
+      "difficulty": "Beginner",
+      "question": "What is the fallback authorization policy?",
+      "answer": "A fallback policy applies to endpoints that have no explicit authorization metadata, letting you require authentication everywhere by default. You configure it with options.FallbackPolicy or a default policy. This secure-by-default approach reduces the chance of forgetting to protect an endpoint.",
+      "code": "builder.Services.AddAuthorization(o =>\n    o.FallbackPolicy = new AuthorizationPolicyBuilder()\n        .RequireAuthenticatedUser().Build());",
+      "tags": ["fallback-policy", "security"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies#use-a-fallback-policy"]
+    },
+    {
+      "id": "authorization-010",
+      "difficulty": "Beginner",
+      "question": "How do you check authorization imperatively in code?",
+      "answer": "You inject IAuthorizationService and call AuthorizeAsync with the user and a policy name or requirement, then branch on the result. This is useful when authorization depends on a resource loaded inside the action. Imperative checks complement declarative attributes for resource-based scenarios.",
+      "code": "var result = await _authz.AuthorizeAsync(User, document, \"EditPolicy\");\nif (!result.Succeeded) return Forbid();",
+      "tags": ["iauthorizationservice", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom authorization requirement and handler?",
+      "answer": "You implement IAuthorizationRequirement as a marker with data, then an AuthorizationHandler<TRequirement> whose HandleRequirementAsync calls context.Succeed when satisfied. Register the handler in DI and add the requirement to a policy. Handlers can be resource-based by using AuthorizationHandler<TRequirement, TResource>.",
+      "code": "public class MinimumAgeHandler\n    : AuthorizationHandler<MinimumAgeRequirement>\n{\n    protected override Task HandleRequirementAsync(\n        AuthorizationHandlerContext ctx, MinimumAgeRequirement req)\n    {\n        if (/* condition */) ctx.Succeed(req);\n        return Task.CompletedTask;\n    }\n}",
+      "tags": ["custom-requirement", "handlers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-012",
+      "difficulty": "Intermediate",
+      "question": "What is resource-based authorization?",
+      "answer": "Resource-based authorization evaluates a policy against a specific resource instance, such as a document, using AuthorizeAsync(User, resource, policy). This is needed when permission depends on ownership or the resource's state, which a static policy cannot express. You call it imperatively inside the action or handler after loading the resource.",
+      "code": "var doc = await _repo.GetAsync(id);\nif (!(await _authz.AuthorizeAsync(User, doc, \"Edit\")).Succeeded)\n    return Forbid();",
+      "tags": ["resource-based", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/resource-based"]
+    },
+    {
+      "id": "authorization-013",
+      "difficulty": "Intermediate",
+      "question": "How do you require multiple roles or policies?",
+      "answer": "For roles you can use [Authorize(Roles = \"Admin,Manager\")], which requires the user to be in at least one listed role, or add several [Authorize] attributes, each of which must pass. For policies, applying multiple policies requires all of them to succeed. Requirements within a single policy are combined with AND semantics.",
+      "tags": ["roles", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/roles"]
+    },
+    {
+      "id": "authorization-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between policy-based and role-based authorization?",
+      "answer": "Role-based authorization checks a single role claim and is easy to understand but inflexible. Policy-based authorization composes requirements and handlers, supports custom logic, resource checks, and multiple claims, and is the recommended approach for complex rules. Roles can even be expressed as requirements inside a policy.",
+      "tags": ["policies", "roles"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-015",
+      "difficulty": "Intermediate",
+      "question": "How do you authorize based on endpoint metadata in minimal APIs?",
+      "answer": "RequireAuthorization attaches authorization metadata to an endpoint or group, and the authorization middleware evaluates it. You can require specific policies, roles, or just authentication. Applying it to a group with MapGroup shares the rule across all contained endpoints.",
+      "code": "var admin = app.MapGroup(\"/admin\").RequireAuthorization(\"AdminPolicy\");\nadmin.MapGet(\"/stats\", GetStats);",
+      "tags": ["minimal-api", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use authorization in Blazor and Razor Pages?",
+      "answer": "Razor Pages support the AuthorizePage and AuthorizeFolder conventions and the [Authorize] attribute on the PageModel, while Blazor uses the AuthorizeView component, the [Authorize] attribute on pages, and the AuthorizeRouteView for route-level checks. Policies are shared across these models. This keeps authorization consistent regardless of the UI technology.",
+      "code": "builder.Services.AddRazorPages(o =>\n    o.Conventions.AuthorizeFolder(\"/Admin\"));",
+      "tags": ["razor-pages", "blazor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/razor-pages-authorization"]
+    },
+    {
+      "id": "authorization-017",
+      "difficulty": "Intermediate",
+      "question": "How do you protect against privilege escalation through IDOR?",
+      "answer": "Insecure Direct Object Reference happens when an endpoint accepts an id and returns or modifies the resource without checking ownership. You prevent it with resource-based authorization that verifies the user owns or may access the specific resource, plus input validation. Never rely on an unguessable id alone for access control.",
+      "tags": ["idor", "security"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/resource-based"]
+    },
+    {
+      "id": "authorization-018",
+      "difficulty": "Intermediate",
+      "question": "How do authorization policies interact with authentication schemes?",
+      "answer": "A policy can specify which authentication schemes to use with AddAuthenticationSchemes, and the authorization middleware will authenticate using those schemes before evaluating requirements. If no schemes are specified, the default scheme is used. This lets different endpoints accept different credential types.",
+      "code": "o.AddPolicy(\"Api\", p => p\n    .AddAuthenticationSchemes(\"Bearer\")\n    .RequireAuthenticatedUser());",
+      "tags": ["schemes", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test authorization policies?",
+      "answer": "You can unit test handlers by constructing an AuthorizationHandlerContext with a ClaimsPrincipal and the requirement and asserting on the result. Integration tests using WebApplicationFactory verify that endpoints return 401 or 403 as expected. Testing both allowed and denied cases catches regressions in policy logic.",
+      "tags": ["testing", "authorization"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies", "https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "authorization-020",
+      "difficulty": "Intermediate",
+      "question": "How do you enforce authorization at the data layer?",
+      "answer": "You filter queries by the current user or tenant inside the repository, or use EF Core global query filters keyed on a current-user service, so data is scoped automatically. This defense in depth complements endpoint-level authorization. It prevents leaks when a new endpoint forgets an explicit check.",
+      "code": "modelBuilder.Entity<Order>().HasQueryFilter(\n    o => o.TenantId == _tenant.TenantId);",
+      "tags": ["data-layer", "security"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/", "https://learn.microsoft.com/ef/core/querying/filters"]
+    },
+    {
+      "id": "authorization-021",
+      "difficulty": "Advanced",
+      "question": "How does the authorization middleware evaluate policies and combine requirements?",
+      "answer": "For each endpoint, the middleware collects authorization attributes and policies, authenticates using the configured schemes, and runs each requirement's handlers. All requirements in a policy must succeed, and all policies on the endpoint must pass. Handlers may run asynchronously and can depend on the resource when using resource-based authorization.",
+      "tags": ["internals", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-022",
+      "difficulty": "Advanced",
+      "question": "How would you design a permission-based authorization system?",
+      "answer": "You model permissions as claims or as a database-backed mapping of roles to permissions, then create a requirement that checks whether the user has the needed permission for the operation. Caching permissions per user reduces database load. This scales better than hardcoding roles because permissions can be assigned and audited independently.",
+      "tags": ["permissions", "design"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "authorization-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle authorization for background jobs and services with no HTTP context?",
+      "answer": "Background work runs without a user, so you use a system identity or a service principal and enforce rules in code or through a dedicated authorization service rather than HTTP policies. If the job acts on behalf of a user, you pass the user context explicitly and evaluate the same policies. Auditing these actions is important because there is no interactive user.",
+      "tags": ["background", "service-identity"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/", "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"]
+    },
+    {
+      "id": "authorization-024",
+      "difficulty": "Advanced",
+      "question": "How do you prevent authorization bypass and broken access control?",
+      "answer": "You centralize policies, apply a fallback policy to protect by default, verify resource ownership for every object access, and never trust client-supplied role or tenant identifiers. Logging denied requests and regularly reviewing anonymous endpoints and policies helps catch gaps. Automated tests that assert 401 and 403 responses guard against regressions.",
+      "tags": ["security", "best-practices"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/", "https://learn.microsoft.com/aspnet/core/security/"]
+    },
+    {
+      "id": "authorization-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between declarative and imperative authorization?",
+      "answer": "Declarative authorization via attributes or RequireAuthorization is visible in metadata, applies consistently, and is easy to audit, but it cannot express rules that depend on loaded resources. Imperative checks with IAuthorizationService handle resource-based logic but are easy to forget and harder to see at a glance. Best practice is declarative policies by default with imperative checks only for resource-specific decisions.",
+      "tags": ["trade-offs", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/authorization/policies", "https://learn.microsoft.com/aspnet/core/security/authorization/resource-based"]
+    }
+  ]
+}

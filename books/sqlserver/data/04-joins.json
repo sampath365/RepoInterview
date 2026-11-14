@@ -1,0 +1,341 @@
+{
+  "category": "Joins & Set Operations",
+  "slug": "joins",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "joins-001",
+      "difficulty": "Beginner",
+      "question": "What is an inner join?",
+      "answer": "An inner join returns only the rows where the join key matches in both tables; rows without a match on either side are dropped. It is the default and most common join and corresponds to an intersection of the two row sets. Both explicit INNER JOIN ... ON and the older comma syntax with a WHERE equality produce an inner join.",
+      "tags": [
+        "inner-join",
+        "joins"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ],
+      "code": "SELECT c.CustomerID, o.SalesOrderID\nFROM Sales.Customer AS c\nJOIN Sales.SalesOrderHeader AS o ON o.CustomerID = c.CustomerID;"
+    },
+    {
+      "id": "joins-002",
+      "difficulty": "Beginner",
+      "question": "What does a LEFT OUTER JOIN return?",
+      "answer": "A LEFT OUTER JOIN returns every row from the left table and the matching rows from the right; when there is no match the right columns are returned as NULL. It is used to find rows with no related record, such as customers without orders. Putting a filter on the right table in the ON clause instead of WHERE preserves the outer behavior.",
+      "tags": [
+        "left-join",
+        "outer-join"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ],
+      "code": "SELECT c.CustomerID, o.SalesOrderID\nFROM Sales.Customer AS c\nLEFT JOIN Sales.SalesOrderHeader AS o ON o.CustomerID = c.CustomerID;"
+    },
+    {
+      "id": "joins-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a LEFT JOIN and a RIGHT JOIN?",
+      "answer": "A LEFT JOIN keeps all rows from the first (left) table and a RIGHT JOIN keeps all rows from the second (right) table, filling the missing side with NULLs. A RIGHT JOIN can always be rewritten as a LEFT JOIN by swapping the table order, so most teams standardize on LEFT JOIN for readability. FULL OUTER JOIN keeps unmatched rows from both sides.",
+      "tags": [
+        "left-join",
+        "right-join"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    },
+    {
+      "id": "joins-004",
+      "difficulty": "Beginner",
+      "question": "What is a CROSS JOIN?",
+      "answer": "A CROSS JOIN produces the Cartesian product of two tables, pairing every row of the first with every row of the second. It is useful for generating combinations such as all date-and-product pairs or building a numbers grid. Without a filter it can explode row counts, so use it deliberately.",
+      "tags": [
+        "cross-join",
+        "cartesian"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    },
+    {
+      "id": "joins-005",
+      "difficulty": "Beginner",
+      "question": "What is a self join and when do you need one?",
+      "answer": "A self join joins a table to itself using two aliases, which is required for hierarchical or comparison queries such as employee-to-manager or comparing consecutive rows. The aliases let you reference the same table twice with different roles. Self joins follow the same inner/outer rules as ordinary joins.",
+      "tags": [
+        "self-join",
+        "hierarchy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ],
+      "code": "SELECT e.Name AS Employee, m.Name AS Manager\nFROM dbo.Employee AS e\nLEFT JOIN dbo.Employee AS m ON e.ManagerId = m.EmployeeId;"
+    },
+    {
+      "id": "joins-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between UNION and JOIN?",
+      "answer": "A JOIN combines columns from two tables horizontally based on a matching condition, producing wider rows. A UNION stacks rows from two queries vertically and requires matching column counts and compatible types. Use joins to relate entities and unions to combine similar result sets.",
+      "tags": [
+        "union",
+        "join"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/set-operators-union-transact-sql"
+      ]
+    },
+    {
+      "id": "joins-007",
+      "difficulty": "Beginner",
+      "question": "What do EXCEPT and INTERSECT do?",
+      "answer": "EXCEPT returns distinct rows from the first query that are not present in the second, and INTERSECT returns distinct rows present in both. Both require compatible column lists and implicitly remove duplicates. They are convenient for set comparisons such as finding records in one system but not another.",
+      "tags": [
+        "except",
+        "intersect",
+        "set-operators"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/set-operators-except-and-intersect-transact-sql"
+      ]
+    },
+    {
+      "id": "joins-008",
+      "difficulty": "Beginner",
+      "question": "Why can a join return more rows than expected?",
+      "answer": "A join multiplies rows when the join key is not unique on at least one side, so a one-to-many relationship produces more rows than the parent table. A missing or wrong join predicate can also create an accidental Cartesian product. Check key cardinality and the join condition when the row count looks inflated.",
+      "tags": [
+        "cardinality",
+        "joins"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    },
+    {
+      "id": "joins-009",
+      "difficulty": "Beginner",
+      "question": "What is the ON clause versus the WHERE clause in an outer join?",
+      "answer": "The ON clause defines how the two tables are matched, and for an outer join the filter there is applied before the outer rows are preserved. A predicate in WHERE is applied after the join, so a condition on the null-supplying table can turn a LEFT JOIN into an inner join. Put predicates on the optional table in ON to keep all left rows.",
+      "tags": [
+        "outer-join",
+        "predicate-placement"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    },
+    {
+      "id": "joins-010",
+      "difficulty": "Beginner",
+      "question": "How do you find rows in one table that have no match in another?",
+      "answer": "Use a LEFT JOIN and filter WHERE right_table.key IS NULL, or use NOT EXISTS with a correlated subquery. NOT EXISTS is usually preferred because it handles NULLs correctly and the optimizer can often use an anti-semi join. Both approaches return the unmatched rows.",
+      "tags": [
+        "anti-join",
+        "not-exists"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ],
+      "code": "SELECT c.CustomerID\nFROM Sales.Customer AS c\nWHERE NOT EXISTS (SELECT 1 FROM Sales.SalesOrderHeader AS o\n                  WHERE o.CustomerID = c.CustomerID);"
+    },
+    {
+      "id": "joins-011",
+      "difficulty": "Intermediate",
+      "question": "What is a semi join and how is it expressed in T-SQL?",
+      "answer": "A semi join returns rows from one table for which a match exists in another, without returning columns from the second table. It is written with EXISTS or IN, and the optimizer implements it as a semi join operator that stops at the first match. This avoids the duplicate multiplication of a regular inner join.",
+      "tags": [
+        "semi-join",
+        "exists"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    },
+    {
+      "id": "joins-012",
+      "difficulty": "Intermediate",
+      "question": "How does the optimizer choose the join type and order?",
+      "answer": "The optimizer estimates the cost of nested loops, merge and hash joins for each input and picks the cheapest physical plan, often reordering joins and pushing predicates down. It relies on statistics and cardinality estimates, so stale or skewed stats can produce a poor join choice. Reading the actual plan shows which physical join was used and why.",
+      "tags": [
+        "optimizer",
+        "join-type"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/query-processing-architecture-guide"
+      ]
+    },
+    {
+      "id": "joins-013",
+      "difficulty": "Intermediate",
+      "question": "When would you use CROSS APPLY instead of a join?",
+      "answer": "Use CROSS APPLY when the right side depends on a column from the left, such as a TOP N subquery per outer row or a table-valued function call. A regular join cannot easily express that dependency because the subquery cannot reference the outer table. CROSS APPLY is ideal for top-N-per-group patterns.",
+      "tags": [
+        "apply",
+        "top-n"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/from-transact-sql"
+      ]
+    },
+    {
+      "id": "joins-014",
+      "difficulty": "Intermediate",
+      "question": "What is a non-equijoin and when is it useful?",
+      "answer": "A non-equijoin uses a comparison other than equality, such as <, >, BETWEEN or <>, in the ON clause. It is useful for range lookups like matching a price to a discount band or an event to a time interval. Non-equijoins can be expensive because hash and merge joins favor equality, so indexing the range column helps.",
+      "tags": [
+        "non-equijoin",
+        "range"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ],
+      "code": "SELECT o.SalesOrderID, d.DiscountPct\nFROM Sales.SalesOrderHeader AS o\nJOIN dbo.Discount AS d\n  ON o.TotalDue BETWEEN d.MinAmount AND d.MaxAmount;"
+    },
+    {
+      "id": "joins-015",
+      "difficulty": "Intermediate",
+      "question": "How do you combine a UNION ALL with an ORDER BY?",
+      "answer": "You can apply ORDER BY only once at the end of the whole UNION statement, not inside the individual SELECTs unless each is wrapped in a subquery. The ORDER BY applies to the combined result and may reference the output column names or positions. Wrapping each branch in a derived table lets you add per-branch TOP with its own ORDER BY.",
+      "tags": [
+        "union",
+        "order-by"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/set-operators-union-transact-sql"
+      ],
+      "code": "SELECT Name FROM dbo.A\nUNION ALL\nSELECT Name FROM dbo.B\nORDER BY Name;"
+    },
+    {
+      "id": "joins-016",
+      "difficulty": "Intermediate",
+      "question": "What happens when data types differ between UNION branches?",
+      "answer": "SQL Server resolves the branches to a common type using data type precedence, which can cause implicit conversions and truncation or errors for the higher-precedence side. For example, combining an INT and a VARCHAR converts the INT to VARCHAR, and combining VARCHAR and NVARCHAR converts to NVARCHAR. Always make the types match to keep plans efficient and results correct.",
+      "tags": [
+        "union",
+        "data-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/data-types/data-type-conversion-database-engine"
+      ]
+    },
+    {
+      "id": "joins-017",
+      "difficulty": "Intermediate",
+      "question": "How does a many-to-many relationship require a junction table?",
+      "answer": "A many-to-many relationship cannot be modeled with a single foreign key, so you introduce a junction (bridge) table whose composite key references both parent tables. Querying it requires two joins, one to each parent. The junction table can also carry attributes of the relationship, such as a quantity or an assigned date.",
+      "tags": [
+        "many-to-many",
+        "junction-table"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"
+      ],
+      "code": "SELECT p.ProductID, c.CategoryName\nFROM dbo.ProductCategory AS pc\nJOIN dbo.Product  AS p ON p.ProductID  = pc.ProductID\nJOIN dbo.Category AS c ON c.CategoryID = pc.CategoryID;"
+    },
+    {
+      "id": "joins-018",
+      "difficulty": "Intermediate",
+      "question": "What is the danger of joining on a nullable column?",
+      "answer": "When the join key contains NULLs, the equality comparison yields UNKNOWN and those rows never match, so a LEFT JOIN may still drop expected matches or an inner join silently loses rows. Also, a NULL on both sides does not join because NULL is not equal to NULL. Use ISNULL or COALESCE to a sentinel value only when the semantics truly require it.",
+      "tags": [
+        "null",
+        "joins"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/null-and-unknown-transact-sql"
+      ]
+    },
+    {
+      "id": "joins-019",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize a query that joins many tables?",
+      "answer": "Give the optimizer good statistics, ensure join columns are indexed, and keep predicates sargable so they can be pushed down to reduce rows early. Avoid functions on join columns and keep the join graph as narrow as possible, selecting only the needed columns. Review the actual plan for scans, spills and key lookups that signal missing or covering indexes.",
+      "tags": [
+        "query-tuning",
+        "joins"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"
+      ]
+    },
+    {
+      "id": "joins-020",
+      "difficulty": "Intermediate",
+      "question": "What is a FULL OUTER JOIN and when do you use it?",
+      "answer": "A FULL OUTER JOIN returns all rows from both tables, matching where possible and filling the missing side with NULLs, so it shows both unmatched left and unmatched right rows. It is useful for reconciliation, such as comparing two systems and showing records that exist in only one. It is rarely needed in day-to-day queries but powerful for data comparison.",
+      "tags": [
+        "full-outer-join",
+        "reconciliation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ],
+      "code": "SELECT a.Id AS LeftId, b.Id AS RightId\nFROM dbo.SystemA AS a\nFULL OUTER JOIN dbo.SystemB AS b ON a.Id = b.Id\nWHERE a.Id IS NULL OR b.Id IS NULL;"
+    },
+    {
+      "id": "joins-021",
+      "difficulty": "Advanced",
+      "question": "How does a hash join handle memory and when does it spill?",
+      "answer": "A hash join builds a hash table in memory from the smaller input (the build side) and streams the larger probe side against it. The optimizer requests a memory grant based on estimated size; if the estimate is too low or memory is scarce the build spills to tempdb in partitions, which shows as a spill warning in the plan. Accurate statistics and adequate memory reduce spills.",
+      "tags": [
+        "hash-join",
+        "spill"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    },
+    {
+      "id": "joins-022",
+      "difficulty": "Advanced",
+      "question": "What is a bitmap and how is it used with parallel joins?",
+      "answer": "A bitmap filter can be built from the build side of a hash join and applied to the probe side to skip rows that cannot match, reducing the number of rows flowing through the plan. It is most effective in parallel plans on large star-schema joins. Bitmaps are optimizations the optimizer adds automatically and appear as Bitmap operators in the plan.",
+      "tags": [
+        "bitmap",
+        "parallelism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/execution-plans"
+      ]
+    },
+    {
+      "id": "joins-023",
+      "difficulty": "Advanced",
+      "question": "How does the optimizer decide join order and what is a 'join hint' trade-off?",
+      "answer": "The optimizer reorders joins to minimize estimated cost, driven by cardinality estimates and available indexes. You can override with OPTION (HASH JOIN), MERGE JOIN or LOOP JOIN hints, or force order with OPTION (FORCE ORDER), but hints freeze the plan and can hurt as data grows. Use hints only as a short-term fix after confirming the plan is genuinely wrong.",
+      "tags": [
+        "join-hints",
+        "optimizer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-query"
+      ]
+    },
+    {
+      "id": "joins-024",
+      "difficulty": "Advanced",
+      "question": "What is a star schema join and how does columnstore help?",
+      "answer": "A star schema joins a central fact table to dimension tables on surrogate keys, which suits analytic queries with grouping and aggregation. A clustered columnstore index on the fact table provides column elimination, segment elimination and batch-mode execution that greatly reduce I/O and CPU for these joins. A snowflake schema further normalizes dimensions and adds joins.",
+      "tags": [
+        "star-schema",
+        "columnstore"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/indexes/columnstore-indexes-overview"
+      ]
+    },
+    {
+      "id": "joins-025",
+      "difficulty": "Advanced",
+      "question": "Why can a parallel join produce a higher row count estimate than actual?",
+      "answer": "Parallel plans split work into threads and the optimizer applies an estimated row size and a distribution assumption for each exchange; skew or a bad estimate can make the parallel estimate very different from the actual. Operators like Bitmap and Repartition Streams add or filter rows, so the reported estimates may not match actual counts. Actual execution plans and query store help expose these mismatches for tuning.",
+      "tags": [
+        "parallelism",
+        "cardinality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/cardinality-estimation-sql-server"
+      ]
+    }
+  ]
+}

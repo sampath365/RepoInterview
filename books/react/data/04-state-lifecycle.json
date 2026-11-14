@@ -1,0 +1,338 @@
+{
+  "category": "State & Lifecycle",
+  "slug": "state-lifecycle",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "state-lifecycle-001",
+      "difficulty": "Beginner",
+      "question": "What is state in React?",
+      "answer": "State is data a component owns and that can change over time, such as the current value of an input or whether a menu is open. Unlike props, state is managed inside the component and updating it schedules a re-render. State should hold only what cannot be computed from props or other state. Keeping state minimal avoids synchronization bugs.",
+      "tags": [
+        "state",
+        "basics"
+      ],
+      "references": [
+        "https://react.dev/learn/state-a-components-memory"
+      ]
+    },
+    {
+      "id": "state-lifecycle-002",
+      "difficulty": "Beginner",
+      "question": "How do you declare state in a function component?",
+      "answer": "You call the useState hook with an initial value, which returns a pair: the current state and a setter function. You use array destructuring to name both, for example const [count, setCount] = useState(0). Calling the setter with a new value requests a re-render. The initial value is only used on the first render.",
+      "code": "const [count, setCount] = useState(0);\nreturn <button onClick={() => setCount(count + 1)}>{count}</button>;",
+      "tags": [
+        "state",
+        "useState"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between state and a regular variable?",
+      "answer": "A regular variable declared in a component is recreated on every render and does not trigger a re-render when changed. State persists between renders and telling React to update it schedules a new render with the new value. Use state for values that should survive renders and affect output. Plain variables are fine for values that can be derived during render.",
+      "tags": [
+        "state",
+        "variables"
+      ],
+      "references": [
+        "https://react.dev/learn/state-a-components-memory"
+      ]
+    },
+    {
+      "id": "state-lifecycle-004",
+      "difficulty": "Beginner",
+      "question": "How do you update state based on the previous value?",
+      "answer": "You pass an updater function to the setter, which receives the latest state and returns the next value, for example setCount(c => c + 1). This is important when the new value depends on the old one, especially with multiple updates in one event. It avoids reading a stale value from the current render. For simple replacements you can pass the value directly.",
+      "code": "setCount((c) => c + 1);\nsetCount((c) => c + 1); // +2 total",
+      "tags": [
+        "state",
+        "updater"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-005",
+      "difficulty": "Beginner",
+      "question": "How do you store an object in state and update one field?",
+      "answer": "You store the object in state and create a new object with the changed field when updating, using spread syntax. For example setUser(u => ({ ...u, name: 'Ada' })). This preserves immutability so React detects the change. Never mutate the existing object directly. The same idea applies to nested objects by copying each level you change.",
+      "code": "setUser((u) => ({ ...u, name: 'Ada' }));",
+      "tags": [
+        "state",
+        "objects"
+      ],
+      "references": [
+        "https://react.dev/learn/updating-objects-in-state"
+      ]
+    },
+    {
+      "id": "state-lifecycle-006",
+      "difficulty": "Beginner",
+      "question": "How do you store an array in state and add an item?",
+      "answer": "You create a new array rather than pushing into the existing one, for example setItems(items => [...items, newItem]). React compares state by reference, so a new array signals a change. To remove or update items use filter and map. Treating arrays as immutable keeps rendering predictable.",
+      "code": "setItems((items) => [...items, newItem]);\nsetItems((items) => items.filter((i) => i.id !== id));",
+      "tags": [
+        "state",
+        "arrays"
+      ],
+      "references": [
+        "https://react.dev/learn/updating-arrays-in-state"
+      ]
+    },
+    {
+      "id": "state-lifecycle-007",
+      "difficulty": "Beginner",
+      "question": "What is the initial state and when is it set?",
+      "answer": "The initial state is the argument passed to useState and it is used only on the first render of the component. On later renders React ignores it and uses the current state instead. If computing the initial value is expensive, pass a function so it runs only once, for example useState(() => buildIndex()). This avoids recomputing on every render.",
+      "tags": [
+        "state",
+        "initialization"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-008",
+      "difficulty": "Beginner",
+      "question": "Why does calling the setter not update the value immediately?",
+      "answer": "State updates are asynchronous and batched, so the current render still sees the old value even right after you call the setter. React applies the update and re-renders, and only in that next render does the variable hold the new value. To compute the next state from the latest value, use the updater function form. Relying on the new value in the same event handler is a common mistake.",
+      "tags": [
+        "state",
+        "async"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-009",
+      "difficulty": "Beginner",
+      "question": "What are the class component lifecycle methods?",
+      "answer": "Class components have lifecycle methods such as componentDidMount, componentDidUpdate and componentWillUnmount. componentDidMount runs after the first render, componentDidUpdate after updates, and componentWillUnmount before removal. They are used for side effects like subscriptions and timers. In function components the useEffect hook covers these cases.",
+      "tags": [
+        "lifecycle",
+        "class"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "state-lifecycle-010",
+      "difficulty": "Beginner",
+      "question": "How does the useState hook replace class state?",
+      "answer": "Instead of a single this.state object you can call useState once per independent value, for example one call for a name and another for a count. Each call returns its own state and setter, which keeps updates focused. This avoids merging logic and makes it obvious which piece of state changed. Class state required spreading to update one field of a larger object.",
+      "tags": [
+        "state",
+        "hooks"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-011",
+      "difficulty": "Intermediate",
+      "question": "When should state be lifted versus kept local?",
+      "answer": "Keep state local when only one component needs it, because local state is simpler and avoids unnecessary re-renders of ancestors. Lift it to the closest common ancestor when two or more components must share or coordinate the value. Lifting too eagerly couples components and spreads props. Choose the lowest level that satisfies all consumers.",
+      "tags": [
+        "state",
+        "composition"
+      ],
+      "references": [
+        "https://react.dev/learn/sharing-state-between-components"
+      ]
+    },
+    {
+      "id": "state-lifecycle-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between derived state and state?",
+      "answer": "Derived values can be computed from props or existing state during render and do not need their own state. Storing them separately creates a second source of truth that can drift out of sync. Compute derived values directly, optionally memoizing with useMemo if the calculation is expensive. Reserve state for data that changes independently over time.",
+      "tags": [
+        "state",
+        "derived"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "state-lifecycle-013",
+      "difficulty": "Intermediate",
+      "question": "How does useEffect relate to lifecycle methods?",
+      "answer": "useEffect lets you run side effects after a render commits, and a cleanup function returned from the effect runs before the next run and on unmount. With an empty dependency array it runs once after mount, similar to componentDidMount plus componentWillUnmount. With dependencies it reruns when those values change, similar to componentDidUpdate. Effects describe synchronization, not a one-to-one mapping of lifecycle methods.",
+      "tags": [
+        "effects",
+        "lifecycle"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "state-lifecycle-014",
+      "difficulty": "Intermediate",
+      "question": "How do you reset a component state when a prop changes?",
+      "answer": "The recommended approach is to give the component a key that encodes the identity, so React remounts it and resets state when the key changes. Alternatively you can adjust state during render by comparing a previous prop stored in state. Avoid resetting state inside an effect, which causes an extra render with stale data. The key approach is usually the simplest and fastest.",
+      "code": "<Profile key={userId} userId={userId} />",
+      "tags": [
+        "state",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "state-lifecycle-015",
+      "difficulty": "Intermediate",
+      "question": "What are the rules of hooks and why do they exist?",
+      "answer": "Hooks must be called at the top level of a component or custom hook, never inside loops, conditions or nested functions. They must also be called from React functions, not from plain JavaScript functions. These rules let React match each hook call to its state by call order across renders. Breaking them causes state to be assigned to the wrong hook.",
+      "tags": [
+        "hooks",
+        "rules"
+      ],
+      "references": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ]
+    },
+    {
+      "id": "state-lifecycle-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle state that updates frequently, like a text input?",
+      "answer": "Controlling the input with state is straightforward for most forms, but very frequent updates can cause many re-renders. You can keep the input uncontrolled and read it with a ref, or debounce updates so state changes less often. Splitting the input into its own component also limits how far re-renders spread. Choose based on whether you need the value during render.",
+      "tags": [
+        "state",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "state-lifecycle-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between useLayoutEffect and useEffect?",
+      "answer": "useLayoutEffect runs synchronously after React updates the DOM but before the browser paints, so it can measure layout and update the UI without a visible flicker. useEffect runs after paint and is the default for most side effects. useLayoutEffect blocks painting, so heavy work there hurts responsiveness. Use it only when you must read or change layout before the browser paints.",
+      "tags": [
+        "effects",
+        "layout"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useLayoutEffect"
+      ]
+    },
+    {
+      "id": "state-lifecycle-018",
+      "difficulty": "Intermediate",
+      "question": "How do you know when a component unmounts in a function component?",
+      "answer": "You return a cleanup function from useEffect, which React calls before the component is removed from the DOM. The same cleanup also runs before each re-run of the effect when dependencies change. This is where you clear timers, cancel requests and unsubscribe. Using an empty dependency array makes the cleanup run only on unmount.",
+      "code": "useEffect(() => {\n  const id = setInterval(tick, 1000);\n  return () => clearInterval(id);\n}, []);",
+      "tags": [
+        "effects",
+        "cleanup"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "state-lifecycle-019",
+      "difficulty": "Intermediate",
+      "question": "Why is it a bug to forget the dependency array in an effect?",
+      "answer": "Without a dependency array the effect runs after every render, which can cause repeated work, infinite loops when it sets state, and performance problems. An empty array means it runs once, while a populated array scopes it to specific values. Always list every reactive value the effect reads. Linters such as the react-hooks plugin catch missing dependencies.",
+      "tags": [
+        "effects",
+        "dependencies"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "state-lifecycle-020",
+      "difficulty": "Intermediate",
+      "question": "How does state behave in class components versus function components?",
+      "answer": "Class state is a single object merged by this.setState, whereas function components use multiple independent useState calls. Function component updates replace the value returned by the setter rather than merging objects, so you copy fields yourself. Hooks also let you colocate related state and logic. Both models trigger re-renders when state changes.",
+      "tags": [
+        "state",
+        "class"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-021",
+      "difficulty": "Advanced",
+      "question": "Why can reading state right after setting it give a stale value?",
+      "answer": "Each render closes over the state value from the render in which the event handler was created, so the variable does not change within that call. React schedules the update and applies it in a later render. This is why sequential setCount(count + 1) calls in one handler only add one, while the updater form adds correctly. The stale closure also explains bugs in async callbacks that capture old state.",
+      "tags": [
+        "state",
+        "closures"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of colocating versus centralizing state?",
+      "answer": "Colocating state near where it is used keeps components independent and limits the blast radius of re-renders. Centralizing state makes sharing and coordination easier but can create a large object that many components depend on. A common middle ground is colocating most state and lifting only what must be shared, or using context for truly global values. Choose based on how many components need the data and how often it changes.",
+      "tags": [
+        "state",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/learn/sharing-state-between-components"
+      ]
+    },
+    {
+      "id": "state-lifecycle-023",
+      "difficulty": "Advanced",
+      "question": "How do you avoid unnecessary state updates when the value has not changed?",
+      "answer": "React bails out of a re-render if the new state is identical by Object.is to the current state, so setting the same primitive does nothing. For objects and arrays you must create a new reference for React to detect a change, but you can compare fields yourself and skip the update when they are equal. Memoizing selectors or derived values also prevents needless work. Measure before adding these guards.",
+      "tags": [
+        "state",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "state-lifecycle-024",
+      "difficulty": "Advanced",
+      "question": "What happens if you call a hook conditionally?",
+      "answer": "Conditional hooks break the assumption that hook order is stable across renders, so React may associate state with the wrong hook. This leads to crashes or values jumping between variables. The rule is to call hooks unconditionally at the top level and move conditions inside the hook logic. If you truly need conditional behavior, split into separate components.",
+      "tags": [
+        "hooks",
+        "rules"
+      ],
+      "references": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ]
+    },
+    {
+      "id": "state-lifecycle-025",
+      "difficulty": "Advanced",
+      "question": "How does React 18 concurrent rendering affect state update timing?",
+      "answer": "In concurrent rendering React can interrupt, pause and restart renders, so state updates may be processed at a different time than a synchronous model would suggest. Updates are prioritized, so urgent ones such as typing preempt lower-priority ones. This is why render must be pure and why effects are the place for side effects. Transitions and useDeferredValue let you mark non-urgent updates explicitly.",
+      "tags": [
+        "concurrent",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/blog/2022/03/29/react-v18"
+      ]
+    }
+  ]
+}

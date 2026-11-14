@@ -1,0 +1,214 @@
+{
+  "category": "Testing & Debugging",
+  "slug": "testing",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "Why is testing important in a MAUI app?",
+      "answer": "Testing catches regressions early, verifies behavior across platforms, and gives confidence to refactor. Because MAUI shares code across platforms, a unit test on shared logic covers many targets at once. Automated tests also document expected behavior. Combined with manual device testing, they reduce the risk of shipping broken features.",
+      "tags": ["testing", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "What is a unit test?",
+      "answer": "A unit test verifies a single unit of behavior, such as a method or a view model command, in isolation from external dependencies. It runs fast and deterministically and does not touch the UI or the network. Unit tests are the foundation of a test suite. They pinpoint failures because each test covers a small piece of logic.",
+      "tags": ["testing", "unit-tests"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a unit test and an integration test?",
+      "answer": "A unit test checks a small piece of logic in isolation with dependencies replaced by fakes, while an integration test verifies that multiple components work together, often including real services or storage. Integration tests catch wiring and configuration problems unit tests miss, but they are slower and more fragile. Use both, with many unit tests and fewer targeted integration tests. The test pyramid suggests more unit tests than integration tests.",
+      "tags": ["testing", "concepts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "What is a test framework?",
+      "answer": "A test framework provides attributes to mark tests, a runner to execute them, and assertions to check results. Popular .NET options include xUnit, NUnit, and MSTest, all usable with MAUI shared code. It integrates with test runners and continuous integration. Choosing one and using it consistently keeps tests uniform.",
+      "tags": ["testing", "frameworks"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "How do you test a MAUI view model?",
+      "answer": "Put the view model in a shared class library that does not depend on MAUI UI types, then reference it from a test project and exercise its properties and commands. Inject fake services for dependencies so tests are fast and deterministic. Assert on observable state and property change notifications. This is why keeping view models UI-free is valuable.",
+      "tags": ["testing", "mvvm"],
+      "code": "[Fact]\npublic async Task LoadCommand_PopulatesItems()\n{\n    var vm = new ItemsViewModel(new FakeApi());\n    await vm.LoadCommand.ExecuteAsync(null);\n    Assert.NotEmpty(vm.Items);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "What is a mock or fake and why use one?",
+      "answer": "A fake is a stand-in for a real dependency that returns controlled results, letting you test a unit without a database, network, or device. Fakes make tests fast and deterministic. Prefer hand-written fakes or simple stubs for clarity, reserving mocking frameworks for complex interactions. Overusing mocks couples tests to implementation details.",
+      "tags": ["testing", "fakes"],
+      "code": "public class FakeApi : IApiService\n{\n    public Task<List<Item>> GetItemsAsync()\n        => Task.FromResult(new List<Item> { new() { Name = \"A\" } });\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "What is a regression test?",
+      "answer": "A regression test verifies that a bug fixed earlier stays fixed, usually added after discovering the bug. It documents the original failure so future changes cannot silently reintroduce it. Regression tests are especially valuable in shared MAUI code where changes ripple across platforms. Keep them focused on the specific defect.",
+      "tags": ["testing", "regression"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "How do you debug a MAUI app?",
+      "answer": "Run the app under the debugger in Visual Studio or Visual Studio Code, set breakpoints, and inspect variables and the call stack. The debugger works across platforms and supports stepping through shared and platform code. Use the live visual tree to inspect the UI hierarchy at runtime. Combine debugging with logging for issues that are hard to reproduce under a breakpoint.",
+      "tags": ["debugging", "tools"],
+      "references": ["https://learn.microsoft.com/visualstudio/debugger/"]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "What is the live visual tree used for?",
+      "answer": "The live visual tree is a debugging tool that shows the runtime UI element hierarchy and lets you inspect and change properties of elements while the app runs. It helps diagnose layout and binding problems by revealing the actual tree and values. You can experiment with property changes without rebuilding. It is a fast way to understand unexpected rendering.",
+      "tags": ["debugging", "visual-tree"],
+      "references": ["https://learn.microsoft.com/visualstudio/debugger/"]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "Why should tests be independent of each other?",
+      "answer": "Each test should set up its own state and not rely on the order or side effects of other tests, so failures are isolated and reproducible. Shared mutable state makes tests flaky and hard to diagnose. Use fresh instances per test and avoid static state. Independent tests can also run in parallel safely.",
+      "tags": ["testing", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you set up a unit test project for MAUI shared code?",
+      "answer": "Create a standard test project targeting a plain .NET target framework, reference your shared class library that holds view models and services, and add the test framework packages. Because the shared library avoids MAUI UI types, it can be tested without a device. Run tests with dotnet test in CI. Keep platform-dependent code out of the tested library.",
+      "tags": ["testing", "setup"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test asynchronous code?",
+      "answer": "Make test methods async and await the operations under test, asserting afterward. Avoid blocking with Result or Wait, which can deadlock. Use timeouts or cancellation to keep tests from hanging. Test both success and failure paths, including exceptions, to cover real behavior.",
+      "tags": ["testing", "async"],
+      "code": "[Fact]\npublic async Task Save_Persists_Item()\n{\n    var repo = new FakeRepo();\n    await repo.SaveAsync(new Item { Id = 1 });\n    Assert.Single(await repo.GetAllAsync());\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test navigation logic?",
+      "answer": "Abstract navigation behind an interface, such as INavigationService with a GoToAsync method, so view models call the interface instead of Shell directly. A fake records the calls, letting you assert that the right route and parameters were requested. This keeps navigation testable without a running Shell. It also decouples view models from the UI framework.",
+      "tags": ["testing", "navigation"],
+      "code": "public interface INavigationService\n{\n    Task GoToAsync(string route);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use logging to debug issues?",
+      "answer": "Use ILogger or the platform logging facilities to record meaningful events and errors with context, and configure a logger in dependency injection. Structured logs make it easy to search and correlate. Log at appropriate levels and avoid logging sensitive data. In development you can also use the debug output window for quick traces.",
+      "tags": ["debugging", "logging"],
+      "code": "public class ItemsViewModel\n{\n    readonly ILogger<ItemsViewModel> _log;\n    public ItemsViewModel(ILogger<ItemsViewModel> log) => _log = log;\n}",
+      "references": ["https://learn.microsoft.com/visualstudio/debugger/"]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test data binding and property change notifications?",
+      "answer": "Set the view model property and assert that it raises PropertyChanged for the expected name, using the notification to confirm bindings will update. Test commands and their CanExecute changes as well. Because bindings rely on these notifications, verifying them catches subtle UI bugs. Keep view models UI-free so these tests run without a device.",
+      "tags": ["testing", "bindings"],
+      "code": "string? changed = null;\nvm.PropertyChanged += (s, e) => changed = e.PropertyName;\nvm.Name = \"New\";\nAssert.Equal(nameof(vm.Name), changed);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you debug a binding that is not working?",
+      "answer": "Check the output window for binding errors, verify the BindingContext is set correctly, and confirm the property path and property change notifications. Use the live visual tree to inspect the actual BindingContext and values at runtime. Common causes are a missing INotifyPropertyChanged, a wrong path, or a BindingContext that was not inherited. Fixing the binding often means fixing the view model notification.",
+      "tags": ["debugging", "bindings"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/basic-bindings"]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you write UI tests for a MAUI app?",
+      "answer": "Use a UI automation framework such as Appium or the platform's test tools to drive the app on emulators or devices, interacting with controls by automation id and asserting on visible state. Assign AutomationId to controls so tests can find them reliably. UI tests are slower and more brittle, so reserve them for critical flows. Keep the app's logic in view models so most coverage comes from unit tests.",
+      "tags": ["testing", "ui-tests"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that uses device features?",
+      "answer": "Wrap device APIs behind interfaces and inject them, then substitute a fake in tests that returns controlled values such as a fixed location. This isolates the business logic from the device. For the real implementations, keep them thin so little untested logic remains. Device-specific behavior still needs manual verification on hardware.",
+      "tags": ["testing", "device"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "What is a flaky test and how do you fix one?",
+      "answer": "A flaky test passes and fails intermittently without code changes, usually due to timing, shared state, or real dependencies such as the network. Fixes include removing external dependencies, adding proper awaits, avoiding fixed delays, and isolating state. Identify the root cause rather than retrying blindly. Flaky tests erode trust in the suite.",
+      "tags": ["testing", "flaky"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you run tests in continuous integration for a MAUI project?",
+      "answer": "Build and run the unit test project on a build agent with dotnet test, and keep UI tests on a separate stage with emulators or devices where required. Use the shared library so unit tests run without platform SDKs. Report results and fail the build on test failures. This gates merges on a passing suite.",
+      "tags": ["testing", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "How do you structure a MAUI solution for testability?",
+      "answer": "Split the solution into a shared core library with view models and services that reference no UI types, the MAUI app project for UI and platform code, and test projects for the core. Keep dependencies injected through interfaces so they can be replaced. This separation lets most logic be unit tested on any machine while the app project stays thin. It is the single biggest enabler of a fast test suite.",
+      "tags": ["testing", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "How do you test with dependency injection and a service container?",
+      "answer": "Build a service collection in tests with the same registrations as the app, or construct the object under test directly with fakes for its dependencies. Using the container verifies the registrations themselves, catching missing or misconfigured services. For focused unit tests, constructor injection with hand-made fakes is usually clearer. Both approaches have a place.",
+      "tags": ["testing", "di"],
+      "code": "var services = new ServiceCollection();\nservices.AddSingleton<IApiService, FakeApi>();\nservices.AddTransient<ItemsViewModel>();\nvar provider = services.BuildServiceProvider();\nvar vm = provider.GetRequiredService<ItemsViewModel>();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you debug platform-specific crashes?",
+      "answer": "Reproduce on the specific platform, read the native crash log or the platform log such as logcat on Android or the device console on iOS, and map the stack trace back to your code. Enable the debugger and catch exceptions at the source. Native crashes often stem from lifecycle or threading mistakes. Fixing them requires understanding the platform's threading and lifecycle rules.",
+      "tags": ["debugging", "platform"],
+      "references": ["https://learn.microsoft.com/visualstudio/debugger/"]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "How do you test an app across multiple platforms efficiently?",
+      "answer": "Maximize shared, UI-free code covered by unit tests that run on any machine, then use a small set of device or emulator smoke tests for the critical cross-platform flows. Automate builds for all target frameworks to catch compile-time platform differences early. Reserve deep manual testing for platform-specific features. This balances coverage against the cost of maintaining device infrastructure.",
+      "tags": ["testing", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "What is the trade-off between test coverage and maintenance cost?",
+      "answer": "More tests catch more regressions but add maintenance burden and can slow development if they are brittle or test implementation details. Focus coverage on critical logic, complex algorithms, and bug-prone areas rather than chasing a coverage number. Prefer stable, behavior-focused tests that survive refactoring. A smaller, meaningful suite that stays green is more valuable than a large, flaky one.",
+      "tags": ["testing", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    }
+  ]
+}

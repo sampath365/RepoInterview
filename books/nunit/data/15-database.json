@@ -1,0 +1,367 @@
+{
+  "category": "Database Testing & EF Core",
+  "slug": "database",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "database-001",
+      "difficulty": "Beginner",
+      "question": "Why is testing code that uses EF Core challenging?",
+      "answer": "A DbContext is tied to a database provider and a connection, so a test needs either a real database, a lightweight provider or a fake. Real databases are slow and shared, while fakes may not match the provider's behaviour. The usual solutions are the in-memory or SQLite provider and, for higher fidelity, a containerised database.",
+      "tags": [
+        "efcore",
+        "database"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy"
+      ]
+    },
+    {
+      "id": "database-002",
+      "difficulty": "Beginner",
+      "question": "What is the EF Core in-memory provider used for?",
+      "answer": "It stores data in memory and lets you test repository and query logic without a database. It is fast and simple but does not enforce relational constraints or translate SQL, so it can give false confidence. Use it for basic logic and a real provider for anything provider-specific.",
+      "tags": [
+        "efcore",
+        "inmemory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy"
+      ]
+    },
+    {
+      "id": "database-003",
+      "difficulty": "Beginner",
+      "question": "Why does Microsoft recommend SQLite in-memory over the in-memory provider for EF Core tests?",
+      "answer": "The EF Core in-memory provider is not a relational database and cannot enforce constraints or translate SQL, so tests may pass while production fails. SQLite in-memory is a real relational database that behaves much closer to production. The documentation therefore recommends SQLite in-memory when you want relational behaviour without a server.",
+      "tags": [
+        "efcore",
+        "sqlite"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database"
+      ]
+    },
+    {
+      "id": "database-004",
+      "difficulty": "Beginner",
+      "question": "How do you configure a DbContext to use SQLite in-memory?",
+      "answer": "Open a SqliteConnection with Data Source=:memory:, keep it open for the lifetime of the test, and pass it to UseSqlite in the options. The connection must stay open or the database is discarded. This gives a real relational engine in process.",
+      "code": "var conn = new SqliteConnection(\"Data Source=:memory:\");\nconn.Open();\nvar options = new DbContextOptionsBuilder<AppDbContext>()\n    .UseSqlite(conn)\n    .Options;\nusing var db = new AppDbContext(options);\ndb.Database.EnsureCreated();",
+      "tags": [
+        "efcore",
+        "sqlite"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.data.sqlite.sqliteconnection"
+      ]
+    },
+    {
+      "id": "database-005",
+      "difficulty": "Beginner",
+      "question": "How do you create the schema for an EF Core test database?",
+      "answer": "Call Database.EnsureCreated to build the schema from the model, or apply migrations with Database.Migrate. EnsureCreated is quick for tests but bypasses migrations, so a migration test is worth having separately. Choose based on whether you are testing queries or the migration pipeline.",
+      "code": "db.Database.EnsureCreated();",
+      "tags": [
+        "efcore",
+        "schema"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/"
+      ]
+    },
+    {
+      "id": "database-006",
+      "difficulty": "Beginner",
+      "question": "How do you seed data for an EF Core test?",
+      "answer": "Add entities to the context and call SaveChanges, or insert them with raw SQL. Seeding in setup keeps each test independent. Seed only the rows the test needs so it stays fast and readable.",
+      "code": "db.Orders.Add(new Order { Id = 1, Total = 90 });\ndb.SaveChanges();",
+      "tags": [
+        "efcore",
+        "seeding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "database-007",
+      "difficulty": "Beginner",
+      "question": "How do you verify that SaveChanges actually persisted data?",
+      "answer": "Read the data back through a fresh DbContext or a direct query and assert on it. A new context avoids returning tracked entities from the change tracker. This confirms the write reached the database.",
+      "code": "using var verify = new AppDbContext(options);\nAssert.That(verify.Orders.Count(), Is.EqualTo(1));",
+      "tags": [
+        "efcore",
+        "persistence"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "database-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between testing a repository and testing a DbContext directly?",
+      "answer": "Testing a repository exercises your abstraction and its queries, which is what production code uses. Testing the context directly is closer to EF Core itself and is usually unnecessary. Prefer testing the repository or service layer that production calls.",
+      "tags": [
+        "efcore",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "database-009",
+      "difficulty": "Beginner",
+      "question": "How do you test that a unique constraint is enforced?",
+      "answer": "Use a real relational provider such as SQLite or SQL Server, because the in-memory provider does not enforce constraints. Attempt the duplicate insert and assert that a DbUpdateException is thrown. This verifies the database-level guard.",
+      "code": "db.Orders.Add(new Order { Id = 1 });\ndb.Orders.Add(new Order { Id = 1 });\nAssert.Throws<DbUpdateException>(() => db.SaveChanges());",
+      "tags": [
+        "efcore",
+        "constraints"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    },
+    {
+      "id": "database-010",
+      "difficulty": "Beginner",
+      "question": "How do you dispose a test DbContext correctly?",
+      "answer": "Create it in a using statement or dispose it in teardown so the connection and change tracker are released. For SQLite in-memory, also dispose the underlying connection. Correct disposal prevents leaked connections between tests.",
+      "code": "using var db = new AppDbContext(options);",
+      "tags": [
+        "efcore",
+        "disposal"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.data.sqlite.sqliteconnection"
+      ]
+    },
+    {
+      "id": "database-011",
+      "difficulty": "Intermediate",
+      "question": "How do you isolate tests that use the same SQLite in-memory database name?",
+      "answer": "Keep a separate connection per test so each gets its own private in-memory database, or use a unique connection string per test. Sharing a named in-memory database across tests leaks state. Per-test connections are the simplest isolation.",
+      "tags": [
+        "efcore",
+        "isolation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    },
+    {
+      "id": "database-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test an EF Core query with filtering and paging?",
+      "answer": "Seed a known set of rows, run the query through the repository, and assert on the returned page and count. Use a deterministic ordering in the query under test. Known data plus deterministic order makes the assertions precise.",
+      "code": "var page = await repo.GetPageAsync(pageIndex: 1, pageSize: 2);\nAssert.That(page.Select(o => o.Id), Is.EqualTo(new[] { 1, 2 }));",
+      "tags": [
+        "efcore",
+        "queries"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    },
+    {
+      "id": "database-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test that a migration applies cleanly?",
+      "answer": "Point a context at an empty real database, call Database.Migrate, and assert that the schema is created and a basic insert works. This catches broken or missing migrations. It is a valuable, fast integration test that guards deployment.",
+      "code": "db.Database.Migrate();\ndb.Orders.Add(new Order { Total = 1 });\ndb.SaveChanges();",
+      "tags": [
+        "efcore",
+        "migrations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "database-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test concurrency handling with a row version?",
+      "answer": "Load an entity in two contexts, modify and save the first, then modify and save the second and assert that a DbUpdateConcurrencyException is thrown. This verifies the optimistic concurrency configuration. It requires a real provider that supports the row version column.",
+      "tags": [
+        "efcore",
+        "concurrency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "database-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a repository that uses transactions?",
+      "answer": "Begin a transaction in the test or in the repository, perform the operations, and assert on commit or rollback behaviour by reading the data afterwards. Rolling back per test also gives isolation. Verify both the success and the rollback paths.",
+      "tags": [
+        "efcore",
+        "transactions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "database-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test EF Core code that uses AsNoTracking?",
+      "answer": "Run the query and then modify the returned entity without saving, asserting that the change is not persisted or that the entity is not tracked. This verifies the tracking behaviour the code intends. Tracking differences matter for performance and correctness.",
+      "tags": [
+        "efcore",
+        "tracking"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "database-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test a raw SQL query used by EF Core?",
+      "answer": "Execute it against a real provider that supports the SQL dialect, seed the matching data, and assert on the results. Raw SQL is provider-specific, so an in-memory provider will not validate it. Use SQLite or a containerised database for these tests.",
+      "tags": [
+        "efcore",
+        "rawsql"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    },
+    {
+      "id": "database-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test lazy or eager loading behaviour?",
+      "answer": "Query with the intended loading strategy and assert that the related data is or is not loaded, for example checking that accessing a navigation does not hit the database unexpectedly. Lazy loading can hide N+1 query problems, so an explicit test is worthwhile. Assert on the shape of the loaded graph.",
+      "tags": [
+        "efcore",
+        "loading"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy"
+      ]
+    },
+    {
+      "id": "database-019",
+      "difficulty": "Intermediate",
+      "question": "How do you make database tests run faster?",
+      "answer": "Prefer a lightweight provider such as SQLite in-memory for logic, share expensive resources at fixture level, seed minimal data, and avoid re-creating the schema per test when possible. Parallelising isolated tests also helps. Measure to find the real bottleneck before optimising.",
+      "tags": [
+        "efcore",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "database-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test soft-delete behaviour in EF Core?",
+      "answer": "Perform a delete through the repository, then assert that the row still exists with the deleted flag set and that normal queries exclude it. Testing both the storage and the query filter verifies the full behaviour. Global query filters should be exercised explicitly.",
+      "tags": [
+        "efcore",
+        "softdelete"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/ef/core/dbcontext-configuration/"
+      ]
+    },
+    {
+      "id": "database-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of the EF Core in-memory provider?",
+      "answer": "It is very fast and needs no external resource, but it is not relational, ignores constraints and foreign keys, and does not translate to SQL, so it can let invalid code pass. It is best for simple logic tests and should be replaced by SQLite in-memory or a real database when relational behaviour matters. Microsoft explicitly warns against relying on it for relational coverage.",
+      "tags": [
+        "efcore",
+        "inmemory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy"
+      ]
+    },
+    {
+      "id": "database-022",
+      "difficulty": "Advanced",
+      "question": "How do you test a DbContext with dependency injection in an integration test?",
+      "answer": "Register the DbContext in the test host with a test connection, resolve it from a scope, and seed through the same registrations. This verifies that the production wiring resolves a working context. It also keeps the test close to the real configuration.",
+      "code": "services.AddDbContext<AppDbContext>(o => o.UseSqlite(conn));\nusing var scope = provider.CreateScope();\nvar db = scope.ServiceProvider.GetRequiredService<AppDbContext>();",
+      "tags": [
+        "efcore",
+        "di"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage"
+      ]
+    },
+    {
+      "id": "database-023",
+      "difficulty": "Advanced",
+      "question": "How do you test that a query is translated to SQL rather than evaluated in memory?",
+      "answer": "Run the query with a real provider and, if needed, capture the generated SQL through logging or ToQueryString, then assert that the query executes server-side. Client evaluation of unsupported expressions throws in EF Core, so an exception indicates the problem. A real provider is required for this test.",
+      "code": "var sql = db.Orders.Where(o => o.Total > 10).ToQueryString();\nAssert.That(sql, Does.Contain(\"WHERE\"));",
+      "tags": [
+        "efcore",
+        "translation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "database-024",
+      "difficulty": "Advanced",
+      "question": "How do you test database error handling such as a broken connection?",
+      "answer": "Configure the context with a bad connection string or dispose the connection, then assert that the expected exception is thrown and handled by your code. This verifies resilience and error translation. Simulating the failure deterministically is better than relying on a real outage.",
+      "tags": [
+        "efcore",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "database-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide between fakes, SQLite and a real database for data-access tests?",
+      "answer": "Use fakes or an in-memory collection for pure logic that does not depend on relational behaviour, SQLite in-memory when you need relational semantics cheaply, and a real database such as SQL Server in a container when provider-specific behaviour, migrations or performance matter. Match the fidelity to what the test is protecting against.",
+      "tags": [
+        "efcore",
+        "strategy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    }
+  ]
+}

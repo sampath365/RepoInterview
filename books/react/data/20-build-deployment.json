@@ -1,0 +1,332 @@
+{
+  "category": "Build Tooling, SSR & Deployment",
+  "slug": "build-deployment",
+  "icon": "rocket",
+  "questions": [
+    {
+      "id": "build-deployment-001",
+      "difficulty": "Beginner",
+      "question": "What is a React build process?",
+      "answer": "A build process compiles JSX and TypeScript, bundles modules, and optimizes the output for production. Tools like Vite, webpack or the framework's bundler handle this. The output is static assets the browser can load. Development builds favor speed and debugging while production builds favor size and performance.",
+      "tags": [
+        "build",
+        "tooling"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/"
+      ]
+    },
+    {
+      "id": "build-deployment-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between development and production builds?",
+      "answer": "Development builds include extra warnings, checks and readable code to help you debug. Production builds strip those, minify the code and enable optimizations for speed and size. Using a development build in production is slower and larger. Always deploy the production build.",
+      "tags": [
+        "build",
+        "production"
+      ],
+      "references": [
+        "https://react.dev/learn/react-developer-tools"
+      ]
+    },
+    {
+      "id": "build-deployment-003",
+      "difficulty": "Beginner",
+      "question": "What is code splitting and how does it help?",
+      "answer": "Code splitting breaks the bundle into chunks that load on demand, so users download only what they need for the current screen. This speeds up the initial load, especially on slow networks. Route-based splitting is the simplest approach. Combine it with lazy loading and Suspense.",
+      "tags": [
+        "build",
+        "code-splitting"
+      ],
+      "references": [
+        "https://react.dev/reference/react/lazy"
+      ]
+    },
+    {
+      "id": "build-deployment-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between client-side rendering and server-side rendering?",
+      "answer": "Client-side rendering sends a minimal HTML shell and lets JavaScript build the UI, which is simple but delays first paint and can hurt SEO. Server-side rendering returns HTML with content already present, improving first paint and SEO, then hydrates it on the client. The right choice depends on the content and performance goals. Many apps use a hybrid.",
+      "tags": [
+        "build",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/server"
+      ]
+    },
+    {
+      "id": "build-deployment-005",
+      "difficulty": "Beginner",
+      "question": "What is static site generation?",
+      "answer": "Static site generation renders pages to HTML at build time, producing files that can be served from a CDN with no server work per request. It is fast and cheap, and ideal for content that does not change per user. For fresh data you revalidate or rebuild on a schedule. It is a strong default for marketing and documentation sites.",
+      "tags": [
+        "build",
+        "ssg"
+      ],
+      "references": [
+        "https://react.dev/learn/start-a-new-react-project"
+      ]
+    },
+    {
+      "id": "build-deployment-006",
+      "difficulty": "Beginner",
+      "question": "How do you deploy a React app?",
+      "answer": "You run the production build to produce static assets and upload them to a static host or CDN such as Netlify, Vercel, GitHub Pages or an object store with a CDN. For single-page apps configure the host to serve index.html for unknown paths so deep links work. Set long cache headers for hashed assets. Automated deployment through CI keeps releases consistent.",
+      "tags": [
+        "build",
+        "deployment"
+      ],
+      "references": [
+        "https://react.dev/learn/start-a-new-react-project"
+      ]
+    },
+    {
+      "id": "build-deployment-007",
+      "difficulty": "Beginner",
+      "question": "Why do deep links 404 on a static host for a single-page app?",
+      "answer": "The browser requests a path like /users/1 from the server, but the static host has no such file, so it returns 404. The fix is a rewrite rule that serves index.html for any unmatched path, letting the client router handle it. This is standard configuration for single-page apps. Some hosts call it a SPA fallback or rewrite.",
+      "tags": [
+        "build",
+        "deployment"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/static-deploy"
+      ]
+    },
+    {
+      "id": "build-deployment-008",
+      "difficulty": "Beginner",
+      "question": "What is hydration?",
+      "answer": "Hydration is the process where React attaches event listeners and state to HTML that was rendered on the server. The markup must match what the client would render, or React warns about mismatches and may discard server HTML. Once hydrated, the page behaves like a client-rendered app. Keeping server and client output consistent is essential.",
+      "tags": [
+        "build",
+        "hydration"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
+      ]
+    },
+    {
+      "id": "build-deployment-009",
+      "difficulty": "Beginner",
+      "question": "What are environment variables in a React app?",
+      "answer": "Environment variables let you configure values such as API URLs per environment without changing code. Build tools expose only variables with a specific prefix, like VITE_ or REACT_APP_, to the client. Never put secrets in client-exposed variables, because they end up in the bundle. Read configuration on the server when it must stay private.",
+      "tags": [
+        "build",
+        "configuration"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/env-and-mode"
+      ]
+    },
+    {
+      "id": "build-deployment-010",
+      "difficulty": "Beginner",
+      "question": "Why are asset file names hashed in production builds?",
+      "answer": "Hashed file names change whenever content changes, so browsers can cache assets indefinitely while new deploys fetch fresh files. This avoids stale caches that would otherwise serve old code. The HTML references the hashed names. It is a key part of a reliable caching strategy.",
+      "tags": [
+        "build",
+        "caching"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/build"
+      ]
+    },
+    {
+      "id": "build-deployment-011",
+      "difficulty": "Intermediate",
+      "question": "How does server rendering differ from hydration?",
+      "answer": "Server rendering produces the initial HTML on the server so users see content quickly and crawlers can index it. Hydration happens afterward on the client, attaching event handlers to that HTML to make it interactive. If hydration is slow, the page looks ready but does not respond. Streaming and selective hydration reduce this gap.",
+      "tags": [
+        "build",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/server"
+      ]
+    },
+    {
+      "id": "build-deployment-012",
+      "difficulty": "Intermediate",
+      "question": "What is streaming server rendering?",
+      "answer": "Streaming sends HTML to the browser in chunks as it is produced, so users see the top of the page before the rest is ready. Suspense boundaries let React stream the shell first and fill in slower sections later. This improves time to first byte and perceived performance. It requires a server that supports streaming responses.",
+      "tags": [
+        "build",
+        "streaming"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/server"
+      ]
+    },
+    {
+      "id": "build-deployment-013",
+      "difficulty": "Intermediate",
+      "question": "How do you configure caching for a React app?",
+      "answer": "Cache hashed static assets for a long time because their names change with content, and cache the HTML briefly or not at all so updates appear. Use a CDN to serve assets close to users. For APIs set cache headers appropriate to how fresh the data must be. A clear caching policy prevents both stale content and wasted bandwidth.",
+      "tags": [
+        "build",
+        "caching"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching"
+      ]
+    },
+    {
+      "id": "build-deployment-014",
+      "difficulty": "Intermediate",
+      "question": "How do you analyze and reduce bundle size?",
+      "answer": "Use a bundle analyzer to see which dependencies dominate, then replace heavy libraries, import only the parts you use, and split routes. Enable minification and tree shaking in the build. Set size budgets in CI to catch regressions. Smaller bundles load faster, especially on mobile.",
+      "tags": [
+        "build",
+        "performance"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/build"
+      ]
+    },
+    {
+      "id": "build-deployment-015",
+      "difficulty": "Intermediate",
+      "question": "What is tree shaking?",
+      "answer": "Tree shaking removes unused code from the bundle by analyzing ES module imports and exports at build time. It works best with side-effect-free modules and named imports. Libraries that ship ES modules and mark sideEffects correctly shake well. It reduces bundle size without manual effort.",
+      "tags": [
+        "build",
+        "optimization"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/Tree_shaking"
+      ]
+    },
+    {
+      "id": "build-deployment-016",
+      "difficulty": "Intermediate",
+      "question": "How do you set up a CI pipeline for a React app?",
+      "answer": "A typical pipeline installs dependencies, runs linting and tests, builds the production bundle and deploys artifacts or a preview. Caching dependencies speeds up runs. Failing the pipeline on lint or test errors keeps the main branch healthy. Preview deployments let reviewers check changes before merge.",
+      "tags": [
+        "build",
+        "ci"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/static-deploy"
+      ]
+    },
+    {
+      "id": "build-deployment-017",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs between SPA, SSR and SSG?",
+      "answer": "An SPA is simple to host and very interactive but has slower first paint and weaker SEO without extra work. SSR gives fast first paint and good SEO at the cost of running a server and managing hydration. SSG is fastest and cheapest but only suits content that does not change per request. Many apps mix these per route.",
+      "tags": [
+        "build",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/learn/start-a-new-react-project"
+      ]
+    },
+    {
+      "id": "build-deployment-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors in a production React app?",
+      "answer": "Wrap risky regions in error boundaries, log errors to a monitoring service, and provide fallback UI with a retry path. Test the error paths as part of the build. Monitoring with alerting ensures you learn about failures quickly. Graceful degradation keeps the app usable when parts fail.",
+      "tags": [
+        "build",
+        "errors"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "build-deployment-019",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize images and fonts for production?",
+      "answer": "Serve modern formats, size images to their display dimensions, and lazy-load offscreen ones. Use font-display swap and preload critical fonts to avoid invisible text. Host assets on a CDN and cache them with hashed names. These steps often improve real-world performance more than code changes.",
+      "tags": [
+        "build",
+        "assets"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Performance"
+      ]
+    },
+    {
+      "id": "build-deployment-020",
+      "difficulty": "Intermediate",
+      "question": "What is a content delivery network and why use one?",
+      "answer": "A CDN caches your static assets on servers around the world so users download from a nearby location. This reduces latency and offloads traffic from your origin. It also handles spikes and provides TLS and compression. For static React builds the CDN is often the whole deployment.",
+      "tags": [
+        "build",
+        "cdn"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/CDN"
+      ]
+    },
+    {
+      "id": "build-deployment-021",
+      "difficulty": "Advanced",
+      "question": "How does selective hydration work in React 18?",
+      "answer": "React 18 can hydrate parts of the page independently, prioritizing the parts the user interacts with. If a user clicks a not-yet-hydrated section, React hydrates that section first, so the interaction is handled sooner. This avoids the all-or-nothing hydration delay. Suspense boundaries define the units that hydrate separately.",
+      "tags": [
+        "build",
+        "hydration"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
+      ]
+    },
+    {
+      "id": "build-deployment-022",
+      "difficulty": "Advanced",
+      "question": "How do you debug hydration mismatches?",
+      "answer": "Hydration mismatches occur when server HTML differs from the client's first render, often due to dates, random values or browser-only data. Move such values into effects so they run only on the client, or render a stable placeholder. React logs the mismatch with a diff to help locate it. Fixing the source is better than suppressing the warning.",
+      "tags": [
+        "build",
+        "hydration"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
+      ]
+    },
+    {
+      "id": "build-deployment-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement zero-downtime deployments?",
+      "answer": "Build immutable assets with hashed names, deploy them to the CDN first, then switch the HTML to reference the new build. Because old and new assets coexist, users mid-session keep working. Use health checks and gradual rollouts where a server is involved. This avoids the blank-screen moments of in-place replacement.",
+      "tags": [
+        "build",
+        "deployment"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching"
+      ]
+    },
+    {
+      "id": "build-deployment-024",
+      "difficulty": "Advanced",
+      "question": "How do you monitor real user performance after deployment?",
+      "answer": "Collect Core Web Vitals and other metrics from real users with the web-vitals library or a monitoring service, and correlate them with releases. Track error rates alongside performance. Alert on regressions so you can roll back or fix quickly. Field data reflects real devices and networks better than lab tests.",
+      "tags": [
+        "build",
+        "monitoring"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Performance"
+      ]
+    },
+    {
+      "id": "build-deployment-025",
+      "difficulty": "Advanced",
+      "question": "What security considerations apply to deploying a React app?",
+      "answer": "Avoid injecting untrusted HTML and rely on React's escaping to prevent cross-site scripting, sanitizing any HTML you must render. Use a strict Content Security Policy, serve over HTTPS and keep dependencies patched. Never expose secrets in client bundles. Set security headers and validate all input on the server, because the client cannot be trusted.",
+      "tags": [
+        "build",
+        "security"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Security"
+      ]
+    }
+  ]
+}

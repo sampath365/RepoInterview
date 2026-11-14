@@ -1,0 +1,335 @@
+{
+  "category": "State Management",
+  "slug": "state-management",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "state-management-001",
+      "difficulty": "Beginner",
+      "question": "Why do you need a state management solution in React?",
+      "answer": "Small apps can manage state with useState, useReducer and context. As an app grows, sharing state across distant components, coordinating updates and keeping performance predictable becomes harder. A state management library centralizes that state and provides patterns for updating and selecting it. It is worth adding only when the built-in tools become painful.",
+      "tags": [
+        "state-management",
+        "overview"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "state-management-002",
+      "difficulty": "Beginner",
+      "question": "What is Redux?",
+      "answer": "Redux is a predictable state container for JavaScript apps based on a single store, pure reducer functions and dispatched actions. State changes only through actions, which makes updates traceable and testable. It is framework-agnostic but commonly used with React through React Redux. Its devtools and middleware ecosystem are its main strengths.",
+      "tags": [
+        "redux",
+        "state-management"
+      ],
+      "references": [
+        "https://redux.js.org/introduction/getting-started"
+      ]
+    },
+    {
+      "id": "state-management-003",
+      "difficulty": "Beginner",
+      "question": "What are the core principles of Redux?",
+      "answer": "Redux has three core principles: a single source of truth in one store, state that is read-only and only changed by dispatching actions, and changes made by pure reducer functions. Together these make state predictable and easy to debug. Actions describe what happened, and reducers compute the next state. This structure enables time-travel debugging.",
+      "tags": [
+        "redux",
+        "principles"
+      ],
+      "references": [
+        "https://redux.js.org/understanding/thinking-in-redux/three-principles"
+      ]
+    },
+    {
+      "id": "state-management-004",
+      "difficulty": "Beginner",
+      "question": "What is a Redux action and reducer?",
+      "answer": "An action is a plain object with a type field describing something that happened, optionally carrying a payload. A reducer is a pure function that takes the current state and an action and returns the next state. Reducers must not mutate state or perform side effects. Side effects live in middleware such as thunks or sagas.",
+      "tags": [
+        "redux",
+        "actions"
+      ],
+      "references": [
+        "https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers"
+      ]
+    },
+    {
+      "id": "state-management-005",
+      "difficulty": "Beginner",
+      "question": "What is Zustand?",
+      "answer": "Zustand is a small, hook-based state management library that creates a store from a function returning state and actions. Components select the slices they need with a selector, so they only re-render when those slices change. It requires no provider and has minimal boilerplate. It is a popular lightweight alternative to Redux.",
+      "code": "const useStore = create((set) => ({\n  count: 0,\n  inc: () => set((s) => ({ count: s.count + 1 })),\n}));",
+      "tags": [
+        "zustand",
+        "state-management"
+      ],
+      "references": [
+        "https://zustand.docs.pmnd.rs/getting-started/introduction"
+      ]
+    },
+    {
+      "id": "state-management-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between local and global state?",
+      "answer": "Local state belongs to a single component and is managed with useState or useReducer. Global state is shared across many components and lives in a store or context. Keeping state local by default limits re-renders and coupling. Only promote state to global when multiple distant components truly need it.",
+      "tags": [
+        "state-management",
+        "local-state"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "state-management-007",
+      "difficulty": "Beginner",
+      "question": "What is a Redux store?",
+      "answer": "The store holds the entire application state tree and exposes methods to read state, dispatch actions and subscribe to changes. In React Redux the store is provided to the component tree through a Provider. Components read state with selectors and dispatch actions to request changes. There is normally a single store per application.",
+      "tags": [
+        "redux",
+        "store"
+      ],
+      "references": [
+        "https://redux.js.org/api/store"
+      ]
+    },
+    {
+      "id": "state-management-008",
+      "difficulty": "Beginner",
+      "question": "How does React Redux connect components to the store?",
+      "answer": "React Redux provides the useSelector hook to read selected state and useDispatch to dispatch actions. The Provider component makes the store available to the tree. Selectors run on each store update and the component re-renders only if the selected value changed. This keeps subscriptions efficient.",
+      "code": "const count = useSelector((s) => s.counter.value);\nconst dispatch = useDispatch();",
+      "tags": [
+        "redux",
+        "react-redux"
+      ],
+      "references": [
+        "https://react-redux.js.org/api/hooks"
+      ]
+    },
+    {
+      "id": "state-management-009",
+      "difficulty": "Beginner",
+      "question": "What is an action creator?",
+      "answer": "An action creator is a function that returns an action object, which keeps action shapes consistent and avoids typos. With Redux Toolkit you use createAction or, more often, createSlice which generates creators automatically. They can also carry payloads and be composed with middleware. They are optional but improve maintainability.",
+      "tags": [
+        "redux",
+        "actions"
+      ],
+      "references": [
+        "https://redux.js.org/tutorials/fundamentals/part-3-state-actions-reducers"
+      ]
+    },
+    {
+      "id": "state-management-010",
+      "difficulty": "Beginner",
+      "question": "When should you not use a global store?",
+      "answer": "You should avoid a global store when the data is only needed by one component or a small subtree, or when it is derived from props and other state. Adding it to a store increases indirection and the surface for bugs. Local state and context are simpler for these cases. Reach for a store when sharing and coordination actually demand it.",
+      "tags": [
+        "state-management",
+        "best-practices"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "state-management-011",
+      "difficulty": "Intermediate",
+      "question": "What is Redux Toolkit and why is it recommended?",
+      "answer": "Redux Toolkit is the official, opinionated toolset that simplifies Redux by reducing boilerplate. It provides configureStore, createSlice with Immer for immutable updates, and createAsyncThunk for async logic. It also sets up the Redux DevTools and sensible middleware by default. The Redux docs recommend it for all new Redux code.",
+      "code": "const slice = createSlice({\n  name: 'counter',\n  initialState: { value: 0 },\n  reducers: { inc: (s) => { s.value += 1; } },\n});",
+      "tags": [
+        "redux",
+        "redux-toolkit"
+      ],
+      "references": [
+        "https://redux-toolkit.js.org/introduction/getting-started"
+      ]
+    },
+    {
+      "id": "state-management-012",
+      "difficulty": "Intermediate",
+      "question": "How do you handle asynchronous logic in Redux?",
+      "answer": "Async logic goes in middleware because reducers must stay pure. createAsyncThunk or thunks let you dispatch pending, fulfilled and rejected actions around a promise. Sagas are an alternative using generator functions for complex flows. The thunk approach is the simplest and most common.",
+      "tags": [
+        "redux",
+        "async"
+      ],
+      "references": [
+        "https://redux-toolkit.js.org/api/createAsyncThunk"
+      ]
+    },
+    {
+      "id": "state-management-013",
+      "difficulty": "Intermediate",
+      "question": "What are selectors and why use them?",
+      "answer": "A selector is a function that reads a slice of state from the store. Keeping selectors separate decouples components from the store shape and lets you memoize derived data with createSelector. Memoized selectors avoid recomputing expensive transformations. They also make the store refactorable without touching components.",
+      "tags": [
+        "redux",
+        "selectors"
+      ],
+      "references": [
+        "https://redux.js.org/usage/deriving-data-selectors"
+      ]
+    },
+    {
+      "id": "state-management-014",
+      "difficulty": "Intermediate",
+      "question": "How does Zustand differ from Redux?",
+      "answer": "Zustand has far less boilerplate, no actions or reducers, and no provider requirement. It relies on selector-based subscriptions and works well for small to medium apps. Redux offers stricter structure, middleware and powerful devtools that suit large teams. Both can coexist with React hooks, and the choice is mostly about structure and ecosystem needs.",
+      "tags": [
+        "zustand",
+        "redux"
+      ],
+      "references": [
+        "https://zustand.docs.pmnd.rs/getting-started/introduction"
+      ]
+    },
+    {
+      "id": "state-management-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid unnecessary re-renders with a store?",
+      "answer": "Select only the state a component needs and avoid returning new objects from selectors on every call. With Redux, use memoized selectors or shallow-equal comparison. With Zustand, use a selector with a shallow equality function or select primitives. Narrow subscriptions mean fewer components update when the store changes.",
+      "tags": [
+        "performance",
+        "state-management"
+      ],
+      "references": [
+        "https://react-redux.js.org/api/hooks"
+      ]
+    },
+    {
+      "id": "state-management-016",
+      "difficulty": "Intermediate",
+      "question": "What is the Flux pattern?",
+      "answer": "Flux is an architecture where data flows in one direction: actions are dispatched to a dispatcher, which updates stores, which notify views. Views then trigger new actions. Redux is a simplified implementation of these ideas with a single store and pure reducers. The pattern makes state changes predictable and traceable.",
+      "tags": [
+        "flux",
+        "architecture"
+      ],
+      "references": [
+        "https://redux.js.org/understanding/history-and-design/prior-art"
+      ]
+    },
+    {
+      "id": "state-management-017",
+      "difficulty": "Intermediate",
+      "question": "How do you persist store state?",
+      "answer": "You can subscribe to the store and write selected state to localStorage, or use middleware or a persistence plugin. Only persist what is worth restoring, such as user preferences, and version the data so schema changes do not break hydration. On startup you rehydrate the store from storage. Be careful not to persist sensitive or derived data.",
+      "tags": [
+        "state-management",
+        "persistence"
+      ],
+      "references": [
+        "https://redux.js.org/usage/implementing-undo-history"
+      ]
+    },
+    {
+      "id": "state-management-018",
+      "difficulty": "Intermediate",
+      "question": "What is middleware in Redux?",
+      "answer": "Middleware sits between dispatching an action and the reducer, letting you intercept actions for logging, analytics, async work or other side effects. It is composed into a chain with a signature of store, next and action. Common examples are thunk, saga and logging middleware. Middleware keeps reducers pure by moving side effects out.",
+      "tags": [
+        "redux",
+        "middleware"
+      ],
+      "references": [
+        "https://redux.js.org/understanding/history-and-design/middleware"
+      ]
+    },
+    {
+      "id": "state-management-019",
+      "difficulty": "Intermediate",
+      "question": "How do you structure a large Redux store?",
+      "answer": "Split the store into feature slices, each with its own reducers and selectors, and combine them with combineReducers or configureStore. Keep state normalized to avoid duplication, using ids as keys and arrays of ids for order. Colocate slice logic with the feature that owns it. This mirrors the domain and keeps files manageable.",
+      "tags": [
+        "redux",
+        "architecture"
+      ],
+      "references": [
+        "https://redux.js.org/usage/structuring-reducers/structuring-reducers"
+      ]
+    },
+    {
+      "id": "state-management-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Redux and React context for state?",
+      "answer": "Context transports a value down the tree but re-renders all consumers on any change and has no selectors or middleware. Redux provides a store with selectors so components subscribe to slices and re-render selectively, plus devtools and middleware. Context is simpler for low-frequency values like theme, while Redux scales better for complex, frequently changing state. Many apps use context to provide the Redux store.",
+      "tags": [
+        "redux",
+        "context"
+      ],
+      "references": [
+        "https://react-redux.js.org/api/hooks"
+      ]
+    },
+    {
+      "id": "state-management-021",
+      "difficulty": "Advanced",
+      "question": "Why does Redux recommend immutable updates and how is it enforced?",
+      "answer": "Immutable updates let Redux compare state references cheaply and enable features like time-travel debugging and memoized selectors. Redux Toolkit uses Immer so you can write mutating code that produces a new immutable state under the hood. Direct mutation outside Immer breaks change detection and devtools. The rule keeps updates predictable and traceable.",
+      "tags": [
+        "redux",
+        "immutability"
+      ],
+      "references": [
+        "https://redux-toolkit.js.org/usage/immer-reducers"
+      ]
+    },
+    {
+      "id": "state-management-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of normalized versus nested state?",
+      "answer": "Normalized state stores entities by id with references between them, which avoids duplication and makes updates simple and consistent. Nested state mirrors the UI and is easier to write initially but duplicates data and complicates updates. Normalization pays off as relationships grow and the same entity appears in many places. Selectors can reshape normalized state for components.",
+      "tags": [
+        "state-management",
+        "architecture"
+      ],
+      "references": [
+        "https://redux.js.org/usage/structuring-reducers/normalizing-state-shape"
+      ]
+    },
+    {
+      "id": "state-management-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle optimistic updates with a store?",
+      "answer": "You apply the expected change immediately, keep a snapshot of the previous state, and dispatch a rollback if the server rejects the request. This keeps the UI responsive while the network catches up. Libraries like TanStack Query offer helpers for optimistic mutations. Always reconcile with the authoritative server response to avoid drift.",
+      "tags": [
+        "state-management",
+        "optimistic-ui"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates"
+      ]
+    },
+    {
+      "id": "state-management-024",
+      "difficulty": "Advanced",
+      "question": "When would you choose Zustand or Jotai over Redux?",
+      "answer": "Choose Zustand for a small, hook-friendly store with minimal boilerplate and no provider. Choose Jotai or Recoil-style atom libraries when state is naturally composed of independent atoms and you want fine-grained subscriptions. Redux remains a strong choice for large apps that benefit from strict structure and devtools. The decision usually comes down to team size, complexity and tooling needs.",
+      "tags": [
+        "state-management",
+        "libraries"
+      ],
+      "references": [
+        "https://zustand.docs.pmnd.rs/getting-started/introduction"
+      ]
+    },
+    {
+      "id": "state-management-025",
+      "difficulty": "Advanced",
+      "question": "How do you migrate a large app from Redux to a lighter solution?",
+      "answer": "Migrate incrementally by moving one feature at a time behind the same public selectors and actions so components do not change. Run both systems in parallel during the transition and remove slices once their consumers are converted. Keep tests around the behavior rather than the implementation to catch regressions. Avoid a big-bang rewrite, which risks losing the predictability you already have.",
+      "tags": [
+        "state-management",
+        "migration"
+      ],
+      "references": [
+        "https://redux.js.org/usage/migrating-to-modern-redux"
+      ]
+    }
+  ]
+}

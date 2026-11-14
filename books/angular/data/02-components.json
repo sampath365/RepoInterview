@@ -1,0 +1,384 @@
+{
+  "category": "Components & Templates",
+  "slug": "components",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "components-001",
+      "difficulty": "Beginner",
+      "question": "What is a component in Angular?",
+      "answer": "A component is the fundamental building block of an Angular UI; it combines a TypeScript class with an HTML template and optional styles. The class holds the state and behavior, the template declares what to render, and a selector defines how the component is used in other templates. Components form a tree, and each instance manages its own view.",
+      "tags": [
+        "components",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/components/anatomy-of-components"
+      ]
+    },
+    {
+      "id": "components-002",
+      "difficulty": "Beginner",
+      "question": "How do you create a component with the Angular CLI?",
+      "answer": "Run ng generate component path/to/name, which creates the component file, template, styles, and spec, and registers it as a standalone component by default. The CLI also updates imports where appropriate, for example adding the component to a parent's imports array. You can control the template style with flags such as --inline-template and --inline-style.",
+      "tags": [
+        "cli",
+        "components",
+        "generate"
+      ],
+      "references": [
+        "https://angular.dev/cli/generate/component",
+        "https://angular.dev/tools/cli"
+      ]
+    },
+    {
+      "id": "components-003",
+      "difficulty": "Beginner",
+      "question": "What is a component selector and what forms can it take?",
+      "answer": "A selector tells Angular which element or attribute in a template maps to the component. By default the CLI generates an element selector such as app-user, but a selector can also target an attribute, a class, or a combination. Element selectors are the convention for components because they read naturally in templates.",
+      "tags": [
+        "selector",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/selectors",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "components-004",
+      "difficulty": "Beginner",
+      "question": "What does the @Component decorator metadata control?",
+      "answer": "The @Component decorator attaches metadata to a class, including selector, template or templateUrl, styles or styleUrls, and imports for standalone dependencies. It can also set changeDetection, encapsulation, host bindings, and providers. Angular reads this metadata at compile time to build and update the component's view.",
+      "tags": [
+        "component-decorator",
+        "metadata"
+      ],
+      "references": [
+        "https://angular.dev/api/core/Component",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "components-005",
+      "difficulty": "Beginner",
+      "question": "How do you pass data into a child component?",
+      "answer": "Mark a property in the child with the @Input decorator, or use the newer input() function, then bind to it from the parent template. The parent supplies the value with property binding, for example [title]=\"pageTitle\". Inputs are read-only from the child's perspective and are the standard way to send data down the component tree.",
+      "code": "@Input({ required: true }) title!: string;\n// or the signal-based form\nreadonly title = input.required<string>();",
+      "tags": [
+        "input",
+        "data-flow"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/inputs",
+        "https://angular.dev/guide/signals/inputs"
+      ]
+    },
+    {
+      "id": "components-006",
+      "difficulty": "Beginner",
+      "question": "How does a child component send data back to its parent?",
+      "answer": "The child exposes an output, historically an @Output property holding an EventEmitter, and emits values with .emit(). The parent listens with event binding such as (saved)=\"onSaved($event)\". Modern code can use the output() function, which returns an output emitter without requiring EventEmitter.",
+      "code": "@Output() saved = new EventEmitter<Item>();\n// or the function form\nreadonly saved = output<Item>();",
+      "tags": [
+        "output",
+        "events",
+        "data-flow"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/outputs",
+        "https://angular.dev/guide/components/output-function"
+      ]
+    },
+    {
+      "id": "components-007",
+      "difficulty": "Beginner",
+      "question": "What is view encapsulation and what values does it support?",
+      "answer": "View encapsulation controls how a component's styles are scoped to its own template. The default, Emulated, adds attribute selectors so styles do not leak, ShadowDom uses the browser's native shadow DOM, and None applies styles globally. Emulated is usually the right default because it balances isolation and compatibility.",
+      "tags": [
+        "encapsulation",
+        "styles"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/styling",
+        "https://angular.dev/api/core/ViewEncapsulation"
+      ]
+    },
+    {
+      "id": "components-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an inline template and an external template file?",
+      "answer": "An inline template is written directly in the template property of the decorator, while an external template lives in its own .html file referenced by templateUrl. Inline templates keep very small components compact and self-contained, while external files suit larger templates and give better editor support. The CLI generates external templates by default.",
+      "tags": [
+        "template",
+        "files"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/reference/configs/file-structure"
+      ]
+    },
+    {
+      "id": "components-009",
+      "difficulty": "Beginner",
+      "question": "What is content projection with ng-content?",
+      "answer": "Content projection lets a parent place markup between a component's opening and closing tags and have the component render it in a chosen spot using an ng-content element. This is how reusable components such as cards or dialogs let consumers supply their own content. The ng-content element is a placeholder and does not create its own DOM node.",
+      "code": "<app-card>\n  <h2>Title</h2>\n  <p>Body text</p>\n</app-card>",
+      "tags": [
+        "content-projection",
+        "ng-content"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/content-projection",
+        "https://angular.dev/guide/templates/ng-content"
+      ]
+    },
+    {
+      "id": "components-010",
+      "difficulty": "Beginner",
+      "question": "What are host bindings and host listeners?",
+      "answer": "Host bindings set properties, classes, or styles on the component's own host element, and host listeners subscribe to events on that element. They can be declared with the host object in the decorator or with the @HostBinding and @HostListener decorators. Using the host object keeps this metadata visible next to the rest of the component configuration.",
+      "code": "@Component({\n  selector: 'app-panel',\n  host: { '[class.open]': 'isOpen', '(click)': 'toggle()' },\n})\nexport class PanelComponent {\n  isOpen = false;\n  toggle() { this.isOpen = !this.isOpen; }\n}",
+      "tags": [
+        "host",
+        "hostbinding",
+        "hostlistener"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/host-elements",
+        "https://angular.dev/api/core/HostBinding"
+      ]
+    },
+    {
+      "id": "components-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between @Input/@Output decorators and the input()/output() functions?",
+      "answer": "The decorator forms are property and event bindings resolved at runtime, whereas input() and output() create signal-based inputs and emitter objects with better typing and tree-shaking. Signal inputs are read-only signals, so they compose naturally with computed and effect. Decorators still work and are common in older code, but the function forms are the modern recommendation.",
+      "tags": [
+        "input",
+        "output",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/inputs",
+        "https://angular.dev/guide/components/output-function"
+      ]
+    },
+    {
+      "id": "components-012",
+      "difficulty": "Intermediate",
+      "question": "What are signal inputs and what is input.required()?",
+      "answer": "Signal inputs are declared with input() and expose the value as a read-only signal that updates whenever the parent binding changes. input.required() marks an input as mandatory, so the compiler reports an error if the parent omits it. Signal inputs also support transforms, letting you convert the bound value before it is exposed.",
+      "code": "readonly count = input(0);\nreadonly label = input.required<string>();\nreadonly active = input(false, { transform: booleanAttribute });",
+      "tags": [
+        "input",
+        "signals",
+        "required"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/inputs",
+        "https://angular.dev/api/core/input"
+      ]
+    },
+    {
+      "id": "components-013",
+      "difficulty": "Intermediate",
+      "question": "How does the model() function create a two-way binding input?",
+      "answer": "model() declares a writable signal input that also emits a change event named after the input plus Change, enabling the banana-in-a-box syntax. The parent can use [(value)]=\"state\" and the child can write to the signal to push updates back. This replaces the manual @Input plus @Output pair for two-way binding.",
+      "code": "// child\nreadonly value = model(0);\n// parent\n<app-counter [(value)]=\"count\" />",
+      "tags": [
+        "model",
+        "two-way-binding",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/model",
+        "https://angular.dev/api/core/model"
+      ]
+    },
+    {
+      "id": "components-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between @ViewChild and @ContentChild?",
+      "answer": "ViewChild queries elements or components declared in the component's own template, while ContentChild queries content projected into the component by its parent. View children are available after the view is initialized, and content children after projected content is initialized. Choosing the right query depends on whether the target comes from the component's own template or from its consumers.",
+      "tags": [
+        "viewchild",
+        "contentchild",
+        "queries"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/queries",
+        "https://angular.dev/api/core/ViewChild"
+      ]
+    },
+    {
+      "id": "components-015",
+      "difficulty": "Intermediate",
+      "question": "What is ViewContainerRef used for?",
+      "answer": "ViewContainerRef represents a container where views can be attached or detached dynamically, and it is the anchor used for structural directives and dynamic component creation. It exposes methods such as createComponent, createEmbeddedView, clear, and insert. The location of the container in the DOM determines where the created views appear.",
+      "tags": [
+        "viewcontainerref",
+        "dynamic",
+        "dom"
+      ],
+      "references": [
+        "https://angular.dev/api/core/ViewContainerRef",
+        "https://angular.dev/guide/components/programmatic-rendering"
+      ]
+    },
+    {
+      "id": "components-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ElementRef and Renderer2, and why avoid direct DOM access?",
+      "answer": "ElementRef gives you the raw host element through its nativeElement property, while Renderer2 provides an abstraction with methods to manipulate the DOM safely. Directly touching nativeElement breaks server-side rendering and web worker support and bypasses Angular's sanitization. Prefer bindings or Renderer2, and treat ElementRef as a last resort.",
+      "tags": [
+        "elementref",
+        "renderer2",
+        "dom"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/dom-apis",
+        "https://angular.dev/api/core/Renderer2"
+      ]
+    },
+    {
+      "id": "components-017",
+      "difficulty": "Intermediate",
+      "question": "What is a host directive?",
+      "answer": "A host directive applies another directive's behavior to a component's host element by listing it in the component's hostDirectives array. The component reuses that directive's logic and can selectively expose its inputs and outputs. Host directives are a composition mechanism that avoids duplicating behavior across components.",
+      "tags": [
+        "host-directives",
+        "composition"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives/directive-composition-api",
+        "https://angular.dev/guide/components/host-elements"
+      ]
+    },
+    {
+      "id": "components-018",
+      "difficulty": "Intermediate",
+      "question": "How do you project multiple pieces of content with select?",
+      "answer": "Multiple ng-content elements can target different projected nodes by adding a select attribute that matches a CSS selector such as an attribute or class. Content that matches no slot is discarded unless a slot without select captures the rest. This lets a component define named regions such as a header, body, and footer.",
+      "code": "<ng-content select=\"[card-title]\"></ng-content>\n<ng-content select=\"[card-body]\"></ng-content>\n<ng-content></ng-content>",
+      "tags": [
+        "content-projection",
+        "ng-content",
+        "slots"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/content-projection",
+        "https://angular.dev/guide/templates/ng-content"
+      ]
+    },
+    {
+      "id": "components-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between providers and viewProviders on a component?",
+      "answer": "Both declare providers visible to the component's injector, but providers are also visible to projected content while viewProviders are visible only to the component's own view. This matters when projected content injects a token that the host component also provides. Use viewProviders when you want to keep a provider private to the component's template.",
+      "tags": [
+        "providers",
+        "viewproviders",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/components/content-projection"
+      ]
+    },
+    {
+      "id": "components-020",
+      "difficulty": "Intermediate",
+      "question": "How do ng-template and ngTemplateOutlet enable reusable templates?",
+      "answer": "An ng-template defines a fragment of markup that is not rendered by default, and ngTemplateOutlet renders that fragment at a chosen location with an optional context object. You reference the template through a template reference variable. This pattern lets components accept template inputs and reuse the same markup with different data.",
+      "code": "<ng-template #row let-item=\"$implicit\">\n  <li>{{ item.name }}</li>\n</ng-template>\n<ng-container *ngTemplateOutlet=\"row; context: { $implicit: user }\" />",
+      "tags": [
+        "ng-template",
+        "ngtemplateoutlet",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/ng-template",
+        "https://angular.dev/api/common/NgTemplateOutlet"
+      ]
+    },
+    {
+      "id": "components-021",
+      "difficulty": "Advanced",
+      "question": "How do signal queries such as viewChild() and contentChildren() differ from decorator queries?",
+      "answer": "Signal queries return signals that always reflect the current query result, so they can be read inside computed or effect without manual lifecycle timing. They remove the need to wait for ngAfterViewInit or ngAfterContentInit before reading a query. Decorator queries still work and remain common, but signal queries integrate cleanly with the rest of the signal graph.",
+      "code": "readonly panel = viewChild.required<PanelComponent>('panel');\nreadonly rows = contentChildren(RowComponent);",
+      "tags": [
+        "signal-queries",
+        "viewchild",
+        "contentchildren"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/queries",
+        "https://angular.dev/guide/components/queries"
+      ]
+    },
+    {
+      "id": "components-022",
+      "difficulty": "Advanced",
+      "question": "Why do view and content queries resolve at different lifecycle times?",
+      "answer": "Angular creates projected content before the component's own view, so content queries are populated by ngAfterContentInit and view queries by ngAfterViewInit. Reading a view query in the constructor returns undefined because the view does not exist yet. This ordering also explains why changing content in a view query can trigger ExpressionChangedAfterItHasBeenChecked errors.",
+      "tags": [
+        "lifecycle",
+        "queries",
+        "timing"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/lifecycle",
+        "https://angular.dev/guide/components/queries"
+      ]
+    },
+    {
+      "id": "components-023",
+      "difficulty": "Advanced",
+      "question": "How do you avoid memory leaks in Angular components?",
+      "answer": "Subscribe through the async pipe or toSignal where possible, since both unsubscribe automatically, and otherwise complete subscriptions with takeUntilDestroyed or unsubscribe in ngOnDestroy. Remove global event listeners, timers, and observers when the component is destroyed. Use DestroyRef or the takeUntilDestroyed operator so cleanup is tied to the component's lifetime.",
+      "code": "readonly data = toSignal(this.http.get<Item[]>('/api/items'));\n// streams:\nthis.events.pipe(takeUntilDestroyed()).subscribe(...);",
+      "tags": [
+        "memory",
+        "cleanup",
+        "takeuntildestroyed"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed",
+        "https://angular.dev/api/core/rxjs-interop/takeUntilDestroyed"
+      ]
+    },
+    {
+      "id": "components-024",
+      "difficulty": "Advanced",
+      "question": "What is component inheritance in Angular and what are its pitfalls?",
+      "answer": "A component can extend a base class to share state and behavior, and Angular supports inheriting lifecycle hooks, inputs, and outputs declared in the base class. The pitfalls are that decorators and metadata are not automatically inherited in all cases and that deep hierarchies become hard to follow. Composition through host directives or services is usually preferable to deep inheritance.",
+      "tags": [
+        "inheritance",
+        "composition"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/inheritance",
+        "https://angular.dev/guide/directives/directive-composition-api"
+      ]
+    },
+    {
+      "id": "components-025",
+      "difficulty": "Advanced",
+      "question": "How do you render a component dynamically at runtime?",
+      "answer": "Inject a ViewContainerRef at the insertion point and call createComponent with the component class to create, insert, and return a ComponentRef. The ref exposes the instance and an optional injector for passing inputs, and destroy() removes the view. This is how modals and plugin-style UIs add components that are not known at compile time.",
+      "code": "const ref = this.vcr.createComponent(ToastComponent);\nref.setInput('message', 'Saved');\n// later\nref.destroy();",
+      "tags": [
+        "dynamic-components",
+        "viewcontainerref",
+        "createcomponent"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/programmatic-rendering",
+        "https://angular.dev/api/core/ViewContainerRef"
+      ]
+    }
+  ]
+}

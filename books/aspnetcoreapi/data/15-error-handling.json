@@ -1,0 +1,337 @@
+{
+  "category": "Error Handling & ProblemDetails",
+  "slug": "error-handling",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "error-handling-001",
+      "difficulty": "Beginner",
+      "question": "How do you handle errors globally in an ASP.NET Core Web API?",
+      "answer": "Use exception handling middleware with UseExceptionHandler and one or more IExceptionHandler implementations, which catch unhandled exceptions and produce a consistent response. This centralizes error mapping instead of wrapping every action in try/catch. Return ProblemDetails so clients get a standard shape.",
+      "tags": [
+        "error-handling",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ],
+      "code": "app.UseExceptionHandler();\nbuilder.Services.AddExceptionHandler<GlobalExceptionHandler>();"
+    },
+    {
+      "id": "error-handling-002",
+      "difficulty": "Beginner",
+      "question": "What is ProblemDetails?",
+      "answer": "ProblemDetails is a standard error response format defined by RFC 9457 with fields such as type, title, status, detail, and instance, plus extension members. It is returned with the application/problem+json media type. Using it gives clients a predictable way to parse errors.",
+      "tags": [
+        "problemdetails",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-003",
+      "difficulty": "Beginner",
+      "question": "How do you return a ProblemDetails response from an action?",
+      "answer": "Return Problem(detail, instance, statusCode, title, type) or, in minimal APIs, Results.Problem. The framework serializes it with the correct media type. This keeps error responses consistent with the middleware.",
+      "tags": [
+        "problemdetails",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ],
+      "code": "return Problem(statusCode: 404, title: \"Not Found\",\n    detail: $\"No product with id {id}.\");"
+    },
+    {
+      "id": "error-handling-004",
+      "difficulty": "Beginner",
+      "question": "What is the Developer Exception Page?",
+      "answer": "It is middleware enabled in the Development environment that shows detailed exception information including the stack trace, request details, and headers. It must never be enabled in production because it leaks sensitive information. Production uses the exception handler instead.",
+      "tags": [
+        "error-handling",
+        "development"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-005",
+      "difficulty": "Beginner",
+      "question": "Why should you not return raw exception messages to clients?",
+      "answer": "Exception messages can reveal stack traces, table names, file paths, and other implementation details useful to an attacker. Map exceptions to safe, generic messages and log the details server-side with a correlation identifier. Clients receive only what they need to act.",
+      "tags": [
+        "security",
+        "error-handling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a 4xx and a 5xx error?",
+      "answer": "4xx errors indicate a problem with the request that the client can usually fix, such as invalid input or missing credentials, while 5xx errors indicate a server-side failure. Returning the correct class helps clients decide whether to retry or correct. Do not return 5xx for client mistakes.",
+      "tags": [
+        "error-handling",
+        "status-codes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-007",
+      "difficulty": "Beginner",
+      "question": "How do you handle a not-found resource consistently?",
+      "answer": "Return 404 with a ProblemDetails body, either from the action when the resource is missing or from middleware when a route is unmatched. Consistent 404 handling lets clients treat missing resources uniformly. Avoid returning 200 with null.",
+      "tags": [
+        "error-handling",
+        "404"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-008",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of a correlation identifier?",
+      "answer": "A correlation identifier is a value attached to a request and included in logs and error responses so a specific failure can be traced across services. It is usually propagated through a header such as traceparent or a custom request id. It makes support and debugging far faster.",
+      "tags": [
+        "logging",
+        "tracing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-009",
+      "difficulty": "Beginner",
+      "question": "How do you return validation errors?",
+      "answer": "Return 400 with a ValidationProblemDetails body that maps field names to error messages, which [ApiController] does automatically for invalid models. In minimal APIs return Results.ValidationProblem(errors). This gives clients structured, actionable feedback.",
+      "tags": [
+        "validation",
+        "problemdetails"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/#configure-model-validation-response"
+      ],
+      "code": "return Results.ValidationProblem(new Dictionary<string, string[]>\n{\n    [\"name\"] = [\"Name is required\"]\n});"
+    },
+    {
+      "id": "error-handling-010",
+      "difficulty": "Beginner",
+      "question": "What does UseStatusCodePages do?",
+      "answer": "It generates a response body for status codes that do not have one, such as 404 or 403 from other middleware, so clients do not receive an empty body. UseStatusCodePagesWithReExecute can re-execute a handler to produce a richer response. It complements exception handling for non-exception errors.",
+      "tags": [
+        "error-handling",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-011",
+      "difficulty": "Intermediate",
+      "question": "How do you write an IExceptionHandler?",
+      "answer": "Implement IExceptionHandler with TryHandleAsync, inspect the exception and HttpContext, write a ProblemDetails response, and return true if handled or false to let the next handler try. Register it with AddExceptionHandler and enable UseExceptionHandler. Multiple handlers are tried in registration order.",
+      "tags": [
+        "error-handling",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ],
+      "code": "public async ValueTask<bool> TryHandleAsync(\n    HttpContext ctx, Exception ex, CancellationToken ct)\n{\n    ctx.Response.StatusCode = 500;\n    return true;\n}"
+    },
+    {
+      "id": "error-handling-012",
+      "difficulty": "Intermediate",
+      "question": "How do you map domain exceptions to status codes?",
+      "answer": "In the exception handler, translate known exception types such as NotFoundException to 404 and ConflictException to 409, and fall back to 500 for unknown ones. This keeps domain code free of HTTP concerns. Centralizing the mapping ensures consistency across endpoints.",
+      "tags": [
+        "error-handling",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-013",
+      "difficulty": "Intermediate",
+      "question": "How do you include a trace identifier in error responses?",
+      "answer": "Add HttpContext.TraceIdentifier or the current Activity trace id as an extension member on the ProblemDetails, so clients can report it and you can find the matching log entry. This is a small addition with large diagnostic value. Keep it consistent across all error responses.",
+      "tags": [
+        "error-handling",
+        "tracing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ],
+      "code": "pd.Extensions[\"traceId\"] = ctx.TraceIdentifier;"
+    },
+    {
+      "id": "error-handling-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle exceptions in minimal APIs?",
+      "answer": "Unhandled exceptions from handlers flow to the same exception handling middleware, so IExceptionHandler works there too. You can also use a custom endpoint filter for localized handling. Prefer centralized middleware for consistency.",
+      "tags": [
+        "error-handling",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid leaking sensitive data in logs?",
+      "answer": "Log structured fields rather than whole request or exception objects, redact tokens, passwords, and personal data, and configure log levels so verbose details stay out of production. Review what the default logging providers capture. Treat logs as potentially accessible to many people.",
+      "tags": [
+        "logging",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "error-handling-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between error handling middleware and an exception filter?",
+      "answer": "Exception handling middleware wraps the entire pipeline including routing and other middleware, while an MVC exception filter only catches exceptions from action execution. Middleware is the better default for APIs. Filters remain useful for MVC-specific behavior.",
+      "tags": [
+        "error-handling",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters#exception-filters"
+      ]
+    },
+    {
+      "id": "error-handling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you produce consistent errors for authentication and authorization failures?",
+      "answer": "Customize the challenge and forbid responses with IAuthorizationMiddlewareResultHandler and configure the JWT bearer events to return ProblemDetails. This makes 401 and 403 responses match the rest of your error contract. Consistency helps clients handle failures uniformly.",
+      "tags": [
+        "error-handling",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "error-handling-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors from downstream HTTP calls?",
+      "answer": "Catch HttpRequestException and timeouts from the typed client and translate them into appropriate status codes such as 502 or 504, including a correlation identifier. Do not surface downstream error bodies directly. Use resilience handlers for retries before surfacing a failure.",
+      "tags": [
+        "error-handling",
+        "http-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ]
+    },
+    {
+      "id": "error-handling-019",
+      "difficulty": "Intermediate",
+      "question": "Should you use exceptions for control flow?",
+      "answer": "No, exceptions are for exceptional conditions and are expensive when thrown frequently; use result types or validation for expected outcomes such as a missing record. Reserve exceptions for genuinely unexpected failures. This keeps performance and readability reasonable.",
+      "tags": [
+        "error-handling",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test error handling paths?",
+      "answer": "Use integration tests to trigger validation failures, missing resources, and injected exceptions, asserting the status code and ProblemDetails shape. Unit test the mapping logic in handlers directly. Cover the fallback path for unknown exceptions.",
+      "tags": [
+        "testing",
+        "error-handling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "error-handling-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a consistent error contract across many services?",
+      "answer": "Standardize on ProblemDetails with a shared set of extension members such as traceId and a stable error code, and publish it as a shared library or schema. Document it in OpenAPI so clients can rely on it. Consistency across services reduces client complexity.",
+      "tags": [
+        "error-handling",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-022",
+      "difficulty": "Advanced",
+      "question": "How do you correlate errors across distributed services?",
+      "answer": "Propagate W3C trace context and your own correlation identifier on every outgoing call, and include the trace id in logs and error responses. OpenTelemetry ties spans together so a single failure can be traced end to end. This is essential in microservice architectures.",
+      "tags": [
+        "tracing",
+        "distributed"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "error-handling-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle partial failures in an aggregate endpoint?",
+      "answer": "Return a 207 Multi-Status style body or a per-item result that indicates which parts succeeded, rather than failing the whole request, when the operation is naturally partial. Clearly mark failures so clients can retry just those. Document the semantics in the contract.",
+      "tags": [
+        "error-handling",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "error-handling-024",
+      "difficulty": "Advanced",
+      "question": "How do you protect against stack trace leakage and information disclosure?",
+      "answer": "Never enable the developer exception page in production, map exceptions to generic messages, and review error responses in tests to ensure no internal details leak. Also configure the server to not return detailed errors. Treat error responses as part of your security surface.",
+      "tags": [
+        "security",
+        "error-handling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "error-handling-025",
+      "difficulty": "Advanced",
+      "question": "How do you implement retry-safe error responses?",
+      "answer": "Return 503 with a Retry-After header when the service is temporarily unavailable, and ensure operations are idempotent so clients can safely retry. Include a machine-readable error code. This lets clients back off intelligently instead of hammering the service.",
+      "tags": [
+        "error-handling",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    }
+  ]
+}

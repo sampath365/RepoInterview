@@ -1,0 +1,344 @@
+{
+  "category": "Security Best Practices",
+  "slug": "security",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "security-001",
+      "difficulty": "Beginner",
+      "question": "Why is HTTPS essential for an ASP.NET Core app?",
+      "answer": "HTTPS encrypts traffic in transit, protecting credentials, tokens, and personal data from interception, and it is required for secure cookies and modern browser features. You enable it with UseHttpsRedirection and HSTS in production. Certificates should come from a trusted authority and be renewed before expiry.",
+      "tags": [
+        "https",
+        "transport"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/enforcing-ssl"
+      ]
+    },
+    {
+      "id": "security-002",
+      "difficulty": "Beginner",
+      "question": "What is HSTS?",
+      "answer": "HTTP Strict Transport Security tells browsers to only use HTTPS for your site for a specified period, preventing downgrade and cookie-hijacking attacks. You enable it with app.UseHsts() and configure max-age, includeSubDomains, and preload. HSTS should not be enabled in development because it is hard to undo in a browser.",
+      "code": "builder.Services.AddHsts(o =>\n{\n    o.MaxAge = TimeSpan.FromDays(365);\n    o.IncludeSubDomains = true;\n});",
+      "tags": [
+        "hsts",
+        "transport"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/enforcing-ssl"
+      ]
+    },
+    {
+      "id": "security-003",
+      "difficulty": "Beginner",
+      "question": "What is cross-site request forgery and how do you prevent it?",
+      "answer": "CSRF tricks a logged-in user's browser into sending an unwanted authenticated request to your app. ASP.NET Core prevents it with antiforgery tokens, which the form tag helper adds automatically, and validates on POST; for APIs you use a token header or SameSite cookies. Enable AutoValidateAntiforgeryToken and require HTTPS.",
+      "tags": [
+        "csrf",
+        "antiforgery"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/anti-request-forgery"
+      ]
+    },
+    {
+      "id": "security-004",
+      "difficulty": "Beginner",
+      "question": "What is cross-site scripting and how does ASP.NET Core help prevent it?",
+      "answer": "XSS injects malicious scripts into pages viewed by other users. Razor HTML-encodes output by default, so @Model.Name is safe, and you must avoid Html.Raw with untrusted data. For richer scenarios use a sanitizer, a strict Content Security Policy, and never trust client input.",
+      "tags": [
+        "xss",
+        "output-encoding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-005",
+      "difficulty": "Beginner",
+      "question": "What is SQL injection and how do you prevent it?",
+      "answer": "SQL injection occurs when untrusted input is concatenated into SQL, letting attackers alter queries. You prevent it by using parameterized queries, stored procedures, and ORMs such as EF Core that parameterize by default. Never build SQL with string concatenation from user input.",
+      "tags": [
+        "sql-injection",
+        "data"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-006",
+      "difficulty": "Beginner",
+      "question": "How do you set secure cookie attributes?",
+      "answer": "You set HttpOnly to block JavaScript access, Secure to require HTTPS, and SameSite to Lax or Strict to reduce CSRF risk, plus an appropriate expiration. These options are set on the cookie authentication handler or the specific cookie. Secure defaults are essential for session and auth cookies.",
+      "code": "builder.Services.ConfigureApplicationCookie(o =>\n{\n    o.Cookie.HttpOnly = true;\n    o.Cookie.SecurePolicy = CookieSecurePolicy.Always;\n    o.Cookie.SameSite = SameSiteMode.Lax;\n});",
+      "tags": [
+        "cookies",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/samesite"
+      ]
+    },
+    {
+      "id": "security-007",
+      "difficulty": "Beginner",
+      "question": "What is a Content Security Policy?",
+      "answer": "A Content Security Policy is a response header that restricts which sources of scripts, styles, images, and connections the browser will load, mitigating XSS and data injection. You set it manually or with a middleware, ideally with nonces or hashes for inline scripts. Start in report-only mode to find violations before enforcing.",
+      "code": "app.Use(async (ctx, next) =>\n{\n    ctx.Response.Headers[\"Content-Security-Policy\"] =\n        \"default-src 'self'; script-src 'self';\";\n    await next();\n});",
+      "tags": [
+        "csp",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-008",
+      "difficulty": "Beginner",
+      "question": "Why should you never store secrets in source control?",
+      "answer": "Secrets in source control are exposed to anyone with repository access and persist in history even after removal, and they often leak through logs or forks. Use user secrets in development and a managed secret store such as Azure Key Vault in production. Rotate any secret that was ever committed.",
+      "tags": [
+        "secrets",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/app-secrets"
+      ]
+    },
+    {
+      "id": "security-009",
+      "difficulty": "Beginner",
+      "question": "What is data protection used for?",
+      "answer": "Data protection provides APIs to encrypt and sign data such as authentication cookies, antiforgery tokens, and TempData, and manages the keys used. Keys must be shared and protected across instances. You configure key storage and protection for production deployments.",
+      "tags": [
+        "data-protection",
+        "crypto"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/data-protection/introduction"
+      ]
+    },
+    {
+      "id": "security-010",
+      "difficulty": "Beginner",
+      "question": "What are common security headers you should add?",
+      "answer": "Common headers include Strict-Transport-Security, Content-Security-Policy, X-Content-Type-Options: nosniff, Referrer-Policy, and X-Frame-Options or frame-ancestors to prevent clickjacking. They harden the browser against a range of attacks. Add them globally through middleware and test that they do not break required functionality.",
+      "tags": [
+        "headers",
+        "hardening"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-011",
+      "difficulty": "Intermediate",
+      "question": "How does the SameSite cookie attribute affect security?",
+      "answer": "SameSite controls whether a cookie is sent on cross-site requests: Strict sends it only for same-site navigation, Lax sends it for top-level GET navigations, and None allows cross-site but requires Secure. Lax is a good default that mitigates CSRF while preserving common flows. Setting None without Secure causes browsers to reject the cookie.",
+      "tags": [
+        "samesite",
+        "cookies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/samesite"
+      ]
+    },
+    {
+      "id": "security-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure CORS securely?",
+      "answer": "You allow only the specific origins your clients use, restrict methods and headers, and avoid AllowAnyOrigin together with credentials. For APIs, apply a named policy to the endpoints that need it rather than globally. Overly permissive CORS exposes data to malicious sites.",
+      "code": "builder.Services.AddCors(o => o.AddPolicy(\"spa\", p => p\n    .WithOrigins(\"https://app.example.com\")\n    .WithMethods(\"GET\", \"POST\")\n    .AllowCredentials()));",
+      "tags": [
+        "cors",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "security-013",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent open redirect attacks?",
+      "answer": "Open redirects happen when a returnUrl or next parameter is used without validation, letting attackers redirect users to malicious sites. You validate that the target is a local URL with Url.IsLocalUrl before redirecting. Never redirect to a fully qualified URL supplied by the client.",
+      "code": "if (Url.IsLocalUrl(returnUrl)) return Redirect(returnUrl);\nreturn RedirectToAction(\"Index\", \"Home\");",
+      "tags": [
+        "open-redirect",
+        "input-validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-014",
+      "difficulty": "Intermediate",
+      "question": "How do you validate file uploads securely?",
+      "answer": "You restrict size and allowed content types, validate the actual content rather than the extension or client-supplied type, store files outside the web root or in object storage, and generate new file names. Never execute uploaded files or trust their names. Serving user content from a separate origin or domain further isolates risk.",
+      "tags": [
+        "file-upload",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads"
+      ]
+    },
+    {
+      "id": "security-015",
+      "difficulty": "Intermediate",
+      "question": "What is rate limiting and how do you apply it in ASP.NET Core?",
+      "answer": "Rate limiting caps how many requests a client may make in a window, protecting against brute force and abuse. The built-in rate limiting middleware in .NET 7+ supports fixed window, sliding window, token bucket, and concurrency limiters, applied globally or per endpoint with a partition key. You should return 429 and Retry-After to well-behaved clients.",
+      "code": "builder.Services.AddRateLimiter(o =>\n    o.AddFixedWindowLimiter(\"api\", opt =>\n    {\n        opt.PermitLimit = 100;\n        opt.Window = TimeSpan.FromMinutes(1);\n    }));",
+      "tags": [
+        "rate-limiting",
+        "abuse"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    },
+    {
+      "id": "security-016",
+      "difficulty": "Intermediate",
+      "question": "How do you protect against brute force and credential stuffing?",
+      "answer": "You enforce lockout after repeated failures, require strong passwords and multi-factor authentication, use CAPTCHA or rate limiting on login, and check passwords against breach lists. Identity provides lockout and two-factor support. Monitoring failed logins reveals attack patterns.",
+      "tags": [
+        "brute-force",
+        "identity"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/identity"
+      ]
+    },
+    {
+      "id": "security-017",
+      "difficulty": "Intermediate",
+      "question": "How do you enable HTTPS redirection and what are the pitfalls?",
+      "answer": "UseHttpsRedirection issues a redirect to HTTPS for HTTP requests, but behind a reverse proxy you must forward the original scheme with forwarded headers or the app may loop or redirect incorrectly. You should also configure HSTS and avoid redirecting before static assets are served. Always test the behavior behind the real proxy configuration.",
+      "code": "app.UseForwardedHeaders();\napp.UseHttpsRedirection();",
+      "tags": [
+        "https-redirect",
+        "proxy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/enforcing-ssl",
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer"
+      ]
+    },
+    {
+      "id": "security-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle error information disclosure?",
+      "answer": "You avoid exposing stack traces and internal details in production by using a generic error page and exception handler that returns ProblemDetails without sensitive data. The developer exception page must only run in Development. Logging details server-side while returning minimal responses balances diagnosability and safety.",
+      "code": "if (!app.Environment.IsDevelopment())\n    app.UseExceptionHandler(\"/error\");",
+      "tags": [
+        "error-handling",
+        "disclosure"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "security-019",
+      "difficulty": "Intermediate",
+      "question": "How do you secure an API with tokens?",
+      "answer": "You use short-lived access tokens validated for signature, issuer, audience, and lifetime, transmit them only over HTTPS, and keep them out of URLs and logs. Refresh tokens are stored securely and rotated, and scopes or policies limit what each token can do. Never trust token contents that have not been validated.",
+      "tags": [
+        "api",
+        "tokens"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/",
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-020",
+      "difficulty": "Intermediate",
+      "question": "How do you protect against mass assignment and over-posting?",
+      "answer": "You bind requests to input DTOs that contain only allowed properties, or use [Bind] with an explicit include list, so clients cannot set fields such as role or balance. Combined with authorization and validation, this prevents privilege escalation. Never bind directly to entities that contain security-sensitive fields.",
+      "tags": [
+        "over-posting",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "security-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement a defense-in-depth security architecture for an ASP.NET Core app?",
+      "answer": "You layer transport security with HTTPS and HSTS, authentication with strong credentials and MFA, authorization with least-privilege policies, input validation and output encoding, secure headers, rate limiting, secret management, and auditing. Each layer assumes the others may fail. Regular dependency scanning and penetration testing validate the posture.",
+      "tags": [
+        "defense-in-depth",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "security-022",
+      "difficulty": "Advanced",
+      "question": "How does the antiforgery system generate and validate tokens?",
+      "answer": "The antiforgery service issues a token that pairs a per-user value stored in a cookie with a request token embedded in the form, both protected by data protection. On POST it compares the cookie and form tokens and validates them, rejecting mismatches with a 400. This ties the request to the user's browser session and blocks cross-site submissions.",
+      "tags": [
+        "antiforgery",
+        "internals"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/anti-request-forgery"
+      ]
+    },
+    {
+      "id": "security-023",
+      "difficulty": "Advanced",
+      "question": "How do you secure a SPA and its API end to end?",
+      "answer": "You serve the SPA and API over HTTPS, use a backend-for-frontend or cookie-based auth with antiforgery to keep tokens out of JavaScript, apply a strict Content Security Policy, and validate tokens server-side. CORS is restricted to the app origin, and refresh tokens are rotated and stored securely. Defense in depth covers XSS, CSRF, and token theft.",
+      "tags": [
+        "spa",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/",
+        "https://learn.microsoft.com/aspnet/core/security/anti-request-forgery"
+      ]
+    },
+    {
+      "id": "security-024",
+      "difficulty": "Advanced",
+      "question": "How do you manage certificates and keys securely in production?",
+      "answer": "You store certificates and keys in a managed store such as Azure Key Vault or the OS key store, grant access through managed identities, and automate rotation. Data protection keys are persisted to a shared, protected location across instances. Never ship private keys in the app or source control, and monitor expiry.",
+      "tags": [
+        "certificates",
+        "key-management"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/data-protection/configuration/overview",
+        "https://learn.microsoft.com/aspnet/core/security/key-vault-configuration"
+      ]
+    },
+    {
+      "id": "security-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between security, performance, and usability?",
+      "answer": "Stronger security such as MFA, encryption, and strict CSP can add friction and latency, while relaxing them for convenience increases risk. The right balance depends on the sensitivity of the data, the threat model, and regulatory requirements. Documenting decisions and reviewing them as the system evolves keeps the trade-off deliberate rather than accidental.",
+      "tags": [
+        "trade-offs",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    }
+  ]
+}

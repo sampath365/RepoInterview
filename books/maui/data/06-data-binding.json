@@ -1,0 +1,219 @@
+{
+  "category": "Data Binding & MVVM",
+  "slug": "data-binding",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "data-binding-001",
+      "difficulty": "Beginner",
+      "question": "What is data binding in .NET MAUI?",
+      "answer": "Data binding is a mechanism that links a property on a UI control to a property on a source object, keeping them in sync automatically. When the source changes, the UI updates, and when the user edits the UI with a two-way binding, the source updates. Binding removes manual event wiring and lets you keep UI logic out of code-behind. You express bindings in XAML with the {Binding} markup extension or in C# with SetBinding.",
+      "tags": ["binding", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/"]
+    },
+    {
+      "id": "data-binding-002",
+      "difficulty": "Beginner",
+      "question": "What is a BindingContext in .NET MAUI?",
+      "answer": "BindingContext is the source object that a control and its children use to resolve bindings. When you set the BindingContext on a page, every child element inherits it unless a child overrides it. Bindings then resolve property paths relative to that context. In MVVM the page's BindingContext is typically set to a view model.",
+      "tags": ["binding", "bindingcontext"],
+      "code": "public MainPage(MainViewModel vm)\n{\n    InitializeComponent();\n    BindingContext = vm;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/basic-bindings"]
+    },
+    {
+      "id": "data-binding-003",
+      "difficulty": "Beginner",
+      "question": "How do you bind a property in XAML using the Binding markup extension?",
+      "answer": "Use the {Binding} markup extension and pass the source property name as the path. For example, Text=\"{Binding Name}\" binds the Label's Text property to the Name property on the current BindingContext. You can also use the element syntax with a Binding object and set Path explicitly when you need other settings.",
+      "tags": ["xaml", "binding"],
+      "code": "<Label Text=\"{Binding Title}\" />\n<Entry Text=\"{Binding Name, Mode=TwoWay}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/basic-bindings"]
+    },
+    {
+      "id": "data-binding-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between OneWay and TwoWay binding?",
+      "answer": "OneWay binding flows data from the source to the target only, so UI changes do not write back to the source. TwoWay binding flows in both directions, so edits in the UI update the source and source changes update the UI. Use OneWay for display-only values and TwoWay for editable inputs like Entry or Slider.",
+      "tags": ["binding-mode", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/binding-mode"]
+    },
+    {
+      "id": "data-binding-005",
+      "difficulty": "Beginner",
+      "question": "What is the default binding mode for most bindable properties?",
+      "answer": "Most bindable properties default to OneWay, while user-editable input controls such as Entry.Text, Switch.IsToggled, and Slider.Value default to TwoWay. The default is defined per property when it is declared. You can always override it explicitly with Mode=OneWay or Mode=TwoWay.",
+      "tags": ["binding-mode", "defaults"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/binding-mode"]
+    },
+    {
+      "id": "data-binding-006",
+      "difficulty": "Beginner",
+      "question": "What is INotifyPropertyChanged and why is it needed for binding?",
+      "answer": "INotifyPropertyChanged is an interface with a PropertyChanged event that a source object raises when one of its properties changes. The binding engine subscribes to this event and refreshes the target when it fires. Without it, a one-way binding would not know the source value changed and the UI would stay stale. View models implement it, often through a base class such as ObservableObject from the MVVM Toolkit.",
+      "tags": ["inotifypropertychanged", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/basic-bindings"]
+    },
+    {
+      "id": "data-binding-007",
+      "difficulty": "Beginner",
+      "question": "What is the MVVM pattern?",
+      "answer": "MVVM stands for Model-View-ViewModel, a pattern that separates UI from logic and data. The Model holds data and business rules, the View is the XAML UI, and the ViewModel exposes data and commands the View binds to. This separation improves testability and keeps code-behind minimal. MAUI and the .NET Community Toolkit MVVM library support MVVM directly.",
+      "tags": ["mvvm", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/mvvm"]
+    },
+    {
+      "id": "data-binding-008",
+      "difficulty": "Beginner",
+      "question": "What is a ViewModel in MVVM?",
+      "answer": "A ViewModel is a class that exposes the state and behavior a specific View needs, in a UI-friendly form. It holds observable properties and commands, and it calls services or models to do real work. The View binds to it through BindingContext, so the ViewModel should not reference controls directly. This makes view models unit-testable without a UI.",
+      "tags": ["mvvm", "viewmodel"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/mvvm"]
+    },
+    {
+      "id": "data-binding-009",
+      "difficulty": "Beginner",
+      "question": "What is the commanding pattern in .NET MAUI?",
+      "answer": "Commanding lets a control such as Button invoke an ICommand exposed by the view model instead of handling a Clicked event in code-behind. The control's Command property binds to the ICommand, and its CanExecute controls whether the control is enabled. This keeps user actions declarative and testable. MAUI's Command class and the MVVM Toolkit's RelayCommand are common implementations.",
+      "tags": ["commanding", "mvvm"],
+      "code": "<Button Text=\"Save\"\n        Command=\"{Binding SaveCommand}\"\n        CommandParameter=\"{Binding CurrentItem}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/commanding"]
+    },
+    {
+      "id": "data-binding-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between BindingContext and x:DataType?",
+      "answer": "BindingContext is a runtime object that supplies the actual values for bindings. x:DataType is a compile-time hint that tells the XAML compiler the type of the binding source so it can generate compiled bindings and report errors. They should agree, but they serve different purposes: one provides data, the other enables type checking and performance.",
+      "tags": ["xaml", "compiled-bindings"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings"]
+    },
+    {
+      "id": "data-binding-011",
+      "difficulty": "Intermediate",
+      "question": "What is a compiled binding and how does x:DataType enable it?",
+      "answer": "A compiled binding is resolved at build time into generated code rather than reflection at runtime, which is faster and catches typos as build errors. Setting x:DataType on a view, page, or DataTemplate tells the compiler the type of the binding source so it can compile the binding. Compiled bindings are the default in recent MAUI templates. You can still use a classic binding by omitting x:DataType or setting it to a type that does not match.",
+      "tags": ["compiled-bindings", "performance"],
+      "code": "<ContentPage xmlns:vm=\"clr-namespace:MyApp.ViewModels\"\n             x:DataType=\"vm:MainViewModel\">\n  <Label Text=\"{Binding Title}\" />\n</ContentPage>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings"]
+    },
+    {
+      "id": "data-binding-012",
+      "difficulty": "Intermediate",
+      "question": "How do you use a value converter in a binding?",
+      "answer": "A value converter is a class implementing IValueConverter with Convert and ConvertToSource methods that transform values between source and target. You reference it as a resource and apply it with the Converter property on the binding. Converters are useful for formatting, mapping enums to colors, or inverting booleans. Keep them small and side-effect free so bindings stay predictable.",
+      "tags": ["converters", "binding"],
+      "code": "public class BoolToColorConverter : IValueConverter\n{\n    public object Convert(object v, Type t, object p, CultureInfo c)\n        => (bool)v ? Colors.Green : Colors.Red;\n    public object ConvertBack(object v, Type t, object p, CultureInfo c)\n        => throw new NotSupportedException();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/converters"]
+    },
+    {
+      "id": "data-binding-013",
+      "difficulty": "Intermediate",
+      "question": "What is a MultiBinding and when would you use it?",
+      "answer": "A MultiBinding combines several source bindings into one target value using an IMultiValueConverter. It is useful when a value depends on more than one input, such as computing a full name from first and last name, or enabling a button only when two fields are valid. The converter receives an array of values and returns the combined result.",
+      "tags": ["multibinding", "converters"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/multibinding"]
+    },
+    {
+      "id": "data-binding-014",
+      "difficulty": "Intermediate",
+      "question": "What is a relative binding and what are Self, Ancestor, and TemplatedParent?",
+      "answer": "A relative binding sets the source relative to the target rather than to the BindingContext. RelativeSourceMode.Self binds to another property on the same control, FindAncestor binds to a parent element of a given type, and TemplatedParent binds to the control that owns a ControlTemplate. These are handy inside templates and styles where the BindingContext differs from the control you want to read.",
+      "tags": ["relative-bindings", "binding"],
+      "code": "<Label Text=\"{Binding Source={RelativeSource Self},\n                       Path=Text}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/relative-bindings"]
+    },
+    {
+      "id": "data-binding-015",
+      "difficulty": "Intermediate",
+      "question": "How do you bind a CollectionView to a collection of items?",
+      "answer": "Set the CollectionView's ItemsSource to a collection exposed by the view model and define an ItemTemplate describing each row. The item template's BindingContext is each individual item, so bind its properties directly. Use a DataTemplate with x:DataType set to the item type for compiled bindings. Selection and commands bind through SelectedItem and SelectionChangedCommand.",
+      "tags": ["collectionview", "templates"],
+      "code": "<CollectionView ItemsSource=\"{Binding Items}\">\n  <CollectionView.ItemTemplate>\n    <DataTemplate x:DataType=\"model:Item\">\n      <Label Text=\"{Binding Name}\" />\n    </DataTemplate>\n  </CollectionView.ItemTemplate>\n</CollectionView>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/populate-data"]
+    },
+    {
+      "id": "data-binding-016",
+      "difficulty": "Intermediate",
+      "question": "Why prefer ObservableCollection over List for bindable collections?",
+      "answer": "ObservableCollection implements INotifyCollectionChanged, so adding or removing items raises events that the binding engine uses to update the UI automatically. A plain List does not raise these events, so the UI will not reflect changes after the initial load. Use ObservableCollection for collections that change at runtime and a List when the data is fixed after assignment.",
+      "tags": ["observablecollection", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/populate-data"]
+    },
+    {
+      "id": "data-binding-017",
+      "difficulty": "Intermediate",
+      "question": "How does BindingMode.Default resolve at runtime?",
+      "answer": "BindingMode.Default means the binding uses whatever mode the target property declares in its BindableProperty definition. Each property sets a default when it is registered, commonly OneWay but TwoWay for input controls. This is why the same binding expression behaves differently on a Label versus an Entry. You override it by specifying an explicit Mode on the binding.",
+      "tags": ["binding-mode", "bindable-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/binding-mode"]
+    },
+    {
+      "id": "data-binding-018",
+      "difficulty": "Intermediate",
+      "question": "What is CommandParameter and how is it used?",
+      "answer": "CommandParameter is an optional value passed to the ICommand when it executes, letting one command serve many controls. A common case is a list where each row's button passes the bound item so the handler knows which row was tapped. The parameter can be a constant, a binding, or an x:Reference. Inside the command you cast the parameter back to its type.",
+      "tags": ["commanding", "commandparameter"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/commanding"]
+    },
+    {
+      "id": "data-binding-019",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom BindableProperty?",
+      "answer": "Declare a public static readonly BindableProperty using BindableProperty.Create, giving it a name, type, owner type, default value, and property-changed handler. Then add a CLR property wrapper whose getter calls GetValue and setter calls SetValue. Bindable properties are required for a property to support binding, styling, and animations. This is the same mechanism built-in controls use.",
+      "tags": ["bindable-properties", "custom-controls"],
+      "code": "public static readonly BindableProperty CaptionProperty =\n    BindableProperty.Create(nameof(Caption), typeof(string),\n        typeof(MyView), string.Empty);\n\npublic string Caption\n{\n    get => (string)GetValue(CaptionProperty);\n    set => SetValue(CaptionProperty, value);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/bindable-properties"]
+    },
+    {
+      "id": "data-binding-020",
+      "difficulty": "Intermediate",
+      "question": "How do you format a bound value with StringFormat?",
+      "answer": "Set the StringFormat on a binding to apply .NET composite formatting to the value before display, for example {Binding Price, StringFormat='{0:C}'}. The format string uses the same placeholders as string.Format, and braces must be escaped in XAML. This avoids writing a converter just to format dates or currency. For complex or conditional formatting a converter is still the better choice.",
+      "tags": ["stringformat", "binding"],
+      "code": "<Label Text=\"{Binding Price, StringFormat='Total: {0:C}'}\" />\n<Label Text=\"{Binding Date, StringFormat='{0:MMM d, yyyy}'}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/string-formatting"]
+    },
+    {
+      "id": "data-binding-021",
+      "difficulty": "Advanced",
+      "question": "How does the binding engine resolve a binding path and handle fallback values?",
+      "answer": "The engine walks each segment of the path from the source object, subscribing to INotifyPropertyChanged at every level so intermediate changes propagate. If any segment is null or missing, the binding uses a fallback value or target null value instead of throwing. FallbackValue applies when the path cannot be resolved, and TargetNullValue applies when the resolved value is null. This makes bindings resilient to partially loaded data.",
+      "tags": ["binding", "fallbacks"],
+      "code": "<Label Text=\"{Binding Customer.Name,\n                FallbackValue='n/a',\n                TargetNullValue='unknown'}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/binding-fallbacks"]
+    },
+    {
+      "id": "data-binding-022",
+      "difficulty": "Advanced",
+      "question": "How do compiled bindings improve performance over classic bindings?",
+      "answer": "Classic bindings resolve property paths reflectively on every change, which costs allocations and CPU, especially in list templates. Compiled bindings generate typed accessor code at build time, eliminating reflection and enabling the linker to keep only referenced members. They also turn path typos into compile errors. The result is faster scrolling and smaller trimmed output, which matters most for large lists.",
+      "tags": ["compiled-bindings", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings"]
+    },
+    {
+      "id": "data-binding-023",
+      "difficulty": "Advanced",
+      "question": "When would you use RelativeSource Self versus an x:Reference binding?",
+      "answer": "RelativeSource Self is best when the source is a different property on the same element, such as binding a Label's text to its own width. x:Reference targets a named element anywhere in the same scope, which is useful for cross-control bindings like sizing a BoxView to a Slider. Self needs no name and is more local, while x:Reference is explicit but couples to an element name. Prefer Self for same-element cases and x:Reference for peer elements.",
+      "tags": ["relative-bindings", "x-reference"],
+      "code": "<BoxView WidthRequest=\"{Binding Source={x:Reference slider},\n                                Path=Value}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/relative-bindings"]
+    },
+    {
+      "id": "data-binding-024",
+      "difficulty": "Advanced",
+      "question": "How do you debug binding failures in .NET MAUI?",
+      "answer": "Set the binding trace level to Warning or higher by adding BindingDiagnostics options in the project or by setting the trace level at startup, which logs unresolved paths to the output window. Compiled bindings surface many issues as build warnings, so treat those as errors. You can also inspect the visual tree and BindingContext at runtime to confirm the source is what you expect. Checking the BindingContext inheritance chain resolves most silent failures.",
+      "tags": ["debugging", "binding"],
+      "code": "// In the .csproj\n<BindingDiagnostics>true</BindingDiagnostics>\n\n// Or at startup\nBindingDiagnostics.TraceLevel = BindingTraceLevel.Warning;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/basic-bindings"]
+    },
+    {
+      "id": "data-binding-025",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of binding to nested properties and how do you handle them?",
+      "answer": "A nested path such as Customer.Address.City only updates when every object in the chain raises PropertyChanged, so a replaced intermediate object can leave the binding pointing at a stale instance. If an intermediate value is null, the binding fails silently unless you provide FallbackValue. To avoid surprises, expose a flattened property on the view model or raise PropertyChanged for the whole path when the parent changes. Keeping view models shallow makes bindings easier to reason about.",
+      "tags": ["binding-path", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/binding-path"]
+    }
+  ]
+}

@@ -1,0 +1,359 @@
+{
+  "category": "Best Practices & Common Pitfalls",
+  "slug": "best-practices",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "best-practices-001",
+      "difficulty": "Beginner",
+      "question": "What makes a good unit test?",
+      "answer": "A good unit test is fast, isolated, deterministic and focused on one behaviour, with a name that describes the expected outcome. It should fail for exactly one reason and be readable without extra context. These qualities keep the suite useful over time.",
+      "tags": [
+        "bestpractices",
+        "quality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-002",
+      "difficulty": "Beginner",
+      "question": "Why should tests be independent of each other?",
+      "answer": "Independent tests can run in any order and in parallel, and a failure points to a single cause rather than to leftover state. Shared state creates order dependence and mysterious failures. Isolating each test is a prerequisite for parallel execution.",
+      "tags": [
+        "bestpractices",
+        "isolation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "best-practices-003",
+      "difficulty": "Beginner",
+      "question": "How should you name a test method?",
+      "answer": "Use a name that states the scenario and the expected behaviour, for example Withdraw_WhenBalanceInsufficient_Throws. A descriptive name turns a failure report into a statement of broken behaviour. Avoid names that just restate the method under test.",
+      "tags": [
+        "bestpractices",
+        "naming"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-004",
+      "difficulty": "Beginner",
+      "question": "What is the arrange-act-assert pattern?",
+      "answer": "Arrange sets up the state, act performs the single operation under test, and assert checks the outcome. Separating the phases makes the test easy to read and the intent clear. It also discourages doing too much in one test.",
+      "code": "[Test]\npublic void Total_IncludesTax()\n{\n    var cart = new Cart();                 // Arrange\n    cart.Add(new Item(100m));\n    var total = cart.Total();              // Act\n    Assert.That(total, Is.EqualTo(120m));  // Assert\n}",
+      "tags": [
+        "bestpractices",
+        "structure"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-005",
+      "difficulty": "Beginner",
+      "question": "Why should a test have a single logical assertion?",
+      "answer": "A test with one logical assertion fails for one reason, so the diagnosis is immediate and the test name describes the whole check. Several unrelated assertions make failures ambiguous. Multiple related assertions are fine when they describe one behaviour.",
+      "tags": [
+        "bestpractices",
+        "quality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-006",
+      "difficulty": "Beginner",
+      "question": "What is a test smell?",
+      "answer": "A test smell is a symptom in the test code that suggests a deeper problem, such as excessive setup, duplicated logic or assertions that never fail. Smells make the suite slow, brittle or misleading. Refactoring tests is as important as refactoring production code.",
+      "tags": [
+        "bestpractices",
+        "smells"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-007",
+      "difficulty": "Beginner",
+      "question": "Why is test code as important as production code?",
+      "answer": "Tests are read and changed as often as production code and they are what makes change safe, so poor test code slows the whole team. Treating tests as first-class means applying the same standards of clarity and design. A neglected test suite eventually becomes a liability.",
+      "tags": [
+        "bestpractices",
+        "quality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-008",
+      "difficulty": "Beginner",
+      "question": "What is a brittle test?",
+      "answer": "A brittle test fails for reasons unrelated to the behaviour it verifies, such as a change in an unrelated part of the system or an over-specific assertion. Brittleness erodes trust in the suite. Assert on behaviour and avoid coupling to incidental details.",
+      "tags": [
+        "bestpractices",
+        "smells"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "best-practices-009",
+      "difficulty": "Beginner",
+      "question": "How do you keep tests fast?",
+      "answer": "Keep unit tests in memory, use fakes instead of real infrastructure, avoid sleeps, and move slow integration checks to a separate category. A fast suite is run often, which is what makes it valuable. Slow tests get skipped.",
+      "tags": [
+        "bestpractices",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "best-practices-010",
+      "difficulty": "Beginner",
+      "question": "Why avoid logic such as loops and conditionals inside tests?",
+      "answer": "Logic in tests can hide bugs and make the test as complex as the code it checks, so a failure is hard to interpret. Prefer straight-line tests or parameterized cases with explicit data. Keep tests simple enough to read at a glance.",
+      "tags": [
+        "bestpractices",
+        "smells"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "best-practices-011",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid duplicating setup across many tests?",
+      "answer": "Move shared setup into [SetUp] or a fixture base class, or extract a builder or factory for test data. Duplication is a signal to extract, but over-abstracting setup can hide what a test actually depends on. Balance readability against repetition.",
+      "tags": [
+        "bestpractices",
+        "setup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "best-practices-012",
+      "difficulty": "Intermediate",
+      "question": "When should you use a mock versus a real object?",
+      "answer": "Use a mock when you need to control or verify an interaction with a boundary such as a service or clock, and a real object when the collaborator is simple, fast and deterministic. Over-mocking couples tests to implementation and produces brittle suites. Prefer the simplest substitute that gives the control you need.",
+      "tags": [
+        "bestpractices",
+        "mocks"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "best-practices-013",
+      "difficulty": "Intermediate",
+      "question": "Why is asserting on log output usually a bad idea?",
+      "answer": "Log assertions couple tests to incidental messages that change freely and rarely represent behaviour a user cares about. They make tests brittle without catching meaningful defects. Test observable behaviour instead, and reserve log checks for genuine operational requirements.",
+      "tags": [
+        "bestpractices",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "best-practices-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle test data that must be unique per run?",
+      "answer": "Generate identifiers from a factory or a GUID in setup and clean up afterwards, rather than hard-coding shared values. This avoids collisions in parallel runs and in shared databases. Unique data also makes failures easier to trace.",
+      "tags": [
+        "bestpractices",
+        "data"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "best-practices-015",
+      "difficulty": "Intermediate",
+      "question": "What is the problem with testing private methods?",
+      "answer": "Private methods are implementation details, so testing them couples the suite to internals and makes refactoring painful. Test them through the public API that uses them, or extract the logic into a class with a public surface if it deserves its own tests. Behaviour matters, not visibility.",
+      "tags": [
+        "bestpractices",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-016",
+      "difficulty": "Intermediate",
+      "question": "How do you keep tests readable when setup is complex?",
+      "answer": "Use a builder or an object-mother to construct valid objects with sensible defaults, and override only the fields each test cares about. This makes the relevant data obvious. Complex setup that is hidden behind helpers should still be discoverable.",
+      "code": "var order = new OrderBuilder().WithTotal(90m).Build();",
+      "tags": [
+        "bestpractices",
+        "readability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-017",
+      "difficulty": "Intermediate",
+      "question": "Why should tests not depend on execution order?",
+      "answer": "Order dependence means a test can pass or fail depending on what ran before it, which makes failures non-reproducible and blocks parallelisation. Each test should establish its own preconditions. NUnit does not guarantee ordering unless you explicitly request it.",
+      "tags": [
+        "bestpractices",
+        "isolation"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "best-practices-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a stub, a fake, a spy and a mock?",
+      "answer": "A stub returns canned answers, a fake is a working but simplified implementation, a spy records calls for later inspection, and a mock is configured with expectations about interactions. The distinction matters because each suits a different testing goal. Most libraries blur the lines, so choose based on intent rather than terminology.",
+      "tags": [
+        "bestpractices",
+        "testdoubles"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "best-practices-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle tests that need the current date?",
+      "answer": "Inject a clock or TimeProvider and supply a fixed value in the test, rather than calling DateTime.Now directly. This makes the test deterministic and independent of when it runs. It is one of the highest-value testability changes.",
+      "tags": [
+        "bestpractices",
+        "determinism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.timeprovider",
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html"
+      ]
+    },
+    {
+      "id": "best-practices-020",
+      "difficulty": "Intermediate",
+      "question": "Why is it a smell to mock a type you do not own?",
+      "answer": "Mocking a third-party type couples your tests to that library's API and often requires wrapping it anyway, so the mock adds complexity without control. Wrap the external type in your own interface and mock that instead. This keeps the dependency at the boundary.",
+      "tags": [
+        "bestpractices",
+        "mocks"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "best-practices-021",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of over-mocking?",
+      "answer": "Over-mocking produces tests that verify a scripted sequence of calls rather than real behaviour, so they break on every refactor and give little confidence. It also hides integration problems because the collaborators are never real. Mock only at the boundaries where you need control or verification.",
+      "tags": [
+        "bestpractices",
+        "mocks"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "best-practices-022",
+      "difficulty": "Advanced",
+      "question": "How do you decide the right granularity for a test?",
+      "answer": "Test the smallest unit that delivers a meaningful behaviour, which is usually a public method or a small class, and cover interactions between units with a few integration tests. Too fine a granularity couples tests to implementation; too coarse a granularity makes failures hard to localise. The right size follows the design.",
+      "tags": [
+        "bestpractices",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "best-practices-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep a large test suite maintainable?",
+      "answer": "Keep tests focused and well named, extract helpers and builders for repeated concerns, delete tests that no longer add value, and refactor tests alongside production code. A suite that is cared for stays fast and trusted. Neglect turns it into a tax on every change.",
+      "tags": [
+        "bestpractices",
+        "maintainability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "best-practices-024",
+      "difficulty": "Advanced",
+      "question": "What are common anti-patterns in NUnit test suites?",
+      "answer": "Common anti-patterns include the magic-number test with no explanation, assertions without meaningful constraints, shared mutable fixtures, tests that sleep, and using [Ignore] to hide a persistent failure. Each one erodes the value of the suite. Recognising them is the first step to fixing them.",
+      "tags": [
+        "bestpractices",
+        "pitfalls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html"
+      ]
+    },
+    {
+      "id": "best-practices-025",
+      "difficulty": "Advanced",
+      "question": "How do you balance test coverage, speed and maintenance cost?",
+      "answer": "Invest the most tests where risk is highest and logic is densest, keep the fast unit layer large and the slow end-to-end layer small, and factor out shared setup so maintenance stays low. Coverage is a guide, not a target, and every test carries an ongoing cost. Revisit the balance as the system changes.",
+      "tags": [
+        "bestpractices",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    }
+  ]
+}

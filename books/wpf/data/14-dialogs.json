@@ -1,0 +1,223 @@
+{
+  "category": "Dialogs & User Interaction",
+  "slug": "dialogs",
+  "icon": "message",
+  "questions": [
+    {
+      "id": "dialogs-001",
+      "difficulty": "Beginner",
+      "question": "How do you show a simple message box in WPF?",
+      "answer": "Use the MessageBox.Show method, which displays a modal dialog with a message, optional caption, buttons, and icon. It returns a MessageBoxResult value. MessageBox uses the operating system dialog rather than a WPF window.",
+      "code": "var result = MessageBox.Show(\"Save changes?\", \"Confirm\",\n    MessageBoxButton.YesNo, MessageBoxImage.Question);",
+      "tags": ["messagebox", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.messagebox"]
+    },
+    {
+      "id": "dialogs-002",
+      "difficulty": "Beginner",
+      "question": "What values can MessageBox.Show return?",
+      "answer": "MessageBoxResult includes None, OK, Cancel, Yes, and No. The returned value corresponds to the button the user clicked. If the dialog is dismissed without a button, it returns None.",
+      "tags": ["messagebox", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.messageboxresult"]
+    },
+    {
+      "id": "dialogs-003",
+      "difficulty": "Beginner",
+      "question": "How do you create a custom dialog window?",
+      "answer": "Add a new Window to the project, lay out the fields and buttons, and call ShowDialog to display it modally. Set DialogResult in the button handlers to close the dialog and return a value. Expose public properties for the input values.",
+      "code": "private void OnOk(object sender, RoutedEventArgs e)\n{\n    DialogResult = true;\n}",
+      "tags": ["dialogs", "windows"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-004",
+      "difficulty": "Beginner",
+      "question": "What does setting DialogResult do?",
+      "answer": "Setting DialogResult on a window shown with ShowDialog closes the dialog and returns the value to the caller. It can only be set on a modal window. Setting it to null removes the result without closing in some scenarios.",
+      "tags": ["dialogresult", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-005",
+      "difficulty": "Beginner",
+      "question": "How do you show an open file dialog in WPF?",
+      "answer": "Use Microsoft.Win32.OpenFileDialog, set filters and options, and call ShowDialog. If it returns true, read FileName or FileNames. The OpenFileDialog is a common dialog provided by the Windows API.",
+      "code": "var dlg = new OpenFileDialog { Filter = \"Text|*.txt|All|*.*\" };\nif (dlg.ShowDialog() == true) { var path = dlg.FileName; }",
+      "tags": ["filedialog", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.win32.openfiledialog"]
+    },
+    {
+      "id": "dialogs-006",
+      "difficulty": "Beginner",
+      "question": "How do you show a save file dialog?",
+      "answer": "Use Microsoft.Win32.SaveFileDialog, configure the filter and default file name, and call ShowDialog. The returned FileName is the chosen path. SaveFileDialog also supports overwrite prompts and default extensions.",
+      "code": "var dlg = new SaveFileDialog { DefaultExt = \".txt\",\n    Filter = \"Text|*.txt\" };\nif (dlg.ShowDialog() == true) { Save(dlg.FileName); }",
+      "tags": ["filedialog", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.win32.savefiledialog"]
+    },
+    {
+      "id": "dialogs-007",
+      "difficulty": "Beginner",
+      "question": "How do you show a folder picker?",
+      "answer": "Modern .NET provides Microsoft.Win32.OpenFolderDialog, which returns a selected folder path. Older approaches use the Windows Forms FolderBrowserDialog or the Shell interop interface. Prefer OpenFolderDialog on .NET 8 for a native experience.",
+      "code": "var dlg = new OpenFolderDialog();\nif (dlg.ShowDialog() == true) { var folder = dlg.FolderName; }",
+      "tags": ["filedialog", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.win32.openfolderdialog"]
+    },
+    {
+      "id": "dialogs-008",
+      "difficulty": "Beginner",
+      "question": "How do you make a dialog non-resizable?",
+      "answer": "Set ResizeMode to NoResize, which removes the maximize button and disables resizing. Alternatively use CanMinimize to allow minimizing only. You can also set the window's Width and Height and SizeToContent.",
+      "code": "<Window ResizeMode=\"NoResize\" SizeToContent=\"WidthAndHeight\">",
+      "tags": ["dialogs", "window"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-009",
+      "difficulty": "Beginner",
+      "question": "How do you set a default and cancel button in a dialog?",
+      "answer": "Set IsDefault to true on the OK button so Enter activates it, and IsCancel to true on the Cancel button so Escape closes the dialog with a false result. This matches standard dialog keyboard behavior.",
+      "code": "<Button Content=\"OK\" IsDefault=\"True\" Click=\"OnOk\"/>\n<Button Content=\"Cancel\" IsCancel=\"True\"/>",
+      "tags": ["dialogs", "buttons"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-010",
+      "difficulty": "Beginner",
+      "question": "How do you show a wait or busy indicator?",
+      "answer": "Display an overlay with a progress indicator or a modal window while a long operation runs. Because the UI thread is blocked by synchronous work, you should run the work on a background thread and update the indicator. A simple approach is a semi-transparent overlay bound to an IsBusy property.",
+      "tags": ["progress", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "dialogs-011",
+      "difficulty": "Intermediate",
+      "question": "How do you return data from a custom dialog to the caller?",
+      "answer": "Expose a public property on the dialog for the result, set it before closing, and read it after ShowDialog returns true. Alternatively use the DialogResult and a data context object. Keeping the result in a property avoids coupling to controls.",
+      "code": "var dlg = new RenameDialog { NewName = current };\nif (dlg.ShowDialog() == true) { Apply(dlg.NewName); }",
+      "tags": ["dialogs", "data"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-012",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a progress dialog with cancellation?",
+      "answer": "Run the work in a background task and report progress through IProgress or an event. Provide a Cancel button that signals a CancellationTokenSource. Close the dialog when the work completes or is canceled, being careful to marshal UI updates to the dispatcher.",
+      "code": "var cts = new CancellationTokenSource();\nawait Task.Run(() => Work(progress, cts.Token), cts.Token);",
+      "tags": ["progress", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "dialogs-013",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent a dialog from closing based on validation?",
+      "answer": "Handle the Closing event, validate the input, and set Cancel to true to keep the dialog open. Show an error message to guide the user. This ensures invalid data is not committed.",
+      "code": "protected override void OnClosing(CancelEventArgs e)\n{\n    if (!IsValid()) { e.Cancel = true; ShowError(); }\n}",
+      "tags": ["dialogs", "validation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-014",
+      "difficulty": "Intermediate",
+      "question": "How do you show a common color or font dialog?",
+      "answer": "WPF has no built-in color or font dialog, so you use the Windows Forms ColorDialog and FontDialog through interop or a third-party library. Alternatively you build a custom picker. Referencing System.Windows.Forms is required to use these common dialogs.",
+      "code": "using var dlg = new System.Windows.Forms.ColorDialog();\nif (dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK) { }",
+      "tags": ["dialogs", "interop"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.forms.colordialog"]
+    },
+    {
+      "id": "dialogs-015",
+      "difficulty": "Intermediate",
+      "question": "How do you display a tooltip?",
+      "answer": "Set the ToolTip property on an element to a string or any content, and WPF shows it on hover. You can customize the tooltip with a ToolTip object that has its own template and placement. Tooltips support rich content such as images and formatted text.",
+      "code": "<Button Content=\"Save\">\n  <Button.ToolTip>\n    <StackPanel>\n      <TextBlock Text=\"Save (Ctrl+S)\" FontWeight=\"Bold\"/>\n      <TextBlock Text=\"Writes the file to disk\"/>\n    </StackPanel>\n  </Button.ToolTip>\n</Button>",
+      "tags": ["tooltip", "interaction"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/tooltip"]
+    },
+    {
+      "id": "dialogs-016",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a context menu?",
+      "answer": "Assign a ContextMenu to an element's ContextMenu property, either in XAML or as a resource, and add MenuItems. The menu opens on right-click or the context menu key. Commands on the menu items work the same as elsewhere.",
+      "code": "<TextBox>\n  <TextBox.ContextMenu>\n    <ContextMenu>\n      <MenuItem Command=\"ApplicationCommands.Cut\"/>\n      <MenuItem Command=\"ApplicationCommands.Copy\"/>\n    </ContextMenu>\n  </TextBox.ContextMenu>\n</TextBox>",
+      "tags": ["contextmenu", "interaction"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/contextmenu"]
+    },
+    {
+      "id": "dialogs-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle drag and drop between controls?",
+      "answer": "Start a drag with DragDrop.DoDragDrop in the source's mouse handler and set AllowDrop on the target. Handle DragOver to set the effect and Drop to process the data. The data is transferred through a DataObject with named formats.",
+      "code": "private void OnDrop(object sender, DragEventArgs e)\n{\n    if (e.Data.GetDataPresent(DataFormats.FileDrop))\n        Files = (string[])e.Data.GetData(DataFormats.FileDrop);\n}",
+      "tags": ["drag-drop", "interaction"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/drag-and-drop-overview"]
+    },
+    {
+      "id": "dialogs-018",
+      "difficulty": "Intermediate",
+      "question": "How do you show a notification or toast to the user?",
+      "answer": "WPF has no built-in toast, so you can show an in-app notification panel, use a popup, or integrate Windows toast notifications through the Windows App SDK or a library. For in-app messages, an overlay bound to a collection of notifications is common. Choose the approach based on whether the app must be focused.",
+      "tags": ["notifications", "interaction"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/popup-overview"]
+    },
+    {
+      "id": "dialogs-019",
+      "difficulty": "Intermediate",
+      "question": "What is a Popup and when should you use it?",
+      "answer": "A Popup is a control that displays content in a separate top-level window above other content. It is used for drop-downs, tooltips, and flyouts, and it can stay open or close on click. Popups do not participate in the normal layout of their parent.",
+      "tags": ["popup", "interaction"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/popup-overview"]
+    },
+    {
+      "id": "dialogs-020",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a busy overlay that blocks input?",
+      "answer": "Place a semi-transparent Rectangle or Grid over the content with IsHitTestVisible true and bind its Visibility to an IsBusy property. Include a progress indicator on top. Because it is part of the visual tree, it blocks clicks to the content beneath.",
+      "code": "<Grid>\n  <ContentControl Content=\"{Binding CurrentView}\"/>\n  <Rectangle Fill=\"#80000000\"\n             Visibility=\"{Binding IsBusy, Converter={StaticResource BoolToVis}}\"/>\n</Grid>",
+      "tags": ["busy", "interaction"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "dialogs-021",
+      "difficulty": "Advanced",
+      "question": "How do you show a dialog from a ViewModel in MVVM?",
+      "answer": "Inject a dialog service interface into the ViewModel and call its methods to show dialogs and return results. The View layer implements the service with the actual windows. This keeps the ViewModel free of UI types and testable with a fake service.",
+      "code": "public interface IDialogService\n{\n    bool Confirm(string message);\n}",
+      "tags": ["mvvm", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "dialogs-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle asynchronous work in a modal dialog safely?",
+      "answer": "Keep the dialog responsive by running work on a background thread while the dialog stays open, disabling the buttons as needed. Await tasks on the UI thread so property updates stay safe. Avoid blocking the UI thread with Wait or Result, which can deadlock.",
+      "tags": ["async", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "dialogs-023",
+      "difficulty": "Advanced",
+      "question": "How do you ensure a dialog appears above its parent window?",
+      "answer": "Set the dialog's Owner to the parent window before calling ShowDialog. An owned window is always above its owner and minimizes with it. Without an owner, the dialog may appear behind the main window or on the wrong monitor.",
+      "tags": ["dialogs", "windows"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "dialogs-024",
+      "difficulty": "Advanced",
+      "question": "How do you support accessibility in dialogs and messages?",
+      "answer": "Set AutomationProperties.Name and HelpText on important controls and ensure keyboard focus order is logical. Use access keys and label associations so screen readers announce fields correctly. Test with a screen reader and keyboard-only navigation.",
+      "tags": ["accessibility", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/accessibility-best-practices"]
+    },
+    {
+      "id": "dialogs-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using Windows Forms dialogs in a WPF app?",
+      "answer": "WinForms common dialogs such as ColorDialog and FontDialog are convenient and familiar but require referencing System.Windows.Forms and mixing UI technologies. They can look inconsistent with the WPF theme and add assembly dependencies. Modern alternatives or custom WPF dialogs avoid these drawbacks when styling consistency matters.",
+      "tags": ["interop", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/windows-forms-and-wpf-interoperability-input-architecture"]
+    }
+  ]
+}

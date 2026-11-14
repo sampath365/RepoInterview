@@ -1,0 +1,343 @@
+{
+  "category": "Authorization & Policies",
+  "slug": "authorization",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "authorization-001",
+      "difficulty": "Beginner",
+      "question": "What is authorization in ASP.NET Core?",
+      "answer": "Authorization decides whether an authenticated user may access a resource or perform an action. It is expressed declaratively with [Authorize], imperatively with IAuthorizationService, or through policies. It runs after authentication and before the endpoint executes.",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "authorization-002",
+      "difficulty": "Beginner",
+      "question": "What does the [Authorize] attribute do?",
+      "answer": "It restricts access to an action, controller, or endpoint to authenticated users, returning 401 when no valid identity is present and 403 when the identity lacks the required permission. Applied without arguments it only requires authentication. With roles or a policy name it enforces additional requirements.",
+      "tags": [
+        "authorize",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/simple"
+      ],
+      "code": "[Authorize]\n[HttpGet]\npublic IActionResult Get() => Ok();"
+    },
+    {
+      "id": "authorization-003",
+      "difficulty": "Beginner",
+      "question": "What does [AllowAnonymous] do?",
+      "answer": "It bypasses authorization for a specific action or endpoint even when a broader [Authorize] applies at the controller or globally. This is useful for login, health, or public endpoints. It does not affect authentication middleware, which still runs.",
+      "tags": [
+        "authorize",
+        "anonymous"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/simple"
+      ]
+    },
+    {
+      "id": "authorization-004",
+      "difficulty": "Beginner",
+      "question": "What is role-based authorization?",
+      "answer": "Role-based authorization checks membership in roles named in the token or principal, using [Authorize(Roles = \"admin,manager\")]. It is simple but couples code to role names. As requirements grow, policy-based authorization is more flexible.",
+      "tags": [
+        "authorization",
+        "roles"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/roles"
+      ],
+      "code": "[Authorize(Roles = \"admin,manager\")]"
+    },
+    {
+      "id": "authorization-005",
+      "difficulty": "Beginner",
+      "question": "What is policy-based authorization?",
+      "answer": "A policy is a named set of requirements evaluated against the user's claims and the request context, registered at startup and referenced by [Authorize(Policy = \"name\")]. Policies decouple authorization rules from role names and centralize them. They are the recommended approach for non-trivial rules.",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ],
+      "code": "builder.Services.AddAuthorization(o =>\n    o.AddPolicy(\"Over18\", p => p.RequireClaim(\"age\", \"18\")));"
+    },
+    {
+      "id": "authorization-006",
+      "difficulty": "Beginner",
+      "question": "What is a claims-based check?",
+      "answer": "A claims-based check requires a claim of a given type, optionally with specific values, for example RequireClaim(\"permission\", \"read\"). It ties authorization to the claims the identity provider issues. This is more granular than roles.",
+      "tags": [
+        "authorization",
+        "claims"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/claims"
+      ],
+      "code": "p.RequireClaim(\"permission\", \"orders:write\");"
+    },
+    {
+      "id": "authorization-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between authentication and authorization in the pipeline?",
+      "answer": "Authentication middleware validates credentials and sets the user principal, and authorization middleware evaluates requirements against that principal. UseAuthentication must be registered before UseAuthorization. If authorization runs first, it sees an anonymous user and denies everything.",
+      "tags": [
+        "authorization",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "authorization-008",
+      "difficulty": "Beginner",
+      "question": "How do you require authentication for all endpoints by default?",
+      "answer": "Add a fallback policy with RequireAuthenticatedUser, or call RequireAuthorization on a route group or MapControllers, and opt out where needed with [AllowAnonymous]. A secure-by-default posture avoids forgetting the attribute on a new endpoint. Always review anonymous endpoints deliberately.",
+      "tags": [
+        "authorization",
+        "fallback-policy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies#use-a-fallback-policy"
+      ],
+      "code": "o.FallbackPolicy = new AuthorizationPolicyBuilder()\n    .RequireAuthenticatedUser().Build();"
+    },
+    {
+      "id": "authorization-009",
+      "difficulty": "Beginner",
+      "question": "What is IAuthorizationService used for?",
+      "answer": "It lets you authorize imperatively inside code, for example when the resource is known only at runtime, by calling AuthorizeAsync with a policy and the resource. This complements declarative attributes. It is the basis for resource-based authorization.",
+      "tags": [
+        "authorization",
+        "resource-based"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/resource-based"
+      ],
+      "code": "var ok = await _auth.AuthorizeAsync(User, doc, \"EditPolicy\");"
+    },
+    {
+      "id": "authorization-010",
+      "difficulty": "Beginner",
+      "question": "What is the [Authorize] challenge versus forbid behavior?",
+      "answer": "When the user is unauthenticated the framework issues a challenge, typically a 401, and when the user is authenticated but not allowed it forbids with a 403. The authentication scheme decides the challenge details. This distinction guides clients toward signing in versus giving up.",
+      "tags": [
+        "authorization",
+        "status-codes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "authorization-011",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom authorization requirement and handler?",
+      "answer": "Implement IAuthorizationRequirement to describe the requirement and AuthorizationHandler<TRequirement> to evaluate it, then register both and add the requirement to a policy. The handler inspects claims, the resource, and the context to decide success. This is the standard way to express rules the built-in helpers cannot.",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ],
+      "code": "public class MinAgeHandler : AuthorizationHandler<MinAgeRequirement>\n{\n    protected override Task HandleRequirementAsync(\n        AuthorizationHandlerContext c, MinAgeRequirement r) => Task.CompletedTask;\n}"
+    },
+    {
+      "id": "authorization-012",
+      "difficulty": "Intermediate",
+      "question": "How does resource-based authorization work?",
+      "answer": "The endpoint or action loads the resource, then calls IAuthorizationService.AuthorizeAsync with the user, the resource, and a policy whose handler inspects the resource. This handles per-item rules such as only the document owner may edit it. It cannot be expressed with attributes alone because the resource is needed.",
+      "tags": [
+        "authorization",
+        "resource-based"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/resource-based"
+      ],
+      "code": "var result = await _auth.AuthorizeAsync(User, doc, \"EditPolicy\");\nif (!result.Succeeded) return Forbid();"
+    },
+    {
+      "id": "authorization-013",
+      "difficulty": "Intermediate",
+      "question": "How do you apply a policy to minimal API endpoints?",
+      "answer": "Call RequireAuthorization(\"PolicyName\") on an endpoint or route group, and ensure the authorization middleware is in the pipeline. Policies compose with groups so a whole resource can share one requirement. Attributes are an alternative for handlers that prefer them.",
+      "tags": [
+        "authorization",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ],
+      "code": "app.MapDelete(\"/{id}\", Delete)\n   .RequireAuthorization(\"CanDeleteOrders\");"
+    },
+    {
+      "id": "authorization-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between RequireRole and RequireClaim in a policy?",
+      "answer": "RequireRole adds a requirement that any of the listed role claims is present, while RequireClaim adds a requirement that a specific claim type, and optionally values, exists. Role checks are a convenience over role claims. Prefer claims and policies for fine-grained rules.",
+      "tags": [
+        "authorization",
+        "roles"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/roles"
+      ]
+    },
+    {
+      "id": "authorization-015",
+      "difficulty": "Intermediate",
+      "question": "How do you combine multiple requirements in one policy?",
+      "answer": "Add several requirements to a policy and all must succeed, while multiple handlers for the same requirement allow any to succeed. This lets you express AND and OR semantics clearly. Document complex policies so their intent is obvious.",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ],
+      "code": "o.AddPolicy(\"Admin\", p => p\n    .RequireAuthenticatedUser()\n    .RequireClaim(\"scope\", \"orders.write\"));"
+    },
+    {
+      "id": "authorization-016",
+      "difficulty": "Intermediate",
+      "question": "How do you authorize based on a header or a scope?",
+      "answer": "Use a custom requirement handler that reads the scope claim or an HTTP header from the context, or use RequireAssertion for a quick inline rule. Scopes from OAuth tokens map naturally to claims. Keep rules in policies rather than scattered in actions.",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ],
+      "code": "p.RequireAssertion(ctx =>\n    ctx.User.HasClaim(\"scope\", \"orders.write\"));"
+    },
+    {
+      "id": "authorization-017",
+      "difficulty": "Intermediate",
+      "question": "How do you secure an endpoint that must allow both anonymous and authenticated callers?",
+      "answer": "Leave the endpoint anonymous and apply different behavior based on User.Identity.IsAuthenticated, or split into separate endpoints with distinct policies. Mixing rules in one endpoint hides the contract. Explicit endpoints make authorization easier to reason about.",
+      "tags": [
+        "authorization",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "authorization-018",
+      "difficulty": "Intermediate",
+      "question": "How do you return a custom forbidden response?",
+      "answer": "Implement IAuthorizationMiddlewareResultHandler to customize the challenge and forbid responses, for example to return ProblemDetails instead of an empty body. This centralizes authorization error shape. It keeps responses consistent with the rest of the API.",
+      "tags": [
+        "authorization",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "authorization-019",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the DefaultPolicy?",
+      "answer": "The default policy is applied by [Authorize] when no policy name is given and normally requires only an authenticated user. You can replace it to add baseline requirements such as a required scope. Be careful, because changing it affects every unqualified [Authorize].",
+      "tags": [
+        "authorization",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ]
+    },
+    {
+      "id": "authorization-020",
+      "difficulty": "Intermediate",
+      "question": "How do you protect the Swagger or OpenAPI endpoints?",
+      "answer": "Apply authorization or restrict them to non-production environments, since they expose the full API surface. A common approach is to require authentication and a developer policy in staging. Public production docs should be a deliberate choice.",
+      "tags": [
+        "security",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/simple"
+      ]
+    },
+    {
+      "id": "authorization-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement multi-tenant authorization?",
+      "answer": "Include a tenant claim in the token and evaluate it in a requirement handler against the requested tenant, or use a global query filter keyed by tenant. Policies then require the caller's tenant to match the resource tenant. This prevents cross-tenant access with a single, testable rule.",
+      "tags": [
+        "authorization",
+        "multi-tenant"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ]
+    },
+    {
+      "id": "authorization-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of caching authorization decisions?",
+      "answer": "Caching can grant stale access after permissions change, and keys must include the user, resource, and policy to avoid cross-user leakage. Cache only short-lived, safely keyed decisions, and invalidate on permission changes. When in doubt, re-evaluate per request.",
+      "tags": [
+        "authorization",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ]
+    },
+    {
+      "id": "authorization-023",
+      "difficulty": "Advanced",
+      "question": "How do you test authorization policies?",
+      "answer": "Unit test handlers by constructing an AuthorizationHandlerContext with a synthetic principal and asserting success or failure for each case. Integration tests then verify that endpoints return 401 or 403 as expected. Cover negative cases where the user must be denied.",
+      "tags": [
+        "testing",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "authorization-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep authorization logic out of controllers?",
+      "answer": "Express rules as policies and requirements, call the authorization service for resource-based checks, and keep controllers focused on orchestration. This centralizes rules so they can be reused and tested. Inline role checks in actions tend to drift and duplicate.",
+      "tags": [
+        "authorization",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ]
+    },
+    {
+      "id": "authorization-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle authorization for background jobs and system processes?",
+      "answer": "Background work has no user principal, so it should use a dedicated service identity or a system principal with the required claims, and access resources through the same policy abstractions. Avoid bypassing authorization entirely, which hides privilege assumptions. Log the acting identity for audit.",
+      "tags": [
+        "authorization",
+        "background"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/workers"
+      ]
+    }
+  ]
+}

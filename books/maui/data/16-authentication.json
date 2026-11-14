@@ -1,0 +1,213 @@
+{
+  "category": "Authentication & Secure Storage",
+  "slug": "authentication",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "authentication-001",
+      "difficulty": "Beginner",
+      "question": "What is authentication and how does it differ from authorization?",
+      "answer": "Authentication verifies who a user is, typically by checking credentials or a token, while authorization determines what that authenticated user is allowed to do. Authentication happens first and produces an identity, often as claims. Authorization then checks those claims against policies or roles. Keeping the two concepts separate clarifies security design.",
+      "tags": ["authentication", "concepts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-002",
+      "difficulty": "Beginner",
+      "question": "How should you store authentication tokens in a MAUI app?",
+      "answer": "Store tokens in SecureStorage, which uses platform encryption such as the Keychain on Apple platforms and EncryptedSharedPreferences on Android. Never store tokens in Preferences, plain files, or source code because those are readable. Treat tokens as secrets and clear them on logout. SecureStorage access is asynchronous and can fail, so handle exceptions.",
+      "tags": ["tokens", "securestorage"],
+      "code": "await SecureStorage.SetAsync(\"access_token\", token);\nvar token = await SecureStorage.GetAsync(\"access_token\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "authentication-003",
+      "difficulty": "Beginner",
+      "question": "What is OpenID Connect?",
+      "answer": "OpenID Connect is an authentication layer built on top of OAuth 2.0 that adds an identity token and a user info endpoint. It lets an app delegate sign-in to an identity provider and receive a standard token describing the user. This avoids handling passwords directly. It is widely used for single sign-on and social login.",
+      "tags": ["oidc", "authentication"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-004",
+      "difficulty": "Beginner",
+      "question": "What is OAuth 2.0?",
+      "answer": "OAuth 2.0 is an authorization framework that lets an app obtain limited access to a user's resources on another service without the user's password. It issues access tokens through flows such as authorization code with PKCE for mobile apps. Access tokens are presented to APIs as bearer credentials. OAuth handles authorization, while OpenID Connect adds identity on top.",
+      "tags": ["oauth", "authentication"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-005",
+      "difficulty": "Beginner",
+      "question": "What is a JWT?",
+      "answer": "A JSON Web Token is a compact, self-contained token with three base64url parts: a header, a payload of claims, and a signature. The signature lets the recipient verify the token was issued by a trusted party and not altered. Claims carry information such as the user id, roles, and expiry. JWTs are commonly used as access and identity tokens.",
+      "tags": ["jwt", "tokens"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-006",
+      "difficulty": "Beginner",
+      "question": "Why should you not embed client secrets in a mobile app?",
+      "answer": "A mobile app binary can be decompiled and inspected, so any embedded secret is effectively public. A leaked client secret lets an attacker impersonate your app to the identity provider. Mobile clients should use public-client flows such as authorization code with PKCE and avoid secrets. Keep privileged secrets on your backend.",
+      "tags": ["security", "authentication"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-007",
+      "difficulty": "Beginner",
+      "question": "What is a refresh token used for?",
+      "answer": "A refresh token is a long-lived credential that lets the app obtain new access tokens without asking the user to sign in again. Access tokens are short-lived for safety, and the refresh token exchanges for a new one when it expires. Refresh tokens must be stored securely because they grant ongoing access. They should be revoked on logout or compromise.",
+      "tags": ["tokens", "authentication"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-008",
+      "difficulty": "Beginner",
+      "question": "What is biometric authentication in a mobile app?",
+      "answer": "Biometric authentication uses a fingerprint or face to confirm the user's identity on the device. MAUI does not ship a built-in biometric API, so you use platform code or a library that wraps Face ID, Touch ID, and Android BiometricPrompt. Biometrics usually unlock a stored credential rather than replacing the backend login. It improves convenience while keeping secrets protected.",
+      "tags": ["biometrics", "authentication"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-009",
+      "difficulty": "Beginner",
+      "question": "What is single sign-on?",
+      "answer": "Single sign-on lets a user authenticate once and gain access to multiple apps or services without signing in again. It relies on a shared identity provider that issues tokens the apps trust. For mobile apps this often means using the system browser and a broker for a smooth, secure flow. It improves both security and user experience.",
+      "tags": ["sso", "authentication"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-010",
+      "difficulty": "Beginner",
+      "question": "How do you log a user out in a MAUI app?",
+      "answer": "Clear stored tokens from SecureStorage, reset any cached user state, and navigate back to the login screen. If you use a refresh token, revoke it with the identity provider when possible. Also clear any in-memory session data so the next user does not see stale content. A clean logout is essential for shared devices.",
+      "tags": ["authentication", "logout"],
+      "code": "SecureStorage.Remove(\"access_token\");\nSecureStorage.Remove(\"refresh_token\");\nawait Shell.Current.GoToAsync(\"//login\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "authentication-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement an OAuth authorization code flow with PKCE in MAUI?",
+      "answer": "Use the system browser to open the provider's authorize endpoint, generating a code verifier and its hashed challenge. The provider redirects back to your app's registered URI scheme with an authorization code, which you exchange for tokens using the verifier. This flow avoids client secrets and protects against interception. Libraries such as IdentityModel.OidcClient or MSAL handle the details.",
+      "tags": ["oauth", "pkce"],
+      "code": "var options = new OidcClientOptions\n{\n    Authority = \"https://login.example.com\",\n    ClientId = \"mobile-app\",\n    RedirectUri = \"myapp://callback\",\n    Scope = \"openid profile offline_access\"\n};\nvar client = new OidcClient(options);\nvar result = await client.LoginAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-012",
+      "difficulty": "Intermediate",
+      "question": "How do you use MSAL for Microsoft Entra ID authentication in MAUI?",
+      "answer": "Add the Microsoft.Identity.Client package and configure a PublicClientApplication with your client id, tenant, and redirect URI. Call AcquireTokenInteractive for the first sign-in and AcquireTokenSilent for later calls, which uses the token cache. MSAL supports brokers for single sign-on with the device. It handles token caching, refresh, and PKCE for you.",
+      "tags": ["msal", "entra"],
+      "code": "var app = PublicClientApplicationBuilder.Create(clientId)\n    .WithAuthority(AzureCloudInstance.AzurePublic, tenantId)\n    .WithRedirectUri($\"msal{clientId}://auth\")\n    .Build();\nvar accounts = await app.GetAccountsAsync();\nvar result = await app.AcquireTokenSilent(scopes, accounts.FirstOrDefault())\n    .ExecuteAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-013",
+      "difficulty": "Intermediate",
+      "question": "How do you register a custom URI scheme for OAuth redirects?",
+      "answer": "Register the scheme in each platform's manifest: an intent filter on Android, a URL type in Info.plist on iOS, and a protocol extension on Windows. The redirect URI in your OAuth configuration must match exactly. When the browser redirects to the scheme, the OS launches your app with the callback. Always validate the returned state parameter to prevent forgery.",
+      "tags": ["oauth", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-014",
+      "difficulty": "Intermediate",
+      "question": "How do you attach a bearer token to API requests?",
+      "answer": "Set the Authorization header to Bearer followed by the access token, either per request or through a DelegatingHandler that adds it automatically. Because tokens expire, check the expiry and refresh before sending. A handler centralizes this so callers never manage tokens. Store the token in SecureStorage and refresh it in the handler.",
+      "tags": ["tokens", "http"],
+      "code": "request.Headers.Authorization =\n    new AuthenticationHeaderValue(\"Bearer\", accessToken);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-015",
+      "difficulty": "Intermediate",
+      "question": "How do you refresh an expired access token transparently?",
+      "answer": "Implement a DelegatingHandler that checks whether the token is expired or receives a 401, then uses the refresh token to get a new access token and retries the request once. Serialize refresh attempts so concurrent requests do not trigger multiple refreshes. If refresh fails, sign the user out and return them to login. This keeps callers unaware of token lifecycle.",
+      "tags": ["tokens", "refresh"],
+      "code": "protected override async Task<HttpResponseMessage> SendAsync(\n    HttpRequestMessage req, CancellationToken ct)\n{\n    await EnsureFreshTokenAsync();\n    req.Headers.Authorization = new(\"Bearer\", _token);\n    return await base.SendAsync(req, ct);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-016",
+      "difficulty": "Intermediate",
+      "question": "How do you authenticate against a custom backend API?",
+      "answer": "Implement a login endpoint that validates credentials and returns an access token, or delegate to an identity provider. On the client, post the credentials over HTTPS, store the returned token in SecureStorage, and use it for subsequent requests. Avoid inventing your own token format; prefer proven standards such as OAuth or JWT. Always hash and salt passwords on the server, never on the client.",
+      "tags": ["authentication", "api"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-017",
+      "difficulty": "Intermediate",
+      "question": "How do you guard routes and pages so only signed-in users see them?",
+      "answer": "Check authentication state before navigating or on page appearing, and redirect to login when the user is not signed in. With Shell you can intercept navigation and cancel or redirect it. Centralizing the check in a base view model or navigation service avoids scattering logic. Also re-check on resume because the session may have expired.",
+      "tags": ["authentication", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "authentication-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a session expiring while the user is in the app?",
+      "answer": "Detect expired or rejected tokens through a 401 response or a pre-check, attempt a silent refresh, and if that fails, sign out and show the login page with a clear message. Preserve the user's unsaved input where possible so they can continue after signing in. Route this through a single handler so every API call behaves consistently. This avoids scattered ad-hoc handling.",
+      "tags": ["authentication", "sessions"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-019",
+      "difficulty": "Intermediate",
+      "question": "What are the differences between using a web view and the system browser for sign-in?",
+      "answer": "The system browser is recommended for OAuth because it is isolated, can share the device session for single sign-on, and prevents the app from accessing credentials. An embedded web view can see user input, which is a security risk and often blocked by providers. Modern guidance is to use the system browser or a broker rather than an embedded control. Follow provider requirements to avoid sign-in failures.",
+      "tags": ["oauth", "security"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-020",
+      "difficulty": "Intermediate",
+      "question": "How do you store and use a refresh token securely?",
+      "answer": "Store the refresh token in SecureStorage, never in plain storage, and send it only over HTTPS to the token endpoint. Keep its lifetime as short as practical and rotate it when the provider supports rotation. Revoke it on logout and on detected compromise. Because it grants long-term access, treat it as the most sensitive credential.",
+      "tags": ["tokens", "security"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "authentication-021",
+      "difficulty": "Advanced",
+      "question": "How does PKCE protect the authorization code flow on mobile?",
+      "answer": "PKCE, or Proof Key for Code Exchange, has the client generate a random code verifier and send its SHA-256 hash as the code challenge with the authorization request. When exchanging the code for tokens, the client sends the verifier, and the server checks it matches the challenge. This prevents an attacker who intercepts the authorization code from redeeming it. PKCE is required for public clients such as mobile apps.",
+      "tags": ["oauth", "pkce"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-022",
+      "difficulty": "Advanced",
+      "question": "How do you validate a JWT on the client and what should you not trust?",
+      "answer": "On the client you can decode a JWT to read claims and check expiry, but you must not trust the payload for security decisions because the signature is only meaningfully verified by the resource server holding the key. The client can check the issuer and expiry for UX, but authorization must be enforced server-side. Never rely on client-side role checks to protect data. Always validate tokens on the server.",
+      "tags": ["jwt", "security"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement certificate pinning for API calls?",
+      "answer": "Certificate pinning restricts the app to trust only a specific certificate or public key for a host, defeating man-in-the-middle attacks with rogue certificates. You implement it in a platform HTTP handler or message handler that inspects the server certificate. Pinning must include a backup pin and a rotation plan, because an expired or rotated certificate without an updated app bricks the connection. Weigh the security benefit against operational risk before adopting it.",
+      "tags": ["security", "http"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "authentication-024",
+      "difficulty": "Advanced",
+      "question": "How do you protect sensitive data at rest beyond token storage?",
+      "answer": "Encrypt sensitive data before writing it to disk using platform cryptography with a key stored in SecureStorage, or keep it out of local storage entirely. Avoid logging secrets, and scrub them from crash reports. Use the platform's secure store for credentials and keys. Apply the principle of least data: store only what you must and delete it when no longer needed.",
+      "tags": ["security", "storage"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "authentication-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a managed identity library versus a custom OAuth implementation?",
+      "answer": "A managed library such as MSAL or IdentityModel handles token caching, refresh, PKCE, broker integration, and platform quirks, which reduces bugs and security mistakes, at the cost of a dependency and some abstraction. A custom implementation gives full control and no extra dependency but must correctly implement many security details that are easy to get wrong. For most apps the library is the safer choice. Only build custom when you have a clear reason and the expertise to do it securely.",
+      "tags": ["authentication", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    }
+  ]
+}

@@ -1,0 +1,211 @@
+{
+  "category": "Strategy & Template Method",
+  "slug": "strategy-template",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "strategy-template-001",
+      "difficulty": "Beginner",
+      "question": "What is the Strategy pattern?",
+      "answer": "Strategy defines a family of algorithms, encapsulates each one behind a common interface, and makes them interchangeable. The context holds a reference to a strategy and delegates the varying behavior to it. This lets the algorithm change at runtime without modifying the context.",
+      "tags": ["strategy", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-002",
+      "difficulty": "Beginner",
+      "question": "What is the Template Method pattern?",
+      "answer": "Template Method defines the skeleton of an algorithm in a base class, deferring some steps to subclasses. The base class calls the steps in a fixed order, and subclasses override the ones that vary. This lets subclasses change parts of the algorithm without changing its structure.",
+      "tags": ["template-method", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-003",
+      "difficulty": "Beginner",
+      "question": "What problem does Strategy solve?",
+      "answer": "Strategy replaces large conditionals that choose between algorithm variants with polymorphic objects. Each variant becomes a class implementing a common interface, and the context uses whichever is injected. This keeps the context stable as new variants are added.",
+      "tags": ["strategy", "polymorphism"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-004",
+      "difficulty": "Beginner",
+      "question": "What are the participants in the Template Method pattern?",
+      "answer": "The abstract class defines the template method and declares the steps, some abstract and some with default behavior. Concrete subclasses implement or override the varying steps. The template method orchestrates the calls and is usually not overridden.",
+      "tags": ["template-method", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-005",
+      "difficulty": "Beginner",
+      "question": "How do you inject a strategy in C#?",
+      "answer": "Define a strategy interface, implement concrete strategies, and pass the chosen strategy into the context through its constructor. With dependency injection, register the desired implementation for the interface. The context then calls methods on the injected strategy.",
+      "tags": ["strategy", "dependency-injection"],
+      "code": "public sealed class Checkout(IShippingStrategy shipping)\n{\n    public decimal Total(Order o) => o.Subtotal + shipping.Cost(o);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "strategy-template-006",
+      "difficulty": "Beginner",
+      "question": "What is a hook method in Template Method?",
+      "answer": "A hook is a virtual method with a default implementation that subclasses may override if needed. It provides optional extension points that do not have to be implemented. Hooks let subclasses customize behavior without forcing every subclass to override.",
+      "tags": ["template-method", "hooks"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-007",
+      "difficulty": "Beginner",
+      "question": "Can Strategy be implemented with delegates instead of interfaces?",
+      "answer": "Yes, a Func or Action can represent a strategy when the behavior is a single operation and no state is needed. This is lighter than a full interface and works well with LINQ-style APIs. Use interfaces when the strategy has multiple methods or needs injected dependencies.",
+      "tags": ["strategy", "delegates"],
+      "code": "public sealed class Sorter(Func<int[], int[]> algorithm)\n{\n    public int[] Sort(int[] data) => algorithm(data);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/delegates/"]
+    },
+    {
+      "id": "strategy-template-008",
+      "difficulty": "Beginner",
+      "question": "How is the Template Method pattern used by the .NET base class library?",
+      "answer": "Stream is a template with abstract Read and Write that derived streams implement, while shared logic like CopyTo is defined in the base. Similarly, the Dispose pattern defines a template of Dispose and Dispose(bool). These base classes fix the structure and defer steps to subclasses.",
+      "tags": ["template-method", "dotnet"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.stream"]
+    },
+    {
+      "id": "strategy-template-009",
+      "difficulty": "Beginner",
+      "question": "What is the main benefit of Strategy?",
+      "answer": "It makes algorithms interchangeable and extensible without changing the context, supporting the Open/Closed Principle. New strategies are added as new classes rather than edits to existing code. It also isolates each algorithm for independent testing.",
+      "tags": ["strategy", "ocp"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-010",
+      "difficulty": "Beginner",
+      "question": "How does Template Method promote code reuse?",
+      "answer": "The invariant parts of the algorithm live once in the base class, and subclasses reuse them by only overriding the steps that differ. This avoids duplicating the overall sequence in each subclass. The result is less code and a single place to fix the shared logic.",
+      "tags": ["template-method", "reuse"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Strategy and Template Method?",
+      "answer": "Strategy uses composition: the algorithm is an object injected into the context and can change at runtime. Template Method uses inheritance: the base class fixes the algorithm skeleton and subclasses override steps at compile time. Strategy is more flexible but adds an object per algorithm; Template Method reuses structure but couples subclasses to the base.",
+      "tags": ["strategy", "template-method"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-012",
+      "difficulty": "Intermediate",
+      "question": "How do you select a Strategy at runtime?",
+      "answer": "Use a factory or a registry that maps a key to a strategy implementation, then have the context use the selected one. With dependency injection, inject all implementations and choose based on input. Keep the selection logic in one place and away from the algorithms themselves.",
+      "tags": ["strategy", "factory"],
+      "code": "public ICompressor For(string format) =>\n    _compressors.First(c => c.Format == format);",
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-013",
+      "difficulty": "Intermediate",
+      "question": "When should you prefer Template Method over Strategy?",
+      "answer": "Prefer Template Method when the overall algorithm is stable and only a few steps vary, and when the varying steps naturally belong to a subtype hierarchy. It avoids the extra object and wiring that Strategy needs. If the whole algorithm or many parts change, Strategy is usually cleaner.",
+      "tags": ["template-method", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test a Strategy implementation?",
+      "answer": "Test each strategy in isolation with representative inputs, since strategies are small and focused. Then test the context with a fake strategy to confirm it delegates correctly. This separation makes failures easy to localize.",
+      "tags": ["strategy", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "strategy-template-015",
+      "difficulty": "Intermediate",
+      "question": "How does the Strategy pattern interact with dependency injection lifetimes?",
+      "answer": "Stateless strategies are good candidates for singleton lifetime because they can be shared safely. Stateful strategies should be scoped or transient so instances are not shared across requests. Register the strategy interface with the lifetime matching its statefulness.",
+      "tags": ["strategy", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "strategy-template-016",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid a bloated Strategy interface?",
+      "answer": "Keep the interface focused on the single behavior that varies, following the Interface Segregation Principle. If a strategy needs many methods, consider splitting it or using a more specific abstraction. A narrow interface keeps implementations small and testable.",
+      "tags": ["strategy", "isp"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/interface"]
+    },
+    {
+      "id": "strategy-template-017",
+      "difficulty": "Intermediate",
+      "question": "What is the Hollywood principle and how does it relate to Template Method?",
+      "answer": "The Hollywood principle is do not call us, we will call you: the framework calls the code you provide. Template Method embodies this because the base class calls the subclass steps at the right time. This inverts control and keeps the algorithm's flow in the base class.",
+      "tags": ["template-method", "ioc"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-018",
+      "difficulty": "Intermediate",
+      "question": "How can Strategy replace a switch statement cleanly?",
+      "answer": "Create a strategy interface and one implementation per case, then select the implementation by a lookup instead of switching on a value. The lookup can be a dictionary keyed by the case. Adding a new case means adding a class and a registration, not editing the switch.",
+      "tags": ["strategy", "refactoring"],
+      "code": "private readonly Dictionary<Kind, IHandler> _handlers;\npublic Task Run(Kind k, Msg m) => _handlers[k].Handle(m);",
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-019",
+      "difficulty": "Intermediate",
+      "question": "How do you share state or context with a Strategy?",
+      "answer": "Pass the data the strategy needs as method parameters rather than storing it in the strategy, which keeps strategies stateless and reusable. If the strategy needs services, inject them into its constructor. Avoid having the strategy reach back into the context to fetch state.",
+      "tags": ["strategy", "state"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-020",
+      "difficulty": "Intermediate",
+      "question": "How does Template Method enforce the algorithm's invariant order?",
+      "answer": "The template method in the base class calls the steps in the required sequence and is typically non-virtual, so subclasses cannot reorder them. Subclasses only override the individual steps. This guarantees the overall flow stays consistent.",
+      "tags": ["template-method", "design"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "strategy-template-021",
+      "difficulty": "Advanced",
+      "question": "How do you combine Strategy and Template Method in a single design?",
+      "answer": "Use Template Method to fix the overall processing pipeline and inject a Strategy for the step that varies most or must be chosen at runtime. This gives a stable skeleton with a swappable algorithm. It balances reuse of the sequence with runtime flexibility.",
+      "tags": ["strategy", "template-method"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-022",
+      "difficulty": "Advanced",
+      "question": "What are the risks of Template Method with fragile base classes?",
+      "answer": "Subclasses depend on the base class's internal calls and expectations, so changes to the base can silently break them. This is the fragile base class problem, common with deep inheritance. Favor composition or keep the base minimal and well documented to reduce risk.",
+      "tags": ["template-method", "inheritance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"]
+    },
+    {
+      "id": "strategy-template-023",
+      "difficulty": "Advanced",
+      "question": "How do you make a Strategy pipeline composable?",
+      "answer": "Allow strategies to wrap one another or to be chained, so each adds a step to a pipeline. This blends Strategy with Decorator or Chain of Responsibility. Keep each strategy single-purpose so composition stays understandable.",
+      "tags": ["strategy", "composition"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "strategy-template-024",
+      "difficulty": "Advanced",
+      "question": "How do you choose a Strategy based on configuration and feature flags?",
+      "answer": "Resolve the strategy from the container using a key derived from configuration or a feature flag, and centralize the mapping in the composition root. Keep feature checks out of the strategy implementations. This lets behavior change without code changes.",
+      "tags": ["strategy", "configuration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/configuration"]
+    },
+    {
+      "id": "strategy-template-025",
+      "difficulty": "Advanced",
+      "question": "How do you refactor a large conditional into Strategy while preserving behavior?",
+      "answer": "First add tests that lock in the current behavior for each branch, then extract each branch into a strategy class implementing a shared interface. Introduce a selector that maps inputs to strategies and replace the conditional with a delegation. Run the tests after each step to confirm equivalence.",
+      "tags": ["strategy", "refactoring"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    }
+  ]
+}

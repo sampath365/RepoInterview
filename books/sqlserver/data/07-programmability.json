@@ -1,0 +1,218 @@
+{
+  "category": "Views, Stored Procedures & Functions",
+  "slug": "programmability",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "programmability-001",
+      "difficulty": "Beginner",
+      "question": "What is a view?",
+      "answer": "A view is a stored query that behaves like a virtual table, exposing columns from one or more base tables without storing data itself. It simplifies complex queries, restricts which columns and rows users can see, and provides a stable interface over changing schemas. A standard view is not materialized, so it is recomputed each time it is queried.",
+      "code": "CREATE VIEW dbo.ActiveCustomers AS\nSELECT Id, Name FROM dbo.Customers WHERE IsActive = 1;",
+      "tags": ["view", "ddl"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/views/views"]
+    },
+    {
+      "id": "programmability-002",
+      "difficulty": "Beginner",
+      "question": "What is a stored procedure?",
+      "answer": "A stored procedure is a named batch of T-SQL stored in the database that can accept parameters, contain control-of-flow logic, and return result sets or output values. It centralizes business logic, reduces network round trips, and can be granted permissions independently of the underlying tables. Procedures are precompiled and their plans are cached.",
+      "code": "CREATE PROCEDURE dbo.GetCustomer\n  @CustomerId INT\nAS\nBEGIN\n  SET NOCOUNT ON;\n  SELECT * FROM dbo.Customers WHERE Id = @CustomerId;\nEND",
+      "tags": ["stored-procedure", "module"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/stored-procedures/stored-procedures-database-engine"]
+    },
+    {
+      "id": "programmability-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a stored procedure and a function?",
+      "answer": "A stored procedure can perform actions such as modifying data, returning multiple result sets, and using transactions, and it is called with EXEC. A function must return a value or a table, cannot modify data (except a limited form in some cases), and can be used inline in a query. Functions are composable in SELECT and WHERE; procedures are not.",
+      "tags": ["procedure", "function"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/user-defined-functions/user-defined-functions"]
+    },
+    {
+      "id": "programmability-004",
+      "difficulty": "Beginner",
+      "question": "What are the types of user-defined functions?",
+      "answer": "Scalar functions return a single value, inline table-valued functions return a table from a single SELECT, and multi-statement table-valued functions build and return a table variable. Inline table-valued functions generally perform best because they are expanded into the query, while multi-statement ones carry fixed estimates. Scalar functions called per row can be a serious performance problem.",
+      "tags": ["udf", "functions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/user-defined-functions/user-defined-functions"]
+    },
+    {
+      "id": "programmability-005",
+      "difficulty": "Beginner",
+      "question": "How do you execute a stored procedure and pass parameters?",
+      "answer": "You execute a procedure with EXEC or EXECUTE followed by the procedure name and arguments, either positionally or by name using @parameter = value. Named parameters allow you to omit optional ones and pass them in any order. Output parameters are read after execution into a declared variable.",
+      "code": "EXEC dbo.GetCustomer @CustomerId = 42;",
+      "tags": ["exec", "procedure"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/execute-transact-sql"]
+    },
+    {
+      "id": "programmability-006",
+      "difficulty": "Beginner",
+      "question": "What is an indexed view?",
+      "answer": "An indexed view is a view with a unique clustered index materialized on disk, storing its result set physically and maintained automatically as base data changes. It can dramatically speed up aggregations over large tables because the work is precomputed. It has strict requirements, such as SET options and SCHEMABINDING, and adds write overhead to the base tables.",
+      "code": "CREATE VIEW dbo.SalesByRegion WITH SCHEMABINDING AS\nSELECT RegionId, COUNT_BIG(*) AS Cnt, SUM(Amount) AS Total\nFROM dbo.Sales GROUP BY RegionId;",
+      "tags": ["indexed-view", "materialized"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/views/create-indexed-views"]
+    },
+    {
+      "id": "programmability-007",
+      "difficulty": "Beginner",
+      "question": "What does SET NOCOUNT ON do and why is it recommended?",
+      "answer": "SET NOCOUNT ON suppresses the rows-affected messages that SQL Server otherwise sends after each statement. This reduces network traffic, especially inside loops or procedures with many statements, and avoids confusing some client libraries that interpret the messages as result sets. It is a standard practice at the top of every stored procedure.",
+      "tags": ["nocount", "best-practices"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-nocount-transact-sql"]
+    },
+    {
+      "id": "programmability-008",
+      "difficulty": "Beginner",
+      "question": "How do you return a value from a stored procedure?",
+      "answer": "A procedure can return a result set with SELECT, return a scalar through an OUTPUT parameter, or return an integer status code with RETURN. The return code is commonly used to signal success or a specific error. Output parameters are the right way to return a computed scalar value.",
+      "code": "CREATE PROCEDURE dbo.GetTotal\n  @CustomerId INT, @Total DECIMAL(10,2) OUTPUT\nAS\n  SELECT @Total = SUM(Total) FROM dbo.Orders WHERE CustomerId = @CustomerId;",
+      "tags": ["output-parameter", "procedure"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/stored-procedures/return-data-from-a-stored-procedure"]
+    },
+    {
+      "id": "programmability-009",
+      "difficulty": "Beginner",
+      "question": "What is SCHEMABINDING on a view or function?",
+      "answer": "SCHEMABINDING locks the definition so that the underlying tables cannot be altered or dropped in a way that breaks the object. It is required for indexed views and prevents accidental schema drift. The trade-off is that you must drop or alter the binding before changing dependent columns.",
+      "tags": ["schemabinding", "view"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/views/create-indexed-views"]
+    },
+    {
+      "id": "programmability-010",
+      "difficulty": "Beginner",
+      "question": "How do you view the definition of an existing procedure or view?",
+      "answer": "You can use sp_helptext to print the definition, or query the sys.sql_modules catalog view for the definition column. In SSMS you can right-click the object and script it as CREATE. Remember that encrypted modules return NULL for their definition.",
+      "code": "SELECT OBJECT_DEFINITION(OBJECT_ID('dbo.GetCustomer')) AS Definition;",
+      "tags": ["metadata", "catalog"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-sql-modules-transact-sql"]
+    },
+    {
+      "id": "programmability-011",
+      "difficulty": "Intermediate",
+      "question": "What are the advantages and disadvantages of stored procedures?",
+      "answer": "Stored procedures centralize logic, reduce round trips, and improve security by granting execute permission without table access. They can also be faster due to plan reuse. On the downside they are harder to version and unit test than application code, and they couple business logic to the database, so teams often split logic between the app and procedures.",
+      "tags": ["stored-procedure", "architecture"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/stored-procedures/stored-procedures-database-engine"]
+    },
+    {
+      "id": "programmability-012",
+      "difficulty": "Intermediate",
+      "question": "Why can scalar user-defined functions be a performance problem?",
+      "answer": "Before SQL Server 2019, a scalar UDF was executed once per row in a separate context, blocking parallelism and inflating CPU. SQL Server 2019 introduced scalar UDF inlining, which rewrites eligible scalar functions into relational expressions for a large speedup. Even so, complex or non-inlinable scalar functions should be rewritten as inline table-valued functions or set-based expressions.",
+      "tags": ["scalar-udf", "performance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/user-defined-functions/scalar-udf-inlining"]
+    },
+    {
+      "id": "programmability-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between WITH RECOMPILE and OPTION (RECOMPILE) in a procedure?",
+      "answer": "WITH RECOMPILE on the procedure definition forces a new plan on every execution of the procedure. OPTION (RECOMPILE) on a single statement recompiles only that statement, which is more targeted. Use statement-level recompile for queries with skewed parameters rather than recompiling the whole procedure.",
+      "tags": ["recompile", "procedure"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/create-procedure-transact-sql"]
+    },
+    {
+      "id": "programmability-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use table-valued parameters?",
+      "answer": "A table-valued parameter lets you pass a whole set of rows to a procedure as a read-only table, defined by a user-defined table type. It replaces delimited-string parsing and is efficient for bulk operations. On the client side you populate a DataTable or equivalent and pass it as a structured parameter.",
+      "code": "CREATE TYPE dbo.OrderList AS TABLE (OrderId INT PRIMARY KEY);\nGO\nCREATE PROCEDURE dbo.ProcessOrders @Orders dbo.OrderList READONLY AS\n  SELECT * FROM @Orders;",
+      "tags": ["tvp", "table-type"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/use-table-valued-parameters-database-engine"]
+    },
+    {
+      "id": "programmability-015",
+      "difficulty": "Intermediate",
+      "question": "What are the differences between inline and multi-statement table-valued functions?",
+      "answer": "An inline table-valued function contains a single SELECT and is expanded into the calling query, so its estimates are accurate and it performs well. A multi-statement function declares a return table variable, executes several statements, and has fixed estimates of one row, which often leads to poor plans. Prefer inline functions whenever possible.",
+      "tags": ["inline-tvf", "multi-statement"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/user-defined-functions/user-defined-functions"]
+    },
+    {
+      "id": "programmability-016",
+      "difficulty": "Intermediate",
+      "question": "How do you implement an upsert (MERGE) operation?",
+      "answer": "MERGE performs INSERT, UPDATE, and DELETE in one statement by matching a source to a target on a key. It is concise for synchronizing data, but it has known concurrency bugs and locking quirks, and Microsoft recommends being careful with it. A common alternative is a pair of UPDATE-then-INSERT statements wrapped in a transaction, or an INSERT with a NOT EXISTS guard.",
+      "code": "MERGE dbo.Target AS t\nUSING dbo.Source AS s ON t.Id = s.Id\nWHEN MATCHED THEN UPDATE SET t.Val = s.Val\nWHEN NOT MATCHED THEN INSERT (Id, Val) VALUES (s.Id, s.Val);",
+      "tags": ["merge", "upsert"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/merge-transact-sql"]
+    },
+    {
+      "id": "programmability-017",
+      "difficulty": "Intermediate",
+      "question": "What is dynamic SQL and what are the security risks?",
+      "answer": "Dynamic SQL builds a query string at runtime and executes it with sp_executesql or EXEC, which is useful when the table or column names vary. It is vulnerable to SQL injection if you concatenate user input directly into the string. Mitigate by using sp_executesql with parameters and QUOTENAME for identifiers.",
+      "code": "EXEC sp_executesql\n  N'SELECT * FROM dbo.Orders WHERE CustomerId = @cid',\n  N'@cid INT', @cid = @id;",
+      "tags": ["dynamic-sql", "injection"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/sql-injection"]
+    },
+    {
+      "id": "programmability-018",
+      "difficulty": "Intermediate",
+      "question": "How does sp_executesql differ from EXEC for dynamic SQL?",
+      "answer": "sp_executesql accepts parameters and returns output values, which allows plan reuse and prevents injection when parameters are used properly. EXEC executes a concatenated string with no parameterization, so each distinct string produces a new plan and invites injection. Prefer sp_executesql for anything that takes user input.",
+      "tags": ["sp-executesql", "dynamic-sql"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-executesql-transact-sql"]
+    },
+    {
+      "id": "programmability-019",
+      "difficulty": "Intermediate",
+      "question": "What is a synonym and when would you use one?",
+      "answer": "A synonym is an alias for another database object, letting you reference it by a stable name even when the real object moves. It is useful when referencing objects across databases or schemas without hard-coding the full path everywhere. Synonyms do not enforce permissions themselves; access is still checked on the target object.",
+      "code": "CREATE SYNONYM dbo.Customers FOR SalesDB.dbo.Customers;",
+      "tags": ["synonym", "alias"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/synonyms/synonyms-database-engine"]
+    },
+    {
+      "id": "programmability-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle transactions inside a stored procedure?",
+      "answer": "Open a transaction with BEGIN TRAN, wrap the work in TRY/CATCH, COMMIT on success, and ROLLBACK in the CATCH block, checking XACT_STATE to see whether the transaction is committable. Avoid unnecessary nesting by checking @@TRANCOUNT before starting. Keep transactions short to reduce blocking.",
+      "code": "BEGIN TRY\n  BEGIN TRAN;\n  -- work\n  COMMIT;\nEND TRY\nBEGIN CATCH\n  IF XACT_STATE() <> 0 ROLLBACK;\n  THROW;\nEND CATCH",
+      "tags": ["transaction", "procedure"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/begin-transaction-transact-sql"]
+    },
+    {
+      "id": "programmability-021",
+      "difficulty": "Advanced",
+      "question": "What is scalar UDF inlining and when does it not apply?",
+      "answer": "Scalar UDF inlining, introduced in SQL Server 2019, rewrites an eligible scalar function into a relational expression so it can be optimized with the calling query, restoring parallelism and set-based execution. It does not apply when the function contains non-deterministic or non-inlinable constructs such as certain aggregates, time-based functions, or side-effecting logic. You can check sys.sql_modules for the is_inlineable property.",
+      "tags": ["udf-inlining", "performance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/user-defined-functions/scalar-udf-inlining"]
+    },
+    {
+      "id": "programmability-022",
+      "difficulty": "Advanced",
+      "question": "What are the restrictions on indexed views?",
+      "answer": "An indexed view must be created with SCHEMABINDING, cannot reference other views or use OUTER joins, and must include COUNT_BIG(*) if it contains aggregates. It cannot use certain constructs such as subqueries, DISTINCT, or UNION in most cases, and it needs specific SET options at creation and query time. Querying the view with the NOEXPAND hint guarantees the optimizer uses the index.",
+      "tags": ["indexed-view", "restrictions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/views/create-indexed-views"]
+    },
+    {
+      "id": "programmability-023",
+      "difficulty": "Advanced",
+      "question": "How does parameter sniffing affect stored procedures and how can you mitigate it?",
+      "answer": "A procedure's plan is compiled using the parameter values of its first execution, so a plan good for those values may be poor for others. Symptoms include a procedure that is fast then suddenly slow, or fast for one caller and slow for another. Mitigations include OPTION (RECOMPILE), OPTIMIZE FOR a representative value, splitting the procedure, and SQL Server 2022 parameter-sensitive plan optimization.",
+      "tags": ["parameter-sniffing", "procedure"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/parameter-sensitive-plan-optimization"]
+    },
+    {
+      "id": "programmability-024",
+      "difficulty": "Advanced",
+      "question": "What is the difference between EXECUTE AS OWNER and EXECUTE AS USER?",
+      "answer": "EXECUTE AS OWNER makes the module run with the permissions of its owner, enabling ownership chaining so callers need only execute permission. EXECUTE AS USER or CALLER runs with a specified user's or the caller's permissions, which is useful for auditing or least-privilege scenarios. Choosing the wrong context can either grant too much or break functionality.",
+      "tags": ["execute-as", "security"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/execute-as-clause-transact-sql"]
+    },
+    {
+      "id": "programmability-025",
+      "difficulty": "Advanced",
+      "question": "How do you use sp_refreshsqlmodule and why is it needed?",
+      "answer": "sp_refreshsqlmodule refreshes the metadata of a module that depends on objects whose schema changed, such as a view that uses SELECT * after a column was added. Without it, the module may keep stale metadata and return incorrect columns or errors. It is a targeted fix when schema changes ripple through dependent modules.",
+      "tags": ["sp-refreshsqlmodule", "metadata"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-refreshsqlmodule-transact-sql"]
+    }
+  ]
+}

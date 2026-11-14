@@ -1,0 +1,217 @@
+{
+  "category": "Builder Pattern",
+  "slug": "builder",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "builder-001",
+      "difficulty": "Beginner",
+      "question": "What is the Builder pattern?",
+      "answer": "Builder separates the construction of a complex object from its representation so the same process can create different configurations. It assembles the object step by step through methods, often with a fluent API, and produces the result with a final Build call. It is useful when a constructor would have many optional parameters.",
+      "tags": ["builder", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-002",
+      "difficulty": "Beginner",
+      "question": "What problem does Builder solve compared with telescoping constructors?",
+      "answer": "Telescoping constructors add an overload for each combination of optional parameters, producing many confusing overloads and positional arguments. Builder replaces them with named steps that are self-documenting and order-independent. This removes ambiguity about which argument means what.",
+      "tags": ["builder", "constructors"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-003",
+      "difficulty": "Beginner",
+      "question": "What is a fluent interface in a builder?",
+      "answer": "A fluent interface returns the builder itself from each configuration method so calls can be chained. This reads like a sentence, such as WithName(...).WithPort(443).Build(). It improves discoverability and keeps configuration in one expression.",
+      "tags": ["builder", "fluent"],
+      "code": "var client = new ClientBuilder()\n    .WithName(\"api\")\n    .WithTimeout(TimeSpan.FromSeconds(30))\n    .Build();",
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-004",
+      "difficulty": "Beginner",
+      "question": "What does the director role do in the Builder pattern?",
+      "answer": "The director knows the sequence of steps needed to build a particular representation and drives the builder through them. It lets you reuse a construction recipe with different builders. For simple cases, the client can act as the director and call the steps directly.",
+      "tags": ["builder", "director"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-005",
+      "difficulty": "Beginner",
+      "question": "How does the StringBuilder class relate to the Builder pattern?",
+      "answer": "StringBuilder accumulates pieces through Append calls and produces the final string with ToString, which matches the builder shape. It avoids the cost of creating many intermediate strings. It is a good everyday example of step-by-step construction.",
+      "tags": ["builder", "strings"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.stringbuilder"]
+    },
+    {
+      "id": "builder-006",
+      "difficulty": "Beginner",
+      "question": "When should you prefer a builder over a constructor?",
+      "answer": "Prefer a builder when the object has many optional or related parameters, when construction involves multiple steps, or when the same steps should yield different representations. For a few required parameters, a plain constructor or object initializer is simpler. Builder pays off as complexity grows.",
+      "tags": ["builder", "design"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-007",
+      "difficulty": "Beginner",
+      "question": "How do object initializers compare with builders?",
+      "answer": "Object initializers set public properties in a single expression and are concise for simple objects. They require a parameterless constructor and mutable or init-only setters, and they cannot enforce step ordering or validation across fields. Builder adds control and validation that initializers cannot.",
+      "tags": ["builder", "initializers"],
+      "code": "var options = new HttpOptions\n{\n    BaseAddress = new Uri(\"https://api.example.com\"),\n    Timeout = TimeSpan.FromSeconds(30)\n};",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers"]
+    },
+    {
+      "id": "builder-008",
+      "difficulty": "Beginner",
+      "question": "What is a builder's Build method responsible for?",
+      "answer": "Build finalizes construction, performing validation and returning the immutable product. It is the point where invariants are enforced so an invalid object cannot be created. Making Build the only way to obtain the product keeps the object consistent.",
+      "tags": ["builder", "validation"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-009",
+      "difficulty": "Beginner",
+      "question": "How do records and with expressions reduce the need for builders?",
+      "answer": "Records provide concise immutable construction and the with expression creates a modified copy, which covers many configuration and data-transfer scenarios. They remove boilerplate and give value equality for free. A builder still helps when construction is a multi-step process with validation.",
+      "tags": ["builder", "records"],
+      "code": "public record Endpoint(string Host, int Port, bool Secure);\nvar tls = new Endpoint(\"api\", 443, true);\nvar plain = tls with { Port = 80, Secure = false };",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "builder-010",
+      "difficulty": "Beginner",
+      "question": "How does the .NET configuration builder pattern work?",
+      "answer": "ConfigurationBuilder chains sources such as JSON, environment variables, and command line, and Build produces the combined configuration. Each source is added as a step, and later sources override earlier ones. This is the Builder pattern applied to configuration assembly.",
+      "tags": ["builder", "configuration"],
+      "code": "var config = new ConfigurationBuilder()\n    .AddJsonFile(\"appsettings.json\")\n    .AddEnvironmentVariables()\n    .Build();",
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.configuration.configurationbuilder"]
+    },
+    {
+      "id": "builder-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a type-safe fluent builder in C#?",
+      "answer": "Use interfaces to model the required step order, returning the next interface from each method. Only the final interface exposes Build, so the compiler enforces that all required steps run. This turns a runtime validation into a compile-time guarantee.",
+      "tags": ["builder", "fluent"],
+      "code": "public interface INeedsName { IOptional WithName(string name); }\npublic interface IOptional { IOptional WithPort(int port); Client Build(); }",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/interfaces/"]
+    },
+    {
+      "id": "builder-012",
+      "difficulty": "Intermediate",
+      "question": "How do you make a builder thread-safe or reusable?",
+      "answer": "A builder that mutates shared state is not thread-safe, so each build should use its own builder instance. To reuse a template, expose a ToBuilder method on the product that returns a new builder pre-filled with current values. Avoid caching a single mutable builder across threads.",
+      "tags": ["builder", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/thread-safe/"]
+    },
+    {
+      "id": "builder-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a builder and a factory?",
+      "answer": "A factory decides which type to create and returns it, focusing on selection and creation. A builder focuses on assembling one complex object step by step, controlling the process and representation. They often combine, with a factory returning the right builder for a variant.",
+      "tags": ["builder", "factory"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle nested or hierarchical objects with a builder?",
+      "answer": "Use sub-builders for nested parts and let the parent builder accept a configured sub-builder or a delegate. Each level validates its own invariants before the parent builds. This keeps complex trees readable and testable.",
+      "tags": ["builder", "hierarchy"],
+      "code": "var root = new NodeBuilder(\"root\")\n    .AddChild(b => b.WithName(\"child\").WithValue(42))\n    .Build();",
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-015",
+      "difficulty": "Intermediate",
+      "question": "How do you validate a builder's state before building?",
+      "answer": "Collect required values and validate them in Build, throwing a descriptive exception if something is missing or inconsistent. For richer feedback, accumulate errors and return a result object. Validating at Build time keeps the product always valid.",
+      "tags": ["builder", "validation"],
+      "code": "public Client Build()\n{\n    if (string.IsNullOrWhiteSpace(_name))\n        throw new InvalidOperationException(\"Name is required.\");\n    return new Client(_name, _timeout);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "builder-016",
+      "difficulty": "Intermediate",
+      "question": "What is a step builder and why is it useful?",
+      "answer": "A step builder exposes one interface per step so the compiler forces the caller to complete required steps in order. It prevents invalid intermediate states and documents the required flow. The cost is more interfaces and some ceremony for simple objects.",
+      "tags": ["builder", "step-builder"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-017",
+      "difficulty": "Intermediate",
+      "question": "How does the builder pattern support immutability?",
+      "answer": "The builder accumulates mutable configuration and produces an immutable product in Build, often with readonly or init-only members. Callers never see a partially constructed object, and the final object cannot change. This gives the flexibility of mutation during setup and safety afterward.",
+      "tags": ["builder", "immutability"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "builder-018",
+      "difficulty": "Intermediate",
+      "question": "How does WebApplicationBuilder relate to the Builder pattern?",
+      "answer": "WebApplicationBuilder configures services, configuration, logging, and the host, then Build produces the WebApplication. Each configuration area is a step in a fluent process. It is the primary builder in modern ASP.NET Core startup.",
+      "tags": ["builder", "aspnet"],
+      "code": "var builder = WebApplication.CreateBuilder(args);\nbuilder.Services.AddControllers();\nvar app = builder.Build();",
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.builder.webapplicationbuilder"]
+    },
+    {
+      "id": "builder-019",
+      "difficulty": "Intermediate",
+      "question": "How do you write tests for a builder?",
+      "answer": "Test that each configuration step sets the expected state and that Build enforces validation. Cover defaults, overrides, and invalid combinations to confirm exceptions. Because the builder is deterministic, tests are simple and fast.",
+      "tags": ["builder", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "builder-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid duplication when several builders share steps?",
+      "answer": "Extract common steps into a base builder or a reusable helper, and keep only the specific steps in each concrete builder. If the products share a base type, a generic builder base can return the derived builder type for fluent chaining. This keeps shared logic in one place.",
+      "tags": ["builder", "generics"],
+      "code": "public abstract class BuilderBase<TBuilder, TProduct>\n    where TBuilder : BuilderBase<TBuilder, TProduct>",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/"]
+    },
+    {
+      "id": "builder-021",
+      "difficulty": "Advanced",
+      "question": "When is the Builder pattern over-engineering?",
+      "answer": "When the object has few parameters or no meaningful optional combinations, a constructor, object initializer, or record is clearer. Adding a builder introduces an extra type and indirection for no gain. Reach for a builder only when construction complexity or validation justifies it.",
+      "tags": ["builder", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "builder-022",
+      "difficulty": "Advanced",
+      "question": "How would you design a builder that produces both immutable and mutable results?",
+      "answer": "Have the builder hold configuration and expose two terminal methods, one returning an immutable record and one a mutable class, or parameterize the product type. Keep the shared configuration in the builder and delegate representation to the terminal step. This separates the construction process from the result shape.",
+      "tags": ["builder", "immutability"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "builder-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep a fluent builder discoverable in an IDE?",
+      "answer": "Keep method names verb-based and consistent, return interface types that reveal only valid next steps, and add XML documentation for each step. Ordering the required steps through interfaces makes IntelliSense guide the caller. Avoid returning the concrete builder when a narrower interface communicates intent better.",
+      "tags": ["builder", "api-design"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "builder-024",
+      "difficulty": "Advanced",
+      "question": "How does the builder pattern help with building immutable domain aggregates?",
+      "answer": "A builder can gather and validate all the pieces of an aggregate, then hand them to a private constructor that enforces invariants. The aggregate stays immutable and always valid, while complex assembly is readable. This is common when reconstituting aggregates from persistence.",
+      "tags": ["builder", "ddd"],
+      "code": "public sealed class Order\n{\n    internal Order(OrderId id, IReadOnlyList<Line> lines) { /* invariants */ }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/"]
+    },
+    {
+      "id": "builder-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle optional and mutually exclusive options in a builder?",
+      "answer": "Model required options as mandatory step interfaces, and expose mutually exclusive options on separate interfaces so only one can be chosen. Validate any remaining combinations in Build with clear error messages. This pushes as much correctness as possible to compile time.",
+      "tags": ["builder", "validation"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    }
+  ]
+}

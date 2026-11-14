@@ -1,0 +1,345 @@
+{
+  "category": "Grouping, Aggregation & Window Functions",
+  "slug": "aggregation",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "aggregation-001",
+      "difficulty": "Beginner",
+      "question": "What are the common aggregate functions in SQL Server?",
+      "answer": "Aggregates collapse many rows into a single value: SUM, AVG, MIN, MAX, COUNT and COUNT_BIG, plus statistical ones like STDEV and VAR. COUNT(*) counts all rows, COUNT(column) counts non-NULL values, and COUNT(DISTINCT column) counts unique non-NULL values. All aggregates except COUNT(*) ignore NULLs.",
+      "tags": [
+        "aggregates",
+        "functions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/aggregate-functions-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between COUNT(*) and COUNT(column)?",
+      "answer": "COUNT(*) counts every row in the group regardless of NULLs, while COUNT(column) counts only rows where that column is not NULL. COUNT(DISTINCT column) counts unique non-NULL values. This difference is a common source of incorrect reports when a column is nullable.",
+      "tags": [
+        "count",
+        "null"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/count-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-003",
+      "difficulty": "Beginner",
+      "question": "How does GROUP BY work?",
+      "answer": "GROUP BY partitions the rows into groups that share the same values in the grouping columns, then each aggregate is computed once per group. Every column in the SELECT list must either be in the GROUP BY or wrapped in an aggregate. GROUP BY can group by expressions and by multiple columns.",
+      "tags": [
+        "group-by",
+        "aggregation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-group-by-transact-sql"
+      ],
+      "code": "SELECT Color, COUNT(*) AS ProductCount\nFROM Production.Product\nGROUP BY Color;"
+    },
+    {
+      "id": "aggregation-004",
+      "difficulty": "Beginner",
+      "question": "What is the HAVING clause used for?",
+      "answer": "HAVING filters groups after aggregation, so it can reference aggregate results such as HAVING COUNT(*) > 5. It is evaluated after GROUP BY, unlike WHERE which filters rows before grouping. Use WHERE for row-level filters and HAVING for group-level filters.",
+      "tags": [
+        "having",
+        "filtering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-having-transact-sql"
+      ],
+      "code": "SELECT Color, COUNT(*) AS ProductCount\nFROM Production.Product\nGROUP BY Color\nHAVING COUNT(*) > 10;"
+    },
+    {
+      "id": "aggregation-005",
+      "difficulty": "Beginner",
+      "question": "What does the OVER clause do?",
+      "answer": "The OVER clause turns an aggregate or ranking function into a window function, computing a value across a set of rows related to the current row without collapsing the result. You specify PARTITION BY to group and ORDER BY to order within the window. Unlike GROUP BY, window functions keep every detail row.",
+      "tags": [
+        "window-functions",
+        "over"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-over-clause-transact-sql"
+      ],
+      "code": "SELECT SalesOrderID, TotalDue,\n       SUM(TotalDue) OVER () AS GrandTotal\nFROM Sales.SalesOrderHeader;"
+    },
+    {
+      "id": "aggregation-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a window function and GROUP BY?",
+      "answer": "GROUP BY reduces the result to one row per group, while a window function returns a value for every row and leaves the detail rows intact. Window functions can compute running totals and ranks that GROUP BY cannot express in a single pass. You can combine both in one query when needed.",
+      "tags": [
+        "window-functions",
+        "group-by"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-over-clause-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-007",
+      "difficulty": "Beginner",
+      "question": "How do you compute a running total in T-SQL?",
+      "answer": "Use SUM(...) OVER (ORDER BY ...) with a window frame of ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW to accumulate values in order. The default frame for an ordered window is RANGE UNBOUNDED PRECEDING TO CURRENT ROW, which also handles ties. Adding PARTITION BY restarts the running total per group.",
+      "tags": [
+        "running-total",
+        "window-functions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-over-clause-transact-sql"
+      ],
+      "code": "SELECT OrderDate, TotalDue,\n       SUM(TotalDue) OVER (ORDER BY OrderDate\n                           ROWS UNBOUNDED PRECEDING) AS RunningTotal\nFROM Sales.SalesOrderHeader;"
+    },
+    {
+      "id": "aggregation-008",
+      "difficulty": "Beginner",
+      "question": "What does GROUPING SETS do?",
+      "answer": "GROUPING SETS lets a single query produce multiple grouping levels, equivalent to a UNION ALL of several GROUP BY queries but in one pass over the data. You can list the sets explicitly, such as GROUPING SETS ((Color), (Class), ()). This is commonly used for subtotal and grand-total reports.",
+      "tags": [
+        "grouping-sets",
+        "aggregation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-group-by-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ROLLUP and CUBE?",
+      "answer": "ROLLUP produces hierarchical subtotals plus a grand total for the listed columns, generating n+1 grouping levels for n columns. CUBE generates every possible combination of the listed columns, producing 2^n levels and therefore more rows. Use ROLLUP for drill-down reports and CUBE when you need all cross-tabulations.",
+      "tags": [
+        "rollup",
+        "cube"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-group-by-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-010",
+      "difficulty": "Beginner",
+      "question": "What is the GROUPING function for?",
+      "answer": "GROUPING(column) returns 1 when the column is aggregated away (a NULL produced by ROLLUP or CUBE) and 0 when it is a real value, which lets you distinguish subtotal rows from data rows that are genuinely NULL. It is often used with GROUPING_ID for multi-column subtotals. This makes report output unambiguous.",
+      "tags": [
+        "grouping",
+        "rollup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/grouping-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-011",
+      "difficulty": "Intermediate",
+      "question": "How do LAG and LEAD work?",
+      "answer": "LAG and LEAD return a value from a previous or following row within the window, defined by PARTITION BY and ORDER BY, with an optional offset and default. They avoid self joins for comparing a row to its neighbor, such as period-over-period change. LEAD looks forward and LAG looks backward in the ordered window.",
+      "tags": [
+        "lag",
+        "lead",
+        "window-functions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/lag-transact-sql"
+      ],
+      "code": "SELECT OrderDate, TotalDue,\n       LAG(TotalDue) OVER (ORDER BY OrderDate) AS PrevTotal,\n       TotalDue - LAG(TotalDue) OVER (ORDER BY OrderDate) AS Delta\nFROM Sales.SalesOrderHeader;"
+    },
+    {
+      "id": "aggregation-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ROWS and RANGE in a window frame?",
+      "answer": "ROWS frames by physical row position, so it counts a fixed number of rows before and after the current row. RANGE frames by the values of the ORDER BY column, so tied values are included together and the frame can expand. ROWS is more predictable and usually more efficient; use RANGE when ties should be treated as one group.",
+      "tags": [
+        "window-frame",
+        "rows",
+        "range"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-over-clause-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-013",
+      "difficulty": "Intermediate",
+      "question": "How do you compute a moving average?",
+      "answer": "Use AVG(...) OVER (ORDER BY date ROWS BETWEEN n PRECEDING AND CURRENT ROW) to average the current row and the previous n rows, which gives a sliding window. Change the frame bounds for a centered or trailing window. Ensure the ORDER BY column is indexed to keep the sort cheap.",
+      "tags": [
+        "moving-average",
+        "window-functions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-over-clause-transact-sql"
+      ],
+      "code": "SELECT OrderDate, TotalDue,\n       AVG(TotalDue) OVER (ORDER BY OrderDate\n                           ROWS BETWEEN 6 PRECEDING AND CURRENT ROW) AS Avg7\nFROM Sales.SalesOrderHeader;"
+    },
+    {
+      "id": "aggregation-014",
+      "difficulty": "Intermediate",
+      "question": "What is NTILE and when would you use it?",
+      "answer": "NTILE(n) divides the ordered rows into n roughly equal buckets and returns the bucket number for each row, which is useful for quartiles, deciles and percentile-style reporting. If rows do not divide evenly, the earlier buckets get one extra row. Combine with PARTITION BY to bucket within groups.",
+      "tags": [
+        "ntile",
+        "percentile"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/ntile-transact-sql"
+      ],
+      "code": "SELECT ProductID, ListPrice,\n       NTILE(4) OVER (ORDER BY ListPrice DESC) AS Quartile\nFROM Production.Product;"
+    },
+    {
+      "id": "aggregation-015",
+      "difficulty": "Intermediate",
+      "question": "How do you pivot data in T-SQL?",
+      "answer": "The PIVOT operator rotates unique values from a column into multiple output columns, aggregating a value column for each, and requires you to know the column values in advance. The alternative is conditional aggregation with SUM(CASE WHEN ...). Unpivoting is done with UNPIVOT or CROSS APPLY plus VALUES.",
+      "tags": [
+        "pivot",
+        "unpivot"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/from-using-pivot-and-unpivot"
+      ],
+      "code": "SELECT * FROM (\n  SELECT Year, Quarter, Amount FROM dbo.Sales\n) AS src\nPIVOT (SUM(Amount) FOR Quarter IN ([Q1],[Q2],[Q3],[Q4])) AS p;"
+    },
+    {
+      "id": "aggregation-016",
+      "difficulty": "Intermediate",
+      "question": "How does conditional aggregation work?",
+      "answer": "Conditional aggregation uses an aggregate with a CASE expression inside, such as SUM(CASE WHEN Status = 'Paid' THEN Amount ELSE 0 END), to compute multiple measures in a single scan. It is a flexible alternative to PIVOT and avoids multiple passes over the data. COUNT with CASE counts only the rows meeting a condition.",
+      "tags": [
+        "conditional-aggregation",
+        "case"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/case-transact-sql"
+      ],
+      "code": "SELECT CustomerID,\n       SUM(CASE WHEN Status = 'Paid'   THEN Amount ELSE 0 END) AS Paid,\n       SUM(CASE WHEN Status = 'Unpaid' THEN Amount ELSE 0 END) AS Unpaid\nFROM dbo.Invoice\nGROUP BY CustomerID;"
+    },
+    {
+      "id": "aggregation-017",
+      "difficulty": "Intermediate",
+      "question": "How do STRING_AGG and APPROX_COUNT_DISTINCT differ from older techniques?",
+      "answer": "STRING_AGG concatenates string values across a group with a separator, replacing the old FOR XML PATH trick and producing a single delimited string. APPROX_COUNT_DISTINCT estimates distinct counts from statistics with much less memory and time than COUNT(DISTINCT), at the cost of small error. Use STRING_AGG for readable lists and APPROX_COUNT_DISTINCT for large analytic dashboards.",
+      "tags": [
+        "string-agg",
+        "approximate"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/string-agg-transact-sql"
+      ],
+      "code": "SELECT Color, STRING_AGG(Name, ', ') AS Products\nFROM Production.Product\nWHERE Color IS NOT NULL\nGROUP BY Color;"
+    },
+    {
+      "id": "aggregation-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between AVG over an INT column and a DECIMAL column?",
+      "answer": "AVG of an integer column performs integer arithmetic and truncates the fractional part, so AVG of 1 and 2 returns 1 rather than 1.5. Casting to DECIMAL or multiplying by 1.0 before the average preserves the fraction. This truncation is a classic cause of subtly wrong averages.",
+      "tags": [
+        "avg",
+        "data-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/avg-transact-sql"
+      ],
+      "code": "SELECT AVG(CAST(Quantity AS DECIMAL(10,2))) AS AvgQty\nFROM Sales.SalesOrderDetail;"
+    },
+    {
+      "id": "aggregation-019",
+      "difficulty": "Intermediate",
+      "question": "How do you find the top N rows per group with an aggregate?",
+      "answer": "Use ROW_NUMBER() OVER (PARTITION BY group ORDER BY measure DESC) in a CTE or subquery, then filter rn <= N. CROSS APPLY with a TOP subquery is an alternative that can be faster with the right index. Avoid using MAX per group and rejoining when ties or multiple rows per group are required.",
+      "tags": [
+        "top-n",
+        "partition-by"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/row-number-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle NULLs in aggregate calculations?",
+      "answer": "All aggregates except COUNT(*) ignore NULL rows, so AVG divides by the count of non-NULL values, which can surprise developers expecting NULL treated as zero. Wrap values with ISNULL or COALESCE before aggregating when you want NULL treated as a value. Use COUNT(column) versus COUNT(*) deliberately to control what is counted.",
+      "tags": [
+        "null",
+        "aggregates"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/aggregate-functions-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-021",
+      "difficulty": "Advanced",
+      "question": "Why can a DISTINCT aggregate spill to tempdb and how do you fix it?",
+      "answer": "COUNT(DISTINCT ...) and other distinct aggregates require sorting or hashing the distinct values, which can exceed the memory grant and spill to tempdb, slowing the query. Reducing the row width and filtering earlier lowers the memory need, and APPROX_COUNT_DISTINCT avoids the sort entirely. Check the actual plan for a spill warning to confirm the cause.",
+      "tags": [
+        "spill",
+        "distinct-aggregate"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"
+      ]
+    },
+    {
+      "id": "aggregation-022",
+      "difficulty": "Advanced",
+      "question": "How does the optimizer process window functions and when can they be slow?",
+      "answer": "Window functions are implemented with operators such as Segment, Sequence Project and Window Spool, which require the rows to be sorted by the partition and order keys. A missing supporting index forces a sort that can be expensive on large inputs. Multiple windows with different keys may cause repeated sorts, so aligning the ORDER BY keys with an index helps.",
+      "tags": [
+        "window-functions",
+        "execution-plan"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-over-clause-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between GROUPING SETS and a UNION ALL of grouped queries?",
+      "answer": "GROUPING SETS computes all requested groupings in a single scan and merge, while a UNION ALL runs each grouped query separately and concatenates the results. The single-pass approach usually reads the base data once and is more efficient, and it avoids writing the base aggregation multiple times. However, extremely complex sets can sometimes favor separate queries the optimizer can parallelize better.",
+      "tags": [
+        "grouping-sets",
+        "union-all"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-group-by-transact-sql"
+      ]
+    },
+    {
+      "id": "aggregation-024",
+      "difficulty": "Advanced",
+      "question": "How does columnstore change aggregation performance?",
+      "answer": "A clustered columnstore index stores each column separately and compressed, so an aggregate over a few columns reads far less data than a rowstore scan. Batch-mode execution processes values in vectors of about 900 rows, cutting CPU per row, and segment elimination skips row groups that cannot match a filter. This makes columnstore ideal for large-scale aggregation and reporting.",
+      "tags": [
+        "columnstore",
+        "aggregation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/indexes/columnstore-indexes-overview"
+      ]
+    },
+    {
+      "id": "aggregation-025",
+      "difficulty": "Advanced",
+      "question": "Why might a parallel aggregation show a higher actual row count than expected?",
+      "answer": "In a parallel plan, a local aggregation runs per thread and a global aggregation merges the partial results through an exchange, so operators report partial row counts that do not match the final result. Row estimates on the exchange can also differ from actuals because of distribution assumptions. Read the whole plan and the per-thread stats rather than a single operator's numbers.",
+      "tags": [
+        "parallelism",
+        "aggregation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/execution-plans"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,381 @@
+{
+  "category": "Build, Deployment & Tooling",
+  "slug": "build-deployment",
+  "icon": "rocket",
+  "questions": [
+    {
+      "id": "build-deployment-001",
+      "difficulty": "Beginner",
+      "question": "What is the Angular CLI and what does it provide?",
+      "answer": "The Angular CLI is the official command-line tool that scaffolds projects, generates code, runs the dev server, and builds and tests applications. It configures the toolchain so you do not hand-wire the bundler. Commands such as ng new, ng generate, and ng build cover the common workflow.",
+      "tags": [
+        "cli",
+        "tooling",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli",
+        "https://angular.dev/cli"
+      ]
+    },
+    {
+      "id": "build-deployment-002",
+      "difficulty": "Beginner",
+      "question": "What does ng build do?",
+      "answer": "ng build compiles the application and its assets into the output directory, applying the configuration for the selected build target. By default it produces a development build unless you pass the production configuration. The output contains hashed bundles ready to be served.",
+      "code": "ng build --configuration production",
+      "tags": [
+        "build",
+        "cli"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-003",
+      "difficulty": "Beginner",
+      "question": "What is the angular.json workspace configuration?",
+      "answer": "angular.json describes the workspace's projects, their build targets, and the options for each target, such as output paths, budgets, and file replacements. The CLI reads it to know how to build, serve, and test. Editing it changes build behavior globally.",
+      "tags": [
+        "configuration",
+        "angularjson",
+        "tooling"
+      ],
+      "references": [
+        "https://angular.dev/reference/configs/workspace-config",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-004",
+      "difficulty": "Beginner",
+      "question": "How do environments work in an Angular application?",
+      "answer": "Environment files hold configuration values for different targets, such as API URLs for development and production, and file replacements swap them during the build. This keeps environment-specific values out of the code. Modern applications often use injection tokens to consume them.",
+      "tags": [
+        "environments",
+        "configuration",
+        "deployment"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "build-deployment-005",
+      "difficulty": "Beginner",
+      "question": "What is the dev server and what features does it offer?",
+      "answer": "ng serve starts a local development server with live reload and, in many setups, hot module replacement so changes appear without a full refresh. It serves an unoptimized build for fast iteration. Use it for development only, never for production.",
+      "tags": [
+        "dev-server",
+        "cli",
+        "tooling"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/serve",
+        "https://angular.dev/cli/serve"
+      ]
+    },
+    {
+      "id": "build-deployment-006",
+      "difficulty": "Beginner",
+      "question": "What is the output directory of a build?",
+      "answer": "The build writes to the directory configured in the outputPath option, conventionally dist/<project-name>, and the browser subfolder contains the deployable assets. You deploy the contents of that browser folder to your static host. Knowing the layout avoids serving the wrong directory.",
+      "tags": [
+        "build",
+        "deployment",
+        "output"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "build-deployment-007",
+      "difficulty": "Beginner",
+      "question": "How do you deploy an Angular application?",
+      "answer": "Build it for production and serve the resulting static assets from any web server or CDN, configuring the server to fall back to index.html for client-side routes. The build is just HTML, CSS, and JavaScript. Hosting choices include static hosts, object storage, or a container.",
+      "tags": [
+        "deployment",
+        "hosting"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/deployment",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-008",
+      "difficulty": "Beginner",
+      "question": "Why is hashing used in build filenames?",
+      "answer": "Content hashes in filenames let browsers cache assets aggressively while still fetching new files when content changes. A new build produces new names, so stale caches do not serve old code. Only the small index file needs revalidation.",
+      "tags": [
+        "caching",
+        "build",
+        "deployment"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
+      ]
+    },
+    {
+      "id": "build-deployment-009",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of budgets in the build configuration?",
+      "answer": "Budgets set thresholds for bundle sizes and component styles, and the build fails or warns when a threshold is exceeded. They prevent gradual size creep from going unnoticed. Common limits cover the initial bundle and per-component styles.",
+      "tags": [
+        "budgets",
+        "build",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/reference/configs/workspace-config",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-010",
+      "difficulty": "Beginner",
+      "question": "What files should not be committed to version control?",
+      "answer": "Do not commit build output such as dist, node_modules, or editor and environment files that contain secrets. The generated .gitignore already excludes most of these. Keeping generated artifacts out of the repository avoids noise and accidental secret exposure.",
+      "tags": [
+        "version-control",
+        "tooling"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "build-deployment-011",
+      "difficulty": "Intermediate",
+      "question": "How do you configure different builds for staging and production?",
+      "answer": "Define named configurations in angular.json, each with its own file replacements, optimization settings, and budgets, then select one with the configuration flag. This keeps environment differences declarative. CI can then build each target consistently.",
+      "code": "ng build --configuration staging",
+      "tags": [
+        "configuration",
+        "deployment",
+        "ci"
+      ],
+      "references": [
+        "https://angular.dev/reference/configs/workspace-config",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-012",
+      "difficulty": "Intermediate",
+      "question": "What optimizations does a production build apply?",
+      "answer": "The production configuration enables minification, dead-code elimination, build-time inlining, and output hashing, and it removes development-only checks. These reduce payload and improve startup. Always validate behavior against a production build, since dev builds differ.",
+      "tags": [
+        "build",
+        "optimization",
+        "production"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "build-deployment-013",
+      "difficulty": "Intermediate",
+      "question": "How do you serve an Angular app behind a web server with client-side routing?",
+      "answer": "Configure the server to serve index.html for any path that is not an existing file, so deep links reach the application router. This is the standard single-page-application fallback. Without it, refreshing a route returns a 404.",
+      "tags": [
+        "deployment",
+        "routing",
+        "server"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/deployment",
+        "https://angular.dev/guide/routing"
+      ]
+    },
+    {
+      "id": "build-deployment-014",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate an Angular build into a CI pipeline?",
+      "answer": "Install dependencies reproducibly, run lint and tests, then build with the production configuration, and publish the output artifact. Failing the pipeline on lint, test, or budget errors keeps the main branch healthy. Caching dependencies speeds up the pipeline.",
+      "tags": [
+        "ci",
+        "build",
+        "automation"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/tools/cli/deployment"
+      ]
+    },
+    {
+      "id": "build-deployment-015",
+      "difficulty": "Intermediate",
+      "question": "What is the build system migration to esbuild and Vite about?",
+      "answer": "Angular replaced the older webpack-based build with an esbuild and Vite pipeline, which dramatically improves build and dev-server speed. The CLI builder is selected in angular.json, and the new builder supports the same features. Migration is largely configuration-driven.",
+      "tags": [
+        "build",
+        "esbuild",
+        "vite"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build-system-migration",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-016",
+      "difficulty": "Intermediate",
+      "question": "How do you analyze and reduce bundle size?",
+      "answer": "Use the build report to see the size of each chunk, identify large dependencies, and then lazy load, defer, or replace them. Source maps help trace a large chunk back to its source. Repeated measurement confirms the improvement.",
+      "tags": [
+        "bundles",
+        "performance",
+        "build"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "build-deployment-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle API configuration across environments securely?",
+      "answer": "Keep environment values in configuration that is injected at runtime or built per target, and never embed secrets in the client bundle because it is public. Use a backend or proxy for anything sensitive. Client configuration should contain only public values.",
+      "tags": [
+        "configuration",
+        "security",
+        "deployment"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/best-practices/security"
+      ]
+    },
+    {
+      "id": "build-deployment-018",
+      "difficulty": "Intermediate",
+      "question": "What is a service worker and how does Angular support PWAs?",
+      "answer": "A service worker runs in the background, caching assets and enabling offline use and faster repeat loads. Angular provides a schematic to add a service worker with a configurable caching strategy. It requires HTTPS and careful cache versioning.",
+      "tags": [
+        "pwa",
+        "service-worker",
+        "deployment"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/service-workers",
+        "https://angular.dev/ecosystem/service-workers/config"
+      ]
+    },
+    {
+      "id": "build-deployment-019",
+      "difficulty": "Intermediate",
+      "question": "How do you cache-bust and control caching for deployments?",
+      "answer": "Hashed asset filenames allow long-lived immutable caching, while the index file should be served with no-cache or a short max-age so clients pick up new versions. This pairing gives fast loads and reliable updates. Misconfigured caching is a common cause of stale apps.",
+      "tags": [
+        "caching",
+        "deployment",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Guides/Caching"
+      ]
+    },
+    {
+      "id": "build-deployment-020",
+      "difficulty": "Intermediate",
+      "question": "How do you add server-side rendering to an Angular application?",
+      "answer": "Run the SSR schematic, which adds a server entry point and a Node server that renders the application and hydrates it on the client. SSR improves first paint and supports SEO, at the cost of running a server. You can enable prerendering for static routes.",
+      "tags": [
+        "ssr",
+        "deployment",
+        "seo"
+      ],
+      "references": [
+        "https://angular.dev/guide/ssr",
+        "https://angular.dev/guide/hydration"
+      ]
+    },
+    {
+      "id": "build-deployment-021",
+      "difficulty": "Advanced",
+      "question": "How do you structure a deployment pipeline for multiple environments?",
+      "answer": "Promote the same build artifact through environments by injecting configuration at deploy time, rather than rebuilding per environment, so what you tested is what you ship. Gate promotion on automated tests and health checks. This reduces drift between staging and production.",
+      "tags": [
+        "ci",
+        "cd",
+        "deployment"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/deployment",
+        "https://angular.dev/reference/configs/workspace-config"
+      ]
+    },
+    {
+      "id": "build-deployment-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle lazy chunk loading errors after a deployment?",
+      "answer": "After a deploy, an old client may request a chunk that no longer exists and fail to navigate. Handle navigation errors by prompting a reload or reloading automatically, and serve the index with no-cache so clients refresh quickly. Some teams also keep old chunks briefly.",
+      "tags": [
+        "deployment",
+        "lazy-loading",
+        "errors"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/lifecycle-and-events",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between SSR, prerendering, and client-side rendering?",
+      "answer": "Client-side rendering is simplest and cheapest to host but shows a blank page until JavaScript loads. Prerendering produces static HTML at build time and suits mostly static routes. SSR renders per request for dynamic content at the cost of running and scaling a server.",
+      "tags": [
+        "ssr",
+        "prerendering",
+        "trade-offs"
+      ],
+      "references": [
+        "https://angular.dev/guide/ssr",
+        "https://angular.dev/guide/prerendering"
+      ]
+    },
+    {
+      "id": "build-deployment-024",
+      "difficulty": "Advanced",
+      "question": "How do you make a deployment safe and reversible?",
+      "answer": "Use immutable, versioned artifacts, health checks, and a strategy such as blue-green or canary so a bad release can be rolled back quickly. Keep the previous version available and monitor error rates after release. Rollback speed matters more than perfect prevention.",
+      "tags": [
+        "deployment",
+        "rollback",
+        "reliability"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/deployment",
+        "https://angular.dev/tools/cli/build"
+      ]
+    },
+    {
+      "id": "build-deployment-025",
+      "difficulty": "Advanced",
+      "question": "How do you optimize build and developer feedback time in a large workspace?",
+      "answer": "Use the modern esbuild and Vite builder, cache dependencies in CI, and split large projects so incremental builds touch less code. Hot module replacement and faster type checking keep the inner loop short. Build speed is a developer-productivity concern worth measuring.",
+      "tags": [
+        "build",
+        "tooling",
+        "productivity"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build-system-migration",
+        "https://angular.dev/tools/cli/build"
+      ]
+    }
+  ]
+}

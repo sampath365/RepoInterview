@@ -1,0 +1,367 @@
+{
+  "category": "Categories, Ordering & Skipping",
+  "slug": "categories",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "categories-001",
+      "difficulty": "Beginner",
+      "question": "What is the [Category] attribute used for?",
+      "answer": "The [Category] attribute labels a test, fixture or assembly with one or more named categories so a run can include or exclude them. You can apply it several times or pass a comma-separated list to a single attribute. Categories are the main way to separate slow, integration or environment-specific tests.",
+      "code": "[Test]\n[Category(\"Slow\")]\npublic void Reports_Over_Large_Data() { }",
+      "tags": [
+        "category",
+        "filtering"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "categories-002",
+      "difficulty": "Beginner",
+      "question": "How do you run only tests in a given category?",
+      "answer": "With the NUnit console runner use --where \"cat==Slow\", and with dotnet test use --filter \"TestCategory=Slow\". Both restrict the run to tests carrying that category. Excluding works the same way with != in place of ==.",
+      "code": "dotnet test --filter \"TestCategory=Slow\"",
+      "tags": [
+        "category",
+        "filtering"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests"
+      ]
+    },
+    {
+      "id": "categories-003",
+      "difficulty": "Beginner",
+      "question": "What does the [Ignore] attribute do?",
+      "answer": "The [Ignore] attribute skips a test or fixture during a run and records the reason you supply. The test is reported as skipped rather than failed. Use it for tests that cannot run for now, and prefer fixing or deleting over leaving ignores in place permanently.",
+      "code": "[Test]\n[Ignore(\"Waiting for the payments API to be re-enabled\")]\npublic void Charges_Card() { }",
+      "tags": [
+        "ignore",
+        "skipping"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html"
+      ]
+    },
+    {
+      "id": "categories-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [Ignore] and [Explicit]?",
+      "answer": "[Ignore] skips a test even when you select it by name, whereas [Explicit] skips it only during normal runs and executes it when it is specifically selected. Use [Ignore] for tests that are broken or blocked and [Explicit] for tests that are valid but should not run by default, such as slow ones.",
+      "tags": [
+        "ignore",
+        "explicit"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html"
+      ]
+    },
+    {
+      "id": "categories-005",
+      "difficulty": "Beginner",
+      "question": "How does the [Order] attribute work?",
+      "answer": "The [Order] attribute assigns a numeric order value to a test or fixture, and NUnit runs tests with lower values first within the same level. It only affects ordering among tests that are not run in parallel. Ordering should be used sparingly because tests that depend on order are fragile.",
+      "tags": [
+        "order",
+        "execution"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/order.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "categories-006",
+      "difficulty": "Beginner",
+      "question": "How do you mark a test as skipped from inside the test code?",
+      "answer": "Call Assert.Ignore with a reason to stop the test and report it as skipped, or Assert.Pass to end it early as a success. Assert.Ignore is useful when a precondition can only be detected at runtime. Both stop execution immediately.",
+      "code": "if (!File.Exists(_fixturePath))\n    Assert.Ignore(\"fixture file is not available\");",
+      "tags": [
+        "ignore",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Ignore.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html"
+      ]
+    },
+    {
+      "id": "categories-007",
+      "difficulty": "Beginner",
+      "question": "How do you apply a category to every test in an assembly?",
+      "answer": "Place [assembly: Category(\"Integration\")] in any source file, typically AssemblyInfo.cs. Every test in the assembly is then treated as a member of that category. This is handy for marking an entire test project so it can be excluded in a fast CI job.",
+      "code": "[assembly: Category(\"Integration\")]",
+      "tags": [
+        "category",
+        "assembly"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "categories-008",
+      "difficulty": "Beginner",
+      "question": "How do you exclude a category when running tests?",
+      "answer": "Use --where \"cat!=Slow\" with the console runner, or --filter \"TestCategory!=Slow\" with dotnet test. Excluding keeps a fast subset running by default while leaving the heavier tests available on demand. The same syntax works for excluding by other properties.",
+      "code": "dotnet test --filter \"TestCategory!=Integration\"",
+      "tags": [
+        "category",
+        "filtering"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests"
+      ]
+    },
+    {
+      "id": "categories-009",
+      "difficulty": "Beginner",
+      "question": "What happens to a test marked with both [Ignore] and [Category]?",
+      "answer": "The test still belongs to the category but is skipped because of the ignore, so it appears as skipped in the category's results. The category does not override the ignore. Removing the [Ignore] makes the test run again under its category.",
+      "tags": [
+        "ignore",
+        "category"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html"
+      ]
+    },
+    {
+      "id": "categories-010",
+      "difficulty": "Beginner",
+      "question": "How do you mark a whole fixture as explicit?",
+      "answer": "Apply [Explicit] to the fixture class, and every test in it runs only when explicitly selected. You can supply a reason that the runner displays. It is useful for a fixture that needs a manual environment or long setup.",
+      "tags": [
+        "explicit",
+        "fixture"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html"
+      ]
+    },
+    {
+      "id": "categories-011",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit order tests when no [Order] attribute is present?",
+      "answer": "Without [Order] the sequence of tests is not guaranteed and may vary between runners and runs, because NUnit may reorder tests for parallel execution or by internal tree order. Never rely on implicit order; make tests independent or use [Order] explicitly when order truly matters. This is why order-dependent tests are considered fragile.",
+      "tags": [
+        "order",
+        "execution"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/order.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/order-unit-tests"
+      ]
+    },
+    {
+      "id": "categories-012",
+      "difficulty": "Intermediate",
+      "question": "How do categories interact with parameterized test cases?",
+      "answer": "You can put a category on the method so every case inherits it, or set a category on individual TestCaseData rows so only some cases carry it. This lets you mark just the slow data rows of a parameterized test. Runners and filters treat the cases as separate tests with their own categories.",
+      "code": "yield return new TestCaseData(1000, 7).SetCategory(\"Slow\");",
+      "tags": [
+        "category",
+        "parameterized"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html"
+      ]
+    },
+    {
+      "id": "categories-013",
+      "difficulty": "Intermediate",
+      "question": "What is the [Platform] attribute and how does it affect runs?",
+      "answer": "The [Platform] attribute restricts a test to specific operating systems or runtime versions, for example [Platform(\"Win\")]. NUnit marks the test as skipped on other platforms rather than failing it. It is the declarative way to express platform-specific tests.",
+      "tags": [
+        "platform",
+        "skipping"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/platform.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/platform.html"
+      ]
+    },
+    {
+      "id": "categories-014",
+      "difficulty": "Intermediate",
+      "question": "How does [Order] behave with parallel execution?",
+      "answer": "Ordering only guarantees sequence among tests that run on the same thread in a non-parallel context; if tests are parallelizable they can run concurrently and order is not enforced. To make ordering reliable you must keep the relevant tests non-parallel. This is a common source of confusing results.",
+      "tags": [
+        "order",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/order.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "categories-015",
+      "difficulty": "Intermediate",
+      "question": "How do you temporarily disable a single parameterized case?",
+      "answer": "Use Ignore on the TestCaseData row, or the Ignore property on the [TestCase] attribute, with a reason. Only that case is skipped while the rest of the method's cases run. This keeps a known problem visible without stopping the suite.",
+      "tags": [
+        "ignore",
+        "parameterized"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html"
+      ]
+    },
+    {
+      "id": "categories-016",
+      "difficulty": "Intermediate",
+      "question": "How can you select tests by name rather than by category?",
+      "answer": "With dotnet test use --filter \"FullyQualifiedName~CartTests\" to match a substring of the fully qualified name, or \"Name=MethodName\" for an exact match. The console runner uses --where \"test=~CartTests\". Both are useful for running a single fixture during development.",
+      "code": "dotnet test --filter \"FullyQualifiedName~CartTests\"",
+      "tags": [
+        "filtering",
+        "selection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "categories-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a category and a property in NUnit?",
+      "answer": "A category is a well-known property named Category that runners and filters understand directly, so tools expose it as a first-class concept. A generic [Property] can hold any name and value and is matched with the same filter syntax but is not treated specially by tooling. Use categories for selection and properties for arbitrary metadata.",
+      "tags": [
+        "category",
+        "property"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/property.html"
+      ]
+    },
+    {
+      "id": "categories-018",
+      "difficulty": "Intermediate",
+      "question": "How do you skip the remaining tests in a fixture once a precondition fails?",
+      "answer": "Call Assert.Ignore in a setup method, which stops the affected test and reports it as skipped, or fail fast in [OneTimeSetUp] to prevent the fixture's tests from running. For a condition that invalidates the whole run, marking tests skipped is clearer than failing them all. Choose based on whether the situation is expected or a genuine defect.",
+      "tags": [
+        "ignore",
+        "setup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html"
+      ]
+    },
+    {
+      "id": "categories-019",
+      "difficulty": "Intermediate",
+      "question": "How do you combine category filters with other conditions?",
+      "answer": "Filters support boolean operators: with dotnet test you can write --filter \"TestCategory=Fast&FullyQualifiedName~Cart\", and the console runner supports --where \"cat==Fast and test=~Cart\". This lets you target a precise subset. Keep filter expressions simple so they stay maintainable in CI scripts.",
+      "code": "dotnet test --filter \"TestCategory=Fast&FullyQualifiedName~Cart\"",
+      "tags": [
+        "filtering",
+        "category"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "categories-020",
+      "difficulty": "Intermediate",
+      "question": "How do you report a test as inconclusive rather than failed?",
+      "answer": "Call Assert.Inconclusive with a message, or fail an Assume.That assumption, and NUnit reports the test as Inconclusive. This signals that the result could not be determined, which is different from a pass or a fail. Use it when the environment prevents a meaningful verdict.",
+      "code": "Assert.Inconclusive(\"measurement hardware is unavailable\");",
+      "tags": [
+        "inconclusive",
+        "assumptions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Inconclusive.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/Assumptions.html"
+      ]
+    },
+    {
+      "id": "categories-021",
+      "difficulty": "Advanced",
+      "question": "How does NUnit's test tree affect filtering and ordering?",
+      "answer": "NUnit builds a tree of assemblies, namespaces, fixtures and cases, and filters, ordering and one-time setup all operate on nodes of that tree. A category or property added to a fixture node applies to its descendants, which is why assembly-level metadata reaches every test. Understanding the tree explains why some filters match more tests than expected.",
+      "tags": [
+        "tree",
+        "filtering"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/ordinary-tests.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "categories-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of using [Order] to build dependent tests?",
+      "answer": "Order only sequences tests and does not share state safely, so a dependent test can fail unpredictably when run in isolation, in parallel or in a different order by another runner. If tests genuinely depend on each other the dependency should be expressed with [DependsOnTest] or removed altogether. In most cases independent tests are the better design.",
+      "tags": [
+        "order",
+        "dependenttests"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/order.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/dependent-tests.html"
+      ]
+    },
+    {
+      "id": "categories-023",
+      "difficulty": "Advanced",
+      "question": "How do the NUnit engine's test selection language and VSTest filters differ?",
+      "answer": "The NUnit console runner uses the engine's --where language with fields such as cat, test, method and namespace plus operators like ==, ~ and &&. dotnet test goes through VSTest and uses --filter with traits such as TestCategory and FullyQualifiedName. The concepts map closely but the syntax is not interchangeable.",
+      "tags": [
+        "filtering",
+        "engine"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests"
+      ]
+    },
+    {
+      "id": "categories-024",
+      "difficulty": "Advanced",
+      "question": "How would you design a category scheme for a large test suite?",
+      "answer": "Define a small set of orthogonal categories such as Fast, Integration, Slow and Manual, apply them consistently at fixture or assembly level, and document what each means. Avoid overlapping categories that make filters ambiguous, and keep default runs limited to the fast set. A stable scheme lets CI jobs select exactly the tests they need.",
+      "tags": [
+        "category",
+        "design"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "categories-025",
+      "difficulty": "Advanced",
+      "question": "How do explicit and ignored tests interact with coverage and CI reporting?",
+      "answer": "Explicit and ignored tests are reported as skipped and do not execute, so they contribute nothing to code coverage and should not be counted as passing checks. A growing set of skipped tests is a warning sign that either the tests or the environment need attention. CI should surface the skipped count so the drift is visible.",
+      "tags": [
+        "skipping",
+        "ci"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    }
+  ]
+}

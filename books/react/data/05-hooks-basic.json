@@ -1,0 +1,339 @@
+{
+  "category": "Hooks: useState & useEffect",
+  "slug": "hooks-basic",
+  "icon": "hook",
+  "questions": [
+    {
+      "id": "hooks-basic-001",
+      "difficulty": "Beginner",
+      "question": "What are React hooks?",
+      "answer": "Hooks are functions that let function components use state and other React features without writing a class. The most common are useState for state and useEffect for side effects. They must be called at the top level of a component or custom hook. Hooks make it possible to share stateful logic by extracting it into custom hooks.",
+      "tags": [
+        "hooks",
+        "basics"
+      ],
+      "references": [
+        "https://react.dev/reference/react/hooks"
+      ]
+    },
+    {
+      "id": "hooks-basic-002",
+      "difficulty": "Beginner",
+      "question": "What does useState return?",
+      "answer": "useState returns an array with two elements: the current state value and a setter function. You usually destructure them into named variables. The setter schedules a re-render when called with a new value. The state variable is read-only and must be updated through the setter.",
+      "code": "const [value, setValue] = useState('');",
+      "tags": [
+        "useState",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "hooks-basic-003",
+      "difficulty": "Beginner",
+      "question": "What is useEffect used for?",
+      "answer": "useEffect is used to synchronize a component with an external system, such as a network request, a subscription, the DOM or a timer. It runs after the render is committed to the screen. You can return a cleanup function to undo the effect before the next run or on unmount. Effects should not be used for values that can be computed during render.",
+      "tags": [
+        "useEffect",
+        "effects"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-004",
+      "difficulty": "Beginner",
+      "question": "What is the dependency array in useEffect?",
+      "answer": "The dependency array tells React which values the effect depends on, and the effect re-runs when any of them change. An empty array means the effect runs once after the first render. Omitting the array makes it run after every render. Always include every reactive value the effect reads to avoid stale data.",
+      "tags": [
+        "useEffect",
+        "dependencies"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-005",
+      "difficulty": "Beginner",
+      "question": "How do you clean up after an effect?",
+      "answer": "You return a function from the effect, and React calls it before running the effect again and when the component unmounts. Use it to clear timers, cancel subscriptions, abort requests and remove listeners. Returning the cleanup keeps the effect self-contained. Forgetting it leads to leaks and updates on unmounted components.",
+      "code": "useEffect(() => {\n  const onResize = () => setW(window.innerWidth);\n  window.addEventListener('resize', onResize);\n  return () => window.removeEventListener('resize', onResize);\n}, []);",
+      "tags": [
+        "useEffect",
+        "cleanup"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-006",
+      "difficulty": "Beginner",
+      "question": "Why can hooks not be called conditionally?",
+      "answer": "React tracks hooks by the order in which they are called on each render. If a hook is skipped or added conditionally, the order changes and React assigns state to the wrong hook. The fix is to call hooks unconditionally and put the condition inside the hook or in a child component. This rule keeps hook state aligned across renders.",
+      "tags": [
+        "hooks",
+        "rules"
+      ],
+      "references": [
+        "https://react.dev/reference/rules/rules-of-hooks"
+      ]
+    },
+    {
+      "id": "hooks-basic-007",
+      "difficulty": "Beginner",
+      "question": "What is the useState lazy initializer?",
+      "answer": "If the initial state is expensive to compute, you can pass a function to useState and React calls it only on the first render. You write useState(() => computeExpensiveValue()) instead of calling the function directly. Without the wrapper the value would be computed on every render even though only the first is used. It is a simple optimization for heavy initialization.",
+      "code": "const [tree] = useState(() => buildTree(data));",
+      "tags": [
+        "useState",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "hooks-basic-008",
+      "difficulty": "Beginner",
+      "question": "How do you run an effect only once on mount?",
+      "answer": "Pass an empty dependency array so the effect has no dependencies to react to, and it runs a single time after the initial render. Any cleanup you return runs on unmount. This is the pattern for one-time setup such as establishing a connection. If the effect reads props or state, list them as dependencies instead.",
+      "tags": [
+        "useEffect",
+        "mount"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between useState and a ref for storing values?",
+      "answer": "State updates trigger a re-render so the UI reflects the new value, while a ref holds a mutable value without causing a re-render. Use state for anything that affects what is displayed, and a ref for values you only need to read or change imperatively, such as a timer id or previous value. Changing a ref does not update the screen. Choosing the right one avoids both missed updates and wasted renders.",
+      "tags": [
+        "useState",
+        "useRef"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "hooks-basic-010",
+      "difficulty": "Beginner",
+      "question": "What is a custom hook?",
+      "answer": "A custom hook is a function whose name starts with use that calls other hooks and returns values or functions for a component to use. It lets you extract and reuse stateful logic without changing the component tree. Custom hooks share logic, not state, so each call gets its own state. They are the preferred way to reuse behavior in modern React.",
+      "code": "function useCounter(start = 0) {\n  const [n, setN] = useState(start);\n  return [n, () => setN((x) => x + 1)];\n}",
+      "tags": [
+        "custom-hooks",
+        "reuse"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "hooks-basic-011",
+      "difficulty": "Intermediate",
+      "question": "How do you fetch data in an effect correctly?",
+      "answer": "You start the request inside the effect, track loading and error state, and ignore the result if the component unmounted or the inputs changed. Use an AbortController to cancel the request in cleanup. List the inputs the request depends on in the dependency array. For data-heavy apps a library such as TanStack Query often handles this more robustly.",
+      "code": "useEffect(() => {\n  const ctrl = new AbortController();\n  fetch(url, { signal: ctrl.signal }).then(setData);\n  return () => ctrl.abort();\n}, [url]);",
+      "tags": [
+        "useEffect",
+        "data-fetching"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-012",
+      "difficulty": "Intermediate",
+      "question": "What is an infinite loop in useEffect and how do you avoid it?",
+      "answer": "An effect that updates state which is also in its dependency array will re-run endlessly. This often happens when you set a new object or array each time, because the reference changes on every render. To fix it, remove unnecessary state, list stable dependencies, or move the logic out of the effect. Derived values should be computed during render instead.",
+      "tags": [
+        "useEffect",
+        "pitfalls"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "hooks-basic-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle multiple pieces of state?",
+      "answer": "You can call useState once per independent value, which keeps updates focused and avoids merging. If several values always change together, grouping them into one object can reduce the number of setters. Avoid a single large state object when fields are unrelated. Prefer the structure that makes the update logic simplest to follow.",
+      "tags": [
+        "useState",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "hooks-basic-014",
+      "difficulty": "Intermediate",
+      "question": "Why might you not need an effect at all?",
+      "answer": "Effects are for synchronizing with external systems, not for transforming data or responding to user events. Values derived from props or state should be computed during render, and event-specific logic belongs in event handlers. Removing unnecessary effects makes components simpler and avoids extra renders. A common sign of a redundant effect is one that only calls a setter with a computed value.",
+      "tags": [
+        "useEffect",
+        "best-practices"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "hooks-basic-015",
+      "difficulty": "Intermediate",
+      "question": "How do you share logic between components?",
+      "answer": "Extract the shared logic into a custom hook and call it from each component that needs it. This keeps the logic in one place while each component keeps its own state. Custom hooks compose well, so one hook can use others. Alternatively, composition with children or render props can share structure when the markup also repeats.",
+      "tags": [
+        "custom-hooks",
+        "reuse"
+      ],
+      "references": [
+        "https://react.dev/learn/reusing-logic-with-custom-hooks"
+      ]
+    },
+    {
+      "id": "hooks-basic-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use useEffect to subscribe to an external store?",
+      "answer": "You subscribe in the effect and return an unsubscribe function from cleanup, then store the received value in state. This ensures the subscription is set up after mount and torn down correctly. For external stores the useSyncExternalStore hook is a better fit because it handles tearing and server rendering. Use it when you need a reliable snapshot of external data.",
+      "tags": [
+        "useEffect",
+        "subscriptions"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useSyncExternalStore"
+      ]
+    },
+    {
+      "id": "hooks-basic-017",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the useState updater function?",
+      "answer": "The updater function receives the pending state and returns the next state, which lets React apply updates in sequence. This is essential when the new value depends on the previous one and when several updates occur in the same batch. It also avoids stale values captured by closures. Use it whenever you write setX(x + 1) or similar.",
+      "tags": [
+        "useState",
+        "updater"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "hooks-basic-018",
+      "difficulty": "Intermediate",
+      "question": "How do you run code after a state change?",
+      "answer": "You describe the desired result based on the new state and let React re-render, rather than treating the change as an event to react to in an effect. If you must run a side effect in response to a specific change, an effect with that value in its dependencies works. Often the cleaner solution is to put the logic in the event handler that caused the change. Effects that only react to state changes are frequently avoidable.",
+      "tags": [
+        "useEffect",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "hooks-basic-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between useEffect and useLayoutEffect in practice?",
+      "answer": "useEffect is asynchronous and runs after the browser paints, so it does not block visual updates and is right for most side effects. useLayoutEffect runs synchronously before paint and is used when you must measure the DOM or adjust layout to avoid a flicker. Because it blocks painting, heavy work in useLayoutEffect hurts perceived performance. Start with useEffect and switch only when you observe a visual glitch.",
+      "tags": [
+        "useEffect",
+        "useLayoutEffect"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useLayoutEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-020",
+      "difficulty": "Intermediate",
+      "question": "How do you use a ref to store a timer or interval id?",
+      "answer": "Store the id in a ref so changing it does not trigger a render, and clear the timer in the effect cleanup. The ref also lets other handlers access the latest id without re-subscribing. This pattern avoids leaks when the component unmounts. Because refs persist across renders, they are ideal for values that are not part of the UI.",
+      "code": "const idRef = useRef(null);\nuseEffect(() => {\n  idRef.current = setInterval(tick, 1000);\n  return () => clearInterval(idRef.current);\n}, []);",
+      "tags": [
+        "useRef",
+        "effects"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "hooks-basic-021",
+      "difficulty": "Advanced",
+      "question": "Why does the exhaustive-deps lint rule matter?",
+      "answer": "The react-hooks/exhaustive-deps rule checks that every reactive value used in an effect is listed as a dependency. Missing dependencies cause effects to read stale props or state, producing hard-to-reproduce bugs. The rule also warns when dependencies change on every render, which hints at a design problem. Following it usually leads to simpler, correct effects.",
+      "tags": [
+        "useEffect",
+        "linting"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "hooks-basic-022",
+      "difficulty": "Advanced",
+      "question": "How does the useEffect cleanup interact with React 18 StrictMode?",
+      "answer": "In development StrictMode mounts, unmounts and remounts components to surface effects that are not resilient to being run twice. Your cleanup must fully undo the setup so the second mount behaves like a fresh one. If a subscription or connection is not cleaned up, you will see duplicates or leaks in development. Writing correct cleanup makes the effect robust in production and under concurrent features.",
+      "tags": [
+        "useEffect",
+        "strictmode"
+      ],
+      "references": [
+        "https://react.dev/reference/react/StrictMode"
+      ]
+    },
+    {
+      "id": "hooks-basic-023",
+      "difficulty": "Advanced",
+      "question": "What is the correct way to fetch data with cancellation?",
+      "answer": "Create an AbortController inside the effect, pass its signal to fetch, and call abort in the cleanup so an in-flight request is cancelled when inputs change or the component unmounts. Also guard against setting state after abort by ignoring the resulting error. This prevents race conditions where a slow response overwrites a newer one. Data libraries encapsulate this pattern and add caching.",
+      "tags": [
+        "useEffect",
+        "data-fetching"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect",
+        "https://developer.mozilla.org/en-US/docs/Web/API/AbortController"
+      ]
+    },
+    {
+      "id": "hooks-basic-024",
+      "difficulty": "Advanced",
+      "question": "When should logic live in an event handler rather than an effect?",
+      "answer": "Anything that happens because the user did something belongs in the event handler that received the event, where you know exactly what happened and why. Effects are for keeping the component in sync with external systems that can change independently. Moving event-specific logic out of effects removes unnecessary state and re-renders. A useful question is whether the code would still need to run if the component rendered for another reason.",
+      "tags": [
+        "useEffect",
+        "best-practices"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "hooks-basic-025",
+      "difficulty": "Advanced",
+      "question": "How do you avoid stale closures inside effects and callbacks?",
+      "answer": "List every value the effect reads in its dependency array so React re-creates it with fresh values. For event handlers passed to memoized children, wrap them in useCallback with the right dependencies or use a ref to hold the latest callback. Another option is the useEffectEvent hook for reading the latest values without re-subscribing. The goal is to keep closures in sync with the data they read.",
+      "tags": [
+        "useEffect",
+        "closures"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    }
+  ]
+}

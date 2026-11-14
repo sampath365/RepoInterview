@@ -1,0 +1,370 @@
+{
+  "category": "Test Cases & Data Sources",
+  "slug": "data-sources",
+  "icon": "file",
+  "questions": [
+    {
+      "id": "data-sources-001",
+      "difficulty": "Beginner",
+      "question": "What kinds of data source attributes does NUnit provide?",
+      "answer": "NUnit provides inline sources such as [TestCase], [Values] and [Range], and external sources such as [TestCaseSource], [ValueSource] and [TestFixtureSource] for fixtures. Theories add [Datapoint] and [DatapointSource]. Inline attributes suit constants, while source members suit computed or shared data.",
+      "tags": [
+        "data",
+        "attributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html"
+      ]
+    },
+    {
+      "id": "data-sources-002",
+      "difficulty": "Beginner",
+      "question": "What does a [TestCaseSource] member need to return?",
+      "answer": "The source member must be static and return an IEnumerable of object arrays or TestCaseData instances, one per test case. Each object array supplies the arguments in method parameter order. A property or method is acceptable as long as it is static and enumerable.",
+      "code": "public static IEnumerable Cases => new[]\n{\n    new object[] { 1, 2, 3 },\n    new object[] { 4, 5, 9 },\n};",
+      "tags": [
+        "testcasesource",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-003",
+      "difficulty": "Beginner",
+      "question": "How do you reference a data source in another class?",
+      "answer": "Use the TestCaseSource overload that takes a type and a member name, for example [TestCaseSource(typeof(MyData), nameof(MyData.Cases))]. The member must be static and accessible. This keeps test data separate from the test logic and lets several fixtures share it.",
+      "code": "[TestCaseSource(typeof(DivideData), nameof(DivideData.Cases))]\npublic void Divide(int n, int d, int expected) { }",
+      "tags": [
+        "testcasesource",
+        "sharing"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-004",
+      "difficulty": "Beginner",
+      "question": "How do you supply values for a fixture constructor with [TestFixtureSource]?",
+      "answer": "Apply [TestFixtureSource] to the fixture class and name a static member or a type that returns the argument sets. NUnit creates one fixture instance per argument set and passes the values to the constructor. This parameterizes the whole fixture rather than a single test.",
+      "code": "[TestFixtureSource(nameof(Cases))]\npublic class CalculatorTests\n{\n    public CalculatorTests(int start) { }\n    private static object[] Cases = { new object[] { 0 }, new object[] { 10 } };\n}",
+      "tags": [
+        "testfixturesource",
+        "fixture"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixturesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestFixtureData.html"
+      ]
+    },
+    {
+      "id": "data-sources-005",
+      "difficulty": "Beginner",
+      "question": "What does the [ValueSource] attribute do?",
+      "answer": "[ValueSource] names a static member that supplies the values for a single parameter, for example [ValueSource(nameof(Primes))] int value. It is the dynamic counterpart of [Values] and can return any IEnumerable of the parameter's type. Values from several parameters are combined by NUnit.",
+      "code": "private static int[] Primes => new[] { 2, 3, 5, 7 };\n\n[Test]\npublic void IsPrime([ValueSource(nameof(Primes))] int value)\n{\n    Assert.That(IsPrimeNumber(value), Is.True);\n}",
+      "tags": [
+        "valuesource",
+        "parameters"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/valuesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/values.html"
+      ]
+    },
+    {
+      "id": "data-sources-006",
+      "difficulty": "Beginner",
+      "question": "How do [Datapoint] and [DatapointSource] supply data to theories?",
+      "answer": "[Datapoint] marks a field, property or method returning a single value as a data point, while [DatapointSource] marks a member returning a collection of values for a given type. NUnit collects these points and uses them to feed the parameters of every [Theory]. Assumptions in the theory can discard combinations that do not apply.",
+      "tags": [
+        "datapoint",
+        "theory"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/datapoint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/datapointsource.html"
+      ]
+    },
+    {
+      "id": "data-sources-007",
+      "difficulty": "Beginner",
+      "question": "What is TestCaseData used for?",
+      "answer": "TestCaseData represents a single case returned from a data source and allows you to attach metadata such as a name, category, description, expected result or explicit flag. You construct it with the argument values and chain the metadata methods. It is the richer alternative to a plain object array.",
+      "code": "yield return new TestCaseData(12, 3).Returns(4).SetCategory(\"Arithmetic\");",
+      "tags": [
+        "testcasedata",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html"
+      ]
+    },
+    {
+      "id": "data-sources-008",
+      "difficulty": "Beginner",
+      "question": "How do you set an expected result from a data source?",
+      "answer": "Call Returns on a TestCaseData instance to set the expected return value, and make the test method return a value of that type. NUnit then asserts that the returned value equals the expected result. This keeps input and expected output together in the data.",
+      "code": "yield return new TestCaseData(12, 3).Returns(4);",
+      "tags": [
+        "expectedresult",
+        "testcasedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-009",
+      "difficulty": "Beginner",
+      "question": "Can a [TestCaseSource] member be a method with parameters?",
+      "answer": "No, the source member referenced by [TestCaseSource] must be parameterless and static. If you need parameterized data generation, expose a method that returns an IEnumerable and call your generation logic inside it. NUnit invokes the member once at load time to obtain the cases.",
+      "tags": [
+        "testcasesource",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-010",
+      "difficulty": "Beginner",
+      "question": "How do you skip a single row from a data source?",
+      "answer": "Chain Ignore with a reason on the TestCaseData row, or set the Ignore property on a [TestCase]. The row is reported as skipped while the remaining rows still execute. This keeps a known-bad combination documented without breaking the build.",
+      "code": "yield return new TestCaseData(0, 0).Ignore(\"undefined\");",
+      "tags": [
+        "ignore",
+        "testcasedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html"
+      ]
+    },
+    {
+      "id": "data-sources-011",
+      "difficulty": "Intermediate",
+      "question": "How do you load test data from an external file in NUnit?",
+      "answer": "Write a static data source method that reads the file and yields TestCaseData or object arrays, referencing it with [TestCaseSource]. The file is read at load time when NUnit enumerates the source. Remember that load-time failures surface as errors during discovery rather than as test failures.",
+      "code": "public static IEnumerable Cases =>\n    File.ReadAllLines(\"cases.csv\")\n        .Select(l => l.Split(','))\n        .Select(p => new object[] { int.Parse(p[0]), int.Parse(p[1]) });",
+      "tags": [
+        "data",
+        "files"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-012",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit combine values when both [Values] and [TestCaseSource] are present?",
+      "answer": "A method can use [TestCase] rows for some parameters and data attributes for others; NUnit combines the sources to produce the cases. Where several parameters have their own values the full cross product is generated unless [Sequential] or [Pairwise] is applied. Keep the combination simple to avoid a case explosion.",
+      "tags": [
+        "combinatorial",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/combinatorial.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-013",
+      "difficulty": "Intermediate",
+      "question": "How do you give each row from a data source a distinct name?",
+      "answer": "Call SetName on the TestCaseData row, optionally using the argument values in the name. Named rows are far easier to identify in runner output and in CI reports. Without a name NUnit builds one from the method name and arguments.",
+      "code": "yield return new TestCaseData(12, 3).SetName(\"Divide 12 by 3\");",
+      "tags": [
+        "naming",
+        "testcasedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-014",
+      "difficulty": "Intermediate",
+      "question": "How do you share a data source between a parameterized test and a parameterized fixture?",
+      "answer": "Put the data in a static member and reference it from both [TestCaseSource] on the test and [TestFixtureSource] on the fixture, using the type-and-member overload. The same data shape can be consumed by either attribute as long as the argument order matches. This avoids duplicating data definitions.",
+      "tags": [
+        "testcasesource",
+        "testfixturesource"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixturesource.html"
+      ]
+    },
+    {
+      "id": "data-sources-015",
+      "difficulty": "Intermediate",
+      "question": "What happens if a [TestCaseSource] member throws an exception?",
+      "answer": "If the source member throws while NUnit enumerates it at load time, the affected tests are reported as errors or not runnable rather than as ordinary failures. The exception message is usually shown against the test. Guard the source so that data problems are reported clearly.",
+      "tags": [
+        "testcasesource",
+        "troubleshooting"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    },
+    {
+      "id": "data-sources-016",
+      "difficulty": "Intermediate",
+      "question": "How do you supply enum values as test data?",
+      "answer": "Pass enum members directly to [TestCase] or [Values] because they are compile-time constants, for example [TestCase(DayOfWeek.Monday)]. For computed sets use [ValueSource] returning the enum values. The enum is converted to the parameter type automatically.",
+      "code": "[TestCase(DayOfWeek.Monday, false)]\n[TestCase(DayOfWeek.Saturday, true)]\npublic void IsWeekend(DayOfWeek day, bool expected)\n{\n    Assert.That(IsWeekend(day), Is.EqualTo(expected));\n}",
+      "tags": [
+        "enums",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/values.html"
+      ]
+    },
+    {
+      "id": "data-sources-017",
+      "difficulty": "Intermediate",
+      "question": "How do you pass null or arrays as test case arguments?",
+      "answer": "Pass null directly, and pass an array as a single argument by wrapping it in a new object array so NUnit does not treat its elements as separate arguments. This distinction matters for methods that take a collection. TestCaseData makes the intent explicit.",
+      "code": "[TestCase(null)]\n[TestCase(new int[] { 1, 2, 3 })]\npublic void Handles_Input(int[] values) { }",
+      "tags": [
+        "testcase",
+        "arguments"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html"
+      ]
+    },
+    {
+      "id": "data-sources-018",
+      "difficulty": "Intermediate",
+      "question": "How do you mark a whole parameterized test as explicit?",
+      "answer": "Apply [Explicit] to the method in addition to the data attributes, or set Explicit on each TestCaseData row. The test cases then run only when explicitly selected. Combining explicit with data lets you keep a large data set out of the default run.",
+      "tags": [
+        "explicit",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html"
+      ]
+    },
+    {
+      "id": "data-sources-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between [TestCaseSource] and [ValueSource]?",
+      "answer": "[TestCaseSource] supplies the complete argument list for the method, one array per case. [ValueSource] supplies the values for a single parameter, and NUnit combines it with the other parameters. Use [TestCaseSource] when arguments are related and [ValueSource] when a parameter has an independent set of values.",
+      "tags": [
+        "testcasesource",
+        "valuesource"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/valuesource.html"
+      ]
+    },
+    {
+      "id": "data-sources-020",
+      "difficulty": "Intermediate",
+      "question": "How do you attach a category to cases from a data source?",
+      "answer": "Call SetCategory on the TestCaseData row, and the category applies to that generated case. This lets different rows be filtered independently, for example marking slow rows with a Slow category. The category is visible to runners and filters.",
+      "code": "yield return new TestCaseData(100, 3).SetCategory(\"Slow\");",
+      "tags": [
+        "category",
+        "testcasedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html"
+      ]
+    },
+    {
+      "id": "data-sources-021",
+      "difficulty": "Advanced",
+      "question": "How does NUnit treat data sources that return lazy enumerables?",
+      "answer": "NUnit enumerates the source once at load time, so a lazy sequence is evaluated then and the resulting cases are fixed for the run. Deferred exceptions or side effects therefore happen during discovery, not execution. Materialise the data if you need deterministic behaviour or want to avoid surprising load-time work.",
+      "tags": [
+        "testcasesource",
+        "loadtime"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/load-time-and-execution-time.html"
+      ]
+    },
+    {
+      "id": "data-sources-022",
+      "difficulty": "Advanced",
+      "question": "How do you build a data source that returns strongly typed rows without object arrays?",
+      "answer": "NUnit expects object arrays or TestCaseData, so you can project a strongly typed collection into object arrays with a selector, or construct TestCaseData with the typed values. This keeps the domain model typed while satisfying NUnit's contract. The projection runs at load time.",
+      "code": "public static IEnumerable Cases =>\n    Rows.Select(r => new object[] { r.A, r.B, r.Expected });",
+      "tags": [
+        "testcasesource",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html"
+      ]
+    },
+    {
+      "id": "data-sources-023",
+      "difficulty": "Advanced",
+      "question": "How do [DatapointSource] and [Theory] interact with assumptions?",
+      "answer": "NUnit combines the data points for each theory parameter, and an unmet Assume.That inside the theory marks that combination Inconclusive rather than failing it. This lets a single theory describe a general rule while automatically skipping inputs that violate its preconditions. The result is a compact but expressive property test.",
+      "tags": [
+        "theory",
+        "assumptions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/datapointsource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/theory.html"
+      ]
+    },
+    {
+      "id": "data-sources-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of inline [TestCase] data versus a [TestCaseSource]?",
+      "answer": "Inline [TestCase] rows are local, explicit and easy to read, but they cannot hold computed values and become unwieldy for large or reused data sets. A [TestCaseSource] can compute or load data and share it, but moves the data away from the test and evaluates it at load time. Use inline data for small literal tables and a source for anything dynamic or shared.",
+      "tags": [
+        "design",
+        "data"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcasesource.html"
+      ]
+    },
+    {
+      "id": "data-sources-025",
+      "difficulty": "Advanced",
+      "question": "How do you supply arguments of different types in the same data source?",
+      "answer": "Return object arrays whose elements match the parameter types positionally, because NUnit converts each element to the target parameter type. You can mix ints, strings, enums and null in one row as long as the method signature matches. Type conversion failures are reported against the affected case.",
+      "tags": [
+        "data",
+        "arguments"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html"
+      ]
+    }
+  ]
+}

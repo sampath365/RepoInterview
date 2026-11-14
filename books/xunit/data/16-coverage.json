@@ -1,0 +1,212 @@
+{
+  "category": "Code Coverage & Analysis",
+  "slug": "coverage",
+  "icon": "chart",
+  "questions": [
+    {
+      "id": "coverage-001",
+      "difficulty": "Beginner",
+      "question": "What is code coverage?",
+      "answer": "Code coverage measures how much of your production code is exercised by the test suite, reported as a percentage over lines, branches, or methods. It is a useful signal for finding untested areas but says nothing about whether the assertions are meaningful. Treat it as a diagnostic tool rather than a goal.",
+      "tags": ["coverage", "metrics"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-002",
+      "difficulty": "Beginner",
+      "question": "How do you collect coverage in .NET?",
+      "answer": "Run dotnet test with the --collect:\"XPlat Code Coverage\" argument, which uses the coverlet collector to produce a coverage report in the test results directory. Coverlet emits Cobertura and other formats that CI systems and report tools understand. No extra code is needed in the test project for this to work.",
+      "code": "dotnet test --collect:\"XPlat Code Coverage\"",
+      "tags": ["coverlet", "cli"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-003",
+      "difficulty": "Beginner",
+      "question": "What is coverlet?",
+      "answer": "Coverlet is the cross-platform coverage tool that .NET uses by default, integrating with the test runner through the XPlat Code Coverage data collector or an MSBuild task. It supports line, branch, and method coverage and can merge results from multiple test projects. Because it works on Windows, Linux, and macOS, it is the standard choice for CI.",
+      "tags": ["coverlet", "tooling"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between line coverage and branch coverage?",
+      "answer": "Line coverage counts how many executable lines were run, while branch coverage counts how many decision outcomes were taken, such as both sides of an if. Branch coverage is stricter and reveals untested conditions that line coverage misses. A high line percentage with low branch coverage often means the happy path is tested but the edge cases are not.",
+      "tags": ["branch", "line"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-005",
+      "difficulty": "Beginner",
+      "question": "How do you generate a human-readable coverage report?",
+      "answer": "Use ReportGenerator to convert the coverage file into HTML, badges, or other formats. This turns the raw Cobertura XML into a browsable report showing which lines are covered. It is a common step in CI to publish coverage as an artefact.",
+      "code": "reportgenerator -reports:**/coverage.cobertura.xml \\\n  -targetdir:coveragereport -reporttypes:Html",
+      "tags": ["reportgenerator", "reports"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-006",
+      "difficulty": "Beginner",
+      "question": "Why is 100 percent coverage not a good goal?",
+      "answer": "Chasing 100 percent encourages tests that execute code without asserting meaningful behaviour, so the metric rises while confidence does not. Some code, such as trivial getters or generated code, is not worth testing. A better goal is to cover the important logic and the risky edge cases.",
+      "tags": ["anti-patterns", "coverage"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "coverage-007",
+      "difficulty": "Beginner",
+      "question": "How do you exclude code from coverage?",
+      "answer": "Annotate types or members with [ExcludeFromCodeCoverage] or configure coverlet to exclude assemblies, namespaces, or attributes. Typical exclusions are generated code, Program entry points, and migration classes. Document the exclusions so they are intentional rather than hiding untested logic.",
+      "code": "[ExcludeFromCodeCoverage]\npublic class GeneratedMapper { }",
+      "tags": ["exclusions", "attributes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-008",
+      "difficulty": "Beginner",
+      "question": "What does a coverage report tell you?",
+      "answer": "It shows which lines and branches were executed and, crucially, which were not, so you can see the gaps in your suite. It can also show coverage per class and per assembly to highlight the riskiest untested areas. It does not tell you whether the assertions are correct, so it must be read alongside the tests themselves.",
+      "tags": ["reports", "interpretation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-009",
+      "difficulty": "Beginner",
+      "question": "How do you merge coverage from multiple test projects?",
+      "answer": "Collect coverage from each project and pass all the resulting files to ReportGenerator, which merges them into a single report. Alternatively use coverlet's merge capabilities with a directory of results. Merging gives an accurate picture of coverage across the whole solution rather than per project.",
+      "tags": ["merging", "reports"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between statement and method coverage?",
+      "answer": "Method coverage counts whether each method was entered at all, while statement or line coverage counts whether each executable statement ran. A method can be counted as covered even if only its first line executed, so method coverage is the coarsest measure. Line and branch coverage give a much more useful picture.",
+      "tags": ["method", "statement"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-011",
+      "difficulty": "Intermediate",
+      "question": "How do you enforce a coverage threshold in CI?",
+      "answer": "Use coverlet's MSBuild properties such as Threshold and ThresholdType to fail the build when coverage drops below a value, or configure a quality gate in your coverage tool. Failing the build keeps coverage from regressing silently. Set the threshold slightly below the current value so it acts as a ratchet rather than an arbitrary target.",
+      "code": "dotnet test /p:CollectCoverage=true \\\n  /p:Threshold=80 /p:ThresholdType=line",
+      "tags": ["thresholds", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-012",
+      "difficulty": "Intermediate",
+      "question": "How do you collect coverage from a WebApplicationFactory integration test?",
+      "answer": "Coverage is collected the same way as for any test project, because the in-memory host runs in the same process and its code is instrumented. Run dotnet test with the coverage collector and include the web project's assemblies in the report. Verify that the web assembly appears in the report, since a misconfigured include list can silently omit it.",
+      "tags": ["integration", "coverage"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-013",
+      "difficulty": "Intermediate",
+      "question": "How do you measure coverage of a separate process?",
+      "answer": "For an application that runs outside the test process, such as a desktop app or a service, use a coverage tool that can attach to the process, or collect coverage with the .NET coverage tooling that supports process-level collection. This is more involved than in-process collection and is usually reserved for end-to-end scenarios. Simpler architectures that keep logic in testable libraries avoid the problem entirely.",
+      "tags": ["out-of-process", "tooling"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use coverage to find dead code?",
+      "answer": "Look for classes and branches that are never executed even by the full suite, which may indicate dead code or a missing test. Investigate before deleting, because the code might be reached only in production scenarios not covered by tests. This makes coverage a useful tool for reducing maintenance burden.",
+      "tags": ["dead-code", "analysis"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "coverage-015",
+      "difficulty": "Intermediate",
+      "question": "How do you combine coverage with mutation testing?",
+      "answer": "Mutation testing introduces small faults into the code and checks whether your tests fail, so it measures the strength of the assertions rather than just the amount of code executed. Tools such as Stryker.NET report a mutation score alongside coverage. Use mutation testing on critical modules where coverage alone gives false confidence.",
+      "tags": ["mutation-testing", "stryker"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-016",
+      "difficulty": "Intermediate",
+      "question": "Why can coverage vary between runs?",
+      "answer": "Parallel execution, flaky tests, environment differences, and tests that are skipped conditionally all change which code runs, so the percentage can drift. Instrumentation of different assemblies or a changed include list also alters the result. Compare coverage on the same runner and configuration to keep the number meaningful.",
+      "tags": ["variance", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-017",
+      "difficulty": "Intermediate",
+      "question": "How do you publish coverage as a CI badge?",
+      "answer": "Generate a badge with ReportGenerator or a dedicated coverage service and reference the badge image in your README. Many CI providers can parse the coverage file and display the percentage automatically. Keep the badge updated by running the report on every build.",
+      "code": "reportgenerator -reports:coverage.cobertura.xml \\\n  -targetdir:report -reporttypes:Badge",
+      "tags": ["badges", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-018",
+      "difficulty": "Intermediate",
+      "question": "How do you measure coverage for a library that is used by several test projects?",
+      "answer": "Collect coverage from every test project and merge the results, making sure the library assembly is included and only counted once. Without merging you see each project's partial view, which understates the true coverage. A shared report generator step in CI handles the merge consistently.",
+      "tags": ["merging", "libraries"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-019",
+      "difficulty": "Intermediate",
+      "question": "How do you find the least-covered files?",
+      "answer": "Sort the coverage report by percentage ascending and focus on the files with the lowest coverage that also carry the most risk, such as core business rules. Low coverage in trivial or generated files is not worth the effort. Combining the sort with change frequency identifies the code that most needs tests.",
+      "tags": ["analysis", "prioritisation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-020",
+      "difficulty": "Intermediate",
+      "question": "What does the coverage collector include by default?",
+      "answer": "The XPlat collector instruments the assemblies that are loaded during the test run, which includes your test project and the projects it references, but it excludes some system assemblies and anything you configure out. Because the default set is broad, always check the report to confirm that the assemblies you care about are present. Explicit includes reduce noise and speed up collection.",
+      "tags": ["configuration", "defaults"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-021",
+      "difficulty": "Advanced",
+      "question": "How does coverage instrumentation affect test performance?",
+      "answer": "Instrumentation adds overhead to every executed line and can significantly slow a large suite, especially with branch coverage enabled. To limit the impact, restrict instrumentation to the assemblies you care about and run coverage on a separate CI stage rather than on every developer build. The slowdown is usually acceptable because coverage runs are less frequent.",
+      "tags": ["performance", "instrumentation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-022",
+      "difficulty": "Advanced",
+      "question": "How do you set a meaningful coverage policy for a team?",
+      "answer": "Set a modest floor that prevents regression rather than an aspirational target, and require coverage on new or changed code instead of the whole repository. Combine coverage with code review to ensure the tests assert real behaviour. Review the policy periodically because a metric that is gamed loses its value.",
+      "tags": ["policy", "governance"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "coverage-023",
+      "difficulty": "Advanced",
+      "question": "Why can high coverage coexist with poor tests?",
+      "answer": "Coverage only records that code executed, not that the result was verified, so tests without assertions or with trivial assertions can reach a high percentage while missing real defects. A single broad test can also execute many lines at once without checking each outcome. Mutation testing and careful review are the antidotes to coverage theatre.",
+      "tags": ["coverage-theatre", "quality"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "coverage-024",
+      "difficulty": "Advanced",
+      "question": "How do you integrate coverage results into a pull request review?",
+      "answer": "Have CI post a comment or status check that shows the coverage change for the diff, so reviewers can see whether new code is tested. Tools such as ReportGenerator or hosted coverage services can produce diff coverage. Requiring a minimum diff coverage focuses attention on the change rather than the historical total.",
+      "tags": ["pull-requests", "diff-coverage"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "coverage-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide which modules deserve mutation testing?",
+      "answer": "Target modules that hold core business rules, are changed frequently, and have high coverage but a history of escaped defects, because that is where weak assertions are most costly. Mutation testing is computationally expensive, so running it on the whole solution is usually impractical. Restricting it to a critical subset gives most of the value at a fraction of the cost.",
+      "tags": ["mutation-testing", "prioritisation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    }
+  ]
+}

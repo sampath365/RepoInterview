@@ -1,0 +1,216 @@
+{
+  "category": "Command & Chain of Responsibility",
+  "slug": "command-chain",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "command-chain-001",
+      "difficulty": "Beginner",
+      "question": "What is the Command pattern?",
+      "answer": "Command encapsulates a request as an object, letting you parameterize clients with different requests, queue or log requests, and support undoable operations. The command object binds a receiver to an action. The invoker triggers the command without knowing the receiver.",
+      "tags": ["command", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-002",
+      "difficulty": "Beginner",
+      "question": "What is the Chain of Responsibility pattern?",
+      "answer": "Chain of Responsibility lets you pass a request along a chain of handlers until one of them handles it. Each handler decides either to process the request or to forward it to the next handler. The sender is decoupled from the eventual receiver.",
+      "tags": ["chain-of-responsibility", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-003",
+      "difficulty": "Beginner",
+      "question": "What are the participants in the Command pattern?",
+      "answer": "The command interface declares Execute and often Undo. Concrete commands bind a receiver to an action. The receiver knows how to perform the work, the invoker triggers commands, and the client creates and configures them.",
+      "tags": ["command", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-004",
+      "difficulty": "Beginner",
+      "question": "What problem does the Command pattern solve?",
+      "answer": "It turns a request into a first-class object, so requests can be stored, queued, logged, retried, or undone. It also decouples the code that triggers an action from the code that performs it. This is useful for menus, task queues, and undo history.",
+      "tags": ["command", "decoupling"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-005",
+      "difficulty": "Beginner",
+      "question": "When does Chain of Responsibility make sense?",
+      "answer": "Use it when more than one handler might process a request and the handler is not known in advance, or when handlers should be composed in order. It suits validation, logging, authentication, and approval workflows. It also allows adding or reordering handlers without changing the sender.",
+      "tags": ["chain-of-responsibility", "design"],
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-006",
+      "difficulty": "Beginner",
+      "question": "How does the Command pattern enable undo?",
+      "answer": "Each command records the information needed to reverse its effect, and the invoker keeps a history of executed commands. Undo calls the command's Undo method and moves it to a redo stack. This makes reversible operations straightforward.",
+      "tags": ["command", "undo"],
+      "code": "public interface ICommand\n{\n    void Execute();\n    void Undo();\n}",
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-007",
+      "difficulty": "Beginner",
+      "question": "How is Chain of Responsibility used in ASP.NET Core?",
+      "answer": "Middleware forms a chain where each component can handle the request or call the next delegate. Authentication middleware can short-circuit by not calling next, for example returning 401. This is a practical chain of responsibility over HTTP requests.",
+      "tags": ["chain-of-responsibility", "middleware"],
+      "code": "app.UseAuthentication();\napp.UseAuthorization();",
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "command-chain-008",
+      "difficulty": "Beginner",
+      "question": "How does the Command pattern relate to a button click handler?",
+      "answer": "The button is the invoker and does not know what the action does. The click triggers a command object that knows the receiver and the operation. This lets the same button be configured with different commands without changing the button.",
+      "tags": ["command", "ui"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-009",
+      "difficulty": "Beginner",
+      "question": "What happens if no handler in the chain handles a request?",
+      "answer": "The request simply falls off the end of the chain, and the sender must decide what that means. Common choices are a default handler, a fallback response, or throwing an error. The chain should document this behavior clearly.",
+      "tags": ["chain-of-responsibility", "design"],
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-010",
+      "difficulty": "Beginner",
+      "question": "How does a command differ from a simple method call?",
+      "answer": "A method call is immediate and direct, while a command is an object that can be stored, passed around, and executed later. The command separates the request from its execution, enabling queuing and undo. This indirection is the point of the pattern.",
+      "tags": ["command", "design"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a handler chain in C#?",
+      "answer": "Define a handler interface with a method that takes the request and can invoke the next handler. Each handler holds a reference to the next one, forming a linked chain. The client builds the chain by wiring handlers together.",
+      "tags": ["chain-of-responsibility", "csharp"],
+      "code": "public abstract class Handler\n{\n    private Handler? _next;\n    public Handler SetNext(Handler next) { _next = next; return next; }\n    public virtual Task Handle(Request r) =>\n        _next is null ? Task.CompletedTask : _next.Handle(r);\n}",
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-012",
+      "difficulty": "Intermediate",
+      "question": "How do you queue and process commands asynchronously?",
+      "answer": "Enqueue command objects into a channel or a background queue and have a worker dequeue and execute them. This decouples the producer from processing time and supports retries. For durability across restarts, persist the commands to a store or broker.",
+      "tags": ["command", "async"],
+      "code": "await _channel.Writer.WriteAsync(new SendEmail(to, subject));",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/queue-service"]
+    },
+    {
+      "id": "command-chain-013",
+      "difficulty": "Intermediate",
+      "question": "How do you support redo in the Command pattern?",
+      "answer": "Maintain two stacks: one for executed commands and one for undone commands. Undo pops from the executed stack, calls Undo, and pushes to the redo stack; redo does the reverse. New commands clear the redo stack because history has branched.",
+      "tags": ["command", "redo"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-014",
+      "difficulty": "Intermediate",
+      "question": "How does the MediatR library use the Command pattern?",
+      "answer": "MediatR routes request objects to a single handler resolved from the container, which is the Command pattern with a mediator. Behaviors wrap the pipeline for cross-cutting concerns like validation and logging. This keeps controllers thin and handlers focused.",
+      "tags": ["command", "mediatr"],
+      "code": "public sealed record CreateOrder(string CustomerId) : IRequest<Guid>;",
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "command-chain-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a chain of responsibility?",
+      "answer": "Test each handler in isolation with a request it should handle and one it should pass on. Then test the assembled chain to verify ordering and short-circuiting. Assert that the correct handler processed the request and that later handlers were not called.",
+      "tags": ["chain-of-responsibility", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "command-chain-016",
+      "difficulty": "Intermediate",
+      "question": "How do you make commands serializable for persistence?",
+      "answer": "Keep commands as simple data records with no behavior or dependencies, and resolve the handler from the type at execution. This makes them easy to serialize to JSON or a queue. Behavior lives in handlers, not in the command data.",
+      "tags": ["command", "serialization"],
+      "code": "public sealed record ShipOrder(Guid OrderId, string Carrier);",
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/overview"]
+    },
+    {
+      "id": "command-chain-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a chain and a pipeline?",
+      "answer": "A chain typically stops when a handler processes the request, while a pipeline usually runs every stage in order, each transforming the input. Middleware is closer to a pipeline, whereas approval workflows are chains. Some implementations blur the two by allowing handlers to both process and pass on.",
+      "tags": ["chain-of-responsibility", "pipeline"],
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors and retries in command processing?",
+      "answer": "Wrap command execution in try/catch and decide whether to retry, dead-letter, or fail. Idempotent commands make retries safe, so design commands so re-execution does not duplicate effects. Persist failure details for diagnostics and manual replay.",
+      "tags": ["command", "resilience"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/"]
+    },
+    {
+      "id": "command-chain-019",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent a chain from becoming a hidden control flow mess?",
+      "answer": "Keep the chain short and each handler single-purpose, and document the order and responsibilities. Prefer explicit composition over runtime discovery of handlers. If the flow is hard to follow, consider a pipeline with clear stages or a straightforward conditional.",
+      "tags": ["chain-of-responsibility", "maintainability"],
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-020",
+      "difficulty": "Intermediate",
+      "question": "How do you register command handlers with dependency injection?",
+      "answer": "Register each handler with the container and use a dispatcher that resolves the handler for the command type. Open generic registration can map IHandler<TCommand> to implementations. Handlers can then have their own dependencies injected.",
+      "tags": ["command", "dependency-injection"],
+      "code": "builder.Services.AddScoped<IHandler<CreateOrder>, CreateOrderHandler>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "command-chain-021",
+      "difficulty": "Advanced",
+      "question": "How would you implement transactional commands with rollback?",
+      "answer": "Give each command a Compensate method that reverses its effect, and execute a sequence of commands within a transaction or a saga. On failure, run compensations in reverse order. For distributed cases, use the saga pattern with idempotent steps.",
+      "tags": ["command", "saga"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "command-chain-022",
+      "difficulty": "Advanced",
+      "question": "How do you scale command processing across multiple workers?",
+      "answer": "Put commands on a durable queue that multiple workers consume, and make commands idempotent so duplicate delivery is safe. Use partitioning or message groups when ordering per key matters. Monitor queue depth and retry behavior to detect backlogs.",
+      "tags": ["command", "scaling"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/"]
+    },
+    {
+      "id": "command-chain-023",
+      "difficulty": "Advanced",
+      "question": "How do you combine Command with Chain of Responsibility for a middleware-style pipeline?",
+      "answer": "Wrap each command handler in a chain of behaviors, where each behavior can run logic before and after invoking the next. This yields a pipeline around a single handler. It is how validation, logging, and transactions decorate command execution.",
+      "tags": ["command", "chain-of-responsibility"],
+      "code": "public sealed class ValidationBehavior<TReq, TRes>(IValidator<TReq> v)\n    : IPipelineBehavior<TReq, TRes>",
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "command-chain-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a command bus in a monolith?",
+      "answer": "A command bus decouples senders from handlers and centralizes cross-cutting concerns, which improves consistency and testability. The cost is indirection, harder debugging, and a dependency on the bus abstraction. It pays off as the number of handlers grows and consistency matters.",
+      "tags": ["command", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/"]
+    },
+    {
+      "id": "command-chain-025",
+      "difficulty": "Advanced",
+      "question": "How do you keep a long-running chain of responsibility responsive?",
+      "answer": "Offload slow handlers to background processing and return early where possible. Use cancellation tokens so a request can be abandoned and set timeouts per stage. Ensure handlers do not block the thread and consider parallelizing independent stages.",
+      "tags": ["chain-of-responsibility", "performance"],
+      "code": "await handler.HandleAsync(request, cancellationToken);",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    }
+  ]
+}

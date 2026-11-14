@@ -1,0 +1,219 @@
+{
+  "category": "Layout Panels & Controls",
+  "slug": "layout",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "layout-001",
+      "difficulty": "Beginner",
+      "question": "What is a layout panel in WPF?",
+      "answer": "A layout panel is a container that positions and sizes its child elements. It derives from Panel and implements the measure and arrange passes of WPF layout. Common panels include Grid, StackPanel, DockPanel, Canvas, and WrapPanel.",
+      "tags": ["panels", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/panel"]
+    },
+    {
+      "id": "layout-002",
+      "difficulty": "Beginner",
+      "question": "How does the Grid panel work?",
+      "answer": "Grid arranges children in rows and columns defined by RowDefinitions and ColumnDefinitions. Children specify their position with the attached properties Grid.Row and Grid.Column. Grid also supports spanning with Grid.RowSpan and Grid.ColumnSpan.",
+      "code": "<Grid>\n  <Grid.RowDefinitions>\n    <RowDefinition Height=\"Auto\"/>\n    <RowDefinition Height=\"*\"/>\n  </Grid.RowDefinitions>\n  <TextBlock Grid.Row=\"0\" Text=\"Header\"/>\n  <TextBlock Grid.Row=\"1\" Text=\"Body\"/>\n</Grid>",
+      "tags": ["grid", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/grid"]
+    },
+    {
+      "id": "layout-003",
+      "difficulty": "Beginner",
+      "question": "How does StackPanel arrange its children?",
+      "answer": "StackPanel stacks children in a single line either vertically or horizontally based on its Orientation property. Children are given their desired size in the stacking direction, so the panel can grow beyond its bounds. It is simple and fast but does not offer row or column alignment.",
+      "code": "<StackPanel Orientation=\"Vertical\">\n  <Button Content=\"One\"/>\n  <Button Content=\"Two\"/>\n</StackPanel>",
+      "tags": ["stackpanel", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/stackpanel"]
+    },
+    {
+      "id": "layout-004",
+      "difficulty": "Beginner",
+      "question": "What is a Canvas and when should you use it?",
+      "answer": "Canvas positions children at explicit coordinates using the attached properties Canvas.Left, Canvas.Top, Canvas.Right, and Canvas.Bottom. It does not resize or reposition children when the canvas changes size. Use Canvas for free-form drawing or absolute positioning where you control coordinates.",
+      "code": "<Canvas>\n  <Rectangle Canvas.Left=\"20\" Canvas.Top=\"10\"\n             Width=\"80\" Height=\"40\" Fill=\"SteelBlue\"/>\n</Canvas>",
+      "tags": ["canvas", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/canvas"]
+    },
+    {
+      "id": "layout-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Margin and Padding?",
+      "answer": "Margin is the space outside an element's border that separates it from neighbors and the parent. Padding is the space inside the border that separates the border from the element's content. Both accept a Thickness value that can specify one, two, or four measurements.",
+      "tags": ["margin", "padding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/alignment-margins-and-padding-overview"]
+    },
+    {
+      "id": "layout-006",
+      "difficulty": "Beginner",
+      "question": "What do the HorizontalAlignment and VerticalAlignment properties do?",
+      "answer": "They control how a child is positioned within the space its parent allots. Options include Left, Center, Right, Stretch, Top, and Bottom. The default is Stretch, which makes the child fill the available space unless its size is constrained.",
+      "code": "<Button HorizontalAlignment=\"Right\" VerticalAlignment=\"Top\"\n        Content=\"Top Right\"/>",
+      "tags": ["alignment", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/alignment-margins-and-padding-overview"]
+    },
+    {
+      "id": "layout-007",
+      "difficulty": "Beginner",
+      "question": "What is a DockPanel?",
+      "answer": "DockPanel docks its children to one edge of the panel using the attached property DockPanel.Dock. Children are docked in order, and the last child fills the remaining space when LastChildFill is true. It is useful for building typical window frames with headers, footers, and sidebars.",
+      "code": "<DockPanel LastChildFill=\"True\">\n  <Menu DockPanel.Dock=\"Top\"/>\n  <StatusBar DockPanel.Dock=\"Bottom\"/>\n  <ContentControl/>\n</DockPanel>",
+      "tags": ["dockpanel", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/dockpanel"]
+    },
+    {
+      "id": "layout-008",
+      "difficulty": "Beginner",
+      "question": "What is a WrapPanel?",
+      "answer": "WrapPanel arranges children in a line and moves to the next line when there is no more space in the current one. Its Orientation controls whether wrapping happens horizontally or vertically, and ItemWidth and ItemHeight can force uniform cell sizes. It is good for tag lists and tool palettes.",
+      "tags": ["wrappanel", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/wrappanel"]
+    },
+    {
+      "id": "layout-009",
+      "difficulty": "Beginner",
+      "question": "What are star-sized, auto, and fixed row heights in a Grid?",
+      "answer": "A fixed height such as \"100\" sets an absolute size. \"Auto\" sizes the row to its content. A star value such as \"*\" or \"2*\" takes a share of the remaining space after fixed and auto rows are measured, so \"2*\" receives twice the space of \"*\".",
+      "code": "<Grid.ColumnDefinitions>\n  <ColumnDefinition Width=\"Auto\"/>\n  <ColumnDefinition Width=\"*\"/>\n  <ColumnDefinition Width=\"2*\"/>\n</Grid.ColumnDefinitions>",
+      "tags": ["grid", "sizing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/grid"]
+    },
+    {
+      "id": "layout-010",
+      "difficulty": "Beginner",
+      "question": "How do you make a control stretch to fill available space?",
+      "answer": "Leave HorizontalAlignment and VerticalAlignment at their default value of Stretch and avoid setting an explicit Width or Height. The parent panel then gives the element all remaining space. For star sizing in a Grid, place the element in a star row or column.",
+      "tags": ["sizing", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/alignment-margins-and-padding-overview"]
+    },
+    {
+      "id": "layout-011",
+      "difficulty": "Intermediate",
+      "question": "Describe the WPF layout process and its two passes?",
+      "answer": "Layout has two passes: measure and arrange. In the measure pass each element reports its desired size through MeasureOverride given the available size, and in the arrange pass the parent places children through ArrangeOverride. If a change invalidates layout, WPF re-runs the passes during the render cycle.",
+      "tags": ["layout", "measure-arrange"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "layout-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Width and ActualWidth?",
+      "answer": "Width is the requested width you set and may be a double value or NaN to indicate automatic sizing. ActualWidth is the read-only width the layout system computed after measure and arrange. ActualWidth reflects the real rendered size, while Width is only a request.",
+      "tags": ["layout", "properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "layout-013",
+      "difficulty": "Intermediate",
+      "question": "What does the SharedSizeGroup feature of Grid do?",
+      "answer": "SharedSizeGroup lets multiple Grid elements share column or row sizes so that corresponding rows and columns align across grids. A parent must set Grid.IsSharedSizeScope to true for the sharing to take effect. It is commonly used to align labels and inputs across separate panels.",
+      "code": "<Grid Grid.IsSharedSizeScope=\"True\">\n  <Grid>\n    <Grid.ColumnDefinitions>\n      <ColumnDefinition SharedSizeGroup=\"Label\"/>\n    </Grid.ColumnDefinitions>\n  </Grid>\n</Grid>",
+      "tags": ["grid", "sizing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/grid"]
+    },
+    {
+      "id": "layout-014",
+      "difficulty": "Intermediate",
+      "question": "How does a UniformGrid differ from a Grid?",
+      "answer": "UniformGrid arranges children in a fixed number of equally sized rows and columns without definitions. You set Rows and Columns or let it compute them from the child count. Grid offers independent row and column sizing and spanning, while UniformGrid is simpler and always uniform.",
+      "tags": ["uniformgrid", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/panel"]
+    },
+    {
+      "id": "layout-015",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of GridSplitter?",
+      "answer": "GridSplitter lets users resize rows or columns interactively by dragging a divider. It is placed in its own Grid cell and configured with ResizeDirection and ResizeBehavior. It updates the width or height of the adjacent rows or columns as the user drags.",
+      "code": "<Grid>\n  <Grid.ColumnDefinitions>\n    <ColumnDefinition Width=\"*\"/>\n    <ColumnDefinition Width=\"Auto\"/>\n    <ColumnDefinition Width=\"*\"/>\n  </Grid.ColumnDefinitions>\n  <GridSplitter Grid.Column=\"1\" Width=\"5\" HorizontalAlignment=\"Stretch\"/>\n</Grid>",
+      "tags": ["gridsplitter", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/gridsplitter"]
+    },
+    {
+      "id": "layout-016",
+      "difficulty": "Intermediate",
+      "question": "How does a ScrollViewer affect layout?",
+      "answer": "ScrollViewer gives its content infinite space in the scrollable direction during measure so the content can report its full desired size. It then shows scrollbars when the content exceeds the viewport. Wrapping a large StackPanel in a ScrollViewer lets the panel grow instead of clipping.",
+      "code": "<ScrollViewer VerticalScrollBarVisibility=\"Auto\"\n              HorizontalScrollBarVisibility=\"Disabled\">\n  <StackPanel/>\n</ScrollViewer>",
+      "tags": ["scrollviewer", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "layout-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between StackPanel and DockPanel?",
+      "answer": "StackPanel stacks children in one direction and lets the panel grow in that direction. DockPanel docks children to any of the four edges and lets one child fill the remaining space. DockPanel is better for full-window frames, while StackPanel suits simple sequential groups.",
+      "tags": ["panels", "comparison"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/dockpanel"]
+    },
+    {
+      "id": "layout-018",
+      "difficulty": "Intermediate",
+      "question": "What are MinWidth, MaxWidth, and how do they interact with Width?",
+      "answer": "MinWidth and MaxWidth constrain the size the layout system may assign, clamping the result of measure and arrange. If Width is set within those limits it is honored, but a value outside them is clamped. They also limit stretching and star sizing so an element never becomes smaller or larger than allowed.",
+      "tags": ["layout", "sizing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "layout-019",
+      "difficulty": "Intermediate",
+      "question": "How do you add a border and rounded corners around a control?",
+      "answer": "Wrap the control in a Border and set BorderBrush, BorderThickness, CornerRadius, and Padding. The Border is a single-child decorator that draws around its content. This is the standard way to give controls a frame or rounded background.",
+      "code": "<Border BorderBrush=\"Gray\" BorderThickness=\"1\"\n        CornerRadius=\"8\" Padding=\"12\" Background=\"White\">\n  <TextBlock Text=\"Rounded\"/>\n</Border>",
+      "tags": ["border", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/alignment-margins-and-padding-overview"]
+    },
+    {
+      "id": "layout-020",
+      "difficulty": "Intermediate",
+      "question": "What is the Viewbox control used for?",
+      "answer": "Viewbox scales its single child to fit the available space while preserving the child's aspect ratio. It uses a ScaleTransform internally and can be configured with Stretch and StretchDirection. It is useful for scaling icons, diagrams, or entire compositions to fit a container.",
+      "tags": ["viewbox", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/panel"]
+    },
+    {
+      "id": "layout-021",
+      "difficulty": "Advanced",
+      "question": "How do you create a custom layout panel?",
+      "answer": "Derive from Panel and override MeasureOverride and ArrangeOverride. In MeasureOverride call Measure on each child and return the total desired size, and in ArrangeOverride call Arrange on each child with its final rectangle. WPF then handles invalidation and rendering of your panel.",
+      "code": "protected override Size MeasureOverride(Size available)\n{\n    foreach (UIElement c in InternalChildren)\n        c.Measure(available);\n    return available;\n}",
+      "tags": ["custom-panel", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "layout-022",
+      "difficulty": "Advanced",
+      "question": "How does layout virtualization work in a panel?",
+      "answer": "A virtualizing panel creates UI containers only for the items currently in view and recycles them as the user scrolls. It derives from VirtualizingPanel and overrides the item container generation methods. This keeps memory and layout cost low for large item collections.",
+      "tags": ["virtualization", "panels"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.controls.virtualizingpanel"]
+    },
+    {
+      "id": "layout-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between MeasureOverride and ArrangeOverride?",
+      "answer": "MeasureOverride computes the size your element wants given the available size and calls Measure on children. ArrangeOverride receives the final size your element is given and calls Arrange on children with their rectangles. Measure determines desire and Arrange determines actual placement.",
+      "tags": ["layout", "measure-arrange"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/layout"]
+    },
+    {
+      "id": "layout-024",
+      "difficulty": "Advanced",
+      "question": "How does layout rounding and UseLayoutRounding affect rendering?",
+      "answer": "UseLayoutRounding makes the layout system round element positions and sizes to whole device pixels. This prevents blurry edges caused by drawing on fractional pixel boundaries, especially on high-DPI displays. It is set on a root element and inherited, and it can be combined with SnapsToDevicePixels.",
+      "code": "<Window UseLayoutRounding=\"True\" SnapsToDevicePixels=\"True\">",
+      "tags": ["dpi", "rendering"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-layout-and-design"]
+    },
+    {
+      "id": "layout-025",
+      "difficulty": "Advanced",
+      "question": "What performance considerations apply to layout?",
+      "answer": "Deep or frequently invalidated layout trees are expensive, so keep the visual tree shallow and avoid unnecessary nesting. Prefer star sizing over Auto where possible and use fixed sizes when known. Avoid changing layout properties in tight loops and consider virtualization for large lists.",
+      "tags": ["performance", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-layout-and-design"]
+    }
+  ]
+}

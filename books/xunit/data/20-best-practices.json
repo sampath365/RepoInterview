@@ -1,0 +1,208 @@
+{
+  "category": "Best Practices & Common Pitfalls",
+  "slug": "best-practices",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "best-practices-001",
+      "difficulty": "Beginner",
+      "question": "What makes a good unit test?",
+      "answer": "A good unit test is fast, deterministic, isolated from other tests, and tests one behaviour with a clear name. It should fail only when the behaviour it describes is broken, so a failure is always actionable. Readability matters because tests are read far more often than they are written.",
+      "tags": ["quality", "unit-tests"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-002",
+      "difficulty": "Beginner",
+      "question": "Why should tests be independent of each other?",
+      "answer": "Independent tests can run in any order, in parallel, and in isolation, so a failure points to a real defect rather than leftover state. xUnit reinforces this by creating a new instance of the test class for every test. Never rely on another test having run first.",
+      "tags": ["isolation", "independence"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "best-practices-003",
+      "difficulty": "Beginner",
+      "question": "Why is a test that asserts nothing harmful?",
+      "answer": "A test without assertions can only fail if the code throws, so it gives a false sense of coverage and never verifies the outcome. It also pollutes the suite with noise and slows the run. Always assert on the behaviour the test is named for.",
+      "tags": ["assertions", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-004",
+      "difficulty": "Beginner",
+      "question": "What is the test pyramid?",
+      "answer": "The test pyramid describes a healthy mix with many fast unit tests at the base, fewer integration tests in the middle, and a small number of slow end-to-end tests at the top. The shape keeps feedback fast while still verifying the whole system. An inverted pyramid, with mostly end-to-end tests, is slow and brittle.",
+      "tags": ["test-pyramid", "strategy"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-005",
+      "difficulty": "Beginner",
+      "question": "Why should tests avoid Thread.Sleep?",
+      "answer": "A sleep makes the test slow and still flaky, because the delay may be too short on a loaded machine and too long on a fast one. Instead, await a real signal such as a task, a polling helper with a timeout, or a synchronisation primitive. Deterministic waiting removes both the delay and the flakiness.",
+      "tags": ["flakiness", "sleep"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-006",
+      "difficulty": "Beginner",
+      "question": "How many assertions should a test have?",
+      "answer": "Aim for the smallest number that fully verifies one behaviour, which is often a single assertion but can be a few related ones. Multiple assertions about the same outcome are fine, but asserting unrelated things couples the test to several behaviours and blurs the failure. Split the test when the assertions describe different behaviours.",
+      "tags": ["assertions", "focus"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-007",
+      "difficulty": "Beginner",
+      "question": "Why should tests be fast?",
+      "answer": "Fast tests encourage developers to run them often, which shortens the feedback loop and catches defects early. A slow suite gets skipped locally and then blocks CI. Speed is a design property you protect by keeping unit tests free of I/O and heavy setup.",
+      "tags": ["speed", "feedback"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-008",
+      "difficulty": "Beginner",
+      "question": "What does deterministic mean for a test?",
+      "answer": "A deterministic test produces the same result every time it runs, regardless of time, order, machine, or network. Sources of non-determinism include the current time, random values without a seed, and shared mutable state. Controlling those inputs is what makes a test trustworthy.",
+      "tags": ["determinism", "reliability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-009",
+      "difficulty": "Beginner",
+      "question": "Should you test private methods?",
+      "answer": "Generally no, because private methods are implementation details and testing them couples the tests to the internals, making refactoring painful. Test them indirectly through the public API, or extract the logic into a separate class with its own public surface if it deserves direct tests. This keeps the tests focused on observable behaviour.",
+      "tags": ["encapsulation", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-010",
+      "difficulty": "Beginner",
+      "question": "How do you keep test code maintainable?",
+      "answer": "Apply the same standards to test code as to production code: clear names, small focused methods, helper builders instead of copy-pasted setup, and no dead tests. Test code is read constantly, so its readability pays off. Delete obsolete tests rather than leaving them commented out.",
+      "tags": ["maintainability", "readability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-011",
+      "difficulty": "Intermediate",
+      "question": "What is over-mocking and why is it a problem?",
+      "answer": "Over-mocking is replacing so many collaborators with mocks that the test verifies the mocks rather than the real behaviour. Such tests pass even when the integration between components is broken, and they break whenever the interaction changes. Mock only what is slow, non-deterministic, or outside your control, and prefer real objects for the rest.",
+      "tags": ["mocking", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that depends on the current time?",
+      "answer": "Inject an abstraction such as TimeProvider or a clock interface and supply a fixed or controllable implementation in the test, rather than calling DateTime.Now directly. This makes the test deterministic and lets you simulate the passage of time. It also improves the production design by making the dependency explicit.",
+      "code": "var clock = new FakeTimeProvider(\n    new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));\nvar sut = new Service(clock);",
+      "tags": ["time", "testability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-013",
+      "difficulty": "Intermediate",
+      "question": "Why should tests not share mutable state?",
+      "answer": "Shared mutable state couples tests together, so the outcome depends on execution order and parallel runs interfere with each other. The failure then appears in a different test than the one that caused it, which is very hard to debug. Keep state inside the test or reset it in a fixture.",
+      "tags": ["state", "isolation"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "best-practices-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test a class with many dependencies?",
+      "answer": "First consider whether the class has too many responsibilities and could be split, because a constructor with eight dependencies is a design smell. If the dependencies are genuine, construct the class with only the collaborators the test needs and use test doubles for the rest. A builder or factory method keeps the construction readable.",
+      "tags": ["design", "dependencies"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-015",
+      "difficulty": "Intermediate",
+      "question": "What is a magic value in a test and how do you avoid it?",
+      "answer": "A magic value is an unexplained literal whose meaning is unclear, such as 42 appearing in several assertions. Name the value in a well-named local or constant so the reader understands what it represents. This makes the test self-documenting and reduces mistakes when the value changes.",
+      "tags": ["readability", "constants"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a test that is intermittently failing?",
+      "answer": "Reproduce it by running the test repeatedly, ideally in parallel and under load, and look for time, order, or resource dependencies. Fix the root cause rather than adding retries, which hide the problem. Quarantine it with a trait if it must be temporarily excluded from the gate.",
+      "tags": ["flakiness", "debugging"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-017",
+      "difficulty": "Intermediate",
+      "question": "Why is asserting on log messages fragile?",
+      "answer": "Log messages are free text that changes often, so asserting on them couples the test to wording rather than behaviour and produces failures for harmless edits. Prefer asserting on the observable outcome, or on a structured log event with a stable identifier if the logging itself is the behaviour under test. Keep message-based assertions to the minimum.",
+      "tags": ["logging", "fragility"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-018",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid duplicating setup across many tests?",
+      "answer": "Extract the common setup into a constructor, a fixture, or a test data builder that each test can customise. Builders are often better than a shared fixture because each test declares exactly the state it needs. The goal is to remove mechanical duplication without hiding what a test depends on.",
+      "tags": ["setup", "builders"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "best-practices-019",
+      "difficulty": "Intermediate",
+      "question": "What is a test that only passes because of its order?",
+      "answer": "It is a test that depends on state left by a previous test, so it fails when run alone or in a different order. xUnit runs tests in an undefined order and in parallel, which surfaces this problem quickly. Fix it by making the test set up its own state.",
+      "tags": ["order-dependence", "isolation"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "best-practices-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test a class that uses static state?",
+      "answer": "Static state makes tests order-dependent and parallel-unsafe, so the best fix is to replace it with an injectable instance. If you cannot change the code, wrap the static call behind an interface and test through the wrapper. Avoid resetting static state in test setup as a permanent solution, because it hides the design problem.",
+      "tags": ["static", "testability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-021",
+      "difficulty": "Advanced",
+      "question": "How do you decide between a unit test and an integration test?",
+      "answer": "Use a unit test when the behaviour lives inside one component and the collaborators can be substituted without losing the point of the test. Use an integration test when the risk is in the wiring, the configuration, or the interaction with a real dependency such as a database or HTTP stack. The decision should be driven by where defects are likely, not by habit.",
+      "tags": ["strategy", "integration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-022",
+      "difficulty": "Advanced",
+      "question": "How do you keep a large test suite fast as it grows?",
+      "answer": "Keep unit tests free of I/O, share expensive infrastructure through fixtures, run independent tests in parallel, and move slow end-to-end tests to a separate stage. Continuously remove redundant tests that no longer add signal. Treat suite duration as a metric that you watch and defend.",
+      "tags": ["performance", "scaling"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "best-practices-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of strict test isolation?",
+      "answer": "Perfect isolation gives order-independent, parallel-safe tests that are easy to diagnose, but it can require more setup per test and can miss integration defects. Sharing state makes tests faster to write but creates hidden coupling and flakiness. The pragmatic balance is isolated unit tests plus a smaller set of integration tests that deliberately exercise the shared wiring.",
+      "tags": ["trade-offs", "isolation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-024",
+      "difficulty": "Advanced",
+      "question": "How do you refactor a fragile test suite without losing confidence?",
+      "answer": "Start by characterising the behaviour the tests are meant to protect, then replace fragile assertions with behaviour-focused ones in small steps, keeping the suite green throughout. Delete tests that only assert implementation details once their intent is covered elsewhere. Refactoring tests is safest when the suite is reliable, so fix flakiness first.",
+      "tags": ["refactoring", "maintenance"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "best-practices-025",
+      "difficulty": "Advanced",
+      "question": "What separates a professional test suite from one that merely passes?",
+      "answer": "A professional suite is fast, deterministic, and trustworthy, so a red build always means a real problem, and its tests document the behaviour in language the team understands. It is maintained with the same care as production code and pruned of redundant or obsolete tests. The measure is not the number of tests but the confidence the team has when it ships.",
+      "tags": ["quality", "culture"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

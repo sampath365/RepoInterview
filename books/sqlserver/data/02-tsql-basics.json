@@ -1,0 +1,339 @@
+{
+  "category": "T-SQL Basics & Data Types",
+  "slug": "tsql-basics",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "tsql-basics-001",
+      "difficulty": "Beginner",
+      "question": "What are the main categories of T-SQL statements?",
+      "answer": "T-SQL statements fall into DML (SELECT, INSERT, UPDATE, DELETE, MERGE), DDL (CREATE, ALTER, DROP, TRUNCATE), DCL (GRANT, REVOKE, DENY) and TCL (BEGIN, COMMIT, ROLLBACK, SAVE TRANSACTION). DML works with data, DDL defines and changes schema objects, DCL controls permissions, and TCL manages transactions. Knowing which category a statement belongs to tells you whether it is transactional and whether it needs schema-level permissions.",
+      "tags": [
+        "t-sql",
+        "dml",
+        "ddl"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/transact-sql-syntax-conventions-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a local variable and a parameter?",
+      "answer": "A local variable is declared with DECLARE and prefixed with @, lives only for the batch or procedure scope, and is assigned with SET or SELECT. A parameter is declared in the procedure or function signature and receives a value from the caller at execution time. Variables default to NULL until assigned, whereas parameters are bound to the arguments supplied in the call.",
+      "tags": [
+        "variables",
+        "parameters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/variables-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between SET and SELECT when assigning variables?",
+      "answer": "SET assigns a single variable and raises an error if the query returns more than one row, while SELECT can assign multiple variables in one statement and silently takes the last row when many are returned. SET follows the ANSI standard and is clearer and safer; SELECT can be faster for many assignments but has the multi-row pitfall. For strict correctness prefer SET unless you deliberately need the multi-variable form.",
+      "tags": [
+        "variables",
+        "set"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/set-local-variable-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-004",
+      "difficulty": "Beginner",
+      "question": "What are the common numeric data types and how do you choose one?",
+      "answer": "INT (4 bytes), BIGINT (8 bytes) and SMALLINT (2 bytes) store whole numbers, while DECIMAL(p,s) and NUMERIC store exact fixed-precision values ideal for money. FLOAT and REAL store approximate floating-point values and should be avoided for currency because they cannot represent decimals exactly. Prefer the smallest type that fits the range, and use DECIMAL for financial data.",
+      "tags": [
+        "data-types",
+        "numeric"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/data-types/data-types-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between CHAR, VARCHAR, NCHAR and NVARCHAR?",
+      "answer": "CHAR and VARCHAR store non-Unicode text in the database collation, while NCHAR and NVARCHAR store Unicode using two bytes per character. The fixed-length CHAR/NCHAR pad values with spaces to the declared length, whereas VARCHAR/NVARCHAR use only the bytes needed. Use NVARCHAR for multilingual text and VARCHAR for ASCII data where storage matters, and never store Unicode in a VARCHAR column.",
+      "tags": [
+        "data-types",
+        "strings",
+        "unicode"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/data-types/char-and-varchar-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between DATE, DATETIME and DATETIME2?",
+      "answer": "DATE stores only a date, TIME stores only a time, and DATETIME2 stores both with variable precision up to 100 nanoseconds and a much wider range than DATETIME. DATETIME is the legacy type with 3.33 ms accuracy and is retained for backward compatibility. For new work use DATE, TIME and DATETIME2, and prefer DATETIMEOFFSET when you must store a UTC offset.",
+      "tags": [
+        "data-types",
+        "datetime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/data-types/datetime2-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-007",
+      "difficulty": "Beginner",
+      "question": "What does the NULL value mean and how is it compared?",
+      "answer": "NULL represents an unknown or missing value, not zero or an empty string, and it is not equal to anything including another NULL. Comparisons with NULL yield UNKNOWN, so you must test it with IS NULL or IS NOT NULL rather than = or <>. Functions like ISNULL, COALESCE and NULLIF help substitute or test NULLs, and most aggregates ignore NULL rows.",
+      "tags": [
+        "null",
+        "data-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/null-and-unknown-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ISNULL and COALESCE?",
+      "answer": "ISNULL takes exactly two arguments and returns the second when the first is NULL, while COALESCE accepts two or more arguments and returns the first non-NULL value. COALESCE is ANSI standard and follows the data type precedence rules, so it can return a different type than the first argument, whereas ISNULL returns the type of the first argument. Both can be used in expressions but COALESCE is more portable.",
+      "tags": [
+        "null",
+        "functions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/coalesce-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-009",
+      "difficulty": "Beginner",
+      "question": "How do you write a comment in T-SQL?",
+      "answer": "Use a double hyphen for a single-line comment and slash-asterisk ... asterisk-slash for a block comment that can span lines. Comments are ignored by the parser and are useful for documenting intent or temporarily disabling code. Nested block comments are supported, and comments can appear almost anywhere whitespace is allowed.",
+      "tags": [
+        "comments",
+        "syntax"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/comment-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-010",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the GO keyword?",
+      "answer": "GO is not a T-SQL statement but a batch separator recognized by client tools such as SSMS and sqlcmd. It signals that the preceding statements form a batch that should be sent to the server as a unit, and variables declared in one batch are not visible in the next. Use GO between statements that require their own batch, such as CREATE PROCEDURE or CREATE VIEW.",
+      "tags": [
+        "batches",
+        "go"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/sql-server-utilities-statements-go"
+      ]
+    },
+    {
+      "id": "tsql-basics-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a batch and a transaction?",
+      "answer": "A batch is a group of statements sent together to be parsed and executed as one unit by the client, while a transaction is a unit of work with ACID properties that can be committed or rolled back. A batch may contain zero or more transactions, and a transaction can span batches. Compilation errors abort a batch but not necessarily a transaction, and some statements must be the only statement in a batch.",
+      "tags": [
+        "batches",
+        "transactions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/transactions-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-012",
+      "difficulty": "Intermediate",
+      "question": "How does implicit conversion affect queries and indexes?",
+      "answer": "When two expressions of different data types are compared, SQL Server converts the lower-precedence type to the higher one, and converting a column can prevent an index seek. A common example is comparing a VARCHAR column to an NVARCHAR parameter, which converts the column and forces a scan. Match data types in joins and predicates, or convert the constant or parameter instead of the column.",
+      "tags": [
+        "data-types",
+        "implicit-conversion",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/data-types/data-type-conversion-database-engine"
+      ]
+    },
+    {
+      "id": "tsql-basics-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between CONVERT and CAST?",
+      "answer": "CAST is the ANSI standard function using the form CAST(expression AS type), while CONVERT is a SQL Server-specific function that additionally accepts a style code for formatting dates and numbers. Use CAST for portability and CONVERT when you need a specific display format, such as CONVERT(VARCHAR(10), getdate(), 120). TRY_CAST and TRY_CONVERT return NULL instead of raising an error on a bad conversion.",
+      "tags": [
+        "functions",
+        "conversion"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/cast-and-convert-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between CHARINDEX and PATINDEX?",
+      "answer": "CHARINDEX searches for a literal substring and returns its starting position, while PATINDEX searches for a pattern that can include wildcards such as % and _ and returns the starting position. Both return 0 when the value is not found and are 1-based. Use PATINDEX when you need pattern matching and CHARINDEX for fast literal searches.",
+      "tags": [
+        "functions",
+        "strings"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/patindex-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between UNION and UNION ALL?",
+      "answer": "UNION combines the rows of two result sets and removes duplicates, which requires a sort or hash and extra cost, while UNION ALL concatenates all rows including duplicates without deduplication. UNION ALL is faster and should be used when duplicates are impossible or acceptable. Both require the same number of columns with compatible data types in the same order.",
+      "tags": [
+        "set-operators",
+        "union"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/set-operators-union-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between DELETE and TRUNCATE?",
+      "answer": "DELETE removes rows one at a time, is fully logged, fires triggers and can use a WHERE clause, while TRUNCATE quickly deallocates the data pages of the whole table, is minimally logged and does not fire triggers. TRUNCATE cannot be used when a foreign key references the table and requires ALTER permission, and it resets identity to the seed. Use TRUNCATE for a fast full clear and DELETE when you need predicates or auditing.",
+      "tags": [
+        "dml",
+        "truncate"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/statements/truncate-table-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-017",
+      "difficulty": "Intermediate",
+      "question": "How do you generate a sequence of numbers without a table in T-SQL?",
+      "answer": "You can use a recursive CTE, a numbers table, or the built-in GENERATE_SERIES (SQL Server 2022 and Azure SQL) to produce a series. GENERATE_SERIES(start, stop [, step]) returns a single-column table and is the simplest modern approach. A persisted numbers table remains the most performant for heavy use.",
+      "tags": [
+        "generate-series",
+        "numbers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/generate-series-transact-sql"
+      ],
+      "code": "SELECT value\nFROM GENERATE_SERIES(1, 10) AS g;"
+    },
+    {
+      "id": "tsql-basics-018",
+      "difficulty": "Intermediate",
+      "question": "What does the MERGE statement do and what are its risks?",
+      "answer": "MERGE performs INSERT, UPDATE and DELETE in a single statement by comparing a source and target on a join condition, often called an upsert. It can be convenient but has well-known bugs and concurrency issues, including incorrect duplicate handling and race conditions, and Microsoft recommends careful testing. Many teams prefer explicit INSERT/UPDATE/DELETE with proper locking for reliability.",
+      "tags": [
+        "dml",
+        "merge"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/statements/merge-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-019",
+      "difficulty": "Intermediate",
+      "question": "What is a derived table and how does it differ from a CTE?",
+      "answer": "A derived table is a subquery in the FROM clause that produces a result set and must be given an alias, and it exists only for the duration of that statement. A CTE is defined with WITH at the start of the statement and can be referenced multiple times, can be recursive, and improves readability. Both are non-persisted and are inlined by the optimizer.",
+      "tags": [
+        "derived-table",
+        "cte"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-020",
+      "difficulty": "Intermediate",
+      "question": "What are the differences between RANK, DENSE_RANK and ROW_NUMBER?",
+      "answer": "ROW_NUMBER assigns a unique sequential number to every row regardless of ties, RANK gives tied rows the same number and then skips, and DENSE_RANK gives tied rows the same number with no gaps. All three require an ORDER BY inside the OVER clause. Choose based on whether ties should share a rank and whether the sequence should be contiguous.",
+      "tags": [
+        "window-functions",
+        "ranking"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/rank-transact-sql"
+      ],
+      "code": "SELECT ROW_NUMBER() OVER (ORDER BY Score DESC) AS rn,\n       RANK()       OVER (ORDER BY Score DESC) AS rnk,\n       DENSE_RANK() OVER (ORDER BY Score DESC) AS drnk\nFROM Results;"
+    },
+    {
+      "id": "tsql-basics-021",
+      "difficulty": "Advanced",
+      "question": "How do you handle dates and times across time zones in SQL Server?",
+      "answer": "Use DATETIMEOFFSET to store the local time together with its UTC offset, or store everything in UTC as DATETIME2 and convert at the edges of the application. AT TIME ZONE converts between a source time zone and a target time zone and can add or remove the offset, while the sys.time_zone_info view lists the supported zone names. Converting at query time can prevent index use, so it is often better to store UTC and convert for display.",
+      "tags": [
+        "datetime",
+        "time-zone"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/at-time-zone-transact-sql"
+      ],
+      "code": "SELECT CAST('2024-01-01 12:00' AS datetime2) AT TIME ZONE 'UTC'\n       AT TIME ZONE 'Pacific Standard Time' AS local_time;"
+    },
+    {
+      "id": "tsql-basics-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between STRING_SPLIT and OPENJSON for splitting values?",
+      "answer": "STRING_SPLIT (SQL Server 2016 and later) splits a delimited string into rows with a value column and, from 2022, an optional ordinal column, but it does not guarantee order without the ordinal. OPENJSON parses a JSON array into rows and gives full control over types and paths. Use STRING_SPLIT for simple delimited lists and OPENJSON for structured or typed data.",
+      "tags": [
+        "strings",
+        "json"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/string-split-transact-sql"
+      ],
+      "code": "SELECT value\nFROM STRING_SPLIT('red,green,blue', ',') AS s;"
+    },
+    {
+      "id": "tsql-basics-023",
+      "difficulty": "Advanced",
+      "question": "How does collation affect comparisons, sorting and Unicode storage?",
+      "answer": "Collation defines the rules for sorting, case and accent sensitivity, and the code page used by non-Unicode types. Case-insensitive collations treat 'A' and 'a' as equal, and different collations can make a join between columns fail with a collation conflict. You can override per expression with COLLATE, but columns should share a collation to allow index seeks and to avoid conversion errors.",
+      "tags": [
+        "collation",
+        "unicode"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/collations/collation-and-unicode-support"
+      ]
+    },
+    {
+      "id": "tsql-basics-024",
+      "difficulty": "Advanced",
+      "question": "What are the pros and cons of using the sql_variant data type?",
+      "answer": "sql_variant stores values of several data types in a single column and preserves the underlying type, which can be useful for generic attribute tables. However, it has limited index and statistics support, cannot hold some types such as text or image, and comparisons follow a type precedence that can surprise developers. It is generally better to model separate typed columns or use a serialized format.",
+      "tags": [
+        "data-types",
+        "sql-variant"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/data-types/sql-variant-transact-sql"
+      ]
+    },
+    {
+      "id": "tsql-basics-025",
+      "difficulty": "Advanced",
+      "question": "How does SET NOCOUNT ON affect batches and client behavior?",
+      "answer": "SET NOCOUNT ON suppresses the 'n rows affected' messages that SQL Server sends for each statement, which reduces network traffic and avoids extra result sets that can confuse some clients. It is a common best practice at the top of stored procedures and triggers. It does not change the data or @@ROWCOUNT, which is still updated after each statement.",
+      "tags": [
+        "set-options",
+        "nocount"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/statements/set-nocount-transact-sql"
+      ]
+    }
+  ]
+}

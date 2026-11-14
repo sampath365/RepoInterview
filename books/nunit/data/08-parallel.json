@@ -1,0 +1,361 @@
+{
+  "category": "Parallel Test Execution",
+  "slug": "parallel",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "parallel-001",
+      "difficulty": "Beginner",
+      "question": "Is parallel execution enabled by default in NUnit?",
+      "answer": "No, by default NUnit runs tests one at a time within an assembly. You opt in by marking tests or fixtures with [Parallelizable], or by setting an assembly-level [Parallelizable] attribute. Once enabled, NUnit schedules the eligible tests onto a pool of worker threads.",
+      "tags": [
+        "parallel",
+        "defaults"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-002",
+      "difficulty": "Beginner",
+      "question": "What does the [Parallelizable] attribute do?",
+      "answer": "[Parallelizable] declares that a test, fixture or assembly may run at the same time as other tests that are also parallelizable. Without an argument its scope defaults to ParallelScope.Self. Marking a test parallelizable is a promise that it is thread-safe.",
+      "code": "[Test]\n[Parallelizable(ParallelScope.Self)]\npublic void Is_Thread_Safe() { }",
+      "tags": [
+        "parallelizable",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/parallelizable.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-003",
+      "difficulty": "Beginner",
+      "question": "What are the values of the ParallelScope enum?",
+      "answer": "ParallelScope.Self means this node may run in parallel with other nodes; Children means its children may run in parallel; Fixtures means the fixture may run alongside other fixtures; and All combines the relevant scopes. You can combine values with the bitwise or operator. Choosing the scope controls exactly what is allowed to overlap.",
+      "code": "[assembly: Parallelizable(ParallelScope.Fixtures)]",
+      "tags": [
+        "parallelscope",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/parallelizable.html"
+      ]
+    },
+    {
+      "id": "parallel-004",
+      "difficulty": "Beginner",
+      "question": "How do you turn on parallel execution for a whole assembly?",
+      "answer": "Add [assembly: Parallelizable(ParallelScope.Fixtures)] to the test assembly so fixtures run alongside one another. You can also set [assembly: LevelOfParallelism(n)] to cap the number of worker threads. This is the usual way to speed up a suite without editing every fixture.",
+      "code": "[assembly: Parallelizable(ParallelScope.Fixtures)]\n[assembly: LevelOfParallelism(4)]",
+      "tags": [
+        "parallel",
+        "assembly"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/levelofparallelism.html"
+      ]
+    },
+    {
+      "id": "parallel-005",
+      "difficulty": "Beginner",
+      "question": "What is the [NonParallelizable] attribute for?",
+      "answer": "[NonParallelizable] marks a test or fixture that must not run at the same time as any other test, even when the assembly is parallelizable. NUnit schedules it so that it has exclusive access. It is the safety valve for tests that touch shared global state.",
+      "tags": [
+        "nonparallelizable",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/nonparallelizable.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-006",
+      "difficulty": "Beginner",
+      "question": "What is the main risk of running tests in parallel?",
+      "answer": "The main risk is shared mutable state: two tests writing the same static field, file or database row can interfere and fail intermittently. Parallel execution does not cause the bug, it reveals it. Making tests independent and isolated is the correct fix rather than disabling parallelism.",
+      "tags": [
+        "parallel",
+        "state"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-007",
+      "difficulty": "Beginner",
+      "question": "How do you control how many threads NUnit uses for parallel tests?",
+      "answer": "Apply [LevelOfParallelism(n)] at the assembly level to cap the number of worker threads NUnit uses. Without it NUnit chooses a default based on the processor count. Setting it explicitly can help when tests share a constrained resource such as a database.",
+      "code": "[assembly: LevelOfParallelism(4)]",
+      "tags": [
+        "levelofparallelism",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/levelofparallelism.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-008",
+      "difficulty": "Beginner",
+      "question": "What is ParallelScope.Self and how does it differ from Children?",
+      "answer": "ParallelScope.Self means the node itself may run in parallel with other parallel nodes. ParallelScope.Children means the node's children may run in parallel with each other, which is useful on a fixture whose tests should overlap while the fixture runs as a unit. Combining them with the or operator enables both.",
+      "tags": [
+        "parallelscope",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/parallelizable.html"
+      ]
+    },
+    {
+      "id": "parallel-009",
+      "difficulty": "Beginner",
+      "question": "Can OneTimeSetUp run in parallel with tests?",
+      "answer": "No, the one-time setup and teardown of a fixture or SetUpFixture complete before the contained tests begin, even when those tests run in parallel. This guarantees that shared setup is finished before any test uses it. Only the tests themselves overlap.",
+      "tags": [
+        "onetimesetup",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setupfixture.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-010",
+      "difficulty": "Beginner",
+      "question": "Does parallel execution change the order tests run in?",
+      "answer": "Yes, parallel execution makes the completion and even the start order of tests nondeterministic because several tests run concurrently. Tests must therefore be independent of order. If you need a specific sequence you must keep those tests non-parallel and ordered.",
+      "tags": [
+        "order",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/order.html"
+      ]
+    },
+    {
+      "id": "parallel-011",
+      "difficulty": "Intermediate",
+      "question": "How do you run fixtures in parallel but keep each fixture's tests in order?",
+      "answer": "Mark the assembly with ParallelScope.Fixtures so fixtures overlap, and do not mark the individual tests parallelizable, so NUnit runs the tests within a fixture one at a time. This gives cross-fixture parallelism while preserving per-fixture sequence. It is a common balance for suites with per-fixture shared state.",
+      "tags": [
+        "parallelscope",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-012",
+      "difficulty": "Intermediate",
+      "question": "How does FixtureLifeCycle.InstancePerTestCase help with parallel tests?",
+      "answer": "With a fresh fixture instance per test, instance fields are not shared between tests that run concurrently, which removes a common source of interference. Static state and shared external resources still need attention. This combination is recommended when fixtures run in parallel.",
+      "tags": [
+        "fixturelifecycle",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-013",
+      "difficulty": "Intermediate",
+      "question": "What happens when a parallelizable test needs exclusive access to a resource?",
+      "answer": "Mark the test or fixture [NonParallelizable] so NUnit gives it exclusive access, or synchronise access with a lock. A cleaner approach is to give each test its own isolated resource, such as a unique temporary file or an in-memory database. Isolation avoids the serialisation cost.",
+      "tags": [
+        "nonparallelizable",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/nonparallelizable.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-014",
+      "difficulty": "Intermediate",
+      "question": "How do ParallelScope.Fixtures and ParallelScope.All differ?",
+      "answer": "ParallelScope.Fixtures allows a fixture to run alongside other fixtures but keeps its own tests sequential. ParallelScope.All allows the fixture and all of its tests to run in parallel with everything else, giving the most overlap and the greatest thread-safety requirement. Choose All only when both fixture-level and test-level state are safe.",
+      "tags": [
+        "parallelscope",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/parallelizable.html"
+      ]
+    },
+    {
+      "id": "parallel-015",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit schedule parallel work internally?",
+      "answer": "NUnit maintains a queue of parallelizable tests and a pool of worker threads and dispatches tests to the pool as threads become free. Non-parallelizable tests act as barriers that must run alone. The number of workers is bounded by the level of parallelism.",
+      "tags": [
+        "scheduling",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-016",
+      "difficulty": "Intermediate",
+      "question": "How do you diagnose a test that only fails when run in parallel?",
+      "answer": "Look for shared mutable state such as static fields, singletons, fixed file paths, ports or database rows that two tests touch at once. Reproduce by running the fixture in parallel repeatedly and inspect the failure for a race symptom. Fix by isolating the resource per test rather than disabling parallelism.",
+      "tags": [
+        "parallel",
+        "flaky"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-017",
+      "difficulty": "Intermediate",
+      "question": "Can [Parallelizable] be applied to individual test methods?",
+      "answer": "Yes, you can put [Parallelizable] on a method to allow just that test to run in parallel with others. This is useful when most of a fixture must stay sequential but a few expensive tests are independent. The scope defaults to Self for a method.",
+      "tags": [
+        "parallelizable",
+        "methods"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/parallelizable.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-018",
+      "difficulty": "Intermediate",
+      "question": "How do [Apartment] and parallel execution interact?",
+      "answer": "Tests that require a single-threaded apartment, marked with [Apartment(ApartmentState.STA)], cannot simply run on any worker thread, so NUnit restricts how they are scheduled. Mixing apartment-sensitive tests with aggressive parallelism can cause failures or serialisation. Keep apartment tests non-parallelizable to be safe.",
+      "tags": [
+        "apartment",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/apartment.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between engine-level and framework-level parallel execution?",
+      "answer": "Framework parallel execution happens inside a single test assembly using [Parallelizable] and runs tests on a thread pool within that process. Engine parallel execution runs several test assemblies or processes at once, coordinated by the runner. They are independent facilities and can be combined.",
+      "tags": [
+        "engine",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Engine-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-020",
+      "difficulty": "Intermediate",
+      "question": "How do you make a test fixture safe for parallel execution?",
+      "answer": "Avoid mutable static state, give each test its own instance data, use unique names for files and other external resources, and prefer per-test lifecycle so instances are not shared. Where a shared resource is unavoidable, guard it with a lock or make it non-parallelizable. These steps remove the usual causes of parallel flakiness.",
+      "tags": [
+        "parallel",
+        "bestpractices"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html"
+      ]
+    },
+    {
+      "id": "parallel-021",
+      "difficulty": "Advanced",
+      "question": "How does NUnit decide the degree of parallelism when LevelOfParallelism is unset?",
+      "answer": "Without an explicit level NUnit chooses a default number of worker threads, typically based on the number of processors. The actual overlap is also limited by which tests are parallelizable and by the scope of the parallelizable nodes. Setting LevelOfParallelism gives you deterministic control when tests contend for a resource.",
+      "tags": [
+        "levelofparallelism",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/levelofparallelism.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-022",
+      "difficulty": "Advanced",
+      "question": "How do non-parallelizable tests interact with the parallel schedule?",
+      "answer": "A non-parallelizable test must run while no other test is running, so NUnit drains the parallel work before running it and resumes afterwards. This creates a serialisation point that can reduce the benefit of parallelism if many tests are marked non-parallelizable. Prefer isolating state over widespread non-parallelizable markers.",
+      "tags": [
+        "nonparallelizable",
+        "scheduling"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/nonparallelizable.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "parallel-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of ParallelScope.All for a fixture?",
+      "answer": "ParallelScope.All maximises overlap, which can substantially shorten a suite, but it requires that both fixture-level and test-level state be thread-safe, including any one-time state the tests share. Getting it wrong produces intermittent failures that are hard to debug. Adopt it only after confirming the fixture holds no shared mutable state.",
+      "tags": [
+        "parallelscope",
+        "design"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/parallelizable.html"
+      ]
+    },
+    {
+      "id": "parallel-024",
+      "difficulty": "Advanced",
+      "question": "How would you migrate a large sequential suite to parallel execution safely?",
+      "answer": "Start by enabling ParallelScope.Fixtures at the assembly level, which is the least risky step, and fix any shared-state failures by isolating resources. Then mark individual fixtures or tests parallelizable where they are provably independent, using LevelOfParallelism to bound resource contention. Measure flakiness after each step so regressions are attributable.",
+      "tags": [
+        "parallel",
+        "migration"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html"
+      ]
+    },
+    {
+      "id": "parallel-025",
+      "difficulty": "Advanced",
+      "question": "How does parallel execution affect tests that share a database or file system?",
+      "answer": "Concurrent tests writing the same rows or files can interleave and corrupt each other's expectations, producing intermittent failures. The robust fix is isolation: a unique schema, transaction or temporary directory per test. Failing that, serialise access with locks or mark the tests non-parallelizable, but isolation scales better.",
+      "tags": [
+        "parallel",
+        "isolation"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    }
+  ]
+}

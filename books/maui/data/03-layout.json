@@ -1,0 +1,207 @@
+{
+  "category": "Layouts & Controls",
+  "slug": "layout",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "layout-001",
+      "difficulty": "Beginner",
+      "question": "What is a layout in .NET MAUI?",
+      "answer": "A layout is a container that arranges its child views according to its own rules. MAUI provides StackLayout, Grid, FlexLayout, AbsoluteLayout, and others, all deriving from the abstract Layout class. Choosing the right layout controls both appearance and layout performance.",
+      "tags": ["layouts", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/"]
+    },
+    {
+      "id": "layout-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between StackLayout and VerticalStackLayout?",
+      "answer": "Both arrange children in a single direction, but VerticalStackLayout and HorizontalStackLayout are optimized and use a non-bindable children collection. StackLayout supports binding its Children and Orientation and is more flexible but heavier. Prefer VerticalStackLayout or HorizontalStackLayout for simple stacks and use StackLayout only when you need bindable children.",
+      "tags": ["layouts", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/stacklayout", "https://learn.microsoft.com/dotnet/maui/user-interface/layouts/verticalstacklayout"]
+    },
+    {
+      "id": "layout-003",
+      "difficulty": "Beginner",
+      "question": "How does the Grid layout arrange its children?",
+      "answer": "Grid arranges children in rows and columns defined by RowDefinitions and ColumnDefinitions. Each child specifies its position with Grid.Row, Grid.Column, and spans with Grid.RowSpan and Grid.ColumnSpan. The default row and column is 0, so children without attached properties stack in the top-left cell.",
+      "tags": ["grid", "layouts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/grid"]
+    },
+    {
+      "id": "layout-004",
+      "difficulty": "Beginner",
+      "question": "What does the star sizing do in a Grid?",
+      "answer": "Star sizing distributes available space proportionally among rows or columns. A value of 2* gives twice the space of *, and combined with Auto and absolute sizes it lets you mix fixed and flexible tracks. The Grid first satisfies Auto and absolute tracks, then splits the remainder by star weights.",
+      "tags": ["grid", "sizing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/grid"]
+    },
+    {
+      "id": "layout-005",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the FlexLayout?",
+      "answer": "FlexLayout arranges children in a flexible, CSS flexbox-like manner with Wrap and direction controls. It supports properties such as Basis, Grow, Shrink, and AlignSelf per child. It is useful for responsive layouts that need to wrap items across rows.",
+      "tags": ["flexlayout", "layouts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/flexlayout"]
+    },
+    {
+      "id": "layout-006",
+      "difficulty": "Beginner",
+      "question": "What is AbsoluteLayout used for?",
+      "answer": "AbsoluteLayout positions children at explicit coordinates using proportional or absolute values. You attach positions with AbsoluteLayout.LayoutBounds and control sizing with AbsoluteLayout.LayoutFlags. It is best for layouts that do not reflow, such as overlays and custom positioning.",
+      "tags": ["absolutelayout", "layouts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/absolutelayout"]
+    },
+    {
+      "id": "layout-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Margin and Padding?",
+      "answer": "Margin is the space outside a view's border that separates it from siblings. Padding is the space inside a layout's border between the border and its children. Both accept a Thickness that can specify uniform or per-side values.",
+      "tags": ["layout", "spacing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/"]
+    },
+    {
+      "id": "layout-008",
+      "difficulty": "Beginner",
+      "question": "What is the CollectionView control?",
+      "answer": "CollectionView is a flexible, performant control for presenting scrollable lists or grids of data. It supports selection, grouping, headers and footers, empty views, and both horizontal and vertical layouts. It supersedes ListView for most scenarios.",
+      "tags": ["collectionview", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/"]
+    },
+    {
+      "id": "layout-009",
+      "difficulty": "Beginner",
+      "question": "How do you display an image in MAUI?",
+      "answer": "Use the Image control and set its Source to a file name, URI, or ImageSource. Images placed in Resources/Images are referenced by filename and resolved per platform. You can control the fit with Aspect such as AspectFill or AspectFit.",
+      "tags": ["image", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/image"]
+    },
+    {
+      "id": "layout-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Entry and Editor?",
+      "answer": "Entry is a single-line text input, while Editor is a multi-line text input. Both derive from InputView and share properties like Text, Placeholder, and IsReadOnly. Editor grows to multiple lines and is used for longer free text.",
+      "tags": ["entry", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/entry", "https://learn.microsoft.com/dotnet/maui/user-interface/controls/editor"]
+    },
+    {
+      "id": "layout-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom layout in .NET MAUI?",
+      "answer": "Derive from Layout and override CreateLayoutManager to return a custom ILayoutManager. The manager implements Measure and ArrangeChildren to size and position children. This is the modern replacement for the old custom layout approach and integrates with the layout cycle.",
+      "tags": ["layouts", "custom"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/custom"]
+    },
+    {
+      "id": "layout-012",
+      "difficulty": "Intermediate",
+      "question": "What is BindableLayout and when would you use it?",
+      "answer": "BindableLayout adds data binding to layouts that are not inherently list controls, such as VerticalStackLayout or FlexLayout. You set ItemsSource and ItemTemplate, and it generates one child per item. It is useful for small, non-virtualized collections where a CollectionView would be overkill.",
+      "tags": ["bindablelayout", "data-binding"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/bindablelayout"]
+    },
+    {
+      "id": "layout-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use a Grid inside a CollectionView item template?",
+      "answer": "Place the Grid inside the DataTemplate and use star or Auto definitions to lay out the item's fields. The item's binding context is the data object, so bindings resolve against it. Avoid deeply nested or fixed-size layouts in templates to keep scrolling smooth.",
+      "tags": ["collectionview", "grid"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/populate-data", "https://learn.microsoft.com/dotnet/maui/user-interface/layouts/grid"]
+    },
+    {
+      "id": "layout-014",
+      "difficulty": "Intermediate",
+      "question": "How does a MAUI layout measure and arrange its children?",
+      "answer": "Layout runs a two-pass process: measure computes desired sizes given constraints, then arrange positions children within the final size. Each layout manager caches measurements and only re-measures when constraints or properties change. Excessive invalidation from property changes causes layout thrash and jank.",
+      "tags": ["layout", "measure"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/custom"]
+    },
+    {
+      "id": "layout-015",
+      "difficulty": "Intermediate",
+      "question": "How do you make a layout scrollable?",
+      "answer": "Wrap content in a ScrollView, which provides a single scrollable child. Set Orientation to control vertical, horizontal, or both directions. For large data sets prefer CollectionView, which virtualizes items instead of scrolling a fully materialized layout.",
+      "tags": ["scrollview", "layouts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/scrollview"]
+    },
+    {
+      "id": "layout-016",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the Border control?",
+      "answer": "Border draws a border and optional corner radius and background around a single child. You configure Stroke, StrokeThickness, StrokeShape, and Padding. It replaces the legacy Frame control for card-like containers.",
+      "tags": ["border", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/border"]
+    },
+    {
+      "id": "layout-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a selection in a CollectionView?",
+      "answer": "Set SelectionMode to Single or Multiple and bind SelectedItem or SelectedItems. Handle the SelectionChanged event to react to changes. For commands, bind SelectionChangedCommand in an MVVM-friendly way.",
+      "tags": ["collectionview", "selection"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/selection"]
+    },
+    {
+      "id": "layout-018",
+      "difficulty": "Intermediate",
+      "question": "What is a VisualStateManager used for?",
+      "answer": "VisualStateManager defines named visual states and the property setters applied in each, such as Normal, Disabled, or Focused. You attach states through VisualStateGroups in XAML or code. It is the recommended way to change appearance in response to control state changes.",
+      "tags": ["visual-state-manager", "styles"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/visual-states"]
+    },
+    {
+      "id": "layout-019",
+      "difficulty": "Intermediate",
+      "question": "How do you show a grid of items with a fixed number of columns?",
+      "answer": "Set CollectionView.ItemsLayout to a GridItemsLayout with Span equal to the column count. Orientation determines whether items fill rows or columns. You can also control item spacing with HorizontalItemSpacing and VerticalItemSpacing.",
+      "tags": ["collectionview", "grid"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/layout"]
+    },
+    {
+      "id": "layout-020",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a pull-to-refresh list?",
+      "answer": "Wrap the list in a RefreshView and set IsRefreshing bound to a view model property. Bind Command to a refresh command that reloads data. When the work completes, set IsRefreshing back to false to hide the spinner.",
+      "tags": ["refreshview", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/refreshview"]
+    },
+    {
+      "id": "layout-021",
+      "difficulty": "Advanced",
+      "question": "How do you optimize layout performance in .NET MAUI?",
+      "answer": "Prefer simpler layouts such as Grid over deeply nested stacks, and avoid redundant containers that add measure passes. Use VerticalStackLayout and HorizontalStackLayout over StackLayout, and set fixed sizes where content size is known. Minimize property changes that invalidate layout and avoid layouts inside frequently recycled item templates.",
+      "tags": ["performance", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance", "https://learn.microsoft.com/dotnet/maui/user-interface/layouts/"]
+    },
+    {
+      "id": "layout-022",
+      "difficulty": "Advanced",
+      "question": "How does CollectionView virtualization work and how do you preserve it?",
+      "answer": "CollectionView virtualizes items so only visible cells are realized, reusing them as you scroll. You break virtualization by nesting a scrollable inside another scrollable or by giving the list an unbounded height inside a ScrollView. Keep item templates lightweight and avoid Measure calls that force full realization.",
+      "tags": ["collectionview", "virtualization"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/scrolling", "https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/"]
+    },
+    {
+      "id": "layout-023",
+      "difficulty": "Advanced",
+      "question": "How do RelativeLayout constraints work?",
+      "answer": "RelativeLayout positions children relative to the layout or to other children using constraint expressions. Constraints are created with methods like Constraint.RelativeToParent and Constraint.RelativeToView, then set on XConstraint and YConstraint. Because it can be hard to maintain, prefer Grid or FlexLayout unless you need sibling-relative positioning.",
+      "tags": ["relativelayout", "layouts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/layouts/relativelayout"]
+    },
+    {
+      "id": "layout-024",
+      "difficulty": "Advanced",
+      "question": "What are device-independent units and why do they matter for layout?",
+      "answer": "Device-independent units (DIUs) are MAUI's universal measurement, roughly 1/160 inch, so a value means the same physical size across densities. The framework converts DIUs to platform pixels automatically, which keeps layouts consistent across devices. Designing in DIUs avoids the density-specific math that raw pixels would require.",
+      "tags": ["layout", "units"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/device-independent-units"]
+    },
+    {
+      "id": "layout-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle safe-area insets in a MAUI page?",
+      "answer": "Safe areas avoid notches, rounded corners, and system bars so content stays visible. On iOS you can control page safe-area behavior with the platform-specific Page.UseSafeArea, and layouts can be inset manually where needed. Newer .NET versions add SafeAreaEdges for finer cross-platform control, so check your target version.",
+      "tags": ["safe-area", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/safe-area", "https://learn.microsoft.com/dotnet/maui/ios/platform-specifics/page-safe-area-layout"]
+    }
+  ]
+}

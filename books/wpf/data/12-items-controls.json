@@ -1,0 +1,222 @@
+{
+  "category": "Items Controls & Data Templates",
+  "slug": "items-controls",
+  "icon": "list",
+  "questions": [
+    {
+      "id": "items-controls-001",
+      "difficulty": "Beginner",
+      "question": "What is an ItemsControl?",
+      "answer": "ItemsControl is the base class for controls that display a collection of items, such as ListBox, ComboBox, and ListView. It exposes Items and ItemsSource and generates a container for each item. You control appearance with an ItemTemplate and the panel that lays out items.",
+      "tags": ["itemscontrol", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Items and ItemsSource?",
+      "answer": "Items is the collection of items the control displays directly, and you can add to it in XAML. ItemsSource is a binding to an external collection, and when it is set you cannot also add to Items. Use ItemsSource when data comes from a ViewModel or data source.",
+      "tags": ["itemssource", "itemscontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-003",
+      "difficulty": "Beginner",
+      "question": "What is a DataTemplate in an ItemsControl?",
+      "answer": "A DataTemplate set on ItemTemplate defines how each item is rendered. It binds to the item's properties and produces the visual for that item. Without a template the control displays each item's ToString result.",
+      "code": "<ListBox ItemsSource=\"{Binding People}\">\n  <ListBox.ItemTemplate>\n    <DataTemplate>\n      <StackPanel Orientation=\"Horizontal\">\n        <TextBlock Text=\"{Binding Name}\" FontWeight=\"Bold\"/>\n        <TextBlock Text=\"{Binding Age, StringFormat=' ({0})'}\"/>\n      </StackPanel>\n    </DataTemplate>\n  </ListBox.ItemTemplate>\n</ListBox>",
+      "tags": ["datatemplate", "itemscontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "items-controls-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ListBox and ListView?",
+      "answer": "ListBox is a simple selectable list of items. ListView derives from ListBox and adds a View property, most commonly a GridView that displays items in columns with headers. Use ListView when you need column-based display.",
+      "tags": ["listbox", "listview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/listview-overview"]
+    },
+    {
+      "id": "items-controls-005",
+      "difficulty": "Beginner",
+      "question": "What is a ComboBox and how does it differ from a ListBox?",
+      "answer": "A ComboBox shows a single selected item with a drop-down list of options, saving space. A ListBox shows all items at once and supports multiple selection. Both derive from Selector and share selection behavior.",
+      "tags": ["combobox", "listbox"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/combobox"]
+    },
+    {
+      "id": "items-controls-006",
+      "difficulty": "Beginner",
+      "question": "How do you bind the selected item of a list to a property?",
+      "answer": "Set SelectedItem to a TwoWay binding on the ViewModel property. Alternatively use SelectedValue with SelectedValuePath to bind a key rather than the whole object. TwoWay binding keeps the ViewModel in sync as the selection changes.",
+      "code": "<ListBox ItemsSource=\"{Binding People}\"\n         SelectedItem=\"{Binding SelectedPerson, Mode=TwoWay}\"/>",
+      "tags": ["selection", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/listbox"]
+    },
+    {
+      "id": "items-controls-007",
+      "difficulty": "Beginner",
+      "question": "What is a Selector control?",
+      "answer": "Selector is the base class for controls that let the user choose one or more items from a collection, such as ListBox, ComboBox, and TabControl. It provides SelectedItem, SelectedIndex, SelectedValue, and selection change events. It also manages the collection view's current item.",
+      "tags": ["selector", "itemscontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.controls.primitives.selector"]
+    },
+    {
+      "id": "items-controls-008",
+      "difficulty": "Beginner",
+      "question": "How do you display items in columns with a ListView?",
+      "answer": "Set the ListView's View to a GridView and define GridViewColumns with DisplayMemberBinding or a cell template. Each column shows a property of the item. This is the classic table-like presentation in WPF.",
+      "code": "<ListView ItemsSource=\"{Binding People}\">\n  <ListView.View>\n    <GridView>\n      <GridViewColumn Header=\"Name\" DisplayMemberBinding=\"{Binding Name}\"/>\n      <GridViewColumn Header=\"Age\" DisplayMemberBinding=\"{Binding Age}\"/>\n    </GridView>\n  </ListView.View>\n</ListView>",
+      "tags": ["gridview", "listview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/gridview-overview"]
+    },
+    {
+      "id": "items-controls-009",
+      "difficulty": "Beginner",
+      "question": "What is an item container and why does it matter?",
+      "answer": "An item container is the element that wraps each data item, such as ListBoxItem or ComboBoxItem. Containers hold selection and interaction state. You can style or re-template containers to change how items look and behave.",
+      "tags": ["containers", "itemscontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-010",
+      "difficulty": "Beginner",
+      "question": "How do you enable multiple selection in a ListBox?",
+      "answer": "Set SelectionMode to Multiple or Extended. Multiple lets the user toggle items with clicks, while Extended supports shift and control ranges. You then read the SelectedItems collection, which is not bindable by default.",
+      "code": "<ListBox SelectionMode=\"Extended\" ItemsSource=\"{Binding People}\"/>",
+      "tags": ["selection", "listbox"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/listbox"]
+    },
+    {
+      "id": "items-controls-011",
+      "difficulty": "Intermediate",
+      "question": "What is ItemsPanel and how do you change the layout of items?",
+      "answer": "ItemsPanel defines the panel that arranges item containers, and it defaults to a StackPanel or VirtualizingStackPanel. You replace it with an ItemsPanelTemplate to use a WrapPanel, UniformGrid, or Canvas. This controls how items flow within the control.",
+      "code": "<ListBox.ItemsPanel>\n  <ItemsPanelTemplate>\n    <WrapPanel/>\n  </ItemsPanelTemplate>\n</ListBox.ItemsPanel>",
+      "tags": ["itemspanel", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-012",
+      "difficulty": "Intermediate",
+      "question": "What is an ItemContainerStyle?",
+      "answer": "ItemContainerStyle applies a style to the generated container for each item, such as ListBoxItem. It lets you set container properties like padding or a custom template. It is different from ItemTemplate, which styles the item content.",
+      "code": "<ListBox.ItemContainerStyle>\n  <Style TargetType=\"ListBoxItem\">\n    <Setter Property=\"Padding\" Value=\"8\"/>\n  </Style>\n</ListBox.ItemContainerStyle>",
+      "tags": ["itemcontainerstyle", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ItemTemplate and ItemContainerStyle?",
+      "answer": "ItemTemplate defines the visual content of each item through a DataTemplate. ItemContainerStyle styles the container element that wraps the item. Use ItemTemplate to change what an item looks like and ItemContainerStyle to change the wrapper's properties.",
+      "tags": ["datatemplate", "itemcontainerstyle"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "items-controls-014",
+      "difficulty": "Intermediate",
+      "question": "How does grouping work in an ItemsControl?",
+      "answer": "Group items in the collection view and add a GroupStyle to the control. The GroupStyle defines the group header with a HeaderTemplate and can set a container style. This renders grouped sections such as categories with headers.",
+      "code": "<ListBox ItemsSource=\"{Binding People}\">\n  <ListBox.GroupStyle>\n    <GroupStyle>\n      <GroupStyle.HeaderTemplate>\n        <DataTemplate>\n          <TextBlock Text=\"{Binding Name}\" FontWeight=\"Bold\"/>\n        </DataTemplate>\n      </GroupStyle.HeaderTemplate>\n    </GroupStyle>\n  </ListBox.GroupStyle>\n</ListBox>",
+      "tags": ["grouping", "itemscontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-sort-and-group-data-using-a-view-in-xaml"]
+    },
+    {
+      "id": "items-controls-015",
+      "difficulty": "Intermediate",
+      "question": "How do you add headers and footers to an ItemsControl?",
+      "answer": "Use the Header and Footer properties of HeaderedItemsControl-derived controls, or place the ItemsControl inside a layout with separate elements. For controls without header support, wrap the control in a StackPanel with a TextBlock. Some controls provide HeaderTemplate and FooterTemplate for custom rendering.",
+      "tags": ["itemscontrol", "header"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-016",
+      "difficulty": "Intermediate",
+      "question": "How do you bind an item's container to the item itself?",
+      "answer": "Inside an ItemTemplate the DataContext is the item, so a binding with an empty path refers to the item. To reach the container, use RelativeSource with AncestorType set to the container type. This is useful for selection-based visual changes.",
+      "code": "<DataTemplate>\n  <TextBlock Text=\"{Binding}\"\n             Foreground=\"{Binding IsSelected,\n               RelativeSource={RelativeSource AncestorType=ListBoxItem},\n               Converter={StaticResource SelToBrush}}\"/>\n</DataTemplate>",
+      "tags": ["binding", "containers"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "items-controls-017",
+      "difficulty": "Intermediate",
+      "question": "What is a DataTemplateSelector and when do you need one?",
+      "answer": "A DataTemplateSelector chooses a DataTemplate for each item based on custom logic, such as the item type or a property value. You override SelectTemplate and return the appropriate template. It is used when one collection contains different kinds of items that need different visuals.",
+      "code": "public class ItemSelector : DataTemplateSelector\n{\n    public DataTemplate PersonTemplate { get; set; }\n    public DataTemplate CompanyTemplate { get; set; }\n    public override DataTemplate SelectTemplate(object item, DependencyObject c)\n        => item is Person ? PersonTemplate : CompanyTemplate;\n}",
+      "tags": ["datatemplateselector", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "items-controls-018",
+      "difficulty": "Intermediate",
+      "question": "How do you style items differently based on data?",
+      "answer": "Use DataTrigger or MultiDataTrigger inside the ItemContainerStyle or ItemTemplate to change visuals based on bound values. Alternatively, a converter can map a value to a brush or visibility. Data triggers keep the logic declarative in XAML.",
+      "code": "<DataTrigger Binding=\"{Binding Balance}\" Value=\"0\">\n  <Setter Property=\"Foreground\" Value=\"Gray\"/>\n</DataTrigger>",
+      "tags": ["datatrigger", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "items-controls-019",
+      "difficulty": "Intermediate",
+      "question": "What is a TreeView and how is it bound to hierarchical data?",
+      "answer": "TreeView displays hierarchical data with expandable nodes. Bind ItemsSource to the root collection and set a HierarchicalDataTemplate that specifies ItemsSource for child nodes. This lets the tree expand recursively over the data.",
+      "code": "<TreeView ItemsSource=\"{Binding Departments}\">\n  <TreeView.ItemTemplate>\n    <HierarchicalDataTemplate ItemsSource=\"{Binding Employees}\">\n      <TextBlock Text=\"{Binding Name}\"/>\n    </HierarchicalDataTemplate>\n  </TreeView.ItemTemplate>\n</TreeView>",
+      "tags": ["treeview", "hierarchical"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/treeview-overview"]
+    },
+    {
+      "id": "items-controls-020",
+      "difficulty": "Intermediate",
+      "question": "How do you enable editing in a DataGrid?",
+      "answer": "Set IsReadOnly to false and define columns with DataGridTextColumn, DataGridCheckBoxColumn, or templates. DataGrid supports editing, sorting, and grouping out of the box. Commit and cancel are handled per cell and can be customized.",
+      "code": "<DataGrid ItemsSource=\"{Binding People}\" AutoGenerateColumns=\"False\">\n  <DataGrid.Columns>\n    <DataGridTextColumn Header=\"Name\" Binding=\"{Binding Name}\"/>\n    <DataGridTextColumn Header=\"Age\" Binding=\"{Binding Age}\"/>\n  </DataGrid.Columns>\n</DataGrid>",
+      "tags": ["datagrid", "editing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/datagrid"]
+    },
+    {
+      "id": "items-controls-021",
+      "difficulty": "Advanced",
+      "question": "How does UI virtualization work in item controls?",
+      "answer": "VirtualizingStackPanel creates containers only for visible items and recycles them as the user scrolls. Enable it with IsVirtualizing and control container reuse with VirtualizationMode. Virtualization greatly reduces memory and startup cost for large collections.",
+      "code": "<ListBox VirtualizingPanel.IsVirtualizing=\"True\"\n         VirtualizingPanel.VirtualizationMode=\"Recycling\"\n         ItemsSource=\"{Binding BigList}\"/>",
+      "tags": ["virtualization", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    },
+    {
+      "id": "items-controls-022",
+      "difficulty": "Advanced",
+      "question": "How do you bind SelectedItems of a multi-select control in MVVM?",
+      "answer": "SelectedItems is a read-only, non-bindable property, so you cannot bind it directly. Common solutions are an attached behavior that synchronizes SelectedItems with a ViewModel collection, or handling SelectionChanged in code-behind to update the ViewModel. Avoid referencing the control from the ViewModel.",
+      "tags": ["selecteditems", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/listbox"]
+    },
+    {
+      "id": "items-controls-023",
+      "difficulty": "Advanced",
+      "question": "How do you improve performance when displaying thousands of items?",
+      "answer": "Enable virtualization and recycling, keep item templates simple, and freeze shared brushes. Avoid binding-heavy templates with converters that run per item. Set ScrollViewer.CanContentScroll to true so the panel can virtualize.",
+      "code": "<ListView VirtualizingPanel.IsVirtualizing=\"True\"\n         VirtualizingPanel.VirtualizationMode=\"Recycling\"\n         ScrollViewer.CanContentScroll=\"True\"/>",
+      "tags": ["performance", "virtualization"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-controls"]
+    },
+    {
+      "id": "items-controls-024",
+      "difficulty": "Advanced",
+      "question": "How do you create a custom ItemsControl with a custom container?",
+      "answer": "Derive from ItemsControl and override GetContainerForItemOverride and IsItemItsOwnContainerOverride to provide your container type. Optionally override PrepareContainerForItemOverride to set up the container. You can also override the default ItemsPanel and template through style metadata.",
+      "code": "protected override DependencyObject GetContainerForItemOverride()\n    => new MyItem();\nprotected override bool IsItemItsOwnContainerOverride(object item)\n    => item is MyItem;",
+      "tags": ["custom-itemscontrol", "containers"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/itemscontrol"]
+    },
+    {
+      "id": "items-controls-025",
+      "difficulty": "Advanced",
+      "question": "How does the item container generator work?",
+      "answer": "ItemContainerGenerator creates and tracks the container for each item and maps items to containers. It raises StatusChanged as containers are generated or recycled. You use ContainerFromItem and ItemFromContainer to move between the two, which is essential with virtualization.",
+      "tags": ["containergenerator", "itemscontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.controls.itemcontainergenerator"]
+    }
+  ]
+}

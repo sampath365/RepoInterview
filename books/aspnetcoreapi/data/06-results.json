@@ -1,0 +1,344 @@
+{
+  "category": "Action Results & Status Codes",
+  "slug": "results",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "results-001",
+      "difficulty": "Beginner",
+      "question": "What is IActionResult?",
+      "answer": "IActionResult is an interface that represents the result of an action, encapsulating the status code, headers, and body to write. The framework executes it after the action returns. It is the untyped base for results such as OkObjectResult and NotFoundResult.",
+      "tags": [
+        "action-results",
+        "http"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-002",
+      "difficulty": "Beginner",
+      "question": "How do you return 200 OK with a body?",
+      "answer": "Return Ok(value) or, in minimal APIs, Results.Ok(value) or TypedResults.Ok(value). This produces a 200 status with the value serialized using the negotiated format. Returning the object directly also yields 200 with the object as the body.",
+      "tags": [
+        "status-codes",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "return Ok(new { id = 1, name = \"Widget\" });"
+    },
+    {
+      "id": "results-003",
+      "difficulty": "Beginner",
+      "question": "How do you return 201 Created?",
+      "answer": "Use Created(uri, value) or CreatedAtAction and CreatedAtRoute, which set the Location header pointing to the new resource. CreatedAtAction builds the URI from an action name and route values. Returning 201 with Location lets clients retrieve the new resource.",
+      "tags": [
+        "status-codes",
+        "created"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "return CreatedAtAction(nameof(Get), new { id = p.Id }, p);"
+    },
+    {
+      "id": "results-004",
+      "difficulty": "Beginner",
+      "question": "How do you return 204 No Content?",
+      "answer": "Return NoContent() or, in minimal APIs, Results.NoContent(). This signals success with no response body, which is typical for DELETE and for PUT updates that do not return the resource. Clients should not expect a payload.",
+      "tags": [
+        "status-codes",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-005",
+      "difficulty": "Beginner",
+      "question": "How do you return 404 Not Found?",
+      "answer": "Return NotFound() when the requested resource does not exist, optionally with a ProblemDetails body via NotFound(problem). Returning 404 rather than 200 with a null body is essential for correct client behavior. Minimal APIs use Results.NotFound().",
+      "tags": [
+        "status-codes",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "var p = await _repo.FindAsync(id);\nreturn p is null ? NotFound() : Ok(p);"
+    },
+    {
+      "id": "results-006",
+      "difficulty": "Beginner",
+      "question": "How do you return 400 Bad Request?",
+      "answer": "Return BadRequest() or BadRequest(model) to indicate a client error such as invalid input. With [ApiController], model-state errors produce 400 automatically with ValidationProblemDetails. Prefer this over returning a 200 with an error payload.",
+      "tags": [
+        "status-codes",
+        "bad-request"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-007",
+      "difficulty": "Beginner",
+      "question": "How do you choose between returning 401 and 403 from an action?",
+      "answer": "401 Unauthorized means the request lacks valid authentication credentials, while 403 Forbidden means the identity is known but not allowed to perform the action. Returning 401 should include a WWW-Authenticate challenge. Use 403 when the user is authenticated but unauthorized.",
+      "tags": [
+        "status-codes",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-008",
+      "difficulty": "Beginner",
+      "question": "What is ActionResult<T>?",
+      "answer": "ActionResult<T> wraps either a value of type T or an IActionResult, giving compile-time type information and better OpenAPI metadata while still allowing error results. You can return the value directly or return Ok, NotFound, and similar helpers in the same action. It is the recommended return type for controller actions that return data.",
+      "tags": [
+        "actionresult",
+        "web-api"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "[HttpGet(\"{id}\")]\npublic ActionResult<Product> Get(int id)\n{\n    var p = _repo.Find(id);\n    return p is null ? NotFound() : p;\n}"
+    },
+    {
+      "id": "results-009",
+      "difficulty": "Beginner",
+      "question": "How do you return an arbitrary status code?",
+      "answer": "Return StatusCode(code) or StatusCode(code, value) for codes without a dedicated helper. Minimal APIs use Results.StatusCode(code). This is useful for less common codes such as 202, 409, or 422.",
+      "tags": [
+        "status-codes",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "return StatusCode(StatusCodes.Status202Accepted, job);"
+    },
+    {
+      "id": "results-010",
+      "difficulty": "Beginner",
+      "question": "How do you return a plain string or file?",
+      "answer": "Use ContentResult or Results.Text for text, and FileResult, Results.File, or PhysicalFile for files. These set the appropriate content type. Returning raw strings is fine for simple endpoints but JSON is usually expected for APIs.",
+      "tags": [
+        "results",
+        "files"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-011",
+      "difficulty": "Intermediate",
+      "question": "When should you use ProblemDetails for errors?",
+      "answer": "ProblemDetails is a standard JSON error shape defined by RFC 9457 with fields such as type, title, status, detail, and extensions. Using it makes errors machine-readable and consistent across endpoints. ASP.NET Core returns ProblemDetails automatically for many failures and exposes Results.Problem.",
+      "tags": [
+        "problemdetails",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ],
+      "code": "return Problem(statusCode: 409, title: \"Conflict\",\n    detail: \"Version mismatch.\");"
+    },
+    {
+      "id": "results-012",
+      "difficulty": "Intermediate",
+      "question": "What does the [ProducesResponseType] attribute do?",
+      "answer": "It documents the response types and status codes an action can return, which improves the generated OpenAPI document. With [ApiController], the framework also uses the declared types to choose the correct response. Declaring them keeps client code generation accurate.",
+      "tags": [
+        "openapi",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "[ProducesResponseType(StatusCodes.Status200OK)]\n[ProducesResponseType(StatusCodes.Status404NotFound)]"
+    },
+    {
+      "id": "results-013",
+      "difficulty": "Intermediate",
+      "question": "How does content negotiation affect action results?",
+      "answer": "Results that carry an object, such as OkObjectResult, are written by the selected output formatter based on the Accept header. If no formatter matches, the result becomes 406. ObjectResult also allows overriding the content type explicitly.",
+      "tags": [
+        "content-negotiation",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Results and IResult in minimal APIs?",
+      "answer": "IResult is the interface returned by handlers, and Results is a static factory class producing implementations. TypedResults returns concrete types for better metadata. All three ultimately write to the response in the same way.",
+      "tags": [
+        "results",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ]
+    },
+    {
+      "id": "results-015",
+      "difficulty": "Intermediate",
+      "question": "How do you return a 409 Conflict?",
+      "answer": "Return Conflict() or Conflict(problem) when the request conflicts with the current resource state, such as a duplicate key or an optimistic concurrency failure. A ProblemDetails body can explain the conflict. This tells the client to resolve the conflict and retry.",
+      "tags": [
+        "status-codes",
+        "conflict"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "if (await _repo.ExistsAsync(dto.Sku))\n    return Conflict(new { error = \"duplicate sku\" });"
+    },
+    {
+      "id": "results-016",
+      "difficulty": "Intermediate",
+      "question": "How do you implement optimistic concurrency with ETags?",
+      "answer": "Include an ETag on responses, read If-Match on updates, and compare it against the current version, returning 412 Precondition Failed when it does not match. The ETag can be a row version or a hash of the representation. This prevents lost updates without locking.",
+      "tags": [
+        "etag",
+        "concurrency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "var etag = $\"\\\"{entity.RowVersion}\\\"\";\nResponse.Headers.ETag = etag;"
+    },
+    {
+      "id": "results-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between 200 and 202?",
+      "answer": "200 OK means the request completed and the body contains the result. 202 Accepted means the request was accepted for processing but has not completed, and the body or Location header points to a status resource. Use 202 for asynchronous work that finishes later.",
+      "tags": [
+        "status-codes",
+        "async"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-018",
+      "difficulty": "Intermediate",
+      "question": "How do you return different content types from one action?",
+      "answer": "Return an ObjectResult and set its ContentType, or use typed results such as Results.Text, Results.Json, or Results.Stream. This bypasses or augments content negotiation for a specific endpoint. It is useful for endpoints that must always emit a fixed format.",
+      "tags": [
+        "results",
+        "content-negotiation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-019",
+      "difficulty": "Intermediate",
+      "question": "How do you set response headers from an action?",
+      "answer": "Access Response.Headers through HttpContext and set values such as Location, Cache-Control, or a custom correlation header. For results, some helpers set headers for you, for example Created sets Location. Keep header names as standard constants where possible.",
+      "tags": [
+        "results",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-context"
+      ],
+      "code": "Response.Headers.CacheControl = \"no-store\";\nreturn Ok(value);"
+    },
+    {
+      "id": "results-020",
+      "difficulty": "Intermediate",
+      "question": "Why avoid returning 200 with an error body?",
+      "answer": "Returning 200 for failures breaks caching, retries, and monitoring because clients and proxies cannot distinguish success from error by status code. It also forces clients to parse the body to detect problems. Use the appropriate 4xx or 5xx status with a descriptive ProblemDetails body instead.",
+      "tags": [
+        "status-codes",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-021",
+      "difficulty": "Advanced",
+      "question": "How do you standardize API responses across endpoints?",
+      "answer": "Define a consistent envelope or, preferably, rely on ProblemDetails for errors and plain resources for success, and enforce it with filters or middleware. Document the contract in OpenAPI so clients can rely on it. Consistency matters more than any particular shape.",
+      "tags": [
+        "results",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement conditional requests with If-None-Match?",
+      "answer": "Return an ETag with the representation, then on a subsequent GET compare the If-None-Match value and return 304 Not Modified when it matches. This saves bandwidth because the client reuses its cached copy. The same validators support If-Match for safe updates.",
+      "tags": [
+        "etag",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "if (Request.Headers.IfNoneMatch == etag)\n    return StatusCode(StatusCodes.Status304NotModified);"
+    },
+    {
+      "id": "results-023",
+      "difficulty": "Advanced",
+      "question": "How does the framework choose between declared result types at runtime?",
+      "answer": "With [ApiController] and [ProducesResponseType], the framework picks the closest matching result type for OpenAPI but executes the actual IActionResult you return at runtime. Declared types do not constrain execution; they describe the contract. Mismatches produce inaccurate documentation, so keep them in sync.",
+      "tags": [
+        "openapi",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "results-024",
+      "difficulty": "Advanced",
+      "question": "How do you return a streamed file efficiently?",
+      "answer": "Use Results.Stream or FileStreamResult with enableRangeProcessing set to true so clients can resume and seek with range requests. Stream directly from storage rather than buffering into memory. Set the correct content type and, for large files, consider a redirect to a signed URL.",
+      "tags": [
+        "streaming",
+        "files"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ],
+      "code": "return Results.Stream(stream, \"application/pdf\", enableRangeProcessing: true);"
+    },
+    {
+      "id": "results-025",
+      "difficulty": "Advanced",
+      "question": "How do you test that an action returns the correct status codes?",
+      "answer": "Assert on the concrete result types or status codes in unit tests and verify end-to-end behavior with WebApplicationFactory integration tests. Cover success, not-found, validation failure, and conflict paths. Using ActionResult<T> and typed results makes these assertions straightforward.",
+      "tags": [
+        "testing",
+        "results"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    }
+  ]
+}

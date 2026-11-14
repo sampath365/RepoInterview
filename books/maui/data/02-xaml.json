@@ -1,0 +1,207 @@
+{
+  "category": "XAML & Markup",
+  "slug": "xaml",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "xaml-001",
+      "difficulty": "Beginner",
+      "question": "What is XAML in .NET MAUI?",
+      "answer": "XAML is an XML-based declarative markup language used to define MAUI user interfaces and resource dictionaries. Each element maps to a .NET type and each attribute to a property, event, or attached property. XAML is compiled into intermediate code and then to IL, so it is not interpreted at runtime.",
+      "tags": ["xaml", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/"]
+    },
+    {
+      "id": "xaml-002",
+      "difficulty": "Beginner",
+      "question": "How does XAML relate to code-behind in a MAUI page?",
+      "answer": "A ContentPage is typically split into a XAML file that defines the UI and a code-behind file that holds logic. The x:Class directive on the root element links the XAML to the partial class in code-behind. Both compile into the same class, so controls named with x:Name are accessible from code.",
+      "tags": ["code-behind", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/get-started"]
+    },
+    {
+      "id": "xaml-003",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the x:Class attribute?",
+      "answer": "x:Class specifies the fully qualified name of the code-behind class that the XAML file is merged with. The XAML compiler generates a partial class with that name, and the code-behind declares the matching partial class. This pairing is what connects markup to imperative logic.",
+      "tags": ["xaml", "code-behind"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/essential-syntax"]
+    },
+    {
+      "id": "xaml-004",
+      "difficulty": "Beginner",
+      "question": "What does the x:Name attribute do?",
+      "answer": "x:Name assigns a field name to an element so it can be referenced from code-behind and by x:Reference bindings. The generated partial class exposes a field with that name initialized during InitializeComponent. Names must be unique within the XAML scope.",
+      "tags": ["xaml", "naming"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/essential-syntax"]
+    },
+    {
+      "id": "xaml-005",
+      "difficulty": "Beginner",
+      "question": "What is a markup extension in XAML?",
+      "answer": "A markup extension is a class that returns a value for a property at parse time and is written in braces such as {Binding Path} or {StaticResource Color}. It lets you express computed or referenced values in attribute syntax. Built-in extensions include Binding, StaticResource, DynamicResource, and x:Static.",
+      "tags": ["markup-extension", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/markup-extensions"]
+    },
+    {
+      "id": "xaml-006",
+      "difficulty": "Beginner",
+      "question": "What are the common XAML namespaces used in MAUI pages?",
+      "answer": "The default namespace declares MAUI controls, and the x prefix maps to the XAML language namespace for directives like x:Name and x:DataType. A local prefix maps to your own project's types. Additional prefixes such as xmlns:toolkit map to libraries like the Community Toolkit.",
+      "tags": ["xaml", "namespaces"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/namespaces/"]
+    },
+    {
+      "id": "xaml-007",
+      "difficulty": "Beginner",
+      "question": "What is property-element syntax in XAML?",
+      "answer": "Property-element syntax sets a property using a child element of the form Type.Property instead of an attribute. It is used when a value is complex or itself an object graph, such as Grid.RowDefinitions or a control's Content. Attribute syntax is shorthand that works only for simple values.",
+      "tags": ["xaml", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/essential-syntax"]
+    },
+    {
+      "id": "xaml-008",
+      "difficulty": "Beginner",
+      "question": "How do you attach an event handler in XAML?",
+      "answer": "You set the event name as an attribute whose value is the name of a method in code-behind, for example Clicked=\"OnClicked\". The XAML compiler wires the handler during InitializeComponent. The method signature must match the event delegate.",
+      "tags": ["xaml", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/get-started"]
+    },
+    {
+      "id": "xaml-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between StaticResource and DynamicResource?",
+      "answer": "StaticResource resolves a resource once at parse time and is the faster default. DynamicResource resolves at runtime and updates when the underlying resource changes, which suits theme switching. Use StaticResource unless the resource value is expected to change at runtime.",
+      "tags": ["resources", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "xaml-010",
+      "difficulty": "Beginner",
+      "question": "How do you add a comment in XAML?",
+      "answer": "XAML comments use the XML syntax <!-- comment -->. Comments cannot contain double hyphens and cannot appear inside a markup extension expression. They are stripped by the compiler and have no runtime effect.",
+      "tags": ["xaml", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/essential-syntax"]
+    },
+    {
+      "id": "xaml-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom markup extension?",
+      "answer": "Derive from IMarkupExtension or its generic form and implement ProvideValue, which receives an IServiceProvider and returns the value. Apply the MarkupExtensionReturnType attribute to declare the return type for the compiler. You can then use it in XAML with braces, passing constructor arguments or named properties.",
+      "tags": ["markup-extension", "custom"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/markup-extensions/create"]
+    },
+    {
+      "id": "xaml-012",
+      "difficulty": "Intermediate",
+      "question": "What is x:DataType used for?",
+      "answer": "x:DataType declares the type of the binding context for a scope, enabling compiled bindings. With it set, the XAML compiler validates binding paths and generates strongly typed accessors, which is faster and catches errors at build time. You can also apply it per binding with the DataType property.",
+      "tags": ["compiled-bindings", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings"]
+    },
+    {
+      "id": "xaml-013",
+      "difficulty": "Intermediate",
+      "question": "What is x:Reference and when is it useful?",
+      "answer": "x:Reference refers to another named element in the same XAML scope. It is useful for bindings that target a sibling, parent, or named control rather than the binding context. Combined with Source, it lets you bind to properties of another element.",
+      "tags": ["xaml", "bindings"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/essential-syntax"]
+    },
+    {
+      "id": "xaml-014",
+      "difficulty": "Intermediate",
+      "question": "How do you define and use a resource in XAML?",
+      "answer": "You define a resource with an x:Key inside a ResourceDictionary, usually in a page, app, or merged dictionary. Consumers retrieve it with StaticResource or DynamicResource using that key. Resources can be styles, colors, brushes, templates, or any object.",
+      "tags": ["resources", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "xaml-015",
+      "difficulty": "Intermediate",
+      "question": "What is x:Array and x:Arguments used for?",
+      "answer": "x:Array creates an array of items directly in XAML, which is handy for binding small static lists. x:Arguments passes constructor arguments to an object element when no parameterless constructor exists. Both remove the need for code-behind in simple initialization scenarios.",
+      "tags": ["xaml", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/essential-syntax"]
+    },
+    {
+      "id": "xaml-016",
+      "difficulty": "Intermediate",
+      "question": "How does XAML compilation work in .NET MAUI?",
+      "answer": "The XAML compiler (XamlC) runs during build, parses each XAML file, and emits IL that builds the object tree and wires bindings. Because it generates code instead of parsing XML at runtime, startup is faster and errors surface at compile time. You can control it with the XamlCompilation attribute or the MauiXaml build item.",
+      "tags": ["xamlc", "compilation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/xamlc"]
+    },
+    {
+      "id": "xaml-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use x:Static in XAML?",
+      "answer": "x:Static returns the value of a static field, property, or constant from a type. It is written as {x:Static local:Constants.DefaultPadding} and is resolved at parse time. It is a common way to expose constants or singleton values to markup without a binding.",
+      "tags": ["xaml", "markup-extension"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/markup-extensions/consume"]
+    },
+    {
+      "id": "xaml-018",
+      "difficulty": "Intermediate",
+      "question": "What is a DataTemplate and where is it used in XAML?",
+      "answer": "A DataTemplate describes how to render an item of data and is used by controls like CollectionView, ListView, and CarouselView. You can define it inline or as a keyed resource and reference it via ItemTemplate. Its binding context is each individual data item.",
+      "tags": ["datatemplate", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/datatemplate"]
+    },
+    {
+      "id": "xaml-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use a DataTrigger in XAML?",
+      "answer": "A DataTrigger watches a binding value and applies setters when that value matches. You place it in a control's Triggers collection with Binding and Value, plus one or more Setter elements. Triggers are a declarative way to change appearance based on data without code.",
+      "tags": ["triggers", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/triggers"]
+    },
+    {
+      "id": "xaml-020",
+      "difficulty": "Intermediate",
+      "question": "What is a ControlTemplate and how does it differ from a DataTemplate?",
+      "answer": "A ControlTemplate replaces the visual structure of a control and exposes parts through TemplateBinding and ContentPresenter. A DataTemplate defines how data is displayed for an item. ControlTemplate changes a control's look, while DataTemplate changes how bound data is rendered.",
+      "tags": ["controltemplate", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/controltemplate", "https://learn.microsoft.com/dotnet/maui/fundamentals/datatemplate"]
+    },
+    {
+      "id": "xaml-021",
+      "difficulty": "Advanced",
+      "question": "How do you register a custom XAML namespace with XmlnsDefinition?",
+      "answer": "You apply the XmlnsDefinition assembly attribute mapping a CLR namespace to a URI, typically in AssemblyInfo. A consumer then declares that URI as an xmlns prefix and can use your types without a per-type prefix. This is how libraries like the Community Toolkit expose their controls.",
+      "tags": ["namespaces", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/namespaces/custom-namespace-schemas"]
+    },
+    {
+      "id": "xaml-022",
+      "difficulty": "Advanced",
+      "question": "How does MAUI handle generic types in XAML?",
+      "answer": "You specify type arguments with the x:TypeArguments directive on the element, using a prefix-qualified type. This is used for generic base classes and markup extensions with generic parameters. The XAML compiler resolves the closed generic type at compile time.",
+      "tags": ["generics", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/generics"]
+    },
+    {
+      "id": "xaml-023",
+      "difficulty": "Advanced",
+      "question": "How can you load XAML at runtime in .NET MAUI?",
+      "answer": "The XamlReader.Load method parses a XAML string or stream and returns the resulting object tree. The LoadFromXaml extension method applies XAML to an existing object, which is how InitializeComponent works internally. Runtime XAML is slower than compiled XAML and skips compile-time validation.",
+      "tags": ["xaml", "runtime"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/runtime-load"]
+    },
+    {
+      "id": "xaml-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of compiled bindings versus classic bindings?",
+      "answer": "Compiled bindings, enabled by x:DataType, resolve paths at build time, giving faster performance and compile-time errors but requiring a known data type in scope. Classic string-based bindings are more flexible with dynamic data and reflection but slower and error-prone. Prefer compiled bindings and fall back to classic bindings only when the type is genuinely unknown.",
+      "tags": ["compiled-bindings", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/data-binding/compiled-bindings", "https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/data-binding-basics"]
+    },
+    {
+      "id": "xaml-025",
+      "difficulty": "Advanced",
+      "question": "How does the XAML compiler handle x:Name fields and InitializeComponent?",
+      "answer": "The compiler generates a partial class that declares a field for each x:Name element and implements InitializeComponent. InitializeComponent loads the compiled XAML, assigns the named fields, and attaches event handlers. This is why InitializeComponent must be called in the page constructor before accessing named controls.",
+      "tags": ["xamlc", "code-behind"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/xamlc", "https://learn.microsoft.com/dotnet/maui/xaml/fundamentals/get-started"]
+    }
+  ]
+}

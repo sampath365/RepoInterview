@@ -1,0 +1,343 @@
+{
+  "category": "Model Binding & Validation",
+  "slug": "model-binding",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "model-binding-001",
+      "difficulty": "Beginner",
+      "question": "What is model binding?",
+      "answer": "Model binding is the process that maps request data such as route values, query strings, form fields, and the body into action parameters or handler arguments. It uses value providers and model binders to locate and convert values by name and type. If conversion fails, the error is recorded in ModelState so validation can report it.",
+      "tags": [
+        "model-binding",
+        "mvc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-002",
+      "difficulty": "Beginner",
+      "question": "What are the default model binding sources?",
+      "answer": "The default sources are route values, query string, form fields, and the request body for complex types with formatters. Simple types prefer route and query, while complex types bind from the body in API controllers. You can override the source with attributes like [FromRoute], [FromQuery], [FromForm], [FromHeader], and [FromBody].",
+      "tags": [
+        "binding-sources",
+        "model-binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-003",
+      "difficulty": "Beginner",
+      "question": "What is ModelState?",
+      "answer": "ModelState is a dictionary of binding and validation results for each submitted value, tracking errors and attempted values. The [ApiController] attribute automatically returns a 400 response when ModelState is invalid, while MVC controllers usually check ModelState.IsValid before proceeding. Reading ModelState lets you surface validation errors to the client.",
+      "tags": [
+        "modelstate",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-004",
+      "difficulty": "Beginner",
+      "question": "What are data annotations and how are they used for validation?",
+      "answer": "Data annotations are attributes such as [Required], [StringLength], [Range], [EmailAddress], and [RegularExpression] applied to model properties. They are evaluated during model validation and populate ModelState with any violations. They are simple to use and work well with OpenAPI schema generation.",
+      "code": "public class RegisterDto\n{\n    [Required, EmailAddress] public string Email { get; set; }\n    [StringLength(100, MinimumLength = 8)] public string Password { get; set; }\n}",
+      "tags": [
+        "data-annotations",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [FromBody] and [FromForm]?",
+      "answer": "[FromBody] binds a complex type from the request body using an input formatter such as System.Text.Json, expecting a JSON or XML payload. [FromForm] binds from form fields, typically from application/x-www-form-urlencoded or multipart/form-data submissions. A request can only have one [FromBody] parameter, but form binding supports multiple and file uploads.",
+      "tags": [
+        "frombody",
+        "fromform"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-006",
+      "difficulty": "Beginner",
+      "question": "What happens when model binding fails?",
+      "answer": "When a value cannot be bound or converted, an error is added to ModelState and the parameter is set to its default value. The action still runs unless validation short-circuits it, so you must check ModelState.IsValid or rely on the automatic 400 behavior of [ApiController]. Binding errors include the attempted value and the reason.",
+      "tags": [
+        "binding-errors",
+        "modelstate"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-007",
+      "difficulty": "Beginner",
+      "question": "How do you validate a model manually in an action?",
+      "answer": "You can call TryValidateModel or check ModelState.IsValid and return BadRequest with the errors when invalid. Manual validation is useful when the model is constructed inside the action or when validation depends on runtime state. You can also add errors yourself with ModelState.AddModelError.",
+      "code": "if (!ModelState.IsValid)\n    return ValidationProblem(ModelState);\nreturn Ok(dto);",
+      "tags": [
+        "validation",
+        "modelstate"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-008",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the Bind attribute?",
+      "answer": "The [Bind] attribute limits which properties model binding populates, which protects against over-posting by excluding properties a client should not set. You can specify Include or Prefix to control the bound set. In modern APIs, using dedicated input DTOs is usually preferred over [Bind] for the same protection.",
+      "code": "[HttpPost]\npublic IActionResult Create([Bind(\"Name,Price\")] Product p) => Ok(p);",
+      "tags": [
+        "bind",
+        "over-posting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-009",
+      "difficulty": "Beginner",
+      "question": "How does binding of simple versus complex types differ?",
+      "answer": "Simple types such as int, string, DateTime, and Guid bind from route, query, or form values by name, while complex types bind from the body in API controllers or from form fields in MVC. Collections bind from repeated query or form keys. This default behavior is why a simple parameter in a POST is not read from JSON unless you mark it [FromBody].",
+      "tags": [
+        "simple-types",
+        "complex-types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between client-side and server-side validation?",
+      "answer": "Client-side validation runs in the browser for immediate feedback and better user experience but can be bypassed. Server-side validation always runs on the server and is the only authoritative check for security and data integrity. You should implement both, never relying on client validation alone.",
+      "tags": [
+        "validation",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom validation attribute?",
+      "answer": "You derive from ValidationAttribute, override the IsValid method, and return a ValidationResult, then apply the attribute to a property. You can also implement IClientModelValidator to add client-side rules. Custom attributes keep validation declarative and reusable across models.",
+      "code": "public class NotFutureDateAttribute : ValidationAttribute\n{\n    public override bool IsValid(object value) =>\n        value is DateTime d && d <= DateTime.UtcNow;\n}",
+      "tags": [
+        "custom-validation",
+        "attributes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation#custom-validation-attributes"
+      ]
+    },
+    {
+      "id": "model-binding-012",
+      "difficulty": "Intermediate",
+      "question": "How does IValidatableObject work?",
+      "answer": "IValidatableObject lets a model validate itself with cross-property rules by implementing Validate and returning a sequence of ValidationResults. It runs after attribute-based validation and is ideal when a rule depends on multiple properties. The context includes the validation context and the object being validated.",
+      "code": "public IEnumerable<ValidationResult> Validate(\n    ValidationContext ctx)\n{\n    if (End <= Start)\n        yield return new ValidationResult(\"End must be after Start\");\n}",
+      "tags": [
+        "ivalidatableobject",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation#ivalidatableobject"
+      ]
+    },
+    {
+      "id": "model-binding-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between validation attributes and FluentValidation?",
+      "answer": "Data annotations are simple, built-in, and applied directly on the model, while FluentValidation expresses rules in a separate validator class with a fluent API and supports complex, conditional, and dependency-injected rules. FluentValidation integrates with ASP.NET Core model state and is preferred for complex domain rules. Data annotations remain convenient for straightforward cases and generate OpenAPI schema constraints automatically.",
+      "tags": [
+        "fluentvalidation",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-014",
+      "difficulty": "Intermediate",
+      "question": "How do you bind a file upload?",
+      "answer": "You declare an IFormFile or IFormFileCollection parameter, which binds multipart form data, and you can read its stream and copy it to storage. Large uploads should use streaming with MultipartReader or the file's OpenReadStream rather than buffering in memory. Size limits are enforced through Kestrel and form options.",
+      "code": "[HttpPost(\"upload\")]\npublic async Task<IActionResult> Upload(IFormFile file)\n{\n    using var s = File.Create(Path.Combine(dir, file.FileName));\n    await file.CopyToAsync(s);\n    return Ok();\n}",
+      "tags": [
+        "file-upload",
+        "iformfile"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads"
+      ]
+    },
+    {
+      "id": "model-binding-015",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a custom model binder?",
+      "answer": "You implement IModelBinder and register it through a provider, either globally in MvcOptions or by applying a ModelBinder attribute to a parameter or type. The binder reads values from the binding context and sets the model, adding errors as needed. Custom binders are useful for special types such as strongly typed IDs or values needing external lookup.",
+      "code": "public class SlugBinder : IModelBinder\n{\n    public Task BindModelAsync(ModelBindingContext ctx)\n    {\n        var v = ctx.ValueProvider.GetValue(ctx.ModelName).FirstValue;\n        ctx.Result = ModelBindingResult.Success(v?.ToLowerInvariant());\n        return Task.CompletedTask;\n    }\n}",
+      "tags": [
+        "custom-binder",
+        "extensibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/advanced/custom-model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between model binding and model validation?",
+      "answer": "Model binding constructs the model from the request, and model validation checks the constructed model against rules and records results in ModelState. Binding errors and validation errors both surface in ModelState, but they come from different stages. A model can bind successfully yet fail validation, or fail binding and never be validated.",
+      "tags": [
+        "model-binding",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle JSON deserialization errors in API controllers?",
+      "answer": "Deserialization errors from the input formatter are recorded in ModelState, and with [ApiController] they produce an automatic 400 ProblemDetails response. You can inspect ModelState entries for JsonException details or customize the response via InvalidModelStateResponseFactory. For Minimal APIs you can catch BadHttpRequestException or use a custom JSON options setup to shape errors.",
+      "tags": [
+        "json",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "model-binding-018",
+      "difficulty": "Intermediate",
+      "question": "How do you bind values from headers?",
+      "answer": "You use the [FromHeader] attribute on a parameter, and the binder looks up the header by name, converting to the parameter type. Header binding is useful for API keys, correlation IDs, or version headers. Header names are matched case-insensitively but you should document required headers for clients.",
+      "code": "[HttpGet]\npublic IActionResult Get([FromHeader(Name = \"X-Api-Key\")] string key)\n    => string.IsNullOrEmpty(key) ? Unauthorized() : Ok();",
+      "tags": [
+        "fromheader",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-019",
+      "difficulty": "Intermediate",
+      "question": "How do you configure the JSON serializer options?",
+      "answer": "You configure System.Text.Json through AddControllers().AddJsonOptions or for minimal APIs through ConfigureHttpJsonOptions, setting things like PropertyNamingPolicy, DefaultIgnoreCondition, and converters. Global options apply to all requests, while attributes on models can override per property. This controls casing, null handling, and enum serialization.",
+      "code": "builder.Services.AddControllers().AddJsonOptions(o =>\n{\n    o.JsonSerializerOptions.PropertyNamingPolicy =\n        JsonNamingPolicy.CamelCase;\n});",
+      "tags": [
+        "json",
+        "serialization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"
+      ]
+    },
+    {
+      "id": "model-binding-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between DTOs and domain entities in binding?",
+      "answer": "DTOs are shaped specifically for the request or response contract, exposing only fields clients may set or read, while domain entities carry persistence and business behavior. Binding directly to entities risks over-posting and couples the API to the database schema. Using DTOs keeps the API contract stable and secure, with mapping to entities inside the service layer.",
+      "tags": [
+        "dto",
+        "over-posting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-021",
+      "difficulty": "Advanced",
+      "question": "How does model binding resolve values across multiple value providers?",
+      "answer": "Binding uses a value provider factory collection that produces value providers in order, such as route, query, form, and body, and the first provider that returns a non-null value wins. Each binder consults the providers through the binding context's ValueProvider. Understanding the order explains why a route value can take precedence over a query value of the same name.",
+      "tags": [
+        "value-providers",
+        "internals"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-022",
+      "difficulty": "Advanced",
+      "question": "How would you build a polymorphic model binding scenario for an API?",
+      "answer": "You enable polymorphic deserialization in System.Text.Json by adding derived type metadata with JsonDerivedType attributes or a custom JsonConverter that inspects a discriminator property. This lets a base type parameter bind to the correct derived class from JSON. Validation must then account for the concrete type, and OpenAPI needs custom schema mapping to describe the union.",
+      "code": "[JsonDerivedType(typeof(Card), \"card\")]\n[JsonDerivedType(typeof(Cash), \"cash\")]\npublic abstract class Payment { }",
+      "tags": [
+        "polymorphism",
+        "json"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding",
+        "https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/polymorphism"
+      ]
+    },
+    {
+      "id": "model-binding-023",
+      "difficulty": "Advanced",
+      "question": "How do you protect against over-posting and mass assignment attacks?",
+      "answer": "You bind to input DTOs that expose only the allowed properties, or use [Bind] with an explicit include list to restrict binding. Never bind directly to entities that contain sensitive fields such as role or balance. Combined with validation and authorization checks, DTOs prevent clients from setting fields they should not control.",
+      "tags": [
+        "over-posting",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-024",
+      "difficulty": "Advanced",
+      "question": "How does validation localization work with data annotations?",
+      "answer": "You localize validation messages by setting ErrorMessageResourceType and ErrorMessageResourceName on attributes, or by configuring ModelBindingMessageProvider for framework messages. The current culture, typically driven by request localization middleware, selects the resource. This keeps messages in resource files and supports multiple languages without code changes.",
+      "tags": [
+        "localization",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/localization"
+      ]
+    },
+    {
+      "id": "model-binding-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of model binding and validation?",
+      "answer": "Binding and validation run for every request, so heavy reflection, large object graphs, or repeated external lookups in validators can dominate latency. Cache compiled binders and validators where possible, keep DTOs small, and avoid synchronous I/O in custom binders or validators. Async validators should be used only when necessary because they add overhead.",
+      "tags": [
+        "performance",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    }
+  ]
+}

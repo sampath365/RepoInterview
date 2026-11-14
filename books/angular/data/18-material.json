@@ -1,0 +1,380 @@
+{
+  "category": "Angular Material & CDK",
+  "slug": "material",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "material-001",
+      "difficulty": "Beginner",
+      "question": "What is Angular Material?",
+      "answer": "Angular Material is a component library that implements Google's Material Design for Angular, providing buttons, form fields, dialogs, tables, and more. It is built on the Component Dev Kit (CDK), which supplies the underlying behavior and accessibility primitives. It gives applications a consistent, accessible UI out of the box.",
+      "tags": [
+        "material",
+        "overview",
+        "ui"
+      ],
+      "references": [
+        "https://material.angular.dev/",
+        "https://material.angular.dev/guide/getting-started"
+      ]
+    },
+    {
+      "id": "material-002",
+      "difficulty": "Beginner",
+      "question": "How do you add Angular Material to a project?",
+      "answer": "Run the ng add @angular/material schematic, which installs the package and configures the theme and typography. You can then import the standalone components you need directly into your components. Modern versions ship standalone components, so no module is required.",
+      "tags": [
+        "material",
+        "setup"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/getting-started",
+        "https://material.angular.dev/guide/theming"
+      ]
+    },
+    {
+      "id": "material-003",
+      "difficulty": "Beginner",
+      "question": "What is the Angular CDK?",
+      "answer": "The Component Dev Kit is a set of behavior primitives such as overlays, drag and drop, virtual scrolling, and accessibility utilities that do not impose a visual style. Angular Material is built on top of it. You can use the CDK directly when you need the behavior with your own design.",
+      "tags": [
+        "cdk",
+        "overview"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/categories",
+        "https://material.angular.dev/cdk/overview"
+      ]
+    },
+    {
+      "id": "material-004",
+      "difficulty": "Beginner",
+      "question": "How do you theme an Angular Material application?",
+      "answer": "Define a theme with the theming API, selecting primary, accent, and warn palettes, then include the theme styles in your global stylesheet. The system supports light and dark modes and density. Customizing the theme keeps Material components consistent with your brand.",
+      "tags": [
+        "material",
+        "theming"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/theming",
+        "https://material.angular.dev/guide/theming-your-components"
+      ]
+    },
+    {
+      "id": "material-005",
+      "difficulty": "Beginner",
+      "question": "How do you open a dialog with Angular Material?",
+      "answer": "Inject MatDialog, call open with the component to display, and subscribe to afterClosed to receive the result. The dialog service manages the overlay, focus trapping, and lifecycle. Data is passed through the dialog config.",
+      "code": "const ref = this.dialog.open(ConfirmDialog);\nref.afterClosed().subscribe((ok) => ok && this.save());",
+      "tags": [
+        "material",
+        "dialog"
+      ],
+      "references": [
+        "https://material.angular.dev/components/dialog/overview",
+        "https://material.angular.dev/cdk/dialog/overview"
+      ]
+    },
+    {
+      "id": "material-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the CDK Dialog and the Material Dialog?",
+      "answer": "The CDK Dialog provides unstyled dialog behavior, while the Material Dialog adds Material styling and structure on top of it. Both share the same overlay and focus-management foundations. Choose the CDK version when you want full control of the appearance.",
+      "tags": [
+        "cdk",
+        "dialog",
+        "material"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/dialog/overview",
+        "https://material.angular.dev/components/dialog/overview"
+      ]
+    },
+    {
+      "id": "material-007",
+      "difficulty": "Beginner",
+      "question": "How do you display a snackbar or toast?",
+      "answer": "Use MatSnackBar, calling open with the message and optional action, and configure the duration and position. It is suited to brief, non-blocking feedback. For blocking confirmations, use a dialog instead.",
+      "tags": [
+        "material",
+        "snackbar",
+        "ux"
+      ],
+      "references": [
+        "https://material.angular.dev/components/snack-bar/overview",
+        "https://material.angular.dev/components/dialog/overview"
+      ]
+    },
+    {
+      "id": "material-008",
+      "difficulty": "Beginner",
+      "question": "How do you show a table of data with Angular Material?",
+      "answer": "Use MatTable with a data source and a set of column definitions that map each column to a cell template. For large data, add MatPaginator and MatSort and wire them to the data source. The table handles rendering and accessibility semantics.",
+      "tags": [
+        "material",
+        "table"
+      ],
+      "references": [
+        "https://material.angular.dev/components/table/overview",
+        "https://material.angular.dev/components/paginator/overview"
+      ]
+    },
+    {
+      "id": "material-009",
+      "difficulty": "Beginner",
+      "question": "What are Material form fields and how do they work with reactive forms?",
+      "answer": "MatFormField wraps a form control and provides the label, hint, and error styling, while matInput applies the Material input styling. They work with both reactive and template-driven forms. Error messages are shown conditionally based on the control's validity.",
+      "tags": [
+        "material",
+        "forms",
+        "form-field"
+      ],
+      "references": [
+        "https://material.angular.dev/components/form-field/overview",
+        "https://material.angular.dev/components/input/overview"
+      ]
+    },
+    {
+      "id": "material-010",
+      "difficulty": "Beginner",
+      "question": "How do you create a navigation layout with Material?",
+      "answer": "Combine MatToolbar, MatSidenav, MatList, and MatIcon to build a standard application shell, with the sidenav toggled by a button. The layout components handle responsive behavior and accessibility roles. They compose naturally with the router for navigation.",
+      "tags": [
+        "material",
+        "layout",
+        "navigation"
+      ],
+      "references": [
+        "https://material.angular.dev/components/sidenav/overview",
+        "https://material.angular.dev/components/toolbar/overview"
+      ]
+    },
+    {
+      "id": "material-011",
+      "difficulty": "Intermediate",
+      "question": "How does the CDK overlay help build popups?",
+      "answer": "The overlay service positions floating content relative to an origin or the viewport, handling scroll, resize, and stacking. It is the foundation for menus, tooltips, selects, and dialogs. You provide the content template and a position strategy.",
+      "tags": [
+        "cdk",
+        "overlay",
+        "material"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/overlay/overview",
+        "https://material.angular.dev/cdk/portal/overview"
+      ]
+    },
+    {
+      "id": "material-012",
+      "difficulty": "Intermediate",
+      "question": "How do you use the CDK virtual scroll with a list?",
+      "answer": "Wrap the list in cdk-virtual-scroll-viewport, provide an item size or a custom strategy, and bind the data source. The viewport renders only visible items, keeping the DOM small for long lists. It works with fixed and variable item heights.",
+      "code": "<cdk-virtual-scroll-viewport itemSize=\"48\">\n  <div *cdkVirtualFor=\"let row of rows\">{{ row.name }}</div>\n</cdk-virtual-scroll-viewport>",
+      "tags": [
+        "cdk",
+        "virtual-scroll",
+        "performance"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/scrolling/overview",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "material-013",
+      "difficulty": "Intermediate",
+      "question": "How does the CDK drag and drop work?",
+      "answer": "Apply cdkDrag to draggable items and cdkDropList to containers, then handle the drop event to reorder your data. The CDK manages the pointer interactions, previews, and transfer between lists. You can customize the preview and constrain movement.",
+      "tags": [
+        "cdk",
+        "drag-drop",
+        "material"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/drag-drop/overview",
+        "https://material.angular.dev/cdk/categories"
+      ]
+    },
+    {
+      "id": "material-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle accessibility with Material components?",
+      "answer": "Material components implement the WAI-ARIA patterns, including roles, keyboard interaction, and focus management, so you get much of the work for free. You must still provide labels, meaningful alternative text, and logical focus order. Testing with a screen reader catches gaps that automated checks miss.",
+      "tags": [
+        "accessibility",
+        "material",
+        "aria"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/a11y/overview",
+        "https://angular.dev/best-practices/a11y"
+      ]
+    },
+    {
+      "id": "material-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use the CDK layout utilities for responsive design?",
+      "answer": "The layout package observes viewport size through breakpoint observers and media matcher services, letting components react to breakpoints in code. The older CSS classes have been deprecated in favor of the observers and CSS media queries. Use them to adapt layouts without duplicating styles.",
+      "tags": [
+        "cdk",
+        "layout",
+        "responsive"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/layout/overview",
+        "https://material.angular.dev/cdk/categories"
+      ]
+    },
+    {
+      "id": "material-016",
+      "difficulty": "Intermediate",
+      "question": "How do you customize a Material component's appearance?",
+      "answer": "Override the component's theme with the theming API or target its design tokens and CSS custom properties, and add your own styles where needed. Avoid deep selectors into internal DOM because they break across versions. Prefer the documented customization surfaces.",
+      "tags": [
+        "material",
+        "theming",
+        "customization"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/theming-your-components",
+        "https://material.angular.dev/guide/theming"
+      ]
+    },
+    {
+      "id": "material-017",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a stepper or tabs with Material?",
+      "answer": "Use MatStepper for multi-step flows with validation between steps, and MatTabs for switching between views. Both manage the active index and expose events for reacting to changes. They work with lazy content and reactive forms.",
+      "tags": [
+        "material",
+        "stepper",
+        "tabs"
+      ],
+      "references": [
+        "https://material.angular.dev/components/stepper/overview",
+        "https://material.angular.dev/components/tabs/overview"
+      ]
+    },
+    {
+      "id": "material-018",
+      "difficulty": "Intermediate",
+      "question": "How do you display a tooltip or a menu?",
+      "answer": "Apply matTooltip to an element for a short hint, and use matMenu with a trigger for a list of actions. Both use the CDK overlay for positioning and handle keyboard interaction. Keep menus for actions and tooltips for supplementary text.",
+      "tags": [
+        "material",
+        "menu",
+        "tooltip"
+      ],
+      "references": [
+        "https://material.angular.dev/components/tooltip/overview",
+        "https://material.angular.dev/components/menu/overview"
+      ]
+    },
+    {
+      "id": "material-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use Angular Material with standalone components?",
+      "answer": "Import the specific Material standalone components a component needs into its imports array, for example MatButton or MatDialog. No NgModule is required, and only the imported components are bundled. This keeps the dependency explicit and the bundle lean.",
+      "code": "@Component({\n  selector: 'app-toolbar',\n  imports: [MatToolbar, MatButton, MatIcon],\n  template: '...',\n})",
+      "tags": [
+        "material",
+        "standalone"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/getting-started",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "material-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle form validation feedback with Material?",
+      "answer": "Wrap the input in mat-form-field, use mat-error elements that render when the control is invalid, and control when errors appear with the control's error state. This keeps validation messages accessible and consistent. Reactive forms make the conditions straightforward to express.",
+      "code": "<mat-form-field>\n  <input matInput [formControl]=\"email\" />\n  <mat-error *ngIf=\"email.hasError('email')\">Invalid email</mat-error>\n</mat-form-field>",
+      "tags": [
+        "material",
+        "validation",
+        "forms"
+      ],
+      "references": [
+        "https://material.angular.dev/components/form-field/overview",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "material-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a component library like Angular Material?",
+      "answer": "A library provides consistent, accessible components and speeds development, but it constrains the visual design and adds bundle size and upgrade work. Custom design systems may instead build on the CDK for behavior without the styling. The decision depends on how much bespoke design the product requires.",
+      "tags": [
+        "material",
+        "trade-offs",
+        "architecture"
+      ],
+      "references": [
+        "https://material.angular.dev/",
+        "https://material.angular.dev/cdk/categories"
+      ]
+    },
+    {
+      "id": "material-022",
+      "difficulty": "Advanced",
+      "question": "How do component harnesses make Material tests robust?",
+      "answer": "Harnesses expose a supported API for interacting with a component, so tests do not depend on internal DOM structure or CSS classes. Material ships harnesses, and the CDK lets you write your own, which also lets you swap the implementation in tests. This reduces breakage when the library updates.",
+      "tags": [
+        "harnesses",
+        "testing",
+        "material"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/using-component-harnesses",
+        "https://material.angular.dev/cdk/categories"
+      ]
+    },
+    {
+      "id": "material-023",
+      "difficulty": "Advanced",
+      "question": "How does Angular Material manage theming with the M3 system?",
+      "answer": "The Material 3 theming system builds themes from design tokens generated by a Sass API, from which component styles are derived. Tokens allow consistent customization across components and support light, dark, and density variations. This replaces the older palette-only approach with a more systematic model.",
+      "tags": [
+        "material",
+        "theming",
+        "m3"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/theming",
+        "https://material.angular.dev/guide/theming-your-components"
+      ]
+    },
+    {
+      "id": "material-024",
+      "difficulty": "Advanced",
+      "question": "How do you build a custom component on top of CDK primitives?",
+      "answer": "Combine CDK building blocks such as overlay, portal, and a11y focus management to implement the behavior, then style it yourself. This gives you the accessibility and interaction logic without adopting Material's look. It is the recommended path for design systems.",
+      "tags": [
+        "cdk",
+        "custom-components",
+        "architecture"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/categories",
+        "https://material.angular.dev/cdk/a11y/overview"
+      ]
+    },
+    {
+      "id": "material-025",
+      "difficulty": "Advanced",
+      "question": "How do you keep accessibility correct in complex custom components?",
+      "answer": "Follow the relevant WAI-ARIA authoring pattern, manage focus deliberately, support full keyboard interaction, and announce dynamic changes to assistive technology. Use the CDK a11y utilities for live announcements and focus trapping. Automate what you can, then verify with manual screen reader testing.",
+      "tags": [
+        "accessibility",
+        "aria",
+        "cdk"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://material.angular.dev/cdk/a11y/overview"
+      ]
+    }
+  ]
+}

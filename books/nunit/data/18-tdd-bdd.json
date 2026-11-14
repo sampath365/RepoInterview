@@ -1,0 +1,360 @@
+{
+  "category": "TDD & BDD with NUnit",
+  "slug": "tdd-bdd",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "tdd-bdd-001",
+      "difficulty": "Beginner",
+      "question": "What is test-driven development?",
+      "answer": "TDD is a workflow in which you write a failing test first, then the minimum code to make it pass, then refactor. The cycle keeps the design driven by the tests and provides a safety net for change. It is as much a design technique as a testing one.",
+      "tags": [
+        "tdd",
+        "concepts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-002",
+      "difficulty": "Beginner",
+      "question": "What are the three steps of the TDD cycle?",
+      "answer": "Red, green, refactor: write a test that fails, write the simplest code that passes, then improve the code while keeping the test green. Each step is short, often minutes. The discipline of failing first proves the test can actually fail.",
+      "tags": [
+        "tdd",
+        "cycle"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-003",
+      "difficulty": "Beginner",
+      "question": "Why must the test fail before you write the production code?",
+      "answer": "A failing test proves the test is actually exercising the code and that the assertion can detect a problem. A test that passes immediately may not be running at all or may be asserting nothing useful. The red step eliminates false confidence.",
+      "tags": [
+        "tdd",
+        "cycle"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-004",
+      "difficulty": "Beginner",
+      "question": "How does NUnit fit into a TDD workflow?",
+      "answer": "NUnit provides the [Test] methods, assertions and a fast runner that make the red-green-refactor loop practical. You write a failing NUnit test, run it, implement the code, and run again. The short feedback loop is what TDD depends on.",
+      "tags": [
+        "tdd",
+        "nunit"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "tdd-bdd-005",
+      "difficulty": "Beginner",
+      "question": "What is BDD?",
+      "answer": "Behaviour-driven development describes behaviour in terms of scenarios written in a shared, often natural-language form such as Given-When-Then, and drives development from those scenarios. It extends TDD by focusing on business behaviour and collaboration. Tools can map the scenarios to executable tests.",
+      "tags": [
+        "bdd",
+        "concepts"
+      ],
+      "references": [
+        "https://reqnroll.net/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "tdd-bdd-006",
+      "difficulty": "Beginner",
+      "question": "What does the Given-When-Then structure express?",
+      "answer": "Given describes the initial context, When the action under test, and Then the expected outcome. It separates setup, action and assertion, which makes scenarios readable and focused. The structure works whether the tests are written in plain C# or in a Gherkin feature file.",
+      "tags": [
+        "bdd",
+        "structure"
+      ],
+      "references": [
+        "https://reqnroll.net/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "tdd-bdd-007",
+      "difficulty": "Beginner",
+      "question": "How do you name tests to express behaviour?",
+      "answer": "Use names that describe the expected behaviour, such as Withdraw_WhenBalanceIsInsufficient_Throws. A good name states the scenario and the outcome so a failure reads as a requirement that is broken. Behavioural names make the suite a form of documentation.",
+      "code": "[Test]\npublic void Withdraw_WhenBalanceInsufficient_Throws() { }",
+      "tags": [
+        "bdd",
+        "naming"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-008",
+      "difficulty": "Beginner",
+      "question": "What is the relationship between a user story and a test?",
+      "answer": "A user story expresses a desired behaviour, and the acceptance tests encode the concrete examples that must pass for the story to be considered done. This links the tests to the requirement. Acceptance tests are often written in a BDD style.",
+      "tags": [
+        "bdd",
+        "stories"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://reqnroll.net/"
+      ]
+    },
+    {
+      "id": "tdd-bdd-009",
+      "difficulty": "Beginner",
+      "question": "How do you structure a test with arrange, act and assert?",
+      "answer": "Arrange sets up the objects and inputs, act performs the single operation under test, and assert verifies the outcome. Keeping the three phases distinct makes the test readable and the failure obvious. One logical assertion per test is a good default.",
+      "code": "[Test]\npublic void Adds_Two_Numbers()\n{\n    var calc = new Calculator();          // Arrange\n    var result = calc.Add(2, 3);          // Act\n    Assert.That(result, Is.EqualTo(5));   // Assert\n}",
+      "tags": [
+        "tdd",
+        "structure"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-010",
+      "difficulty": "Beginner",
+      "question": "Why should each test verify one behaviour?",
+      "answer": "A test with one behaviour is easier to name, reason about and diagnose, because a failure points to a single expectation. Tests that check many unrelated things become brittle and hard to interpret. Splitting them improves the feedback you get from a red test.",
+      "tags": [
+        "tdd",
+        "bestpractices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-011",
+      "difficulty": "Intermediate",
+      "question": "How do you apply TDD to a feature with complex logic?",
+      "answer": "Break the feature into small behaviours and drive them one test at a time, starting with the simplest case and adding edge cases as the design emerges. Refactor after each green step so the design stays clean. TDD is most valuable precisely when the logic is intricate.",
+      "tags": [
+        "tdd",
+        "practice"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-012",
+      "difficulty": "Intermediate",
+      "question": "What is the role of triangulation in TDD?",
+      "answer": "Triangulation adds a second example that forces a more general implementation, preventing you from hard-coding the answer for the first test. It nudges the design towards the real algorithm. Once the general solution exists, further examples become regression tests.",
+      "tags": [
+        "tdd",
+        "practice"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-013",
+      "difficulty": "Intermediate",
+      "question": "How do NUnit's parameterized tests support TDD?",
+      "answer": "TestCase and TestCaseSource let you express several examples of one behaviour compactly, which suits the triangulation step. You can add a new example as a new row and watch it fail before implementing the general case. This keeps examples close together.",
+      "code": "[TestCase(2, 3, 5)]\n[TestCase(10, 1, 11)]\npublic void Add_ReturnsSum(int a, int b, int expected)\n{\n    Assert.That(new Calculator().Add(a, b), Is.EqualTo(expected));\n}",
+      "tags": [
+        "tdd",
+        "parameterized"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/data-driven-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "tdd-bdd-014",
+      "difficulty": "Intermediate",
+      "question": "What is a walking skeleton in TDD?",
+      "answer": "A walking skeleton is the thinnest end-to-end slice of the system that works, used to prove the architecture and wiring before building features. It connects the layers with minimal logic so that tests can run through the whole path. Subsequent work fills in behaviour behind the skeleton.",
+      "tags": [
+        "tdd",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "tdd-bdd-015",
+      "difficulty": "Intermediate",
+      "question": "How does TDD influence design?",
+      "answer": "Writing the test first forces you to consider how the code will be called, which tends to produce smaller units with clear responsibilities and injectable dependencies. It surfaces awkward APIs early, before they are baked in. The resulting design is more testable and usually simpler.",
+      "tags": [
+        "tdd",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "tdd-bdd-016",
+      "difficulty": "Intermediate",
+      "question": "What is outside-in TDD?",
+      "answer": "Outside-in TDD starts from an acceptance test at the system boundary and works inward, using the failing test to drive the next collaborator. It keeps the work focused on delivering behaviour rather than building layers speculatively. It is often combined with mocking at the boundaries.",
+      "tags": [
+        "tdd",
+        "practice"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "tdd-bdd-017",
+      "difficulty": "Intermediate",
+      "question": "What is specification by example?",
+      "answer": "Specification by example captures concrete examples of desired behaviour as the specification, so the tests become the documentation of the requirement. Each example is a real input and expected output that the team agrees on. This reduces ambiguity compared with prose requirements.",
+      "tags": [
+        "bdd",
+        "practice"
+      ],
+      "references": [
+        "https://reqnroll.net/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "tdd-bdd-018",
+      "difficulty": "Intermediate",
+      "question": "How do you implement BDD scenarios with NUnit?",
+      "answer": "You can write scenarios as NUnit tests using Given-When-Then naming and structure, or use a Gherkin-based framework that generates or binds to the test methods. The NUnit route keeps everything in C# and needs no extra tooling. The Gherkin route adds readability for non-developers.",
+      "tags": [
+        "bdd",
+        "nunit"
+      ],
+      "references": [
+        "https://reqnroll.net/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a unit test and an acceptance test in TDD?",
+      "answer": "A unit test drives the design of a small unit and runs fast and in isolation. An acceptance test verifies that a user-visible behaviour works end to end and is usually written from the customer's perspective. TDD uses both, at different levels of granularity.",
+      "tags": [
+        "tdd",
+        "levels"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "tdd-bdd-020",
+      "difficulty": "Intermediate",
+      "question": "How do you keep TDD tests fast enough to be useful?",
+      "answer": "Keep unit tests in memory, avoid real I/O, use fakes for slow dependencies, and run the full suite often so slow tests do not accumulate unnoticed. Fast tests are essential because the cycle depends on running them many times a minute. Slow tests belong at the integration level.",
+      "tags": [
+        "tdd",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "tdd-bdd-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of strict TDD versus test-after development?",
+      "answer": "Strict TDD improves design and gives a complete regression net, but it can feel slower at first and requires discipline, especially in unfamiliar domains. Test-after can be quicker for exploratory spikes but often produces tests that merely lock in the existing implementation. Many teams use TDD for core logic and a lighter approach for prototypes.",
+      "tags": [
+        "tdd",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "tdd-bdd-022",
+      "difficulty": "Advanced",
+      "question": "How do you apply TDD to legacy code that has no tests?",
+      "answer": "Add characterisation tests that capture the current behaviour before changing anything, using seams to isolate the parts you will modify. Then drive the new behaviour with TDD. The characterisation tests protect against accidental changes while the TDD tests guide the new work.",
+      "tags": [
+        "tdd",
+        "legacy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "tdd-bdd-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between London and Chicago style TDD?",
+      "answer": "The London school emphasises interaction-based testing with mocks at the boundaries and works outside-in, while the Chicago school favours state-based testing with real collaborators and works inside-out. London gives strong design feedback and isolation; Chicago gives more realistic coverage with fewer brittle interaction tests. Many teams blend the two.",
+      "tags": [
+        "tdd",
+        "design"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "tdd-bdd-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid tests that merely restate the implementation?",
+      "answer": "Assert on observable behaviour and outcomes rather than on internal calls, and name tests after requirements instead of methods. Tests coupled to implementation break on every refactor without catching real bugs. Behaviour-focused tests survive refactoring and still catch regressions.",
+      "tags": [
+        "tdd",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "tdd-bdd-025",
+      "difficulty": "Advanced",
+      "question": "How do you integrate BDD scenarios with CI and reporting?",
+      "answer": "Generate or bind the scenarios to test methods so they run in the normal test job, and publish a report that maps each scenario to its result. This makes behaviour visible to the whole team. Keeping scenarios in the same pipeline avoids a separate, stale test suite.",
+      "tags": [
+        "bdd",
+        "ci"
+      ],
+      "references": [
+        "https://reqnroll.net/",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core"
+      ]
+    }
+  ]
+}

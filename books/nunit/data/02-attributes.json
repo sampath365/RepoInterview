@@ -1,0 +1,368 @@
+{
+  "category": "Test Attributes & Fixtures",
+  "slug": "attributes",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "attributes-001",
+      "difficulty": "Beginner",
+      "question": "What is the role of the [TestFixture] attribute and is it required?",
+      "answer": "The [TestFixture] attribute marks a class as containing tests and was historically required. In NUnit 3 and later it is optional for public, non-abstract classes that contain at least one test method, because those classes are treated as fixtures automatically. It is still useful for clarity and for marking classes that hold only setup code.",
+      "tags": [
+        "testfixture",
+        "attributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes.html"
+      ]
+    },
+    {
+      "id": "attributes-002",
+      "difficulty": "Beginner",
+      "question": "What does the [Description] attribute do and where does the text appear?",
+      "answer": "The [Description] attribute attaches a human-readable description to a test, fixture or assembly. The text is carried into the test result and shown by runners such as the NUnit console, and it is available through the test's properties. It documents intent without affecting execution.",
+      "tags": [
+        "description",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/description.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Test-Result-XML-Format.html"
+      ]
+    },
+    {
+      "id": "attributes-003",
+      "difficulty": "Beginner",
+      "question": "How do you record an author or owner on a test?",
+      "answer": "Apply the [Author] attribute to a test, fixture or assembly to record who wrote it, and it can be applied more than once to list several people. The value is stored as a property named Author on the test and appears in result output. It is metadata only and does not change how the test runs.",
+      "tags": [
+        "author",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/author.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Test-Result-XML-Format.html"
+      ]
+    },
+    {
+      "id": "attributes-004",
+      "difficulty": "Beginner",
+      "question": "What is the [Property] attribute used for?",
+      "answer": "The [Property] attribute attaches an arbitrary name and value pair to a test, fixture or assembly. Properties are exposed through TestContext.CurrentContext.Test.Properties and can be used in filters, for example --where priority=High. Use them for custom metadata that does not map to a built-in attribute.",
+      "code": "[Test]\n[Property(\"priority\", \"High\")]\npublic void Critical_Path_Test() { }",
+      "tags": [
+        "property",
+        "metadata",
+        "filtering"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/property.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "attributes-005",
+      "difficulty": "Beginner",
+      "question": "How do you give a test a custom display name?",
+      "answer": "Set the TestName property on the [Test] or [TestCase] attribute to override the name NUnit derives from the method. The custom name is used in the runner display and in filters, while the underlying method is unchanged. It is handy when a generated or parameterized name would be unclear.",
+      "code": "[Test(TestName = \"Cart applies 10% discount\")]\npublic void DiscountTest() { }",
+      "tags": [
+        "testname",
+        "naming"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testcase.html"
+      ]
+    },
+    {
+      "id": "attributes-006",
+      "difficulty": "Beginner",
+      "question": "What is the [TestOf] attribute used for?",
+      "answer": "The [TestOf] attribute records the type or member that a test exercises, which helps when test names do not make the target obvious. The value is stored as a TestOf property on the test and surfaced in reporting. Like other metadata attributes it has no effect on execution.",
+      "code": "[TestOf(typeof(Calculator))]\npublic class CalculatorTests { }",
+      "tags": [
+        "testof",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testof.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Test-Result-XML-Format.html"
+      ]
+    },
+    {
+      "id": "attributes-007",
+      "difficulty": "Beginner",
+      "question": "What does the [FixtureLifeCycle] attribute control?",
+      "answer": "The [FixtureLifeCycle] attribute selects whether NUnit creates one fixture instance shared by all its tests (LifeCycle.SingleInstance, the default) or a new instance per test (LifeCycle.InstancePerTestCase). It can be placed on a class or the assembly, and a class-level setting overrides the assembly default. Instance-per-test avoids shared instance state, which is valuable with parallel execution.",
+      "tags": [
+        "fixturelifecycle",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "attributes-008",
+      "difficulty": "Beginner",
+      "question": "How do you apply an attribute such as [Category] at the assembly level?",
+      "answer": "Place the attribute on the assembly, typically in an AssemblyInfo.cs file or any source file using the assembly: target, for example [assembly: Category(\"Integration\")]. NUnit then treats every test in the assembly as belonging to that category or carrying that metadata. The same works for [Parallelizable], [LevelOfParallelism] and other multi-scope attributes.",
+      "code": "[assembly: Category(\"Integration\")]\n[assembly: Parallelizable(ParallelScope.Fixtures)]",
+      "tags": [
+        "assembly",
+        "category"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes.html"
+      ]
+    },
+    {
+      "id": "attributes-009",
+      "difficulty": "Beginner",
+      "question": "What does the [NonTestAssembly] attribute do?",
+      "answer": "The [NonTestAssembly] attribute tells NUnit that an assembly should not be treated as a test assembly even if it references the framework. It prevents accidental discovery of tests in helper or production assemblies. It is applied at the assembly level.",
+      "tags": [
+        "assembly",
+        "discovery"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/nontestassembly.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/NUnit-Test-Projects.html"
+      ]
+    },
+    {
+      "id": "attributes-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [TestFixture] and [TestFixtureSource]?",
+      "answer": "The [TestFixture] attribute simply marks a class as a fixture. The [TestFixtureSource] attribute goes further: it declares that the fixture is parameterized and names a source that supplies the constructor arguments, so NUnit creates one instance of the fixture per data row. Use [TestFixture] for ordinary fixtures and [TestFixtureSource] when the fixture itself needs data.",
+      "tags": [
+        "testfixture",
+        "testfixturesource"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixturesource.html"
+      ]
+    },
+    {
+      "id": "attributes-011",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit resolve attributes that are inherited from a base class?",
+      "answer": "NUnit walks the inheritance chain and combines inherited attributes where the attribute declares Inherited in its AttributeUsage. A [SetUp] method in a base class runs before the derived class's [SetUp], and categories and properties declared on a base fixture apply to derived fixtures. Attributes that are not marked inherited apply only to the type they are placed on.",
+      "tags": [
+        "inheritance",
+        "attributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "attributes-012",
+      "difficulty": "Intermediate",
+      "question": "How do attribute-derived attributes work in NUnit?",
+      "answer": "You can define your own attribute that derives from an NUnit attribute, for example a class deriving from CategoryAttribute that supplies a fixed category name. NUnit recognises it exactly as it would recognise the base attribute, so placing your attribute is equivalent to placing the base one with those values. This is a clean way to standardise metadata across a suite.",
+      "code": "public class IntegrationAttribute : CategoryAttribute { }\n\n[Integration]\npublic class SlowTests { }",
+      "tags": [
+        "customization",
+        "attributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Attributes.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html"
+      ]
+    },
+    {
+      "id": "attributes-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between [SetUpFixture] and [TestFixture]?",
+      "answer": "A [TestFixture] holds tests and its lifecycle methods run for those tests, while a [SetUpFixture] holds no tests and exists only to provide [OneTimeSetUp] and [OneTimeTearDown] that run once for its namespace or the whole assembly. Use a SetUpFixture for cross-cutting resources and ordinary fixtures for the tests themselves.",
+      "tags": [
+        "setupfixture",
+        "testfixture"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setupfixture.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "attributes-014",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data to a fixture constructor using [TestFixtureSource]?",
+      "answer": "Apply [TestFixtureSource] to the fixture class and name a static member or type that returns the argument sets, then add a constructor whose parameters match those arguments. NUnit creates one fixture instance per argument set and runs all tests in the fixture for each. The argument sets can be plain object arrays or TestFixtureData instances that add metadata.",
+      "code": "[TestFixtureSource(nameof(Cases))]\npublic class CalculatorTests\n{\n    private readonly int _start;\n    public CalculatorTests(int start) => _start = start;\n    private static object[] Cases = { new object[] { 0 }, new object[] { 10 } };\n}",
+      "tags": [
+        "testfixturesource",
+        "parameterized"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixturesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestFixtureData.html"
+      ]
+    },
+    {
+      "id": "attributes-015",
+      "difficulty": "Intermediate",
+      "question": "What is TestFixtureData and how does it differ from TestCaseData?",
+      "answer": "TestFixtureData supplies arguments for a parameterized fixture and lets you attach metadata such as a category, description or explicit flag to each generated fixture. TestCaseData does the equivalent job for parameterized test methods. Both derive from a common base and support a fluent interface for chaining metadata.",
+      "tags": [
+        "testfixturedata",
+        "testcasedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestFixtureData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html"
+      ]
+    },
+    {
+      "id": "attributes-016",
+      "difficulty": "Intermediate",
+      "question": "How do you control whether a fixture instance is shared or created per test?",
+      "answer": "Apply [FixtureLifeCycle(LifeCycle.InstancePerTestCase)] to the fixture, or set it at assembly level as a default and override it per class. Instance-per-test gives every test a clean instance, which removes shared-field interference and pairs well with parallel execution. The default, LifeCycle.SingleInstance, creates one instance for the whole fixture and is slightly cheaper.",
+      "tags": [
+        "fixturelifecycle",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "attributes-017",
+      "difficulty": "Intermediate",
+      "question": "How can an attribute implement IApplyToTest to modify a test at load time?",
+      "answer": "Implement IApplyToTest and use its ApplyToTest method to mutate the Test object as the tree is built, for example by adding a category, setting a property or marking the test explicit. Because this runs at load time it must rely only on metadata, not on runtime state. It is the standard hook for cross-cutting test customisation.",
+      "code": "public void ApplyToTest(Test test)\n{\n    if (test.RunState != RunState.NotRunnable)\n        test.Properties.Add(\"Category\", \"Custom\");\n}",
+      "tags": [
+        "extensibility",
+        "attributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/IApplyToTest-Interface.html",
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Attributes.html"
+      ]
+    },
+    {
+      "id": "attributes-018",
+      "difficulty": "Intermediate",
+      "question": "What is the [Apartment] attribute and when is it needed?",
+      "answer": "The [Apartment] attribute requests that a test run on a thread with a specific apartment state, either STA or MTA. It matters for code that requires a single-threaded apartment, such as COM interop, Windows Forms and some UI or clipboard APIs. The attribute can be applied at method, class or assembly level.",
+      "tags": [
+        "apartment",
+        "threading"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/apartment.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/requiresthread.html"
+      ]
+    },
+    {
+      "id": "attributes-019",
+      "difficulty": "Intermediate",
+      "question": "What does the AttributeUsage setting on NUnit attributes imply?",
+      "answer": "AttributeUsage controls where an attribute may be placed and whether it can appear more than once. For example [Category] allows multiple instances and applies to methods, classes and assemblies, while [Test] applies only to methods and [OneTimeSetUp] only to methods. Knowing the allowed targets tells you whether an attribute belongs on a method, a fixture or the assembly.",
+      "tags": [
+        "attributes",
+        "usage"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html"
+      ]
+    },
+    {
+      "id": "attributes-020",
+      "difficulty": "Intermediate",
+      "question": "How do you mark a test so that it runs only when explicitly selected?",
+      "answer": "Apply the [Explicit] attribute to the test or fixture so that it is skipped during a normal run and only executed when selected by name or filter. You can supply a reason string that runners display. It is the usual way to keep slow or environment-specific tests out of the default run while leaving them runnable on demand.",
+      "code": "[Test]\n[Explicit(\"Run manually: needs a live database\")]\npublic void Migrates_Legacy_Data() { }",
+      "tags": [
+        "explicit",
+        "skipping"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/explicit.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/ignore.html"
+      ]
+    },
+    {
+      "id": "attributes-021",
+      "difficulty": "Advanced",
+      "question": "How do multiple attributes on the same method interact?",
+      "answer": "Attributes are independent and are all applied to the same test unless they conflict, in which case NUnit reports the test as not runnable or the more specific setting wins. Metadata attributes such as [Category] and [Property] accumulate, while behavioural attributes like [Explicit] and [Platform] can suppress execution. Order of declaration does not matter for the outcome.",
+      "tags": [
+        "attributes",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes.html",
+        "https://docs.nunit.org/articles/nunit/extending-nunit/IApplyToTest-Interface.html"
+      ]
+    },
+    {
+      "id": "attributes-022",
+      "difficulty": "Advanced",
+      "question": "How do you create an action attribute that runs code around every test?",
+      "answer": "Implement ITestAction, which provides BeforeTest and AfterTest methods plus a Targets property describing whether it applies to tests, suites or both. NUnit calls BeforeTest before the test and AfterTest after it, which lets you implement custom setup and teardown that is not tied to a fixture. Action attributes are useful for cross-cutting concerns such as setting up ambient context.",
+      "code": "public class LogAttribute : Attribute, ITestAction\n{\n    public ActionTargets Targets => ActionTargets.Test;\n    public void BeforeTest(ITest test) { }\n    public void AfterTest(ITest test) { }\n}",
+      "tags": [
+        "extensibility",
+        "actionattributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Action-Attributes.html",
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Attributes.html"
+      ]
+    },
+    {
+      "id": "attributes-023",
+      "difficulty": "Advanced",
+      "question": "How does NUnit combine [TestFixtureSource] with TestFixtureData metadata?",
+      "answer": "When the source member returns TestFixtureData instances you can chain methods such as SetCategory, SetDescription or SetName on each one, and NUnit applies that metadata to the generated fixture. This lets different parameter sets carry different categories or names within a single fixture class. The metadata is evaluated at load time along with the argument list.",
+      "code": "private static IEnumerable Fixtures()\n{\n    yield return new TestFixtureData(1, 2).SetName(\"Small\");\n    yield return new TestFixtureData(100, 200).SetCategory(\"Large\");\n}",
+      "tags": [
+        "testfixturesource",
+        "testfixturedata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestFixtureData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixturesource.html"
+      ]
+    },
+    {
+      "id": "attributes-024",
+      "difficulty": "Advanced",
+      "question": "How does NUnit resolve attribute precedence between assembly, class and method scope?",
+      "answer": "For settings that exist at several scopes, the most specific scope wins: a method-level value overrides a class-level one, which overrides the assembly default. This is how [FixtureLifeCycle], [DefaultFloatingPointTolerance] and [LevelOfParallelism] behave. Metadata attributes such as [Category] are additive rather than overridden.",
+      "tags": [
+        "attributes",
+        "precedence"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/defaultfloatingpointtolerance.html"
+      ]
+    },
+    {
+      "id": "attributes-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using attributes for test metadata versus a builder approach?",
+      "answer": "Attributes keep metadata next to the code, are discoverable by tooling and need no extra runtime machinery, but they are static and can only express constant values. A builder approach such as TestCaseData or TestFixtureData lets you compute metadata at load time and reuse it across tests, at the cost of moving information away from the method. Many suites use attributes for simple cases and builders when data or metadata is dynamic.",
+      "tags": [
+        "design",
+        "metadata"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestCaseData.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestFixtureData.html"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "category": "Navigation & Windows",
+  "slug": "navigation",
+  "icon": "compass",
+  "questions": [
+    {
+      "id": "navigation-001",
+      "difficulty": "Beginner",
+      "question": "What are the two navigation models in WPF?",
+      "answer": "WPF supports window-based navigation, where each screen is a separate Window, and page-based navigation, which uses a NavigationWindow or Frame to host Page objects. Page-based navigation provides a journal, back and forward, and navigation events. Window-based navigation gives full control but requires manual state management.",
+      "tags": ["navigation", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-002",
+      "difficulty": "Beginner",
+      "question": "What is a Frame in WPF?",
+      "answer": "A Frame is a content control that hosts navigable content such as Page objects and provides navigation chrome and a journal. It can be hosted inside a Window or another control. Frames support NavigationService for programmatic navigation.",
+      "tags": ["frame", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-003",
+      "difficulty": "Beginner",
+      "question": "What is a NavigationWindow?",
+      "answer": "NavigationWindow is a window that includes navigation chrome such as back and forward buttons and hosts navigable content. It derives from Window and exposes NavigationService. It is a convenient way to build a page-based application.",
+      "tags": ["navigationwindow", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-004",
+      "difficulty": "Beginner",
+      "question": "How do you navigate to a page from code?",
+      "answer": "Use the NavigationService and call Navigate with a page instance or a URI. For example NavigationService.Navigate(new Page1()) or Navigate(new Uri(\"Page1.xaml\", UriKind.Relative)). You can also navigate through a Frame's Navigate method.",
+      "code": "NavigationService.Navigate(new Uri(\"Views/Details.xaml\",\n    UriKind.Relative));",
+      "tags": ["navigation", "code"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-005",
+      "difficulty": "Beginner",
+      "question": "What is the navigation journal?",
+      "answer": "The journal is the history of pages visited that enables back and forward navigation. Each Frame and NavigationWindow has its own journal, accessed through the NavigationService. You can inspect CanGoBack and CanGoForward and call GoBack or GoForward.",
+      "tags": ["journal", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-006",
+      "difficulty": "Beginner",
+      "question": "How do you pass data to a page during navigation?",
+      "answer": "You can pass an object as the second argument to Navigate, or use query string parameters in the URI. The page reads the parameter in its OnNavigatedTo override. This avoids global state when moving between pages.",
+      "code": "NavigationService.Navigate(new DetailsPage(), customerId);",
+      "tags": ["navigation", "parameters"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-007",
+      "difficulty": "Beginner",
+      "question": "How do you open a modal dialog window?",
+      "answer": "Create the Window and call ShowDialog, which blocks until the dialog closes. Set the dialog's Owner property to the calling window for correct centering and modality. Read DialogResult or a property to get the user's choice.",
+      "code": "var dlg = new SettingsWindow { Owner = this };\nif (dlg.ShowDialog() == true) { /* apply */ }",
+      "tags": ["dialogs", "windows"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Show and ShowDialog?",
+      "answer": "Show opens a window non-modally, so the user can interact with other windows while it is open. ShowDialog opens it modally, blocking input to other windows until it closes. ShowDialog returns a nullable bool result.",
+      "tags": ["windows", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-009",
+      "difficulty": "Beginner",
+      "question": "How do you start a WPF application with a specific window?",
+      "answer": "Set the StartupUri in App.xaml to the main window's XAML path, or override OnStartup in App.xaml.cs and create the window manually. The latter gives you control for startup logic such as showing a splash or checking configuration. Only one startup mechanism should be used.",
+      "code": "protected override void OnStartup(StartupEventArgs e)\n{\n    base.OnStartup(e);\n    new MainWindow().Show();\n}",
+      "tags": ["startup", "application"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "navigation-010",
+      "difficulty": "Beginner",
+      "question": "How do you handle application shutdown?",
+      "answer": "The application shuts down when the last window closes if ShutdownMode is OnLastWindowClose, which is the default. You can change ShutdownMode to OnMainWindowClose or OnExplicitShutdown and call Shutdown yourself. Handle the Exit event to release resources.",
+      "code": "Application.Current.ShutdownMode = ShutdownMode.OnMainWindowClose;",
+      "tags": ["shutdown", "application"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "navigation-011",
+      "difficulty": "Intermediate",
+      "question": "What are the navigation events of a Frame?",
+      "answer": "A Frame raises Navigating and Navigated when navigation starts and completes, and NavigationFailed when a target cannot be loaded. It also raises NavigationProgress and LoadCompleted. You can cancel navigation in the Navigating handler by setting Cancel to true.",
+      "tags": ["navigation", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-012",
+      "difficulty": "Intermediate",
+      "question": "What is a Page's OnNavigatedTo method used for?",
+      "answer": "OnNavigatedTo is called when navigation to the page completes and receives NavigationEventArgs with the parameter. It is the place to read navigation parameters and load data. The companion OnNavigatedFrom runs when leaving the page.",
+      "code": "protected override void OnNavigatedTo(NavigationEventArgs e)\n{\n    var id = (int)e.Parameter;\n    Load(id);\n}",
+      "tags": ["page", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a Page and a UserControl for navigation?",
+      "answer": "A Page is designed for Frame or NavigationWindow navigation and participates in the journal with navigation events. A UserControl is a reusable component and is not navigable by itself. You can host a UserControl in a Frame, but it does not get journal integration the same way.",
+      "tags": ["page", "usercontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a custom navigation shell?",
+      "answer": "Host a ContentControl in the main window and set its Content to the current view, driven by a navigation service. The service keeps a stack of view models for back navigation. This approach works well with MVVM and avoids direct Frame dependencies.",
+      "code": "public void Navigate(object viewModel)\n{\n    _stack.Push(viewModel);\n    CurrentView = viewModel;\n}",
+      "tags": ["navigation", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-015",
+      "difficulty": "Intermediate",
+      "question": "How do you keep a page in the journal or remove it?",
+      "answer": "Set the page's JournalOwnership or use RemoveBackEntry to drop the most recent back entry. You can also set KeepAlive to false so the page is not retained in the journal. This controls memory use and back navigation behavior.",
+      "code": "NavigationService.RemoveBackEntry();",
+      "tags": ["journal", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-016",
+      "difficulty": "Intermediate",
+      "question": "How do you create a borderless window with a custom title bar?",
+      "answer": "Set WindowStyle to None and AllowsTransparency to true, then draw your own chrome and handle dragging and the close button. You must implement window dragging and system menu behavior manually. This enables fully custom window styling.",
+      "code": "<Window WindowStyle=\"None\" AllowsTransparency=\"True\"\n        Background=\"Transparent\">",
+      "tags": ["window", "custom-chrome"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-017",
+      "difficulty": "Intermediate",
+      "question": "How do you show a window centered on its owner?",
+      "answer": "Set the Owner property to the parent window and WindowStartupLocation to CenterOwner. WPF then centers the window relative to the owner. CenterScreen centers relative to the screen instead.",
+      "code": "var dlg = new AboutWindow { Owner = this,\n    WindowStartupLocation = WindowStartupLocation.CenterOwner };",
+      "tags": ["window", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a modal and a modeless dialog?",
+      "answer": "A modal dialog blocks interaction with the rest of the application until it is dismissed, which is appropriate for confirmations and required input. A modeless dialog allows the user to continue working in other windows. Choose modal when the user must respond before continuing.",
+      "tags": ["dialogs", "windows"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-019",
+      "difficulty": "Intermediate",
+      "question": "How do you persist window size and position between sessions?",
+      "answer": "Save the window's bounds and WindowState to settings when it closes, and restore them in the constructor or Loaded handler. Validate the saved position against current monitors so the window is not off-screen. Application settings or a custom configuration store both work.",
+      "code": "protected override void OnClosing(CancelEventArgs e)\n{\n    Properties.Settings.Default.Bounds = RestoreBounds;\n    Properties.Settings.Default.Save();\n}",
+      "tags": ["window", "settings"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-020",
+      "difficulty": "Intermediate",
+      "question": "How do you add a taskbar icon or tray behavior?",
+      "answer": "Set the window's Icon property for the taskbar and title bar icon. For a system tray icon, use the WinForms NotifyIcon through interop or a dedicated library, since WPF has no built-in tray control. Taskbar features such as jump lists use the Windows API Code Pack or Shell interop.",
+      "tags": ["window", "shell"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement navigation with MVVM and a navigation service?",
+      "answer": "Define an INavigationService interface with methods to navigate to a view model and go back, implemented in the View layer. The shell binds a ContentControl to the current view model and uses DataTemplates to map view models to views. This keeps navigation testable and free of Frame coupling.",
+      "tags": ["navigation", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-022",
+      "difficulty": "Advanced",
+      "question": "How does XBAP navigation differ from desktop navigation?",
+      "answer": "XBAPs were browser-hosted WPF applications that used page navigation inside a browser, but they required .NET Framework and are not supported on modern .NET. Modern WPF applications use Frame or window-based navigation on the desktop. Migrating XBAPs means hosting pages in a desktop shell instead.",
+      "tags": ["xbap", "migration"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "navigation-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle unsaved changes when closing a window or navigating away?",
+      "answer": "Handle the Closing event of the window or the Navigating event of the frame and prompt the user. Set Cancel to true to prevent closing or navigation when the user chooses to stay. This guards against data loss in editors.",
+      "code": "protected override void OnClosing(CancelEventArgs e)\n{\n    if (HasUnsavedChanges && !ConfirmDiscard())\n        e.Cancel = true;\n}",
+      "tags": ["closing", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    },
+    {
+      "id": "navigation-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement single-instance application behavior?",
+      "answer": "Use a named Mutex or a named pipe to detect an existing instance, and signal the running instance to activate its window when a second launch occurs. The new process then exits. This prevents duplicate windows and centralizes file-open or activation handling.",
+      "code": "using var mutex = new Mutex(true, \"MyApp.SingleInstance\", out bool isNew);\nif (!isNew) { SignalExistingInstance(); return; }",
+      "tags": ["single-instance", "application"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "navigation-025",
+      "difficulty": "Advanced",
+      "question": "How do you manage multiple top-level windows in a document-style application?",
+      "answer": "Track open windows in a collection, set each window's Owner for modality relationships, and update menus and commands based on the active window. Handle Activated and Closed events to keep the UI state current. This pattern supports editors with many open documents.",
+      "tags": ["windows", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/windows-in-wpf-applications"]
+    }
+  ]
+}

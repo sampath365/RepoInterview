@@ -1,0 +1,219 @@
+{
+  "category": "Animation & Storyboards",
+  "slug": "animation",
+  "icon": "play",
+  "questions": [
+    {
+      "id": "animation-001",
+      "difficulty": "Beginner",
+      "question": "What is animation in WPF?",
+      "answer": "Animation in WPF changes a dependency property over time, such as moving, fading, or resizing an element. WPF animates dependency properties only, using the animation system that runs on the render thread. Animations are declarative through Storyboards or created in code.",
+      "tags": ["animation", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-002",
+      "difficulty": "Beginner",
+      "question": "What is a Storyboard?",
+      "answer": "A Storyboard is a container that groups animations and provides the timeline control to start, pause, stop, and seek them. It targets objects and properties using Storyboard.TargetName and Storyboard.TargetProperty. Storyboards are commonly started by triggers or from code.",
+      "code": "<Storyboard x:Key=\"FadeIn\">\n  <DoubleAnimation Storyboard.TargetName=\"Box\"\n                   Storyboard.TargetProperty=\"Opacity\"\n                   From=\"0\" To=\"1\" Duration=\"0:0:1\"/>\n</Storyboard>",
+      "tags": ["storyboard", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/storyboards-overview"]
+    },
+    {
+      "id": "animation-003",
+      "difficulty": "Beginner",
+      "question": "What are the main animation types?",
+      "answer": "WPF provides DoubleAnimation, ColorAnimation, PointAnimation, ThicknessAnimation, and others for specific value types. Key-frame animations such as DoubleAnimationUsingKeyFrames allow multiple targets over time. For custom types you can use ObjectAnimationUsingKeyFrames.",
+      "tags": ["animation", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-004",
+      "difficulty": "Beginner",
+      "question": "What do From, To, and By mean in an animation?",
+      "answer": "From sets the starting value, To sets the ending value, and By sets the amount of change relative to the current value. You can specify From and To, From and By, or only To. If From is omitted, the animation starts from the property's current value.",
+      "code": "<DoubleAnimation From=\"0\" To=\"360\" Duration=\"0:0:2\"/>",
+      "tags": ["animation", "properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-005",
+      "difficulty": "Beginner",
+      "question": "What is a Duration in an animation?",
+      "answer": "Duration specifies how long the animation takes to go from start to end. It can be a time value like 0:0:2 or the special value Automatic, which uses one second. Duration can also be Forever for repeating animations.",
+      "tags": ["animation", "duration"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-006",
+      "difficulty": "Beginner",
+      "question": "How do you start a Storyboard from code?",
+      "answer": "Retrieve the storyboard resource and call Begin with the target and, if needed, IsControllable set to true. To target elements by name in code, pass the containing FrameworkElement. You can stop it with Stop or pause with Pause.",
+      "code": "var sb = (Storyboard)FindResource(\"FadeIn\");\nsb.Begin(this);",
+      "tags": ["storyboard", "code"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/how-to-control-a-storyboard-after-it-starts"]
+    },
+    {
+      "id": "animation-007",
+      "difficulty": "Beginner",
+      "question": "How do you animate an element with a trigger?",
+      "answer": "Add an EventTrigger or a property trigger with EnterActions and ExitActions that begin and stop a Storyboard. This makes animations respond to events or state changes declaratively. Triggers are defined in a style, template, or element.",
+      "code": "<Style.Triggers>\n  <EventTrigger RoutedEvent=\"MouseEnter\">\n    <BeginStoryboard Storyboard=\"{StaticResource FadeIn}\"/>\n  </EventTrigger>\n</Style.Triggers>",
+      "tags": ["triggers", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/storyboards-overview"]
+    },
+    {
+      "id": "animation-008",
+      "difficulty": "Beginner",
+      "question": "What is an easing function?",
+      "answer": "An easing function changes the pace of an animation so it accelerates, decelerates, or bounces instead of moving linearly. Common functions include QuadraticEase, BounceEase, and ElasticEase. You assign one to the animation's EasingFunction property.",
+      "code": "<DoubleAnimation To=\"300\" Duration=\"0:0:1\">\n  <DoubleAnimation.EasingFunction>\n    <CubicEase EasingMode=\"EaseOut\"/>\n  </DoubleAnimation.EasingFunction>\n</DoubleAnimation>",
+      "tags": ["easing", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/easing-functions"]
+    },
+    {
+      "id": "animation-009",
+      "difficulty": "Beginner",
+      "question": "Can you animate any property?",
+      "answer": "Only dependency properties of a compatible type can be animated, and the property must not be read-only for the target. Most visual and layout properties can be animated, but properties that trigger expensive re-layout should be avoided. Transform and opacity animations are the most efficient.",
+      "tags": ["animation", "dependency-properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/property-animation-techniques-overview"]
+    },
+    {
+      "id": "animation-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a Storyboard and a Timeline?",
+      "answer": "A Timeline is the base class for anything that defines behavior over time, including animations and storyboards. A Storyboard is a specific Timeline that groups child animations and can target multiple objects. Animations are Timelines that change a property value.",
+      "tags": ["timeline", "storyboard"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-011",
+      "difficulty": "Intermediate",
+      "question": "How do you repeat or reverse an animation?",
+      "answer": "Set RepeatBehavior to a count, a duration, or Forever to repeat, and AutoReverse to true to play the animation backward after it completes. This is useful for pulsing or attention effects. RepeatBehavior.Forever keeps the animation running until stopped.",
+      "code": "<DoubleAnimation To=\"1\" AutoReverse=\"True\"\n                 RepeatBehavior=\"Forever\" Duration=\"0:0:1\"/>",
+      "tags": ["animation", "repeat"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-012",
+      "difficulty": "Intermediate",
+      "question": "What is FillBehavior on an animation?",
+      "answer": "FillBehavior controls what happens after an animation completes. HoldEnd keeps the final value, while Stop reverts the property to its pre-animation value. The default is HoldEnd, which is why an animated property often appears to stay at the end value.",
+      "tags": ["animation", "fillbehavior"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-013",
+      "difficulty": "Intermediate",
+      "question": "How do you animate a transform?",
+      "answer": "Give the element a named transform such as a TranslateTransform in its RenderTransform, then animate the transform's X and Y properties using Storyboard.TargetProperty with the property path. Animating transforms is efficient because it does not trigger layout. This is the preferred way to move elements.",
+      "code": "<Rectangle.RenderTransform>\n  <TranslateTransform x:Name=\"Move\"/>\n</Rectangle.RenderTransform>\n\n<DoubleAnimation Storyboard.TargetName=\"Move\"\n                 Storyboard.TargetProperty=\"X\" To=\"200\"/>",
+      "tags": ["transform", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/how-to-animate-the-position-of-an-object-by-using-key-frames"]
+    },
+    {
+      "id": "animation-014",
+      "difficulty": "Intermediate",
+      "question": "What is a key-frame animation?",
+      "answer": "A key-frame animation changes a property through a series of key frames, each with a value and a key time. Types include LinearDoubleKeyFrame, DiscreteDoubleKeyFrame, and SplineDoubleKeyFrame. They give precise control over complex motion.",
+      "code": "<DoubleAnimationUsingKeyFrames Storyboard.TargetProperty=\"Opacity\">\n  <LinearDoubleKeyFrame KeyTime=\"0:0:0\" Value=\"0\"/>\n  <LinearDoubleKeyFrame KeyTime=\"0:0:1\" Value=\"1\"/>\n  <LinearDoubleKeyFrame KeyTime=\"0:0:2\" Value=\"0.5\"/>\n</DoubleAnimationUsingKeyFrames>",
+      "tags": ["keyframes", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/key-frame-animations-overview"]
+    },
+    {
+      "id": "animation-015",
+      "difficulty": "Intermediate",
+      "question": "How do you control a Storyboard interactively?",
+      "answer": "Begin the storyboard with isControllable true so you can call Pause, Resume, Stop, Seek, and SetSpeedRatio. Interactive control lets users scrub or slow animations. You can also query the storyboard's clock for its state.",
+      "code": "sb.Begin(this, true);\nsb.Pause(this);\nsb.Resume(this);",
+      "tags": ["storyboard", "control"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/how-to-control-a-storyboard-after-it-starts"]
+    },
+    {
+      "id": "animation-016",
+      "difficulty": "Intermediate",
+      "question": "How do you animate a color?",
+      "answer": "Use ColorAnimation to animate a Color property, such as the Color of a SolidColorBrush. You often target a brush resource by name. ColorAnimationUsingKeyFrames supports multi-step color transitions.",
+      "code": "<ColorAnimation Storyboard.TargetName=\"AccentBrush\"\n                Storyboard.TargetProperty=\"Color\"\n                To=\"Orange\" Duration=\"0:0:0.5\"/>",
+      "tags": ["color", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-overview"]
+    },
+    {
+      "id": "animation-017",
+      "difficulty": "Intermediate",
+      "question": "Why can a frozen Freezable not be animated?",
+      "answer": "A frozen Freezable is immutable and cannot be changed, so WPF cannot animate its properties. To animate a brush or transform that is a shared resource, avoid freezing it or give each element its own instance. Freezing is a performance optimization that trades away mutability.",
+      "tags": ["freezable", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/freezable-objects-overview"]
+    },
+    {
+      "id": "animation-018",
+      "difficulty": "Intermediate",
+      "question": "How do you animate a layout property safely?",
+      "answer": "Animating Width or Height triggers layout on each frame and is costly. Prefer animating a ScaleTransform or TranslateTransform, which the render thread can handle without re-layout. If you must animate size, keep the visual subtree small.",
+      "tags": ["animation", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-taking-advantage-of-hardware"]
+    },
+    {
+      "id": "animation-019",
+      "difficulty": "Intermediate",
+      "question": "How do you animate a value based on a binding?",
+      "answer": "You cannot animate a property that is bound with a local value unless you use a converter or animate the source. A common approach is to animate a separate property or use a trigger driven by the bound value. Understanding value precedence explains why bindings and animations conflict.",
+      "tags": ["animation", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-value-precedence"]
+    },
+    {
+      "id": "animation-020",
+      "difficulty": "Intermediate",
+      "question": "What is a clock in the animation system?",
+      "answer": "A clock is a runtime object that maintains the timing state of a timeline, including its current time and progress. WPF creates clocks from timelines and keeps them synchronized. Clocks expose events such as Completed and can be controlled independently.",
+      "tags": ["clock", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-and-timing-system-overview"]
+    },
+    {
+      "id": "animation-021",
+      "difficulty": "Advanced",
+      "question": "How does the animation timing system work with the render thread?",
+      "answer": "WPF's timing system calculates animated values per frame and passes them to the composition engine on the render thread, so many animations continue even if the UI thread is busy. The system uses a clock tree synchronized to the rendering. This design keeps animations smooth.",
+      "tags": ["timing", "rendering"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/animation-and-timing-system-overview"]
+    },
+    {
+      "id": "animation-022",
+      "difficulty": "Advanced",
+      "question": "How do you synchronize multiple animations?",
+      "answer": "Place the animations in the same Storyboard so they share a single clock and start together. You can also use Storyboard.SlipBehavior or control the storyboard's clock. Sharing one storyboard guarantees frame-aligned synchronization.",
+      "tags": ["storyboard", "synchronization"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/storyboards-overview"]
+    },
+    {
+      "id": "animation-023",
+      "difficulty": "Advanced",
+      "question": "How do you remove an animation and restore the property value?",
+      "answer": "Call BeginAnimation with null on the property, or use the storyboard's Remove method, to clear the animation and revert to the previous value. With FillBehavior HoldEnd, the property stays at the end value until the animation is removed. This is important when reusing elements.",
+      "code": "myRect.BeginAnimation(OpacityProperty, null);",
+      "tags": ["animation", "cleanup"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/how-to-set-a-property-after-animating-it-with-a-storyboard"]
+    },
+    {
+      "id": "animation-024",
+      "difficulty": "Advanced",
+      "question": "What are the performance guidelines for WPF animation?",
+      "answer": "Animate transforms and opacity rather than layout-affecting properties, keep animated elements small, and avoid animating properties that force re-rendering of large areas. Use hardware acceleration where possible and limit the number of simultaneous animations. Complex effects during animation can drop frames.",
+      "tags": ["performance", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-taking-advantage-of-hardware"]
+    },
+    {
+      "id": "animation-025",
+      "difficulty": "Advanced",
+      "question": "How do you create a custom animation for a non-double type?",
+      "answer": "For types without a built-in animation, use ObjectAnimationUsingKeyFrames with discrete key frames, which switch the value at key times. For smooth custom types you can implement an animation class deriving from AnimationTimeline and provide GetCurrentValue. Most UI needs are covered by built-in animation types.",
+      "code": "<ObjectAnimationUsingKeyFrames Storyboard.TargetProperty=\"Visibility\">\n  <DiscreteObjectKeyFrame KeyTime=\"0:0:1\" Value=\"Collapsed\"/>\n</ObjectAnimationUsingKeyFrames>",
+      "tags": ["custom-animation", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/custom-animations-overview"]
+    }
+  ]
+}

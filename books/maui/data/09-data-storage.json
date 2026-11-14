@@ -1,0 +1,223 @@
+{
+  "category": "Data, Storage & Local Databases",
+  "slug": "data-storage",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "data-storage-001",
+      "difficulty": "Beginner",
+      "question": "What is the Preferences API in .NET MAUI?",
+      "answer": "Preferences stores small key-value pairs such as settings and flags in a platform-native store, like shared preferences on Android or user defaults on iOS. You read and write values with typed methods such as Preferences.Set and Preferences.Get, and check existence with ContainsKey. It is ideal for lightweight settings, not for large or structured data. Values persist across app launches but are not encrypted.",
+      "tags": ["preferences", "storage"],
+      "code": "Preferences.Set(\"theme\", \"dark\");\nvar theme = Preferences.Get(\"theme\", \"light\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/preferences"]
+    },
+    {
+      "id": "data-storage-002",
+      "difficulty": "Beginner",
+      "question": "What is SecureStorage and when should you use it?",
+      "answer": "SecureStorage stores small secrets such as tokens and passwords using platform encryption, backed by the Keychain on Apple platforms and EncryptedSharedPreferences on Android. Use it whenever data is sensitive, because Preferences and plain files are readable. Access is asynchronous and can fail if the device lacks a secure store, so handle exceptions. It is not meant for large payloads.",
+      "tags": ["securestorage", "security"],
+      "code": "await SecureStorage.SetAsync(\"token\", jwt);\nvar jwt = await SecureStorage.GetAsync(\"token\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "data-storage-003",
+      "difficulty": "Beginner",
+      "question": "What is the FileSystem helper in .NET MAUI?",
+      "answer": "FileSystem provides cross-platform paths and helpers such as AppDataDirectory, CacheDirectory, and OpenAppPackageFileAsync. You combine these with System.IO to read and write files without hard-coding platform paths. The app data directory is private to the app and backed up per platform rules. The cache directory may be cleared by the OS, so do not store critical data there.",
+      "tags": ["filesystem", "storage"],
+      "code": "var path = Path.Combine(FileSystem.AppDataDirectory, \"notes.txt\");\nawait File.WriteAllTextAsync(path, text);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-system-helpers"]
+    },
+    {
+      "id": "data-storage-004",
+      "difficulty": "Beginner",
+      "question": "How do you persist application data to a file in MAUI?",
+      "answer": "Build an absolute path with FileSystem.AppDataDirectory, then use File or FileStream APIs to read and write the content. Serialize objects to JSON with System.Text.Json before writing. Always write to the app data directory rather than a fixed path so each platform stores it correctly. Handle IO exceptions because storage may be full or restricted.",
+      "tags": ["filesystem", "json"],
+      "code": "var file = Path.Combine(FileSystem.AppDataDirectory, \"items.json\");\nvar json = JsonSerializer.Serialize(items);\nawait File.WriteAllTextAsync(file, json);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-system-helpers"]
+    },
+    {
+      "id": "data-storage-005",
+      "difficulty": "Beginner",
+      "question": "What is SQLite and why is it commonly used in MAUI apps?",
+      "answer": "SQLite is a lightweight, file-based relational database engine that runs in-process with no server. It is a natural fit for MAUI because it works offline, supports transactions and queries, and stores data in a single file in the app's directory. The sqlite-net-pcl library provides a simple ORM for MAUI. It suits structured local data such as records, caches, and user content.",
+      "tags": ["sqlite", "database"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-006",
+      "difficulty": "Beginner",
+      "question": "How do you open a SQLite connection in a MAUI app?",
+      "answer": "Create a SQLiteAsyncConnection with a database path built from FileSystem.AppDataDirectory, then call CreateTableAsync for your model types. Wrap access in a repository or service registered with dependency injection. Use the async API to keep the UI thread free. The database file is created on first open if it does not exist.",
+      "tags": ["sqlite", "database"],
+      "code": "var db = new SQLiteAsyncConnection(\n    Path.Combine(FileSystem.AppDataDirectory, \"app.db3\"));\nawait db.CreateTableAsync<TodoItem>();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Preferences and SecureStorage?",
+      "answer": "Preferences stores unencrypted key-value data for non-sensitive settings, while SecureStorage encrypts values using the platform's secure store. Preferences is synchronous and fast; SecureStorage is asynchronous and slightly heavier. Choose Preferences for things like last selected tab and SecureStorage for tokens, passwords, and keys. Never put secrets in Preferences.",
+      "tags": ["preferences", "securestorage"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "data-storage-008",
+      "difficulty": "Beginner",
+      "question": "What is the CacheDirectory used for?",
+      "answer": "CacheDirectory is a location the OS may clear when storage is low, so it is appropriate for data that can be regenerated, such as downloaded images or temporary files. Do not store user data or settings there because it can disappear. It still counts against the app's storage, so clean it up when entries are no longer needed. Using it keeps regenerable content out of your persistent data.",
+      "tags": ["filesystem", "cache"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-system-helpers"]
+    },
+    {
+      "id": "data-storage-009",
+      "difficulty": "Beginner",
+      "question": "How do you store an object as JSON locally in MAUI?",
+      "answer": "Serialize the object to a JSON string with System.Text.Json and write it to a file in AppDataDirectory, then deserialize on read. This avoids a database for small, infrequently changed data. Use source-generated serialization for better startup and trimming behavior. Handle malformed or missing files gracefully by returning a default value.",
+      "tags": ["json", "storage"],
+      "code": "var opts = new JsonSerializerOptions(JsonSerializerDefaults.Web);\nvar json = JsonSerializer.Serialize(profile, opts);\nawait File.WriteAllTextAsync(path, json);\nvar loaded = JsonSerializer.Deserialize<Profile>(json, opts);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/local-web-services"]
+    },
+    {
+      "id": "data-storage-010",
+      "difficulty": "Beginner",
+      "question": "What does the Picker control do in the context of data storage?",
+      "answer": "The Picker control lets the user choose one item from a list, which is often how settings are captured before being saved. You bind its ItemsSource to a collection and read SelectedItem to persist the choice. Pairing a Picker with Preferences or a database is a common pattern for user preferences. It presents a native selection UI on each platform.",
+      "tags": ["controls", "settings"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/picker"]
+    },
+    {
+      "id": "data-storage-011",
+      "difficulty": "Intermediate",
+      "question": "How do you define a SQLite table model with attributes?",
+      "answer": "Annotate a class with [Table] and its members with [PrimaryKey], [AutoIncrement], [Column], and [MaxLength] so sqlite-net maps it to a table. Properties map to columns by name unless you override with [Column]. Mark the primary key explicitly and choose autoincrement for integer ids. Keep the model a plain class so it can be shared with the rest of the app.",
+      "tags": ["sqlite", "orm"],
+      "code": "[Table(\"todo\")]\npublic class TodoItem\n{\n    [PrimaryKey, AutoIncrement]\n    public int Id { get; set; }\n    [MaxLength(200)]\n    public string Title { get; set; } = string.Empty;\n    public bool IsDone { get; set; }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-012",
+      "difficulty": "Intermediate",
+      "question": "How do you perform CRUD operations with SQLite in MAUI?",
+      "answer": "Use InsertAsync, UpdateAsync, and DeleteAsync for writes and Table<T> with LINQ or QueryAsync for reads. These methods run asynchronously off the UI thread. Wrap them in a repository service so view models do not depend on the database library directly. Return counts or affected rows to confirm success.",
+      "tags": ["sqlite", "crud"],
+      "code": "await db.InsertAsync(item);\nawait db.UpdateAsync(item);\nawait db.DeleteAsync(item);\nvar all = await db.Table<TodoItem>().ToListAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle database migrations when your schema changes?",
+      "answer": "sqlite-net can add new columns automatically when you call CreateTableAsync again, but it cannot drop or rename columns. For structural changes you track a schema version in Preferences and run upgrade scripts, or use a migrations library. A robust approach stores the version in the database and applies ordered migration steps on startup. Always test migrations against existing data before shipping.",
+      "tags": ["sqlite", "migrations"],
+      "code": "var version = Preferences.Get(\"dbVersion\", 0);\nif (version < 1)\n{\n    await db.ExecuteAsync(\"ALTER TABLE todo ADD COLUMN Notes TEXT\");\n    Preferences.Set(\"dbVersion\", 1);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-014",
+      "difficulty": "Intermediate",
+      "question": "How do you store files picked by the user?",
+      "answer": "Use FilePicker to select a file, which returns a FileResult with a stream and name. Copy the stream into a file under AppDataDirectory if you need it to persist, because the picked location may be temporary. Save only the file name or a relative path in your data store. Request the necessary permissions before opening the picker.",
+      "tags": ["filepicker", "storage"],
+      "code": "var result = await FilePicker.Default.PickAsync();\nif (result is not null)\n{\n    var dest = Path.Combine(FileSystem.AppDataDirectory, result.FileName);\n    using var src = await result.OpenReadAsync();\n    using var dst = File.Create(dest);\n    await src.CopyToAsync(dst);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-picker"]
+    },
+    {
+      "id": "data-storage-015",
+      "difficulty": "Intermediate",
+      "question": "How do you decide between Preferences, files, and SQLite for local data?",
+      "answer": "Use Preferences for a handful of scalar settings, files or JSON for small structured documents and caches, and SQLite for larger sets that need queries, relationships, or frequent partial updates. The choice affects performance, code complexity, and query capability. Preferences and files are simple but do not scale to querying many records. Match the store to the access pattern rather than defaulting to one.",
+      "tags": ["storage", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/preferences"]
+    },
+    {
+      "id": "data-storage-016",
+      "difficulty": "Intermediate",
+      "question": "How do you seed a local database on first run?",
+      "answer": "After creating tables, check whether any rows exist and insert default data if the table is empty. This runs once because subsequent launches find existing rows. Guard the check with a fast count query so startup stays quick. Seeding from a bundled JSON file lets you ship richer initial content.",
+      "tags": ["sqlite", "seeding"],
+      "code": "if (await db.Table<Category>().CountAsync() == 0)\n{\n    await db.InsertAllAsync(defaultCategories);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-017",
+      "difficulty": "Intermediate",
+      "question": "How do you keep a CollectionView in sync with database changes?",
+      "answer": "Load rows from the database into an ObservableCollection bound to the CollectionView, then update the collection after each write so the UI reflects changes. Because the collection raises change notifications, the view updates without reloading everything. For large sets, reload only the affected items or re-query with paging. Keep database access on a background thread and marshal collection updates to the UI thread.",
+      "tags": ["sqlite", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/populate-data"]
+    },
+    {
+      "id": "data-storage-018",
+      "difficulty": "Intermediate",
+      "question": "How do you store an image captured by the camera?",
+      "answer": "Use MediaPicker to capture a photo, then copy the resulting file into AppDataDirectory and persist its path in your data store. The capture result lives in a temporary location that may be cleaned up, so copy anything you need to keep. Store a relative path and rebuild the absolute path at read time. Compress or resize large images before saving to save space.",
+      "tags": ["media", "storage"],
+      "code": "var photo = await MediaPicker.Default.CapturePhotoAsync();\nif (photo is not null)\n{\n    var dest = Path.Combine(FileSystem.AppDataDirectory, photo.FileName);\n    using var src = await photo.OpenReadAsync();\n    using var dst = File.Create(dest);\n    await src.CopyToAsync(dst);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device-media/picker"]
+    },
+    {
+      "id": "data-storage-019",
+      "difficulty": "Intermediate",
+      "question": "How do you encrypt local files in a MAUI app?",
+      "answer": "MAUI does not ship a built-in file encryption helper, so use platform cryptography such as Aes from System.Security.Cryptography with a key stored in SecureStorage. Encrypt the content before writing and decrypt after reading, and never hard-code the key. Alternatively store small secrets directly in SecureStorage. Encrypting files adds complexity, so reserve it for genuinely sensitive data.",
+      "tags": ["security", "encryption"],
+      "code": "using var aes = Aes.Create();\naes.Key = Convert.FromBase64String(await SecureStorage.GetAsync(\"fileKey\")!);\n// encrypt stream before writing to disk",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    },
+    {
+      "id": "data-storage-020",
+      "difficulty": "Intermediate",
+      "question": "What are the platform differences in where app data is stored?",
+      "answer": "FileSystem.AppDataDirectory maps to the app's private folder on each platform, such as the Documents or Library folder on Apple platforms and the app files directory on Android. The OS sandbox means other apps cannot read these files. Backups and cloud sync follow platform rules, so sensitive files may need an exclusion flag. Using the helper avoids guessing platform paths.",
+      "tags": ["filesystem", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-system-helpers"]
+    },
+    {
+      "id": "data-storage-021",
+      "difficulty": "Advanced",
+      "question": "How do you run SQLite queries efficiently on large datasets?",
+      "answer": "Use parameterized queries, select only the columns you need, and add indexes on columns used in filters and sorts. Avoid loading entire tables when you only need a page of results by using LIMIT and OFFSET. Keep write operations inside transactions to reduce disk flushes. Measure with realistic data because small test sets hide scaling problems.",
+      "tags": ["sqlite", "performance"],
+      "code": "var page = await db.QueryAsync<TodoItem>(\n    \"SELECT * FROM todo WHERE IsDone = ? ORDER BY Id LIMIT ? OFFSET ?\",\n    false, 50, offset);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle concurrent database access safely?",
+      "answer": "sqlite-net's async connection serializes operations internally, but you should still avoid overlapping long-running transactions. Use a single shared connection registered as a singleton rather than opening many connections, which can cause locking. For multi-step operations, use RunInTransactionAsync to keep them atomic. Expect and handle SQLite busy or locked errors by retrying.",
+      "tags": ["sqlite", "concurrency"],
+      "code": "await db.RunInTransactionAsync(conn =>\n{\n    conn.Insert(order);\n    conn.Update(inventory);\n});",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep local data in sync with a remote API?",
+      "answer": "Use the local database as the source of truth for the UI and sync with the server through a repository that reconciles changes, tracking updated timestamps or version numbers to resolve conflicts. Queue offline writes and flush them when connectivity returns. Design an idempotent sync so retries do not duplicate records. Handle conflicts with a defined policy such as last-write-wins or server-authoritative.",
+      "tags": ["sync", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "data-storage-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of storing data in a database versus the file system?",
+      "answer": "A database offers querying, transactions, indexing, and partial updates but adds a dependency and schema management. Files are simple and good for whole-document reads and writes but are inefficient for querying or updating small parts of large data. Databases shine with many records and relationships, while files suit configuration and cached payloads. Mixing them is common, using each for what it does best.",
+      "tags": ["storage", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/database-sqlite"]
+    },
+    {
+      "id": "data-storage-025",
+      "difficulty": "Advanced",
+      "question": "How do you protect data in SecureStorage against device and OS limitations?",
+      "answer": "SecureStorage can fail on devices without a secure enclave or when the keystore is corrupted, and data is lost on uninstall or key reset, so wrap calls in try/catch and have a fallback such as re-authenticating. On Android, back up awareness matters because encrypted prefs may not survive restore. Never treat SecureStorage as a durable store for data you cannot regenerate. Plan for the case where the stored secret is missing.",
+      "tags": ["securestorage", "security"],
+      "code": "try\n{\n    await SecureStorage.SetAsync(\"token\", value);\n}\ncatch (Exception ex)\n{\n    // fall back to re-auth or in-memory\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/secure-storage"]
+    }
+  ]
+}

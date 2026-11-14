@@ -1,0 +1,339 @@
+{
+  "category": "CORS & Security Headers",
+  "slug": "cors",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "cors-001",
+      "difficulty": "Beginner",
+      "question": "What is CORS?",
+      "answer": "Cross-Origin Resource Sharing is a browser security mechanism that lets a server declare which origins may read its responses. The browser enforces it by sending an Origin header and checking the response's Access-Control-Allow-Origin. It protects users from malicious sites reading data from other origins with their credentials.",
+      "tags": [
+        "cors",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-002",
+      "difficulty": "Beginner",
+      "question": "What is the same-origin policy?",
+      "answer": "The same-origin policy restricts web pages from making requests to a different origin, where an origin is the combination of scheme, host, and port. It is a browser-enforced rule that prevents one site from reading another site's data. CORS is the controlled exception to this policy.",
+      "tags": [
+        "cors",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-003",
+      "difficulty": "Beginner",
+      "question": "How do you enable CORS in ASP.NET Core?",
+      "answer": "Register a named policy with AddCors and apply it with UseCors, then attach the policy to controllers with [EnableCors] or to endpoints with RequireCors. Middleware order matters: UseCors must come before UseAuthorization and before endpoint execution. The policy lists allowed origins, methods, and headers.",
+      "tags": [
+        "cors",
+        "setup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ],
+      "code": "builder.Services.AddCors(o => o.AddPolicy(\"web\", p =>\n    p.WithOrigins(\"https://app.example.com\")\n     .AllowAnyHeader().AllowAnyMethod()));"
+    },
+    {
+      "id": "cors-004",
+      "difficulty": "Beginner",
+      "question": "What is a preflight request?",
+      "answer": "A preflight is an OPTIONS request the browser sends before certain cross-origin requests, asking the server which methods and headers are allowed. The server responds with Access-Control-Allow-Methods and related headers. Simple requests that meet specific criteria skip preflight.",
+      "tags": [
+        "cors",
+        "preflight"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-005",
+      "difficulty": "Beginner",
+      "question": "What does Access-Control-Allow-Origin do?",
+      "answer": "It tells the browser which origin may read the response, either a specific origin or a wildcard. When credentials are allowed, a wildcard is not permitted and the exact origin must be echoed. Without a matching value the browser blocks the response from JavaScript.",
+      "tags": [
+        "cors",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between AllowAnyOrigin and WithOrigins?",
+      "answer": "AllowAnyOrigin permits every origin with a wildcard, which is convenient but unsafe for APIs that use credentials, while WithOrigins lists explicit origins. Explicit origins are strongly preferred for authenticated APIs. Remember that CORS is not authentication.",
+      "tags": [
+        "cors",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ],
+      "code": "p.WithOrigins(\"https://app.example.com\", \"https://admin.example.com\");"
+    },
+    {
+      "id": "cors-007",
+      "difficulty": "Beginner",
+      "question": "What is AllowCredentials and when is it needed?",
+      "answer": "AllowCredentials permits the browser to include cookies or the Authorization header on cross-origin requests, and it requires explicit origins rather than a wildcard. Use it only when the client must send credentials. Prefer bearer tokens in headers over cookies where possible.",
+      "tags": [
+        "cors",
+        "credentials"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ],
+      "code": "p.WithOrigins(\"https://app.example.com\").AllowCredentials();"
+    },
+    {
+      "id": "cors-008",
+      "difficulty": "Beginner",
+      "question": "Does CORS protect a server from non-browser clients?",
+      "answer": "No, CORS is enforced by browsers only, so tools such as curl or server-to-server callers ignore it entirely. It protects users in a browser from cross-site reads, not the API from attackers. Real protection comes from authentication and authorization.",
+      "tags": [
+        "cors",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-009",
+      "difficulty": "Beginner",
+      "question": "What are common security response headers?",
+      "answer": "Headers such as X-Content-Type-Options: nosniff, Strict-Transport-Security, Content-Security-Policy, X-Frame-Options, and Referrer-Policy harden browser behavior. They mitigate content sniffing, clickjacking, and mixed-content risks. APIs returning only JSON benefit most from nosniff and HSTS.",
+      "tags": [
+        "security",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "cors-010",
+      "difficulty": "Beginner",
+      "question": "What is HSTS?",
+      "answer": "HTTP Strict Transport Security tells browsers to use HTTPS for a host for a specified period, preventing downgrade attacks and cookie theft over plain HTTP. It is enabled with UseHsts and should only be used once HTTPS is reliably configured. Include subdomains and preload only when you are certain.",
+      "tags": [
+        "security",
+        "hsts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/enforcing-ssl"
+      ]
+    },
+    {
+      "id": "cors-011",
+      "difficulty": "Intermediate",
+      "question": "How do you configure CORS for multiple specific origins?",
+      "answer": "List the origins explicitly with WithOrigins, optionally reading them from configuration so each environment can differ, and set allowed methods and headers narrowly. Avoid AllowAnyOrigin for authenticated APIs. Policy names let different clients get different rules.",
+      "tags": [
+        "cors",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ],
+      "code": "p.WithOrigins(cfg.GetSection(\"Cors:Origins\").Get<string[]>())"
+    },
+    {
+      "id": "cors-012",
+      "difficulty": "Intermediate",
+      "question": "How do you apply different CORS policies to different endpoints?",
+      "answer": "Define multiple named policies, apply them with [EnableCors(\"name\")] on controllers or RequireCors(\"name\") on endpoints, and keep a default policy for the rest. This lets a public endpoint allow a broader origin set than an admin endpoint. Named policies keep rules explicit.",
+      "tags": [
+        "cors",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ],
+      "code": "[EnableCors(\"public\")]\n[ApiController]\npublic class PublicController : ControllerBase { }"
+    },
+    {
+      "id": "cors-013",
+      "difficulty": "Intermediate",
+      "question": "Why must UseCors be ordered carefully?",
+      "answer": "UseCors must run before UseAuthorization and before endpoint execution so it can respond to preflight requests and add headers to responses. If it runs too late, preflight requests may be rejected or headers missing. Middleware order is a common source of CORS failures.",
+      "tags": [
+        "cors",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"
+      ],
+      "code": "app.UseRouting();\napp.UseCors(\"web\");\napp.UseAuthorization();\napp.MapControllers();"
+    },
+    {
+      "id": "cors-014",
+      "difficulty": "Intermediate",
+      "question": "How do you allow credentials with CORS safely?",
+      "answer": "Specify exact origins and enable AllowCredentials, and never combine it with AllowAnyOrigin because the browser rejects the wildcard for credentialed requests. Restrict methods and headers to what the client needs. Also protect against CSRF when using cookies.",
+      "tags": [
+        "cors",
+        "credentials"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-015",
+      "difficulty": "Intermediate",
+      "question": "How do you add security headers globally?",
+      "answer": "Add a small middleware or use a library to set headers such as X-Content-Type-Options, Referrer-Policy, and Strict-Transport-Security on every response. Centralizing them avoids inconsistency across endpoints. Test that they do not break legitimate clients.",
+      "tags": [
+        "security",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ],
+      "code": "app.Use(async (ctx, next) =>\n{\n    ctx.Response.Headers[\"X-Content-Type-Options\"] = \"nosniff\";\n    await next();\n});"
+    },
+    {
+      "id": "cors-016",
+      "difficulty": "Intermediate",
+      "question": "What is a Content-Security-Policy and does an API need one?",
+      "answer": "CSP restricts which sources a browser may load scripts, styles, and other resources from, mitigating XSS. A pure JSON API does not need a CSP because it serves no HTML, but any endpoint returning HTML should set one. Use a restrictive policy and tighten it over time.",
+      "tags": [
+        "security",
+        "csp"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "cors-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle CORS during local development?",
+      "answer": "Add the local development origin such as http://localhost:5173 to the policy, ideally only in the Development environment, so production stays strict. Reading allowed origins from configuration makes this easy. Never ship localhost origins to production.",
+      "tags": [
+        "cors",
+        "development"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-018",
+      "difficulty": "Intermediate",
+      "question": "What is the Vary: Origin header and why does it matter?",
+      "answer": "When a response's CORS headers depend on the request origin, the response must include Vary: Origin so shared caches do not serve one origin's headers to another. ASP.NET Core's CORS middleware adds it automatically. Missing Vary causes subtle cache poisoning.",
+      "tags": [
+        "cors",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-019",
+      "difficulty": "Intermediate",
+      "question": "How do you protect against cross-site request forgery in an API?",
+      "answer": "Prefer token-based authentication sent in a header rather than cookies, since browsers do not attach the Authorization header automatically to cross-site requests. If cookies are used, enable anti-forgery tokens and set SameSite on the cookie. CORS alone does not prevent CSRF.",
+      "tags": [
+        "security",
+        "csrf"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/anti-request-forgery"
+      ]
+    },
+    {
+      "id": "cors-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test CORS configuration?",
+      "answer": "Send an OPTIONS preflight with an Origin header and assert the returned Access-Control-Allow-* values, and test a real cross-origin GET with credentials. Also verify that a disallowed origin receives no allow header. Integration tests catch ordering and policy mistakes early.",
+      "tags": [
+        "testing",
+        "cors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "cors-021",
+      "difficulty": "Advanced",
+      "question": "How do you design CORS for a multi-tenant SaaS API?",
+      "answer": "Allow tenants to register their own frontend origins and build policies from that data, caching the resolution per origin, while enforcing strict allow-lists. Never fall back to a wildcard for authenticated requests. This balances flexibility with safety.",
+      "tags": [
+        "cors",
+        "multi-tenant"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a strict Content-Security-Policy for documentation pages?",
+      "answer": "Serve the docs from the same origin, avoid inline scripts by using nonces or hashes, and start with a report-only policy to observe violations before enforcing. Tighten gradually and monitor reports. A strict CSP meaningfully reduces XSS impact.",
+      "tags": [
+        "security",
+        "csp"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/"
+      ]
+    },
+    {
+      "id": "cors-023",
+      "difficulty": "Advanced",
+      "question": "What are the risks of permissive CORS on an authenticated API?",
+      "answer": "A wildcard or reflective origin policy combined with credentials lets any site read user data on the user's behalf, defeating the same-origin policy. Even without credentials it exposes API structure and data to any page. Restrict origins to known frontends and keep credentials opt-in.",
+      "tags": [
+        "cors",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "cors-024",
+      "difficulty": "Advanced",
+      "question": "How do you combine CORS, HSTS, and certificate pinning?",
+      "answer": "CORS controls which origins may read responses, HSTS forces HTTPS to prevent downgrade, and certificate pinning (usually in mobile clients) constrains which certificates are trusted. Together they harden transport and cross-origin access. Pin only in clients you control because rotation is operationally risky.",
+      "tags": [
+        "security",
+        "tls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/enforcing-ssl"
+      ]
+    },
+    {
+      "id": "cors-025",
+      "difficulty": "Advanced",
+      "question": "How do you apply security headers per environment?",
+      "answer": "Keep strict headers in production, relax only what development tooling requires, and drive the differences from configuration or the environment. Always keep transport security headers such as HSTS on in production. Document any relaxations so they are revisited.",
+      "tags": [
+        "security",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/environments"
+      ]
+    }
+  ]
+}

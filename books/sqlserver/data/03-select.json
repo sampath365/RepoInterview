@@ -1,0 +1,342 @@
+{
+  "category": "SELECT, Filtering & Sorting",
+  "slug": "select",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "select-001",
+      "difficulty": "Beginner",
+      "question": "What is the logical order of operations in a SELECT statement?",
+      "answer": "SQL Server logically processes FROM, then WHERE, GROUP BY, HAVING, SELECT, DISTINCT, ORDER BY, and finally OFFSET/FETCH. This order explains why a column alias defined in SELECT cannot be used in WHERE, but can be used in ORDER BY. The optimizer may physically reorder work, but the logical semantics follow this sequence.",
+      "tags": [
+        "select",
+        "logical-order"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-transact-sql"
+      ]
+    },
+    {
+      "id": "select-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between WHERE and HAVING?",
+      "answer": "WHERE filters individual rows before grouping and cannot reference aggregate functions, while HAVING filters groups after aggregation and can use aggregates such as SUM or COUNT. Filtering with WHERE first reduces the rows that must be grouped and is usually more efficient. A query may contain both clauses.",
+      "tags": [
+        "where",
+        "having",
+        "filtering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-having-transact-sql"
+      ]
+    },
+    {
+      "id": "select-003",
+      "difficulty": "Beginner",
+      "question": "What does SELECT DISTINCT do?",
+      "answer": "DISTINCT removes duplicate rows from the result set by comparing all selected columns, effectively adding an implicit unique sort or hash. It is often a sign that a join produced duplicates that should be fixed at the source. DISTINCT applies to the entire select list, not to a single column.",
+      "tags": [
+        "distinct",
+        "select"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-transact-sql"
+      ]
+    },
+    {
+      "id": "select-004",
+      "difficulty": "Beginner",
+      "question": "How do you sort results and why is ORDER BY important?",
+      "answer": "ORDER BY sorts the result by one or more columns ascending (ASC, the default) or descending (DESC) and must be the last clause except for OFFSET/FETCH. Without ORDER BY, row order is not guaranteed even if results often appear stable. To page results you must combine ORDER BY with OFFSET and FETCH.",
+      "tags": [
+        "order-by",
+        "sorting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-order-by-clause-transact-sql"
+      ]
+    },
+    {
+      "id": "select-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between TOP and OFFSET/FETCH for limiting rows?",
+      "answer": "TOP n returns the first n rows and is simple for quick limits, while OFFSET/FETCH pages through results and requires an ORDER BY. OFFSET n ROWS FETCH NEXT m ROWS ONLY is the ANSI-standard paging approach and is what ORMs often generate. Both benefit from an index that supports the ORDER BY to avoid a full sort.",
+      "tags": [
+        "top",
+        "paging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-order-by-clause-transact-sql"
+      ],
+      "code": "SELECT ProductID, Name\nFROM Production.Product\nORDER BY ProductID\nOFFSET 20 ROWS FETCH NEXT 10 ROWS ONLY;"
+    },
+    {
+      "id": "select-006",
+      "difficulty": "Beginner",
+      "question": "How do the LIKE wildcards work?",
+      "answer": "LIKE matches a pattern where percent (%) matches any string of zero or more characters, underscore (_) matches exactly one character, and square brackets define a character set or range like [A-C]. A caret inside brackets negates the set. Leading wildcards such as '%abc' usually prevent an index seek and cause a scan.",
+      "tags": [
+        "like",
+        "wildcards"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/like-transact-sql"
+      ]
+    },
+    {
+      "id": "select-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between BETWEEN and using two comparisons?",
+      "answer": "BETWEEN is inclusive on both bounds and is shorthand for a column >= low AND column <= high. It is equivalent to the two comparisons for most types but reads more clearly. Be careful with datetime ranges: BETWEEN two dates can include the whole second of the upper date, so half-open ranges with < next-day are often safer.",
+      "tags": [
+        "between",
+        "filtering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/between-transact-sql"
+      ]
+    },
+    {
+      "id": "select-008",
+      "difficulty": "Beginner",
+      "question": "What does the IN operator do and how does it differ from EXISTS?",
+      "answer": "IN tests whether a value matches any value in a list or subquery, while EXISTS tests whether a correlated subquery returns at least one row. IN can return unexpected results when the list contains NULL, because the comparison becomes UNKNOWN. EXISTS typically stops at the first matching row and often performs better on large correlated sets.",
+      "tags": [
+        "in",
+        "exists"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/in-transact-sql"
+      ]
+    },
+    {
+      "id": "select-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between SELECT * and naming columns?",
+      "answer": "SELECT * returns every column in the table, which is convenient interactively but fragile in application code because adding a column changes the result shape. Naming only the columns you need reduces network and memory use and can enable covering-index seeks. Always list columns explicitly in production queries.",
+      "tags": [
+        "select-star",
+        "best-practice"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-transact-sql"
+      ]
+    },
+    {
+      "id": "select-010",
+      "difficulty": "Beginner",
+      "question": "How do you use aliases in a SELECT statement?",
+      "answer": "You can alias a column with the AS keyword, for example SELECT Name AS ProductName, and alias tables similarly so you can qualify columns. Aliases can be referenced in ORDER BY but not in WHERE, because WHERE is evaluated before SELECT. Table aliases keep joins readable and are required for self-joins.",
+      "tags": [
+        "alias",
+        "select"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-clause-transact-sql"
+      ]
+    },
+    {
+      "id": "select-011",
+      "difficulty": "Intermediate",
+      "question": "Why does a function on a column in WHERE hurt performance?",
+      "answer": "Applying a function such as YEAR(OrderDate) or UPPER(Name) to a column makes the predicate non-sargable, so SQL Server cannot seek the index on that column and must scan and evaluate the function per row. Rewriting the predicate as a range on the raw column, such as OrderDate >= '2024-01-01' AND OrderDate < '2025-01-01', restores the seek. Alternatively use a computed column that is indexed or persisted.",
+      "tags": [
+        "sargable",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"
+      ],
+      "code": "WHERE OrderDate >= '2024-01-01'\n  AND OrderDate <  '2025-01-01'   -- sargable range\n-- instead of: WHERE YEAR(OrderDate) = 2024"
+    },
+    {
+      "id": "select-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a sargable and non-sargable predicate?",
+      "answer": "A sargable predicate can use an index seek because it compares a column directly to a value, such as col = @p or col > @p. Non-sargable predicates wrap the column in a function or expression, or use leading wildcards, forcing a scan. Writing sargable predicates is one of the highest-value tuning techniques.",
+      "tags": [
+        "sargable",
+        "index"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/query-processing-architecture-guide"
+      ]
+    },
+    {
+      "id": "select-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement pagination efficiently on a large table?",
+      "answer": "Use ORDER BY with OFFSET/FETCH for simple paging, but for deep pages prefer keyset pagination: remember the last key and query WHERE key > @last ORDER BY key FETCH NEXT n ROWS. Keyset paging avoids scanning and discarding all the earlier rows that OFFSET does. Ensure the ordering key is indexed to make both approaches fast.",
+      "tags": [
+        "paging",
+        "keyset"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-order-by-clause-transact-sql"
+      ],
+      "code": "SELECT Id, Name\nFROM dbo.Products\nWHERE Id > @lastId\nORDER BY Id\nFETCH NEXT 50 ROWS ONLY;"
+    },
+    {
+      "id": "select-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between GROUP BY and DISTINCT?",
+      "answer": "GROUP BY partitions rows into groups so you can apply aggregates, and DISTINCT simply removes duplicate rows of the select list. GROUP BY can produce the same result as DISTINCT when no aggregates are used, but it signals intent and supports HAVING. Use GROUP BY when aggregating and DISTINCT when you truly need unique rows.",
+      "tags": [
+        "group-by",
+        "distinct"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-group-by-transact-sql"
+      ]
+    },
+    {
+      "id": "select-015",
+      "difficulty": "Intermediate",
+      "question": "How does the CASE expression work and where can it be used?",
+      "answer": "CASE evaluates conditions in order and returns the result of the first WHEN that is true, with an optional ELSE for the default and NULL if none matches. It can appear in the SELECT list, WHERE, ORDER BY, and inside aggregates, enabling conditional logic in a single pass. The simple form compares one expression to values, while the searched form uses full predicates.",
+      "tags": [
+        "case",
+        "conditional"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/case-transact-sql"
+      ],
+      "code": "SELECT Name,\n       CASE WHEN ListPrice >= 1000 THEN 'Premium'\n            WHEN ListPrice >= 100  THEN 'Standard'\n            ELSE 'Budget' END AS PriceBand\nFROM Production.Product;"
+    },
+    {
+      "id": "select-016",
+      "difficulty": "Intermediate",
+      "question": "What are the NULL handling options in ORDER BY?",
+      "answer": "In SQL Server, NULLs sort first in ascending order and last in descending order because NULL is treated as the lowest value. To control placement regardless of direction, add a CASE expression that maps NULL to 0 or 1 in the ORDER BY. This keeps the ordering explicit and predictable.",
+      "tags": [
+        "order-by",
+        "null"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/select-order-by-clause-transact-sql"
+      ],
+      "code": "SELECT Name, Color\nFROM Production.Product\nORDER BY CASE WHEN Color IS NULL THEN 1 ELSE 0 END, Color;"
+    },
+    {
+      "id": "select-017",
+      "difficulty": "Intermediate",
+      "question": "What does the APPLY operator do?",
+      "answer": "CROSS APPLY and OUTER APPLY invoke a table-valued expression for each row of the outer table, which is powerful for per-row top-N or function calls. CROSS APPLY behaves like an inner join and drops outer rows with no matches, while OUTER APPLY behaves like a left join and keeps them with NULLs. APPLY can reference columns from the left side, unlike a plain join to a subquery.",
+      "tags": [
+        "apply",
+        "tvf"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/from-transact-sql"
+      ],
+      "code": "SELECT c.CustomerID, o.OrderID, o.OrderDate\nFROM Sales.Customer AS c\nCROSS APPLY (SELECT TOP (3) *\n             FROM Sales.SalesOrderHeader s\n             WHERE s.CustomerID = c.CustomerID\n             ORDER BY s.OrderDate DESC) AS o;"
+    },
+    {
+      "id": "select-018",
+      "difficulty": "Intermediate",
+      "question": "How do you compare a value against a set with ANY, ALL and SOME?",
+      "answer": "ANY/SOME return true if the comparison holds for at least one value in the subquery, and ALL returns true only if it holds for every value. They are quantifiers used with a subquery and a comparison operator, for example > ALL (SELECT ...). These constructs are rarely used in practice but appear in certification questions and legacy code.",
+      "tags": [
+        "any",
+        "all",
+        "quantifiers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-elements/any-transact-sql"
+      ]
+    },
+    {
+      "id": "select-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the INNER JOIN in FROM and a comma-separated join?",
+      "answer": "Comma-separated tables with the join condition in WHERE produce an inner join but are the older ANSI-89 style and mix join and filter predicates, which is error-prone. The explicit INNER JOIN ... ON syntax separates join logic from filtering and is required for outer joins. Always use explicit JOIN syntax in new code.",
+      "tags": [
+        "join-syntax",
+        "ansi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/from-transact-sql"
+      ]
+    },
+    {
+      "id": "select-020",
+      "difficulty": "Intermediate",
+      "question": "How can you limit rows with TOP per group?",
+      "answer": "To get the top N rows per group, use a window function such as ROW_NUMBER() partitioned by the group and filtered to rn <= N, or CROSS APPLY with a TOP subquery. The window-function approach is set-based and often efficient with a supporting index. Avoid cursors or multiple queries for this pattern.",
+      "tags": [
+        "top-n",
+        "window-functions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/functions/row-number-transact-sql"
+      ],
+      "code": "WITH Ranked AS (\n  SELECT CustomerID, OrderID,\n         ROW_NUMBER() OVER (PARTITION BY CustomerID\n                            ORDER BY OrderDate DESC) AS rn\n  FROM Sales.SalesOrderHeader)\nSELECT * FROM Ranked WHERE rn <= 3;"
+    },
+    {
+      "id": "select-021",
+      "difficulty": "Advanced",
+      "question": "Why can OPTION (RECOMPILE) help a parameterized query?",
+      "answer": "OPTION (RECOMPILE) tells SQL Server to build a fresh plan at execution time using the actual parameter values, which fixes parameter-sniffing problems where one plan is bad for some values. It also enables cardinality estimation on the runtime values and can eliminate the need for a plan in the cache. The trade-off is added CPU for compilation on every execution, so apply it selectively to problematic queries.",
+      "tags": [
+        "recompile",
+        "parameter-sniffing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-query"
+      ]
+    },
+    {
+      "id": "select-022",
+      "difficulty": "Advanced",
+      "question": "How does the optimizer decide between a scan and a seek?",
+      "answer": "A seek is attractive when a predicate is selective and a suitable index exists, while a scan can be cheaper when the query needs most rows, when the table is small, or when the predicate is not sargable. The optimizer compares estimated costs using statistics and can choose a scan to avoid many random lookups with a non-covering index. Forcing a seek is rarely correct unless you have measured a tipping point.",
+      "tags": [
+        "scan",
+        "seek",
+        "optimizer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/cardinality-estimation-sql-server"
+      ]
+    },
+    {
+      "id": "select-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a predicate and a residual predicate in a plan?",
+      "answer": "A seek predicate is applied by the index access operator to position and limit the range of rows read, which is what makes a seek selective. A residual predicate is evaluated after the rows are read to filter them further, so it does not reduce the number of pages touched. Pushing as much filtering as possible into the seek predicate is key to efficient index usage.",
+      "tags": [
+        "execution-plan",
+        "predicate"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/execution-plans"
+      ]
+    },
+    {
+      "id": "select-024",
+      "difficulty": "Advanced",
+      "question": "How does batch mode on rowstore change query execution?",
+      "answer": "Batch mode on rowstore (SQL Server 2019 and later) lets the optimizer use vectorized batch processing for rowstore tables, which can speed up analytic scans, joins and aggregations by reducing CPU per row. It can be triggered automatically on compatible workloads or by using a columnstore-like plan shape, and it benefits from memory-optimized tempdb metadata. It is most effective for large scans rather than point lookups.",
+      "tags": [
+        "batch-mode",
+        "columnstore"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/intelligent-query-processing"
+      ]
+    },
+    {
+      "id": "select-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a hash join, merge join and nested loops join?",
+      "answer": "Nested loops join scans the inner input once per outer row and is best for small outer sets with an indexed inner side. Merge join requires both inputs sorted on the join key and excels for large, sorted inputs. Hash join builds a hash table from the smaller input and probes it with the larger, handling unsorted large inputs but consuming memory and potentially spilling to tempdb.",
+      "tags": [
+        "joins",
+        "execution-plan"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/performance/joins"
+      ]
+    }
+  ]
+}

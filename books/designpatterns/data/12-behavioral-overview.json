@@ -1,0 +1,210 @@
+{
+  "category": "Behavioral Patterns Overview",
+  "slug": "behavioral-overview",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "behavioral-overview-001",
+      "difficulty": "Beginner",
+      "question": "What are behavioral design patterns?",
+      "answer": "Behavioral patterns are concerned with algorithms and the assignment of responsibilities between objects, focusing on how objects communicate and distribute work. They make complex control flow easier to reason about and change. The GoF behavioral patterns include Strategy, Observer, Command, State, Iterator, Visitor, Mediator, Memento, Chain of Responsibility, and Template Method.",
+      "tags": ["behavioral", "overview"],
+      "references": ["https://refactoring.guru/design-patterns/behavioral-patterns"]
+    },
+    {
+      "id": "behavioral-overview-002",
+      "difficulty": "Beginner",
+      "question": "What does the Strategy pattern do?",
+      "answer": "Strategy defines a family of interchangeable algorithms behind a common interface and lets the context use any of them. The algorithm can be selected at runtime and swapped without changing the context. It replaces conditional logic with polymorphism.",
+      "tags": ["strategy", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/strategy"]
+    },
+    {
+      "id": "behavioral-overview-003",
+      "difficulty": "Beginner",
+      "question": "What does the Observer pattern do?",
+      "answer": "Observer defines a one-to-many dependency where a subject notifies its subscribers when its state changes. Observers register with the subject and receive updates without the subject knowing their concrete types. It decouples the producer of events from the consumers.",
+      "tags": ["observer", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "behavioral-overview-004",
+      "difficulty": "Beginner",
+      "question": "What does the Command pattern do?",
+      "answer": "Command encapsulates a request as an object, allowing you to parameterize clients, queue or log requests, and support undo. The command holds the receiver and the operation to perform. Invokers trigger commands without knowing what they do.",
+      "tags": ["command", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "behavioral-overview-005",
+      "difficulty": "Beginner",
+      "question": "What does the Iterator pattern do?",
+      "answer": "Iterator provides a way to access elements of a collection sequentially without exposing its underlying representation. It encapsulates traversal state so multiple iterations can proceed independently. In .NET this is realized by IEnumerable and IEnumerator.",
+      "tags": ["iterator", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/iterator"]
+    },
+    {
+      "id": "behavioral-overview-006",
+      "difficulty": "Beginner",
+      "question": "What does the State pattern do?",
+      "answer": "State lets an object alter its behavior when its internal state changes, making it appear to change class. Each state is a separate object implementing the same interface, and the context delegates to the current state. This replaces large switch statements over state values.",
+      "tags": ["state", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "behavioral-overview-007",
+      "difficulty": "Beginner",
+      "question": "What does the Template Method pattern do?",
+      "answer": "Template Method defines the skeleton of an algorithm in a base class and lets subclasses override specific steps without changing the overall structure. The base class controls the sequence and calls abstract or virtual hooks. It promotes reuse of the invariant parts of an algorithm.",
+      "tags": ["template-method", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "behavioral-overview-008",
+      "difficulty": "Beginner",
+      "question": "What does the Chain of Responsibility pattern do?",
+      "answer": "Chain of Responsibility passes a request along a chain of handlers until one handles it. Each handler decides whether to process the request or pass it on. This decouples the sender from the receiver and allows dynamic handler composition.",
+      "tags": ["chain-of-responsibility", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/chain-of-responsibility"]
+    },
+    {
+      "id": "behavioral-overview-009",
+      "difficulty": "Beginner",
+      "question": "What does the Mediator pattern do?",
+      "answer": "Mediator centralizes communication between objects so they do not refer to each other directly. Colleagues interact only with the mediator, which coordinates their behavior. This reduces many-to-many coupling to one-to-many.",
+      "tags": ["mediator", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "behavioral-overview-010",
+      "difficulty": "Beginner",
+      "question": "What does the Memento pattern do?",
+      "answer": "Memento captures an object's internal state so it can be restored later without violating encapsulation. The originator creates a memento and can restore from it, while a caretaker stores mementos. It underpins undo and checkpoint features.",
+      "tags": ["memento", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "behavioral-overview-011",
+      "difficulty": "Intermediate",
+      "question": "How does the Observer pattern relate to .NET events?",
+      "answer": "C# events are a language-level implementation of Observer: the event source holds a multicast delegate and subscribers add handlers. Raising the event notifies all subscribers. The built-in support makes the pattern simple but requires care with unsubscribing to avoid leaks.",
+      "tags": ["observer", "events"],
+      "code": "public event EventHandler<PriceChanged>? Changed;\nChanged?.Invoke(this, new PriceChanged(price));",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/"]
+    },
+    {
+      "id": "behavioral-overview-012",
+      "difficulty": "Intermediate",
+      "question": "How do you decide between Strategy and State?",
+      "answer": "Strategy is about choosing an algorithm and the client typically selects it, and the strategies are usually independent. State is about an object transitioning between states over time, where states may trigger transitions to other states. State changes behavior as a consequence of internal events, while Strategy changes it by external choice.",
+      "tags": ["strategy", "state"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "behavioral-overview-013",
+      "difficulty": "Intermediate",
+      "question": "How does Command support undo and redo?",
+      "answer": "Each command stores enough information to reverse itself, often the receiver and the previous values. An invoker keeps a history stack, pushing executed commands and popping them for undo. Redo uses a second stack of undone commands.",
+      "tags": ["command", "undo"],
+      "code": "public interface ICommand { void Execute(); void Undo(); }",
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "behavioral-overview-014",
+      "difficulty": "Intermediate",
+      "question": "How does Chain of Responsibility map to ASP.NET Core middleware?",
+      "answer": "Each middleware is a handler that can process the request or call the next delegate, forming a chain. A handler can short-circuit by not calling next, such as an authentication middleware returning 401. This is a real-world chain of responsibility over the request pipeline.",
+      "tags": ["chain-of-responsibility", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "behavioral-overview-015",
+      "difficulty": "Intermediate",
+      "question": "How does IEnumerable implement the Iterator pattern?",
+      "answer": "IEnumerable exposes GetEnumerator, which returns an IEnumerator with MoveNext, Current, and Reset. Iterator blocks with yield let the compiler generate the enumerator state machine. This decouples traversal from the collection's internal structure.",
+      "tags": ["iterator", "ienumerable"],
+      "code": "public IEnumerable<int> Evens()\n{\n    for (int i = 0; ; i += 2) yield return i;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/iterators"]
+    },
+    {
+      "id": "behavioral-overview-016",
+      "difficulty": "Intermediate",
+      "question": "How does Template Method compare with Strategy?",
+      "answer": "Template Method uses inheritance: a base class fixes the algorithm skeleton and subclasses override steps. Strategy uses composition: the algorithm is a separate object injected into the context. Template Method favors reuse of a fixed sequence, while Strategy favors runtime flexibility and avoids inheritance coupling.",
+      "tags": ["template-method", "strategy"],
+      "references": ["https://refactoring.guru/design-patterns/template-method"]
+    },
+    {
+      "id": "behavioral-overview-017",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the invoker and receiver in Command?",
+      "answer": "The invoker holds and triggers commands without knowing their details, such as a button or a queue processor. The receiver is the object that performs the actual work, such as a document or a service. The command binds them together and can be stored or queued.",
+      "tags": ["command", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/command"]
+    },
+    {
+      "id": "behavioral-overview-018",
+      "difficulty": "Intermediate",
+      "question": "How does the Mediator pattern reduce coupling in a UI?",
+      "answer": "Widgets communicate through a mediator, such as a dialog controller, instead of referencing each other. When one widget changes, it notifies the mediator, which updates the others. This avoids a web of direct references and centralizes coordination logic.",
+      "tags": ["mediator", "ui"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "behavioral-overview-019",
+      "difficulty": "Intermediate",
+      "question": "What are the pitfalls of the Observer pattern?",
+      "answer": "Observers that are not unsubscribed keep the subject alive and can cause memory leaks, especially in long-lived subjects. Notification order is not guaranteed, and a failing observer can break the notification loop if not isolated. Cascading updates can also create performance or infinite-loop problems.",
+      "tags": ["observer", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/events/how-to-subscribe-to-and-unsubscribe-from-events"]
+    },
+    {
+      "id": "behavioral-overview-020",
+      "difficulty": "Intermediate",
+      "question": "How does the Visitor pattern add operations to a hierarchy?",
+      "answer": "Visitor moves an operation out of the element classes into a separate visitor with a method per element type. Elements accept a visitor and call the matching method, which enables double dispatch. This adds new operations without editing the elements, though adding a new element type requires updating all visitors.",
+      "tags": ["visitor", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "behavioral-overview-021",
+      "difficulty": "Advanced",
+      "question": "How do behavioral patterns combine in an event-driven architecture?",
+      "answer": "Commands encapsulate requests, a mediator or message bus routes them, observers react to resulting events, and state machines manage long-running workflows. Strategy selects handling algorithms, and the chain of responsibility applies cross-cutting processing. Together they keep producers and consumers decoupled and composable.",
+      "tags": ["behavioral", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/"]
+    },
+    {
+      "id": "behavioral-overview-022",
+      "difficulty": "Advanced",
+      "question": "How do you avoid the Observer pattern becoming a performance bottleneck?",
+      "answer": "Notify asynchronously or batch updates to avoid blocking the subject, and throttle or debounce high-frequency changes. Consider a central event aggregator with selective subscriptions to reduce fan-out. Profile to find hot notification paths and avoid notifying observers that do not care about the change.",
+      "tags": ["observer", "performance"],
+      "references": ["https://refactoring.guru/design-patterns/observer"]
+    },
+    {
+      "id": "behavioral-overview-023",
+      "difficulty": "Advanced",
+      "question": "How does State differ from a finite state machine library?",
+      "answer": "The State pattern models states as objects with behavior, which is a manual implementation of a state machine. A library adds declarative transitions, guards, and validation of allowed changes. Use the pattern for simple cases and a library when transitions and rules grow complex.",
+      "tags": ["state", "fsm"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "behavioral-overview-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement Memento efficiently for large objects?",
+      "answer": "Store only the delta or the minimal state needed to restore, rather than a full deep copy. Use immutable snapshots with structural sharing so unchanged parts are reused. For very large states, consider serializing mementos to storage and keeping only references in memory.",
+      "tags": ["memento", "performance"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "behavioral-overview-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose among Template Method, Strategy, and Chain of Responsibility to vary behavior?",
+      "answer": "Choose Template Method when the algorithm's steps are fixed and only some steps vary through inheritance. Choose Strategy when the entire algorithm should be swappable at runtime via composition. Choose Chain of Responsibility when multiple handlers may process a request in sequence with the option to stop early.",
+      "tags": ["behavioral", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/behavioral-patterns"]
+    }
+  ]
+}

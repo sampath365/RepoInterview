@@ -1,0 +1,386 @@
+{
+  "category": "Data Binding & Directives",
+  "slug": "data-binding",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "data-binding-001",
+      "difficulty": "Beginner",
+      "question": "What is interpolation in an Angular template?",
+      "answer": "Interpolation embeds a component expression inside double curly braces, for example {{ title }}, and Angular renders the stringified result into the DOM. It is one-way binding from the component to the view, and the expression is evaluated on every change detection pass. Interpolation is best for simple, side-effect-free expressions.",
+      "code": "<h1>{{ title }}</h1>\n<p>Total: {{ price * quantity }}</p>",
+      "tags": [
+        "interpolation",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/interpolation",
+        "https://angular.dev/guide/templates/expression-syntax"
+      ]
+    },
+    {
+      "id": "data-binding-002",
+      "difficulty": "Beginner",
+      "question": "What is property binding and how does it differ from interpolation?",
+      "answer": "Property binding uses square brackets to assign a value to a DOM property or directive input, for example [disabled]=\"isSaving\" or [value]=\"name\". Interpolation always produces text, whereas property binding can pass objects, arrays, booleans, and other non-string values. Use interpolation for text content and property binding when the target expects a non-string value.",
+      "tags": [
+        "property-binding",
+        "binding"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/property-binding",
+        "https://angular.dev/guide/templates/interpolation"
+      ]
+    },
+    {
+      "id": "data-binding-003",
+      "difficulty": "Beginner",
+      "question": "What is event binding?",
+      "answer": "Event binding uses parentheses to listen for events and run a template statement, for example (click)=\"save()\". The statement can read from the special $event variable, which holds the DOM event or the payload emitted by an output. Event binding is the way a template calls component methods in response to user interaction.",
+      "code": "<button (click)=\"save()\">Save</button>\n<input (input)=\"onInput($event)\" />",
+      "tags": [
+        "event-binding",
+        "events"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/event-binding",
+        "https://angular.dev/guide/templates/template-statements"
+      ]
+    },
+    {
+      "id": "data-binding-004",
+      "difficulty": "Beginner",
+      "question": "What is two-way binding and what is the banana-in-a-box syntax?",
+      "answer": "Two-way binding combines property binding and event binding so a value flows both ways, written as [(ngModel)]=\"name\" or [(value)]=\"count\". Angular desugars it into a property binding plus an event listener for the matching change event. It is convenient for form inputs and custom components that expose a model input.",
+      "code": "<input [(ngModel)]=\"name\" />\n<app-rating [(value)]=\"stars\" />",
+      "tags": [
+        "two-way-binding",
+        "ngmodel"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/two-way-binding",
+        "https://angular.dev/guide/signals/model"
+      ]
+    },
+    {
+      "id": "data-binding-005",
+      "difficulty": "Beginner",
+      "question": "What is attribute binding and when is it needed?",
+      "answer": "Attribute binding uses [attr.name] to set an HTML attribute that has no matching DOM property, such as [attr.aria-label] or [attr.colspan]. For standard properties, property binding is preferred because attributes and properties are not always in sync. Use attribute binding for ARIA, SVG, and other attributes without a property counterpart.",
+      "code": "<td [attr.colspan]=\"columns\">Total</td>\n<button [attr.aria-expanded]=\"open\">Menu</button>",
+      "tags": [
+        "attribute-binding",
+        "a11y"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/attribute-binding",
+        "https://angular.dev/guide/templates/property-binding"
+      ]
+    },
+    {
+      "id": "data-binding-006",
+      "difficulty": "Beginner",
+      "question": "How do class and style bindings work?",
+      "answer": "Class binding uses [class.name]=\"condition\" or the NgClass directive, and style binding uses [style.width.px]=\"size\" or the NgStyle directive. Single-value bindings are precise and tree-shakeable, while the directives accept objects for several classes or styles at once. Prefer the single-value form when only one class or style changes.",
+      "code": "<div [class.active]=\"isActive\" [style.color]=\"color\">Item</div>\n<div [ngClass]=\"{ active: isActive, error: hasError }\"></div>",
+      "tags": [
+        "class-binding",
+        "style-binding",
+        "ngclass"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/class-binding",
+        "https://angular.dev/api/common/NgClass"
+      ]
+    },
+    {
+      "id": "data-binding-007",
+      "difficulty": "Beginner",
+      "question": "What are the built-in control flow blocks in modern Angular?",
+      "answer": "Angular provides @if, @for, @switch, and @let as template syntax that replaces the older structural directives. They are compiled by Angular, need no imports, and offer better type checking and performance. The older *ngIf, *ngFor, and *ngSwitch directives still work for backward compatibility.",
+      "code": "@if (user.isAdmin) {\n  <admin-panel />\n} @else {\n  <user-panel />\n}",
+      "tags": [
+        "control-flow",
+        "templates",
+        "syntax"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/control-flow",
+        "https://angular.dev/api/core/@if"
+      ]
+    },
+    {
+      "id": "data-binding-008",
+      "difficulty": "Beginner",
+      "question": "What is the @for block and why is track required?",
+      "answer": "The @for block repeats markup for each item in a collection, and it requires a track expression that identifies each item, usually a unique id. Tracking lets Angular move or reuse existing DOM nodes instead of recreating them when the list changes. Omitting track throws a build error in modern Angular.",
+      "code": "@for (item of items; track item.id) {\n  <li>{{ item.name }}</li>\n} @empty {\n  <li>No items</li>\n}",
+      "tags": [
+        "for",
+        "control-flow",
+        "track"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/control-flow",
+        "https://angular.dev/api/core/@for"
+      ]
+    },
+    {
+      "id": "data-binding-009",
+      "difficulty": "Beginner",
+      "question": "What are structural directives and how are they written?",
+      "answer": "A structural directive changes the layout by adding or removing elements, and it is applied with the asterisk shorthand such as *ngIf or *ngFor. The asterisk desugars the element into an ng-template that the directive controls. The modern equivalent is the built-in control flow blocks, which are preferred for new code.",
+      "tags": [
+        "structural-directives",
+        "directives"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives/structural-directives",
+        "https://angular.dev/guide/templates/control-flow"
+      ]
+    },
+    {
+      "id": "data-binding-010",
+      "difficulty": "Beginner",
+      "question": "What is a template reference variable?",
+      "answer": "A template reference variable, written as #name or ref-name, gives a template a local handle to a DOM element, a directive, or a component instance. It can be read elsewhere in the same template, for example passing #input to a method or reading #form.value. You can bind it to a specific directive with the exportAs name.",
+      "code": "<input #email />\n<button (click)=\"save(email.value)\">Save</button>",
+      "tags": [
+        "reference-variables",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/reference-variables",
+        "https://angular.dev/guide/templates/expression-syntax"
+      ]
+    },
+    {
+      "id": "data-binding-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between *ngIf/*ngFor and the @if/@for control flow?",
+      "answer": "The built-in control flow is native template syntax that Angular compiles directly, so it needs no imports and can use @else if, @empty, and @let more ergonomically. The directive versions require CommonModule or explicit imports and desugar to ng-template. Both are valid, but the block syntax is the recommended default for new code.",
+      "tags": [
+        "control-flow",
+        "ngif",
+        "ngfor"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/control-flow",
+        "https://angular.dev/api/core/@for"
+      ]
+    },
+    {
+      "id": "data-binding-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom attribute directive?",
+      "answer": "Create a class with the @Directive decorator and a selector that targets an attribute, then inject ElementRef or Renderer2 to change the host. You can react to inputs with @Input or signal inputs and to events with @HostListener or host bindings. Register the directive in the imports array of any standalone component that uses it.",
+      "code": "@Directive({ selector: '[appHighlight]' })\nexport class HighlightDirective {\n  private el = inject(ElementRef<HTMLElement>);\n  @HostListener('mouseenter') onEnter() {\n    this.el.nativeElement.style.background = 'yellow';\n  }\n}",
+      "tags": [
+        "attribute-directives",
+        "custom"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives/attribute-directives",
+        "https://angular.dev/guide/directives"
+      ]
+    },
+    {
+      "id": "data-binding-013",
+      "difficulty": "Intermediate",
+      "question": "What is ng-container and when should you use it?",
+      "answer": "ng-container is a grouping element that does not render a DOM node, so it lets you apply a structural directive or group siblings without adding an extra element. It is useful when a parent must have a single child or when you want to avoid breaking CSS layout. ng-template, by contrast, defines markup that is not rendered until it is instantiated.",
+      "tags": [
+        "ng-container",
+        "dom",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/ng-container",
+        "https://angular.dev/guide/templates/ng-template"
+      ]
+    },
+    {
+      "id": "data-binding-014",
+      "difficulty": "Intermediate",
+      "question": "What is the safe navigation operator and how does it help?",
+      "answer": "The safe navigation operator ?. short-circuits a template expression when the left side is null or undefined instead of throwing. For example user?.address?.city renders nothing when user is null. It is handy for async data, but excessive use can hide real problems, so prefer typed models and resolved data where possible.",
+      "code": "<p>{{ user?.profile?.name }}</p>",
+      "tags": [
+        "safe-navigation",
+        "expressions"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/expression-syntax",
+        "https://angular.dev/guide/templates/interpolation"
+      ]
+    },
+    {
+      "id": "data-binding-015",
+      "difficulty": "Intermediate",
+      "question": "How does the @let syntax work in templates?",
+      "answer": "The @let syntax declares a template-local variable whose value is an expression, for example @let total = price * qty. The variable is scoped to the surrounding block and is recalculated when its dependencies change. It improves readability by naming a computed value that is used several times in the template.",
+      "code": "@let total = price * quantity;\n<p>Total: {{ total }}</p>",
+      "tags": [
+        "let",
+        "templates",
+        "control-flow"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/let-template-variables",
+        "https://angular.dev/guide/templates/control-flow"
+      ]
+    },
+    {
+      "id": "data-binding-016",
+      "difficulty": "Intermediate",
+      "question": "How does the @switch block compare with ngSwitch?",
+      "answer": "The @switch block selects one of several @case branches based on strict equality, with an optional @default branch. It replaces the ngSwitch, ngSwitchCase, and ngSwitchDefault directives and requires no imports. Like the other control flow blocks, it is type-checked and is the preferred syntax for new templates.",
+      "code": "@switch (status) {\n  @case ('active') { <span>Active</span> }\n  @case ('closed') { <span>Closed</span> }\n  @default { <span>Unknown</span> }\n}",
+      "tags": [
+        "switch",
+        "control-flow",
+        "ngswitch"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/control-flow",
+        "https://angular.dev/api/core/@switch"
+      ]
+    },
+    {
+      "id": "data-binding-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a DOM event and an Angular output?",
+      "answer": "A DOM event binding listens to a native event on an element, such as (click) or (input), and $event holds the native event object. An Angular output is a custom event declared by a component or directive, usually with output() or EventEmitter, and $event holds the emitted payload. Both use parentheses, but only outputs are part of the component's public API.",
+      "tags": [
+        "events",
+        "outputs",
+        "binding"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/event-binding",
+        "https://angular.dev/guide/components/outputs"
+      ]
+    },
+    {
+      "id": "data-binding-018",
+      "difficulty": "Intermediate",
+      "question": "How does the ngModel directive enable two-way binding in template-driven forms?",
+      "answer": "ngModel is an attribute directive from FormsModule that binds a form control to a property and participates in the surrounding form. Combined with name inside a form, it registers the control and tracks its value and validity. It is the backbone of template-driven forms and must be imported where it is used.",
+      "code": "<form #f=\"ngForm\">\n  <input name=\"email\" [(ngModel)]=\"user.email\" required />\n</form>",
+      "tags": [
+        "ngmodel",
+        "forms",
+        "template-driven"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/template-driven-forms",
+        "https://angular.dev/api/forms/NgModel"
+      ]
+    },
+    {
+      "id": "data-binding-019",
+      "difficulty": "Intermediate",
+      "question": "What are the restrictions on template expressions?",
+      "answer": "Template expressions are a restricted subset of JavaScript and cannot contain assignments, new, increment operators, or bitwise and comma operators. They must be free of side effects because Angular may evaluate them many times during change detection. Calls to functions in templates are allowed but run on every change detection pass, so they should be cheap.",
+      "tags": [
+        "expression-syntax",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/expression-syntax",
+        "https://angular.dev/guide/templates/template-statements"
+      ]
+    },
+    {
+      "id": "data-binding-020",
+      "difficulty": "Intermediate",
+      "question": "What is microsyntax in Angular templates?",
+      "answer": "Microsyntax is the short form used by structural directives, for example *ngFor=\"let item of items; index as i; trackBy: trackById\". Angular parses the string after the directive into key expressions that map to the directive's inputs. The control flow blocks replace most microsyntax use cases with clearer syntax.",
+      "tags": [
+        "microsyntax",
+        "structural-directives"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives/structural-directives",
+        "https://angular.dev/guide/templates/control-flow"
+      ]
+    },
+    {
+      "id": "data-binding-021",
+      "difficulty": "Advanced",
+      "question": "Why is calling functions in a template a performance concern and what are the alternatives?",
+      "answer": "Template function calls are re-evaluated on every change detection cycle, so an expensive function can dominate rendering time and break reference equality checks used by bindings. Prefer precomputing values in the component, using pure pipes, or exposing derived data through computed signals, which cache results until their dependencies change. Reserve inline calls for trivial, side-effect-free expressions.",
+      "tags": [
+        "performance",
+        "templates",
+        "pipes"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "data-binding-022",
+      "difficulty": "Advanced",
+      "question": "How does Angular decide what changed for a binding?",
+      "answer": "Angular records the previous value of each binding and compares it with the current value using strict equality or the binding-specific differ, such as the iterable differ for ngFor. When a value changes, only the affected DOM update instruction runs. Signal-based bindings go further and notify Angular exactly which consumers depend on a changed signal.",
+      "tags": [
+        "change-detection",
+        "bindings",
+        "differs"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "data-binding-023",
+      "difficulty": "Advanced",
+      "question": "How do you build a custom structural directive?",
+      "answer": "A structural directive injects TemplateRef and ViewContainerRef, then creates or clears the embedded view based on its input. You can attach the directive to an ng-template explicitly or use the asterisk shorthand, and expose context values through the second parameter of createEmbeddedView. Provide the input with the same name as the selector to support the shorthand.",
+      "code": "@Directive({ selector: '[appUnless]' })\nexport class UnlessDirective {\n  private tpl = inject(TemplateRef<unknown>);\n  private vcr = inject(ViewContainerRef);\n  @Input() set appUnless(condition: boolean) {\n    condition ? this.vcr.clear() : this.vcr.createEmbeddedView(this.tpl);\n  }\n}",
+      "tags": [
+        "structural-directives",
+        "templateref",
+        "custom"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives/structural-directives",
+        "https://angular.dev/api/core/TemplateRef"
+      ]
+    },
+    {
+      "id": "data-binding-024",
+      "difficulty": "Advanced",
+      "question": "What is the difference between property binding and attribute interpolation for custom components?",
+      "answer": "For a custom component, a property binding sets an input property or signal on the component instance, while an attribute binding only sets a DOM attribute on the host element. Only declared inputs participate in Angular's binding and change detection. Passing a plain attribute therefore does not update component state.",
+      "tags": [
+        "property-binding",
+        "inputs",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/inputs",
+        "https://angular.dev/guide/templates/property-binding"
+      ]
+    },
+    {
+      "id": "data-binding-025",
+      "difficulty": "Advanced",
+      "question": "How does the defer block integrate with control flow and what can it load?",
+      "answer": "The @defer block lazily loads a component subtree and shows @placeholder, @loading, and @error blocks while it resolves, based on triggers such as viewport, idle, interaction, or a timer. It defers the JavaScript and, when used with @placeholder, the rendering of that subtree. This reduces the initial bundle for heavy components such as charts or editors.",
+      "code": "@defer (on viewport) {\n  <heavy-chart />\n} @placeholder {\n  <div class=\"skeleton\"></div>\n}",
+      "tags": [
+        "defer",
+        "lazy",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/defer",
+        "https://angular.dev/guide/defer"
+      ]
+    }
+  ]
+}

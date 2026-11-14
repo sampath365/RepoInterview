@@ -1,0 +1,353 @@
+{
+  "category": "Logging & Diagnostics",
+  "slug": "logging",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "logging-001",
+      "difficulty": "Beginner",
+      "question": "What is the built-in logging abstraction in ASP.NET Core?",
+      "answer": "ASP.NET Core uses Microsoft.Extensions.Logging, where you inject ILogger<T> and call methods such as LogInformation, LogWarning, and LogError. The abstraction is provider-based, so the same code writes to console, debug, event source, or third-party sinks. Logging is registered by the host and available everywhere through dependency injection.",
+      "tags": [
+        "logging",
+        "ilogger"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-002",
+      "difficulty": "Beginner",
+      "question": "What are the log levels in ASP.NET Core?",
+      "answer": "The levels from least to most severe are Trace, Debug, Information, Warning, Error, Critical, and None, which disables logging. Each level has a numeric value, and configuration filters entries below the configured minimum. Choosing the right level keeps logs useful and controls volume and cost.",
+      "tags": [
+        "log-levels",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#log-level"
+      ]
+    },
+    {
+      "id": "logging-003",
+      "difficulty": "Beginner",
+      "question": "How do you configure log levels in appsettings.json?",
+      "answer": "You set the Logging:LogLevel section, optionally with per-category overrides, where Default sets the baseline and a namespace key like Microsoft.AspNetCore sets a specific level. Filters are matched by the longest category prefix. This lets you quiet noisy frameworks while keeping your own logs verbose.",
+      "code": "\"Logging\": {\n  \"LogLevel\": {\n    \"Default\": \"Information\",\n    \"Microsoft.AspNetCore\": \"Warning\"\n  }\n}",
+      "tags": [
+        "configuration",
+        "log-levels"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#configure-logging"
+      ]
+    },
+    {
+      "id": "logging-004",
+      "difficulty": "Beginner",
+      "question": "What is structured logging?",
+      "answer": "Structured logging captures log messages as named properties rather than plain strings, so they can be searched and aggregated by field. You pass values as message arguments and use message templates with placeholders instead of string concatenation. Sinks such as Serilog, NLog, or OpenTelemetry then store them in a queryable form.",
+      "code": "logger.LogInformation(\"Order {OrderId} placed by {UserId}\", id, user);",
+      "tags": [
+        "structured-logging",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-005",
+      "difficulty": "Beginner",
+      "question": "How do you log exceptions?",
+      "answer": "You pass the exception as the first argument to the Log method, and the provider records it with the message and stack trace. For example, logger.LogError(ex, \"Failed to save order {OrderId}\", id) captures both the exception and structured data. Logging at the right level and including context makes diagnosis easier.",
+      "code": "try { await SaveAsync(order); }\ncatch (Exception ex)\n{\n    logger.LogError(ex, \"Save failed for {OrderId}\", order.Id);\n    throw;\n}",
+      "tags": [
+        "exceptions",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#log-exceptions"
+      ]
+    },
+    {
+      "id": "logging-006",
+      "difficulty": "Beginner",
+      "question": "What are logging providers?",
+      "answer": "A provider is a sink that writes log entries to a destination such as the console, the debugger, ETW or EventSource, or a third-party target. The host adds Console, Debug, EventSource, and EventLog by default in some environments. You register additional providers with builder.Logging.AddXxx.",
+      "tags": [
+        "providers",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#built-in-logging-providers"
+      ]
+    },
+    {
+      "id": "logging-007",
+      "difficulty": "Beginner",
+      "question": "What is a log category?",
+      "answer": "A category is a string, usually the fully qualified type name from ILogger<T>, that identifies the source of a log entry. Filters use categories to control verbosity per area of the app. You can create custom categories with ILoggerFactory.CreateLogger(\"Custom\").",
+      "tags": [
+        "categories",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-008",
+      "difficulty": "Beginner",
+      "question": "What are log scopes?",
+      "answer": "A log scope attaches additional key-value pairs to all log entries written within a using block, such as a request ID or tenant. Scopes are created with logger.BeginScope and are especially useful for correlating entries. Providers that support structured data include scope values in the output.",
+      "code": "using (logger.BeginScope(\"Order {OrderId}\", id))\n{\n    logger.LogInformation(\"Processing\");\n}",
+      "tags": [
+        "scopes",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#log-scopes"
+      ]
+    },
+    {
+      "id": "logging-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ILogger<T> and ILoggerFactory?",
+      "answer": "ILogger<T> is a ready-to-use logger whose category is the type T, obtained through constructor injection, while ILoggerFactory creates loggers for arbitrary categories. Most application code should inject ILogger<T> for its class. ILoggerFactory is used in infrastructure code that needs dynamic categories.",
+      "tags": [
+        "ilogger",
+        "factory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-010",
+      "difficulty": "Beginner",
+      "question": "How does ASP.NET Core log requests?",
+      "answer": "The framework logs request start and end at the Information level with the HTTP method, path, status code, and duration, and logs unhandled exceptions at the Error level. This is controlled by the Microsoft.AspNetCore category filters. You can enrich these logs with middleware or by using HTTP logging middleware for full request and response details.",
+      "tags": [
+        "request-logging",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-011",
+      "difficulty": "Intermediate",
+      "question": "How do you integrate Serilog with ASP.NET Core?",
+      "answer": "You add the Serilog.AspNetCore package, configure the logger with UseSerilog on the host, and add sinks such as console, file, or Seq. Serilog replaces or supplements the built-in providers and supports enrichers and structured output. Request logging is often enabled with UseSerilogRequestLogging for concise, structured access logs.",
+      "code": "builder.Host.UseSerilog((ctx, cfg) =>\n    cfg.ReadFrom.Configuration(ctx.Configuration)\n       .WriteTo.Console()\n       .Enrich.WithProperty(\"App\", \"Orders\"));",
+      "tags": [
+        "serilog",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between logging and distributed tracing?",
+      "answer": "Logging records discrete events with context, while distributed tracing records the flow of a request across services using spans and a trace ID, showing timing and causality. Traces are built with OpenTelemetry and visualized in tools like Jaeger or Application Insights. Together with metrics, they form the three pillars of observability.",
+      "tags": [
+        "tracing",
+        "observability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "logging-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement log correlation across services?",
+      "answer": "You propagate a correlation ID or W3C trace context header such as traceparent between services, adding it to log scopes so entries can be grouped. OpenTelemetry propagates context automatically for instrumented HTTP and gRPC calls. Consistent propagation makes it possible to follow one request across many services.",
+      "code": "app.Use(async (ctx, next) =>\n{\n    var traceId = Activity.Current?.TraceId.ToString()\n        ?? ctx.TraceIdentifier;\n    using (logger.BeginScope(\"TraceId {TraceId}\", traceId))\n        await next();\n});",
+      "tags": [
+        "correlation",
+        "tracing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "logging-014",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom logging provider?",
+      "answer": "You implement ILoggerProvider and ILogger, and register the provider with builder.Logging.AddProvider or a custom AddXxx extension. The logger's Log method writes the entry and supports scopes and external scope providers. Custom providers are useful for proprietary sinks or testing.",
+      "code": "public class MyLoggerProvider : ILoggerProvider\n{\n    public ILogger CreateLogger(string category) => new MyLogger();\n    public void Dispose() { }\n}",
+      "tags": [
+        "custom-provider",
+        "extensibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/extensions/custom-logging-provider"
+      ]
+    },
+    {
+      "id": "logging-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use high-performance logging with LoggerMessage?",
+      "answer": "The [LoggerMessage] source generator and the LoggerMessage.Define API create strongly typed, allocation-free logging methods with cached delegates. This avoids boxing and message formatting overhead in hot paths. Source-generated methods are the recommended approach in .NET 6 and later.",
+      "code": "public static partial class Log\n{\n    [LoggerMessage(1, LogLevel.Information,\n        \"Order {OrderId} processed\")]\n    public static partial void OrderProcessed(ILogger l, int orderId);\n}",
+      "tags": [
+        "performance",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/extensions/logging#log-message-source-generation"
+      ]
+    },
+    {
+      "id": "logging-016",
+      "difficulty": "Intermediate",
+      "question": "How do you filter logs per provider and category?",
+      "answer": "You configure the Logging:LogLevel section for global filters or builder.Logging.AddFilter to set rules per provider, category, or category prefix, with wildcards allowed. More specific filters win over general ones. This lets you send verbose logs to one sink and minimal logs to another.",
+      "code": "builder.Logging.AddFilter(\"Microsoft.EntityFrameworkCore\",\n    LogLevel.Warning);",
+      "tags": [
+        "filtering",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#how-filtering-rules-are-applied"
+      ]
+    },
+    {
+      "id": "logging-017",
+      "difficulty": "Intermediate",
+      "question": "What is the HTTP logging middleware?",
+      "answer": "The HTTP logging middleware logs complete request and response information, including headers, body, and timing, at configurable levels and with options to redact sensitive headers. It is added with builder.Services.AddHttpLogging and app.UseHttpLogging. Because it can log sensitive data, it should be configured carefully and usually only in diagnostics scenarios.",
+      "code": "builder.Services.AddHttpLogging(o =>\n    o.LoggingFields = HttpLoggingFields.RequestMethod\n        | HttpLoggingFields.ResponseStatusCode);",
+      "tags": [
+        "http-logging",
+        "diagnostics"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-logging/"
+      ]
+    },
+    {
+      "id": "logging-018",
+      "difficulty": "Intermediate",
+      "question": "How do you collect logs and metrics in a cloud environment?",
+      "answer": "You enable Application Insights or OpenTelemetry exporters to send logs, traces, and metrics to a backend such as Azure Monitor, where they can be queried and alerted on. Auto-instrumentation adds request and dependency telemetry with little code. Sampling controls cost while preserving error visibility.",
+      "tags": [
+        "azure-monitor",
+        "observability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/azure/azure-monitor/app/asp-net-core"
+      ]
+    },
+    {
+      "id": "logging-019",
+      "difficulty": "Intermediate",
+      "question": "What are the differences between the Debug, Console, and EventSource providers?",
+      "answer": "The Debug provider writes to the debugger output and is used in development, the Console provider writes to standard output and is common in containers, and the EventSource provider emits events consumed by tools like dotnet-trace and PerfView. Each targets a different diagnostics scenario. Production apps usually add a structured sink as well.",
+      "tags": [
+        "providers",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/#built-in-logging-providers"
+      ]
+    },
+    {
+      "id": "logging-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid logging sensitive information?",
+      "answer": "You avoid logging secrets, tokens, passwords, and personal data, use redaction features such as HTTP logging's redaction options, and review message templates for sensitive fields. Log levels and sampling reduce exposure, and you should restrict access to logs. Compliance requirements may mandate specific handling and retention.",
+      "tags": [
+        "security",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "logging-021",
+      "difficulty": "Advanced",
+      "question": "How does the logging pipeline process a log call internally?",
+      "answer": "ILogger<T> forwards the call to a Logger that consults the LoggerFactory's filter rules and, if enabled, dispatches to each registered provider's ILogger. Scopes are tracked per logger and passed to providers that support them. IsEnabled checks short-circuit the work, which is why guarding expensive message construction with IsEnabled matters.",
+      "tags": [
+        "internals",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/extensions/logging"
+      ]
+    },
+    {
+      "id": "logging-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement a background log processor that batches entries?",
+      "answer": "You buffer log entries in a thread-safe queue and drain them on a background task into an external sink, using a bounded channel to apply backpressure. The provider should never block request threads, and it must flush on shutdown. This pattern underlies high-throughput sinks such as Elasticsearch or Seq.",
+      "code": "var channel = Channel.CreateBounded<LogEntry>(\n    new BoundedChannelOptions(10_000));",
+      "tags": [
+        "performance",
+        "background"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/extensions/custom-logging-provider"
+      ]
+    },
+    {
+      "id": "logging-023",
+      "difficulty": "Advanced",
+      "question": "How do you correlate logs, metrics, and traces in a distributed system?",
+      "answer": "You use OpenTelemetry so logs carry the current trace and span IDs, metrics are tagged with resource attributes, and traces link service calls, all keyed by the same trace context. Exporters send the data to a unified backend where you can pivot between them. Consistent resource attributes such as service name make cross-signal queries possible.",
+      "tags": [
+        "opentelemetry",
+        "observability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "logging-024",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of logging in high-throughput services?",
+      "answer": "Each log call has formatting and dispatch cost, and synchronous sinks can block request threads, so logging every detail at Information level can dominate latency. Use LoggerMessage source generation, asynchronous or buffered sinks, appropriate filters, and sampling to control overhead. Measure the impact with benchmarks and tracing.",
+      "tags": [
+        "performance",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/extensions/logging"
+      ]
+    },
+    {
+      "id": "logging-025",
+      "difficulty": "Advanced",
+      "question": "How do you design a logging strategy for a production ASP.NET Core app?",
+      "answer": "You choose levels deliberately, use structured logging with consistent property names, add correlation IDs and scopes, and route to sinks suited to each environment, with alerting on Error and Critical. Retention and sampling policies control cost, and sensitive data must be redacted. Centralizing the configuration keeps logs consistent across services.",
+      "tags": [
+        "strategy",
+        "observability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/",
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    }
+  ]
+}

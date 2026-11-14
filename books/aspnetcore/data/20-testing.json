@@ -1,0 +1,356 @@
+{
+  "category": "Testing & Deployment",
+  "slug": "testing",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What kinds of tests should an ASP.NET Core app have?",
+      "answer": "A healthy suite combines unit tests for isolated logic, integration tests that exercise the real HTTP pipeline with in-memory or containerized dependencies, and a smaller number of end-to-end tests for critical flows. The test pyramid suggests many fast unit tests and fewer slow ones. Each level catches different classes of defects.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/"
+      ]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "What is WebApplicationFactory?",
+      "answer": "WebApplicationFactory<TEntryPoint> boots your app in memory using TestServer so integration tests can send real HTTP requests through the full middleware and routing pipeline. You use it by implementing IClassFixture and creating a client with CreateClient. This tests controllers, filters, DI, and serialization together without a network.",
+      "code": "public class ApiTests : IClassFixture<WebApplicationFactory<Program>>\n{\n    private readonly HttpClient _client;\n    public ApiTests(WebApplicationFactory<Program> f)\n        => _client = f.CreateClient();\n}",
+      "tags": [
+        "integration-tests",
+        "webapplicationfactory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit and integration tests?",
+      "answer": "A unit test exercises a single unit in isolation with dependencies replaced by fakes or stubs, running fast and pinpointing failures. An integration test exercises multiple components together, including the HTTP pipeline and real or realistic dependencies, and catches wiring issues. Both are valuable and complement each other.",
+      "tags": [
+        "unit-tests",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/"
+      ]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "How do you test a controller action in isolation?",
+      "answer": "You instantiate the controller with fake dependencies and call the action directly, asserting on the returned IActionResult and its value. This avoids the pipeline and is fast, but it does not cover filters or binding. Add integration tests for those concerns.",
+      "code": "[Fact]\npublic void Get_ReturnsNotFound_WhenMissing()\n{\n    var ctrl = new ProductsController(new FakeRepo());\n    Assert.IsType<NotFoundResult>(ctrl.Get(99));\n}",
+      "tags": [
+        "unit-tests",
+        "controllers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/testing"
+      ]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "What testing frameworks are commonly used with ASP.NET Core?",
+      "answer": "xUnit is the most common framework for .NET, with NUnit and MSTest as alternatives, and Moq or NSubstitute for test doubles, plus FluentAssertions for readable assertions. The Microsoft.AspNetCore.Mvc.Testing package supports integration testing. Choose one stack and keep it consistent.",
+      "tags": [
+        "frameworks",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "How do you test middleware?",
+      "answer": "You can test middleware in isolation by building a small pipeline with TestServer or by invoking the middleware's InvokeAsync with a DefaultHttpContext and asserting on the response. Integration tests through WebApplicationFactory verify ordering and interaction with other components. Testing both catches logic errors and wiring errors.",
+      "code": "var ctx = new DefaultHttpContext();\nctx.Response.Body = new MemoryStream();\nawait middleware.InvokeAsync(ctx);",
+      "tags": [
+        "middleware",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/middleware"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid mocking frameworks when possible?",
+      "answer": "Heavy mocking couples tests to implementation details, making refactoring painful and tests brittle. Preferring real implementations with in-memory or containerized dependencies tests actual behavior. Use mocks only for external boundaries that are slow, non-deterministic, or unavailable.",
+      "tags": [
+        "mocking",
+        "test-design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "How do you run tests in CI?",
+      "answer": "You run dotnet test in the pipeline, publish results in a format such as TRX or JUnit, and collect coverage. Failing tests should block the build, and integration tests may run against containerized dependencies. Caching packages and running tests in parallel keep pipelines fast.",
+      "code": "dotnet test --logger \"trx;LogFileName=results.trx\"\n           --collect:\"XPlat Code Coverage\"",
+      "tags": [
+        "ci",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "What is TestServer?",
+      "answer": "TestServer is an in-memory server implementation used by WebApplicationFactory that processes requests without real networking, making integration tests fast and deterministic. It uses the app's real pipeline, so behavior matches production closely. It supports configuration overrides for test scenarios.",
+      "tags": [
+        "testserver",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "How do you test model validation?",
+      "answer": "You unit test validation by creating the model, running a Validator over it, and asserting the results, or by posting invalid data to an endpoint in an integration test and expecting a 400. The automatic ApiController behavior is best verified through integration tests. Testing both rules and the API response covers the full path.",
+      "code": "var results = new List<ValidationResult>();\nValidator.TryValidateObject(model, ctx, results, true);",
+      "tags": [
+        "validation",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you override dependencies in an integration test?",
+      "answer": "You use WithWebHostBuilder and ConfigureTestServices to replace registrations with fakes, such as swapping a real database context for an in-memory one or a fake external client. Removals should be explicit to avoid duplicate registrations. This keeps tests hermetic while still exercising the real pipeline.",
+      "code": "var factory = _factory.WithWebHostBuilder(b =>\n    b.ConfigureTestServices(s =>\n        s.AddScoped<IRepo, FakeRepo>()));",
+      "tags": [
+        "integration-tests",
+        "di"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test authentication and authorization?",
+      "answer": "You can add a test authentication handler that authenticates a fake user with the desired claims, then assert that endpoints return 200, 401, or 403 as appropriate. Overriding the scheme avoids needing real tokens. Testing both allowed and denied cases validates the policies.",
+      "code": "b.ConfigureTestServices(s =>\n    s.AddAuthentication(\"Test\")\n     .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(\"Test\", null));",
+      "tags": [
+        "authentication",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test an app that uses EF Core?",
+      "answer": "You can use the in-memory provider for simple tests, SQLite in-memory for relational behavior, or Testcontainers to run a real database in Docker for the highest fidelity. In-memory misses relational features such as constraints and transactions, so it is not ideal for all cases. Resetting state between tests keeps them isolated.",
+      "code": "var conn = new SqliteConnection(\"DataSource=:memory:\");\nconn.Open();\nvar opts = new DbContextOptionsBuilder<AppDb>()\n    .UseSqlite(conn).Options;",
+      "tags": [
+        "ef-core",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "What is Testcontainers and why use it?",
+      "answer": "Testcontainers spins up disposable Docker containers for databases, caches, and brokers during tests, giving realistic dependencies without manual setup. It provides high fidelity and repeatability in CI. The trade-off is that Docker must be available and container startup adds time.",
+      "tags": [
+        "testcontainers",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do you write a good unit test?",
+      "answer": "A good unit test is focused on one behavior, deterministic, fast, independent of other tests, and named so its intent is clear, often following the arrange-act-assert structure. It asserts on observable behavior rather than internal implementation. Avoid shared mutable state and time or randomness without control.",
+      "tags": [
+        "unit-tests",
+        "best-practices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test background services?",
+      "answer": "You can unit test the logic inside the service by extracting it into a method or class and calling it directly, and integration test by starting the host and awaiting observable effects. Avoid asserting on timing, and use signals such as channels or test doubles to synchronize. Cancellation behavior should also be tested.",
+      "tags": [
+        "background-services",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you measure code coverage?",
+      "answer": "You collect coverage with the built-in collector or a tool such as Coverlet and report it with ReportGenerator or in the pipeline. Coverage highlights untested areas but is not a goal in itself. Focus on covering critical logic and branches rather than chasing a number.",
+      "code": "dotnet test /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura",
+      "tags": [
+        "coverage",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test file uploads and downloads?",
+      "answer": "You build a MultipartFormDataContent with the file part and post it through the test client, asserting on the status and stored result, and for downloads read the response stream and verify the content type and bytes. Integration tests through the client exercise binding and the pipeline. Temporary storage should be cleaned up between tests.",
+      "code": "using var content = new MultipartFormDataContent();\ncontent.Add(new StreamContent(stream), \"file\", \"a.txt\");\nvar res = await _client.PostAsync(\"/upload\", content);",
+      "tags": [
+        "file-upload",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads",
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a stub, a fake, and a mock?",
+      "answer": "A stub returns canned answers to calls, a fake is a working but simplified implementation such as an in-memory repository, and a mock records interactions and can verify expectations. Fakes test behavior with real code paths and are usually preferable, while mocks are useful for verifying that a specific call happened. Choosing the lightest double that fits keeps tests clear.",
+      "tags": [
+        "test-doubles",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/",
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you deploy an ASP.NET Core app?",
+      "answer": "You publish with dotnet publish, producing framework-dependent or self-contained output, then deploy to IIS, a container image, Azure App Service, or another host. Configuration, connection strings, and secrets are supplied through environment variables or a secret store. Health checks and rolling deployments keep releases safe.",
+      "code": "dotnet publish -c Release -o ./publish",
+      "tags": [
+        "deployment",
+        "publish"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "How does WebApplicationFactory boot the app and how do you customize it?",
+      "answer": "It locates the entry point assembly, builds the host using the app's Program, and replaces the server with TestServer; you can override configuration, services, and the environment through WithWebHostBuilder. A custom factory subclass can set up shared fixtures such as containers or seeded data. This lets tests exercise the real composition root.",
+      "tags": [
+        "webapplicationfactory",
+        "internals"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "How would you structure a test suite for a large app to stay fast and reliable?",
+      "answer": "You separate fast unit tests from slower integration tests, use fixtures to share expensive setup such as containers, isolate tests with fresh data, and avoid timing dependencies. Running unit tests on every commit and integration tests on pull requests balances speed and confidence. Flaky tests should be fixed or quarantined, never ignored.",
+      "tags": [
+        "test-strategy",
+        "ci"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/",
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you test resilience and failure handling?",
+      "answer": "You inject handlers or fakes that fail in controlled ways, such as returning 500s, timing out, or dropping connections, and assert that retries, circuit breakers, and fallbacks behave as designed. Chaos testing in staging validates the whole system. Testing failure paths is essential because they are hard to reproduce in production.",
+      "tags": [
+        "resilience",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/",
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle deployment strategies like blue-green and canary?",
+      "answer": "Blue-green keeps two identical environments and switches traffic after verifying the new one, enabling instant rollback, while canary sends a small percentage of traffic to the new version and increases it gradually. Both rely on health checks, readiness probes, and observability to detect problems. Database migrations must be backward compatible during the transition.",
+      "tags": [
+        "deployment",
+        "strategies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/",
+        "https://learn.microsoft.com/dotnet/architecture/"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between integration tests with real dependencies and fast unit tests?",
+      "answer": "Integration tests with real dependencies catch wiring, serialization, and database issues but are slower, require infrastructure, and can be flaky. Unit tests are fast and precise but can miss integration defects and over-mock the system. The pragmatic balance is a broad base of unit tests, a focused set of integration tests around critical paths, and a few end-to-end tests.",
+      "tags": [
+        "trade-offs",
+        "test-strategy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    }
+  ]
+}

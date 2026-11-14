@@ -1,0 +1,388 @@
+{
+  "category": "Forms: Template-Driven & Reactive",
+  "slug": "forms",
+  "icon": "text",
+  "questions": [
+    {
+      "id": "forms-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between template-driven and reactive forms?",
+      "answer": "Template-driven forms build the model implicitly from directives such as ngModel in the template and suit simple forms. Reactive forms define the model explicitly in the class with FormControl and FormGroup, giving more control, testability, and validation logic. Reactive forms are preferred for complex or dynamic forms.",
+      "tags": [
+        "forms",
+        "reactive",
+        "template-driven"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-002",
+      "difficulty": "Beginner",
+      "question": "What modules or providers do you import for each form type?",
+      "answer": "Template-driven forms need FormsModule, while reactive forms need ReactiveFormsModule, imported into the standalone component or module that uses them. Both provide the directives that connect controls to the DOM. Importing the wrong one is a common cause of template errors.",
+      "code": "imports: [ReactiveFormsModule],\n// template-driven\nimports: [FormsModule],",
+      "tags": [
+        "forms",
+        "imports"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/reactive-forms",
+        "https://angular.dev/guide/forms/template-driven-forms"
+      ]
+    },
+    {
+      "id": "forms-003",
+      "difficulty": "Beginner",
+      "question": "What is a FormControl?",
+      "answer": "A FormControl represents a single form input and tracks its value, validity, and state such as touched or dirty. You create it with an initial value and optional validators. Reactive templates bind a control to an input with formControl or formControlName.",
+      "code": "readonly email = new FormControl('', {\n  nonNullable: true,\n  validators: [Validators.required, Validators.email],\n});",
+      "tags": [
+        "formcontrol",
+        "reactive"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/FormControl",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-004",
+      "difficulty": "Beginner",
+      "question": "What is a FormGroup?",
+      "answer": "A FormGroup groups several controls into one object with a shared value, validity, and state. You create it from a configuration object of controls and bind it with formGroup. It is the usual way to model an entire form.",
+      "code": "readonly form = new FormGroup({\n  email: new FormControl('', { nonNullable: true }),\n  age: new FormControl<number | null>(null),\n});",
+      "tags": [
+        "formgroup",
+        "reactive"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/FormGroup",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-005",
+      "difficulty": "Beginner",
+      "question": "What is a FormArray?",
+      "answer": "A FormArray holds an ordered list of controls or groups, which is ideal for dynamic, repeating fields such as phone numbers or order lines. You add and remove controls with push and removeAt. Its value is an array mirroring the controls.",
+      "code": "readonly phones = new FormArray([new FormControl('')]);\nadd() { this.phones.push(new FormControl('')); }",
+      "tags": [
+        "formarray",
+        "dynamic-forms"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/FormArray",
+        "https://angular.dev/guide/forms/dynamic-forms"
+      ]
+    },
+    {
+      "id": "forms-006",
+      "difficulty": "Beginner",
+      "question": "How do you use ngModel in a template-driven form?",
+      "answer": "Add [(ngModel)] to an input and give it a name attribute inside a form element so it registers with the parent form. FormsModule must be imported. Validation attributes such as required or pattern are picked up automatically.",
+      "code": "<form #f=\"ngForm\">\n  <input name=\"email\" [(ngModel)]=\"user.email\" required />\n</form>",
+      "tags": [
+        "ngmodel",
+        "template-driven"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/template-driven-forms",
+        "https://angular.dev/api/forms/NgModel"
+      ]
+    },
+    {
+      "id": "forms-007",
+      "difficulty": "Beginner",
+      "question": "What are built-in validators?",
+      "answer": "Angular provides Validators such as required, email, minLength, maxLength, min, max, and pattern for both form types. They return a validation error object when invalid or null when valid. You can compose several by passing an array.",
+      "code": "new FormControl('', [Validators.required, Validators.minLength(3)])",
+      "tags": [
+        "validators",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/form-validation",
+        "https://angular.dev/api/forms/Validators"
+      ]
+    },
+    {
+      "id": "forms-008",
+      "difficulty": "Beginner",
+      "question": "What are the states of a form control?",
+      "answer": "Controls expose valid, invalid, touched, untouched, dirty, pristine, and pending flags. These flags drive styling and error messages, for example showing an error only when the control is invalid and touched. Pending indicates that an async validator is still running.",
+      "tags": [
+        "control-state",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/AbstractControl",
+        "https://angular.dev/guide/forms/form-validation"
+      ]
+    },
+    {
+      "id": "forms-009",
+      "difficulty": "Beginner",
+      "question": "How do you read the value of a reactive form?",
+      "answer": "Read the group's value or getRawValue() for the current values, and subscribe to valueChanges for a stream of updates. Individual controls expose their own value and valueChanges. For display, bind with the control rather than copying values into properties.",
+      "code": "this.form.valueChanges.subscribe((v) => console.log(v));\nconsole.log(this.form.value);",
+      "tags": [
+        "value",
+        "reactive",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/AbstractControl",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-010",
+      "difficulty": "Beginner",
+      "question": "What does the FormBuilder service provide?",
+      "answer": "FormBuilder offers shorthand methods such as group, control, and array that reduce the boilerplate of building reactive forms. It is injectable and can be typed with nonNullable to keep controls non-null. The result is the same FormGroup and FormControl instances you would create by hand.",
+      "code": "private fb = inject(FormBuilder);\nreadonly form = this.fb.nonNullable.group({\n  email: ['', [Validators.required, Validators.email]],\n});",
+      "tags": [
+        "formbuilder",
+        "reactive"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/FormBuilder",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-011",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom validator?",
+      "answer": "A synchronous validator is a function that receives a control and returns null when valid or an error object when invalid. Register it on a control, group, or array, and read the error key in the template. Keep validators pure because they run frequently during validation.",
+      "code": "export function noWhitespace(control: AbstractControl) {\n  return control.value?.trim() ? null : { whitespace: true };\n}",
+      "tags": [
+        "custom-validator",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/form-validation",
+        "https://angular.dev/api/forms/ValidatorFn"
+      ]
+    },
+    {
+      "id": "forms-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write an async validator?",
+      "answer": "An async validator returns a Promise or Observable that resolves to null or an error object, and the control stays pending while it runs. Use it for checks that require the server, such as verifying that a username is free. Debounce and cancel where possible to avoid a request per keystroke.",
+      "code": "export const uniqueName: AsyncValidatorFn = (control) =>\n  inject(UserService).exists(control.value).pipe(\n    map((taken) => (taken ? { taken: true } : null)),\n  );",
+      "tags": [
+        "async-validator",
+        "forms",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/form-validation",
+        "https://angular.dev/api/forms/AsyncValidatorFn"
+      ]
+    },
+    {
+      "id": "forms-013",
+      "difficulty": "Intermediate",
+      "question": "What is a cross-field validator?",
+      "answer": "A cross-field validator is applied to a group and inspects several controls together, which is how you validate that two passwords match or that an end date follows a start date. It returns an error keyed on the group so the template can display it. The same function works with reactive and template-driven forms.",
+      "code": "export const passwordsMatch: ValidatorFn = (group) => {\n  const p = group.get('password')?.value;\n  const c = group.get('confirm')?.value;\n  return p === c ? null : { mismatch: true };\n};",
+      "tags": [
+        "cross-field",
+        "validators",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/form-validation",
+        "https://angular.dev/api/forms/ValidatorFn"
+      ]
+    },
+    {
+      "id": "forms-014",
+      "difficulty": "Intermediate",
+      "question": "What is a ControlValueAccessor?",
+      "answer": "A ControlValueAccessor is the bridge between a form control and a custom UI element, translating between the control's value and the element's representation. It implements writeValue, registerOnChange, and registerOnTouched, and is registered as a NG_VALUE_ACCESSOR provider. Custom components that act as form controls implement this interface.",
+      "code": "providers: [\n  { provide: NG_VALUE_ACCESSOR, useExisting: forwardRef(() => RatingComponent), multi: true },\n]",
+      "tags": [
+        "controlvalueaccessor",
+        "forms",
+        "custom"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/ControlValueAccessor",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-015",
+      "difficulty": "Intermediate",
+      "question": "How do you make a form control non-nullable?",
+      "answer": "Reactive forms support a nonNullable option so the control's value cannot be null, which improves type safety when you reset or disable it. FormBuilder's nonNullable group applies this to all controls. This avoids many null checks in strongly typed forms.",
+      "code": "new FormControl('', { nonNullable: true })",
+      "tags": [
+        "typed-forms",
+        "nonnullable",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/typed-forms",
+        "https://angular.dev/api/forms/FormControlOptions"
+      ]
+    },
+    {
+      "id": "forms-016",
+      "difficulty": "Intermediate",
+      "question": "How do typed reactive forms improve safety?",
+      "answer": "Typed forms infer the value type from the control configuration, so form.value is strongly typed and typos or wrong types are caught at compile time. Controls added dynamically must use the correct generic type. This makes refactoring and consuming form values far safer than the older untyped API.",
+      "tags": [
+        "typed-forms",
+        "typescript",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/typed-forms",
+        "https://angular.dev/api/forms/FormGroup"
+      ]
+    },
+    {
+      "id": "forms-017",
+      "difficulty": "Intermediate",
+      "question": "How do you build a dynamic form with FormArray?",
+      "answer": "Create a FormArray, bind it in the template with formArrayName, and iterate its controls, binding each one with formGroupName or formControlName. Add and remove controls in response to user actions. This is the standard approach for repeating sections such as line items.",
+      "code": "<div formArrayName=\"items\">\n  @for (ctrl of items.controls; track $index) {\n    <input [formControlName]=\"$index\" />\n  }\n</div>",
+      "tags": [
+        "dynamic-forms",
+        "formarray"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/dynamic-forms",
+        "https://angular.dev/api/forms/FormArrayName"
+      ]
+    },
+    {
+      "id": "forms-018",
+      "difficulty": "Intermediate",
+      "question": "How do you reset or patch a form?",
+      "answer": "reset restores controls to their initial values and clears state, while patchValue updates only the provided fields and setValue requires all fields. Use patchValue for partial updates from a server response. Passing a value to reset lets you define the new baseline.",
+      "code": "this.form.patchValue({ email: 'a@b.com' });\nthis.form.reset();",
+      "tags": [
+        "reset",
+        "patchvalue",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/AbstractControl",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-019",
+      "difficulty": "Intermediate",
+      "question": "How do you disable or enable a control?",
+      "answer": "Call disable() or enable() on a control or group, or create it with the disabled state, and read the disabled flag to react in the template. Disabled controls are excluded from the group's value but included in getRawValue(). This is useful for fields that are read-only until prerequisites are met.",
+      "code": "this.form.controls.email.disable();",
+      "tags": [
+        "disabled",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/AbstractControl",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-020",
+      "difficulty": "Intermediate",
+      "question": "How do you display validation errors in the template?",
+      "answer": "Check the control's errors object and its touched or dirty state to decide when to show a message, for example @if (email.invalid && email.touched). Provide a specific message per error key. Reading the control in the template keeps the message in sync with validation.",
+      "code": "@if (email.invalid && email.touched) {\n  @if (email.hasError('required')) { <p>Email is required</p> }\n}",
+      "tags": [
+        "errors",
+        "validation",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/form-validation",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between reactive and template-driven forms for large applications?",
+      "answer": "Reactive forms keep the model in the class, which makes them testable without the DOM, easier to generate dynamically, and better for complex validation and typed values. Template-driven forms are quicker to write for simple cases but hide the model in the template and are harder to unit test. Most large applications standardize on reactive forms for consistency.",
+      "tags": [
+        "forms",
+        "architecture",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-022",
+      "difficulty": "Advanced",
+      "question": "How do async validators interact with change detection and performance?",
+      "answer": "Async validators run whenever the control's value changes, so a naive implementation issues a request on every keystroke and leaves the control pending. Debouncing, cancelling previous requests with switchMap, and updating on blur reduce load. Because pending state blocks form validity, keep the checks fast and bounded.",
+      "tags": [
+        "async-validator",
+        "performance",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/form-validation",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "forms-023",
+      "difficulty": "Advanced",
+      "question": "How do you integrate a custom component as a form control?",
+      "answer": "Implement ControlValueAccessor so the component can read and write the control's value and notify changes and touched state, then register it under NG_VALUE_ACCESSOR. Use forwardRef if the provider refers to the component class itself. This lets custom widgets participate in reactive and template-driven forms exactly like native inputs.",
+      "tags": [
+        "controlvalueaccessor",
+        "custom",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/api/forms/ControlValueAccessor",
+        "https://angular.dev/api/forms/NG_VALUE_ACCESSOR"
+      ]
+    },
+    {
+      "id": "forms-024",
+      "difficulty": "Advanced",
+      "question": "How do signal-based forms differ from the reactive forms API?",
+      "answer": "Signal forms model the form state as signals, so values, validity, and field state are reactive and compose with computed and effect. They reduce imperative wiring around subscriptions and change detection compared with the class-based reactive API. The reactive forms API remains fully supported and is still the most common choice in existing codebases.",
+      "tags": [
+        "signal-forms",
+        "signals",
+        "forms"
+      ],
+      "references": [
+        "https://angular.dev/guide/forms/signals/overview",
+        "https://angular.dev/guide/forms/reactive-forms"
+      ]
+    },
+    {
+      "id": "forms-025",
+      "difficulty": "Advanced",
+      "question": "What are common performance pitfalls in large forms?",
+      "answer": "Subscribing to valueChanges for the whole form and doing heavy work on every keystroke, or running expensive validators synchronously, can make large forms feel sluggish. Prefer per-control subscriptions or signals, debounce async work, and update derived UI with computed values. Splitting very large forms into smaller groups also limits how much re-validates on each change.",
+      "tags": [
+        "performance",
+        "forms",
+        "validation"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/forms/form-validation"
+      ]
+    }
+  ]
+}

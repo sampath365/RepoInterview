@@ -1,0 +1,207 @@
+{
+  "category": "MAUI Fundamentals & Architecture",
+  "slug": "fundamentals",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is .NET MAUI?",
+      "answer": ".NET MAUI (Multi-platform App UI) is Microsoft's cross-platform framework for building native mobile and desktop apps with C# and XAML from a single codebase. It is the evolution of Xamarin.Forms and runs on Android, iOS, macOS (Mac Catalyst), and Windows. MAUI compiles to native UI on each platform, so apps keep native controls and performance while sharing most of the code.",
+      "tags": ["overview", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/what-is-maui"]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "Which platforms does .NET MAUI support?",
+      "answer": "MAUI targets Android 5.0 (API 21) and later, iOS 12.2 and later, macOS 12 and later via Mac Catalyst, and Windows 10/11 via WinUI 3. Linux is not officially supported by Microsoft, though community backends exist. Each target is a separate TFM such as net9.0-android, net9.0-ios, net9.0-maccatalyst, and net9.0-windows.",
+      "tags": ["platforms", "targets"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/supported-platforms"]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is the relationship between .NET MAUI and Xamarin.Forms?",
+      "answer": "MAUI is the successor to Xamarin.Forms and replaces it in the modern .NET release cycle. Unlike Xamarin.Forms, MAUI ships as a workload inside the unified .NET SDK, uses a single project instead of shared and platform projects, and renders controls with handlers rather than renderers. Existing Xamarin.Forms apps migrate to MAUI with tooling and an upgrade assistant.",
+      "tags": ["xamarin", "migration"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/migration/", "https://learn.microsoft.com/dotnet/maui/what-is-maui"]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What is the single-project structure in .NET MAUI?",
+      "answer": "A MAUI project uses one .csproj with multi-targeting instead of separate head projects. Shared code lives in the root, while platform-specific assets and code live in folders such as Platforms/Android and Platforms/iOS. The SDK infers the correct target framework and includes platform folders conditionally when building each TFM.",
+      "tags": ["project", "single-project"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/single-project"]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What is the role of the MauiProgram class?",
+      "answer": "MauiProgram contains the static CreateMauiApp method that bootstraps the application. This is where you configure fonts, register services in the dependency injection container, and call UseMauiApp. It returns a MauiAppBuilder-configured MauiApp that the platform hosts start.",
+      "tags": ["startup", "bootstrap"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the App class in a .NET MAUI application?",
+      "answer": "The App class derives from Application and represents the running application. It sets the initial page or window via CreateWindow and exposes application-wide resources and lifecycle events. Properties set here, such as user app theme and resource dictionaries, apply across the whole app.",
+      "tags": ["application", "lifecycle"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle"]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is a Window in .NET MAUI?",
+      "answer": "Window is the top-level container that hosts a Page and maps to an operating-system window on desktop or a full-screen surface on mobile. Each app has at least one Window created in App.CreateWindow. On desktop and tablets you can open additional windows with Application.OpenWindow.",
+      "tags": ["window", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/windows"]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What is a handler in .NET MAUI?",
+      "answer": "A handler is the abstraction that maps a cross-platform control to its native platform view. Each control has a handler that creates and updates the native control, replacing the renderer model from Xamarin.Forms. Handlers are faster and easier to customize than renderers because they separate the virtual view from the platform view.",
+      "tags": ["handlers", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/"]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What are the main platform folders in a MAUI project?",
+      "answer": "The Platforms folder contains Android, iOS, MacCatalyst, Windows, and Tizen subfolders. Each holds platform manifests, entry points, and platform-specific assets such as AndroidManifest.xml, Info.plist, and Package.appxmanifest. Files in these folders are only compiled for their matching target framework.",
+      "tags": ["platform", "project"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/single-project"]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the Resources folder in a MAUI project?",
+      "answer": "Resources holds shared assets like images, fonts, app icons, splash screens, and raw assets. The build system processes these into platform-specific resources automatically. Styles and color definitions commonly live in Resources/Styles as XAML resource dictionaries.",
+      "tags": ["resources", "assets"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "How does .NET MAUI multi-targeting work in a single project?",
+      "answer": "The project sets TargetFrameworks to include every platform, for example net9.0-android;net9.0-ios;net9.0-maccatalyst plus a conditional net9.0-windows target. The MAUI SDK applies per-platform properties and includes platform folders only for the matching TFM. You can conditionally add package references or properties per target with MSBuild conditions.",
+      "tags": ["multi-targeting", "msbuild"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/single-project", "https://learn.microsoft.com/dotnet/maui/platform-integration/configure-multi-targeting"]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What lifecycle events does a .NET MAUI app expose?",
+      "answer": "The Application class raises Started, Activated, Deactivated, Stopped, and Resumed. Cross-platform Window adds Created, Activated, Deactivated, Stopped, Resumed, Destroying, and Backgrounding. These let you pause work, save state, or refresh data as the app moves between foreground and background.",
+      "tags": ["lifecycle", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle"]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "How does dependency injection integrate into MauiProgram?",
+      "answer": "The builder.Services property is an IServiceCollection, so you register pages, view models, and services with AddSingleton, AddTransient, or AddScoped. Shell and the framework resolve registered types through constructor injection when navigating. This keeps view models testable and decoupled from platform code.",
+      "tags": ["dependency-injection", "services"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "What are the different MAUI app templates?",
+      "answer": "The default .NET MAUI App template provides a blank Shell-based app, while the .NET MAUI Blazor Hybrid template hosts Razor components in a BlazorWebView. There are also templates for class libraries, the MAUI Community Toolkit, and .NET MAUI with .NET Aspire. You choose one with dotnet new maui or through Visual Studio.",
+      "tags": ["templates", "tooling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/get-started/first-app"]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a MAUI control and its handler?",
+      "answer": "A control is the cross-platform virtual view, such as Entry or Button, that you use in shared code. Its handler translates that view into a concrete native control on each platform and applies property mappings. This separation means you write UI once while the handler ensures native fidelity and lets you override platform behavior.",
+      "tags": ["handlers", "controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/", "https://learn.microsoft.com/dotnet/maui/user-interface/handlers/customize"]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "How do you access platform-specific APIs in shared code?",
+      "answer": "You can use conditional compilation with #if ANDROID, IOS, MACCATALYST, or WINDOWS inside shared files. Alternatively, MAUI Essentials exposes cross-platform APIs such as Connectivity and Preferences that internally call platform code. For richer needs, use partial classes or partial methods with per-platform implementations.",
+      "tags": ["platform", "conditional-compilation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code", "https://learn.microsoft.com/dotnet/maui/platform-integration/configure-multi-targeting"]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between CreateMauiApp and CreateWindow?",
+      "answer": "CreateMauiApp runs once at startup and configures the host, services, and fonts, returning the MauiApp. CreateWindow is defined on the Application class and runs whenever a window is created, returning the Window that hosts a Page. CreateMauiApp builds the app container; CreateWindow defines the UI shell for each window.",
+      "tags": ["startup", "lifecycle"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle", "https://learn.microsoft.com/dotnet/maui/fundamentals/windows"]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "How does hot reload work in .NET MAUI?",
+      "answer": "XAML Hot Reload applies edits to XAML and, with .NET Hot Reload, to C# code without restarting the app. It works best on emulators and simulators during development and is triggered from Visual Studio or the CLI. Some changes, like modifying the App class constructor or platform manifests, still require a full rebuild.",
+      "tags": ["tooling", "hot-reload"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/hot-reload"]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the .NET MAUI Community Toolkit?",
+      "answer": "The Community Toolkit is an open-source library of controls, converters, behaviors, and extensions that fill common gaps in MAUI. It includes things like EventToCommandBehavior, MediaElement, and Popup, plus MVVM helpers. It is maintained by the community and Microsoft and ships as NuGet packages separate from the core framework.",
+      "tags": ["toolkit", "libraries"],
+      "references": ["https://learn.microsoft.com/dotnet/communitytoolkit/maui/"]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "How do you add platform-specific resources like fonts and images?",
+      "answer": "Place shared fonts in Resources/Fonts and reference them with ConfigureFonts in MauiProgram. Images go in Resources/Images and are addressed by filename with the build action MauiImage. The build system produces the correct per-platform asset catalog or drawable automatically.",
+      "tags": ["resources", "fonts"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/fonts", "https://learn.microsoft.com/dotnet/maui/user-interface/images/images"]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How does the .NET MAUI handler architecture differ from the Xamarin.Forms renderer model?",
+      "answer": "Renderers combined the cross-platform view and the native view in one class hierarchy, which made them heavyweight and hard to reuse. Handlers split responsibilities: the virtual view holds shared state, while a handler plus platform view mapper applies changes to the native control. This design reduces memory, speeds up control creation, and lets the same platform view be shared by multiple controls.",
+      "tags": ["handlers", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/"]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "How do you migrate a Xamarin.Forms project to .NET MAUI?",
+      "answer": "Use the .NET Upgrade Assistant to convert the project structure to a single project and update namespaces from Xamarin.Forms to Microsoft.Maui.Controls. Renderers and effects must be rewritten as handlers, and platform folders are reorganized. Dependencies are updated to .NET-compatible packages, and you should retest each platform after migration.",
+      "tags": ["migration", "xamarin"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/migration/", "https://learn.microsoft.com/dotnet/maui/migration/renderer-to-handler"]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "What are the implications of trimming and AOT for MAUI applications?",
+      "answer": "Trimming removes unused IL to shrink app size, and Native AOT compiles ahead of time for faster startup, especially on iOS. Both rely on static analysis and can break reflection-based code such as some serializers or dynamic bindings. You may need to add trim annotations, TrimmerRootDescriptor files, or source-generated serialization to stay safe.",
+      "tags": ["trimming", "aot"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/trimming", "https://learn.microsoft.com/dotnet/maui/deployment/nativeaot"]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "How does MAUI abstract the differences between platform application models?",
+      "answer": "MAUI maps the Application, Window, and Page abstractions onto each platform's own app model, such as Activity on Android and UIWindow/UIViewController on iOS. Platform lifecycle callbacks are surfaced through cross-platform events, and platform-specific entry points live in the Platforms folder. This lets shared code reason about one model while the framework translates to native concepts.",
+      "tags": ["architecture", "lifecycle"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle", "https://learn.microsoft.com/dotnet/maui/fundamentals/single-project"]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "What is the role of the MAUI SDK and workloads in the .NET toolchain?",
+      "answer": "MAUI ships as .NET workloads installed with dotnet workload install maui, which pull in the platform SDKs and build tooling. The MAUI SDK then augments MSBuild with targets that process XAML, resources, and platform folders. This workload model keeps MAUI versioned alongside the .NET SDK so a project builds consistently across machines.",
+      "tags": ["tooling", "workloads"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/get-started/installation", "https://learn.microsoft.com/dotnet/maui/fundamentals/single-project"]
+    }
+  ]
+}

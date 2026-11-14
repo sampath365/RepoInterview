@@ -1,0 +1,215 @@
+{
+  "category": "xUnit Fundamentals",
+  "slug": "fundamentals",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is xUnit.net and why is it popular in the .NET ecosystem?",
+      "answer": "xUnit.net is a free, open-source unit testing framework for .NET that was written by the original creators of NUnit to address design issues they saw in earlier frameworks. It is the default test framework in the .NET project templates and the one used by the ASP.NET Core team, so it is heavily documented and widely adopted. Its opinionated design favours isolation, parallelization, and convention over configuration.",
+      "tags": ["xunit", "testing"],
+      "references": ["https://xunit.net/docs/comparisons"]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "Which NuGet packages do you need to write and run xUnit tests?",
+      "answer": "For xUnit.net v2 you reference the xunit meta-package (which pulls in xunit.core and xunit.assert) plus xunit.runner.visualstudio so that dotnet test and Test Explorer can run the tests. For xUnit.net v3 you reference xunit.v3 instead, which includes the core framework, assertion library, and an in-process runner, and you keep xunit.runner.visualstudio for IDE and VSTest integration. The runner packages are marked PrivateAssets so they are not transitively exposed to consumers.",
+      "code": "dotnet add package xunit.v3\ndotnet add package xunit.runner.visualstudio",
+      "tags": ["nuget", "packages"],
+      "references": ["https://xunit.net/docs/nuget-packages-v3"]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What are the main differences between xUnit.net v2 and v3?",
+      "answer": "xUnit.net v3 requires .NET 8 or later (or .NET Framework 4.7.2+) and ships test projects as standalone executables that can run themselves without an external runner. It introduces a globally available TestContext, dynamic skipping via Assert.Skip, explicit tests, assembly fixtures, and richer theory data rows. Package names also changed from xunit.* to xunit.v3.*, and the xunit.abstractions package was removed.",
+      "tags": ["v3", "migration"],
+      "references": ["https://xunit.net/docs/getting-started/v3/migration"]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a Fact and a Theory in xUnit?",
+      "answer": "A Fact marks a test method that is always executed exactly once and has no parameters, so it represents a single, fixed assertion. A Theory marks a parameterized test method that is executed once for every data row supplied by attributes such as InlineData, MemberData, or ClassData. Use a Fact for a single scenario and a Theory when the same logic should hold across many inputs.",
+      "code": "[Fact]\npublic void Empty_list_has_no_items() => Assert.Empty(new List<int>());\n\n[Theory]\n[InlineData(0)]\n[InlineData(1)]\npublic void Count_matches(int n) => Assert.Equal(n, new int[n].Length);",
+      "tags": ["fact", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "How does xUnit discover and run tests?",
+      "answer": "At discovery time xUnit reflects over the compiled assembly, finds public methods decorated with [Fact], [Theory], and other test attributes, and produces a list of test cases. At execution time it creates a new instance of each test class for every test case, invokes the method, and reports the result. This two-phase model lets runners filter tests before any code under test is executed.",
+      "tags": ["discovery", "execution"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the role of the xunit.runner.visualstudio package?",
+      "answer": "xunit.runner.visualstudio is the adapter that lets VSTest-based tools such as dotnet test and Visual Studio's Test Explorer discover and run xUnit tests. It is required for IDE integration even though xUnit v3 projects can already run themselves as executables. It should be referenced with PrivateAssets set to all so it does not flow to projects that reference your test project.",
+      "tags": ["runner", "visual-studio"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "How do you create a new xUnit test project with the .NET CLI?",
+      "answer": "Install the v3 templates with dotnet new install xunit.v3.templates, then run dotnet new xunit3 to scaffold a project in the current folder. The generated project targets .NET 8 or later, references xunit.v3 and xunit.runner.visualstudio, and includes a sample test plus an xunit.runner.json configured in the project file. For v2 you can use the built-in dotnet new xunit template instead.",
+      "code": "dotnet new install xunit.v3.templates\ndotnet new xunit3 -o MyProject.Tests\ndotnet test MyProject.Tests",
+      "tags": ["templates", "cli"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "Why does xUnit create a new instance of the test class for every test?",
+      "answer": "xUnit creates a fresh test class instance per test to guarantee that tests cannot leak state to one another through shared instance fields. This makes test ordering irrelevant and lets the framework run tests in parallel safely. Setup code therefore belongs in the constructor, and cleanup in Dispose or IAsyncDisposable.",
+      "tags": ["isolation", "lifecycle"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit, integration, and end-to-end tests?",
+      "answer": "A unit test exercises one small piece of logic in isolation with its dependencies replaced, so it runs in milliseconds and pinpoints failures precisely. An integration test exercises several real components together, such as an HTTP pipeline or a database, to catch wiring and configuration defects. An end-to-end test drives the fully deployed system from the outside, is slowest and most brittle, and should be reserved for a few critical user journeys.",
+      "tags": ["unit-test", "integration-test"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "How do you run xUnit tests from the command line?",
+      "answer": "The simplest way is dotnet test, which builds the project and runs every discovered test through the VSTest adapter. You can filter with --filter, choose a framework with --framework, and produce a report with --logger. In xUnit v3 you can also execute the test project's own executable directly, which exposes the built-in console runner and its switches.",
+      "code": "dotnet test\ndotnet test --filter \"FullyQualifiedName~OrderService\"",
+      "tags": ["dotnet-test", "cli"],
+      "references": ["https://learn.microsoft.com/dotnet/core/tools/dotnet-test"]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What are the main differences between xUnit, NUnit, and MSTest?",
+      "answer": "All three run on .NET and integrate with dotnet test, but their philosophies differ. xUnit is the most convention-driven and instantiates the test class per test, using the constructor and IDisposable for setup and teardown rather than attributes. NUnit offers the richest attribute set, including [SetUp], [TestCase], and [Category], while MSTest is the Microsoft-first framework with deep Visual Studio integration and [TestInitialize]/[TestCleanup]. The choice is usually driven by team familiarity and existing tooling.",
+      "tags": ["nunit", "mstest"],
+      "references": ["https://xunit.net/docs/comparisons"]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "Why does xUnit not provide [SetUp] and [TearDown] attributes?",
+      "answer": "The xUnit authors consider explicit setup and teardown attributes to be an anti-pattern because they hide control flow and encourage tests to share mutable state. Instead, xUnit uses the class constructor for setup and IDisposable.Dispose or IAsyncDisposable for teardown, which keeps initialization visible and ordered. When you need shared context across tests, you opt into IClassFixture or collection fixtures rather than a global SetUp.",
+      "tags": ["setup", "teardown"],
+      "references": ["https://xunit.net/docs/comparisons"]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "How does xUnit's test collection model affect parallelization?",
+      "answer": "By default xUnit places each test class into its own test collection, and tests in different collections run in parallel while tests inside a single collection run sequentially. Classes that must not run concurrently, for example because they share a database or a static resource, should be placed into the same named collection. You can also disable parallelization entirely with [assembly: CollectionBehavior(DisableTestParallelization = true)].",
+      "tags": ["parallelization", "collections"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "How does the test pyramid guide how many tests you write at each level?",
+      "answer": "The test pyramid recommends many fast unit tests at the base, fewer integration tests in the middle, and only a handful of end-to-end tests at the top. This distribution keeps the suite fast and stable while still covering wiring and critical user flows. In practice you should push each assertion as far down the pyramid as it can be tested reliably.",
+      "tags": ["test-pyramid", "strategy"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "How should you organize a large xUnit test suite?",
+      "answer": "Mirror the production project structure so a test class sits next to the class it covers, and give each test project a single clear responsibility such as unit, integration, or end-to-end. Split slow tests into a separate project so developers can run the fast suite continuously, and use traits to tag categories for selective runs. Keep shared fixtures and helpers in a dedicated folder rather than duplicating them across classes.",
+      "tags": ["organization", "structure"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the xunit.v3 and xunit.v3.core packages?",
+      "answer": "The xunit.v3 package is the developer-facing meta-package that bundles the core framework, the assertion library, and the in-process runner so a normal test project needs only that one reference. The xunit.v3.core package contains just the framework pieces, which is useful when you build extension libraries or want tighter control over which components are referenced. Most test authors should use xunit.v3 and leave core to advanced scenarios.",
+      "tags": ["packages", "v3"],
+      "references": ["https://xunit.net/docs/nuget-packages-v3"]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "How does a test project reference the code it is testing?",
+      "answer": "The test project adds a ProjectReference to the production project, which gives it compile-time access to public and, with InternalsVisibleTo, internal types. If the code under test is a library you distribute, referencing the package instead of the project ensures you test what consumers actually get. Avoid referencing the test project from production code so the dependency direction stays clean.",
+      "code": "<ItemGroup>\n  <ProjectReference Include=\"..\\MyApp\\MyApp.csproj\" />\n</ItemGroup>",
+      "tags": ["project-reference", "internalsvisibleto"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a test case and a test in xUnit's object model?",
+      "answer": "A test case is a discovered, uniquely identifiable unit of work produced during discovery and used for filtering and reporting. A test is the actual execution instance created for a test case, which carries the running state, output, and result. One test case generally maps to one test per run, but the distinction matters when writing custom runners or reporters.",
+      "tags": ["test-case", "object-model"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What result formats can xUnit produce for build servers?",
+      "answer": "xUnit can emit Visual Studio Test Results (TRX) and the Common Test Report Format (CTRF) from the console and MSBuild runners in v3, and the classic XML v2 format is still supported. These files are consumed by CI systems to display pass/fail summaries and to publish test results. With dotnet test you select a format through the --logger option.",
+      "code": "dotnet test --logger \"trx;LogFileName=results.trx\"",
+      "tags": ["reporting", "trx"],
+      "references": ["https://xunit.net/docs/format-xml-v2"]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "What is the Microsoft Testing Platform and how does it relate to xUnit v3?",
+      "answer": "The Microsoft Testing Platform (MTP) is Microsoft's newer, extensible test host that is intended to replace the older VSTest APIs used by dotnet test. xUnit v3 supports MTP, so a test project can expose a unified command-line experience and stand-alone executable behaviour shared with MSTest 3.6+ and other frameworks. You can opt into MTP while keeping xunit.runner.visualstudio for IDE scenarios.",
+      "tags": ["mtp", "vstest"],
+      "references": ["https://xunit.net/docs/getting-started/v3/microsoft-testing-platform"]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How does xUnit's architecture separate discovery from execution, and why?",
+      "answer": "xUnit models discovery and execution as distinct phases with their own object model messages: discovery produces test cases, and execution turns selected test cases into running tests. Separating them lets runners apply filters before instantiating any test class, which is essential for running a single test from an IDE in a large assembly. In v3 the in-process runner performs both phases in one process, removing the cross-app-domain serialization cost that v2 incurred.",
+      "tags": ["architecture", "discovery"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of xUnit v3 test projects being standalone executables?",
+      "answer": "Building tests as executables means each project can run itself with no external runner and no application-domain isolation, and dependency resolution is left to the compiler. This simplifies tooling and makes tests runnable in constrained environments, but it also means the build produces an extra executable and that multi-assembly runners must be pointed at the .dll for .NET projects. The isolation that application domains once provided is instead achieved by launching the test process separately.",
+      "tags": ["executables", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/migration"]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "How do you write a custom xUnit extension point?",
+      "answer": "You implement one of the framework interfaces, such as a custom test case orderer, a theory data attribute, or an ITestFramework, and register it with an assembly-level attribute. In v3 most extensibility attributes had interfaces extracted so you can build your own base types without inheriting the framework ones. Extensions live in a library that references xunit.v3.extensibility.core rather than the meta-package.",
+      "code": "[assembly: TestCaseOrderer(typeof(MyOrderer))]\npublic class MyOrderer : ITestCaseOrderer\n{\n    public IEnumerable<TTestCase> OrderTestCases<TTestCase>(\n        IEnumerable<TTestCase> cases) where TTestCase : ITestCase\n        => cases.OrderBy(c => c.TestMethod.Method.Name);\n}",
+      "tags": ["extensibility", "orderer"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "What is the test pipeline and what startup hooks does xUnit v3 expose?",
+      "answer": "The test pipeline is the ordered set of phases xUnit runs for discovery and execution, and v3 exposes a startup hook so you can run code very early, before any substantial work begins. You implement ITestPipelineStartup and register it with [assembly: TestPipelineStartup(typeof(MyStartup))], and its StartAsync and StopAsync run for both discovery and execution. This differs from an assembly fixture, which only runs during execution, making the pipeline hook the right place for global initialization needed at discovery time.",
+      "code": "[assembly: TestPipelineStartup(typeof(MyStartup))]\npublic class MyStartup : ITestPipelineStartup\n{\n    public ValueTask StartAsync(IMessageSink sink) => default;\n    public ValueTask StopAsync() => default;\n}",
+      "tags": ["pipeline", "startup"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "How do xUnit's analyzers help prevent common testing mistakes?",
+      "answer": "The xunit.analyzers package ships Roslyn analyzers that flag issues at compile time, such as theory data types that do not match the method signature, misuse of Assert.Equal argument order, or async test methods that return void. They also catch patterns known to produce flaky or misleading tests, like calling Assert on a captured variable. Treating analyzer warnings as errors in CI keeps the suite reliable and catches problems before tests ever run.",
+      "tags": ["analyzers", "roslyn"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    }
+  ]
+}

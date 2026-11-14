@@ -1,0 +1,220 @@
+{
+  "category": "Caching & Response Optimization",
+  "slug": "caching",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "caching-001",
+      "difficulty": "Beginner",
+      "question": "Why is caching important in ASP.NET Core?",
+      "answer": "Caching reduces the work needed to serve a request by reusing previously computed results or responses, which lowers latency, database load, and cost. ASP.NET Core supports in-memory caching, distributed caching, response caching, and output caching. Choosing the right layer depends on where the data can safely be reused.",
+      "tags": ["caching", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/overview"]
+    },
+    {
+      "id": "caching-002",
+      "difficulty": "Beginner",
+      "question": "What is in-memory caching?",
+      "answer": "In-memory caching stores data in the process memory using IMemoryCache, giving very fast reads at the cost of being local to one server and lost on restart. It is ideal for small, frequently accessed data such as reference lists. Because it is not shared, it does not work well for scaled-out apps that need consistency.",
+      "code": "builder.Services.AddMemoryCache();\n...\n_cache.Set(\"key\", value, TimeSpan.FromMinutes(5));",
+      "tags": ["memory-cache", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "caching-003",
+      "difficulty": "Beginner",
+      "question": "What is distributed caching?",
+      "answer": "Distributed caching stores cache entries in an external store such as Redis, SQL Server, or NCache, shared by all instances of an app. It survives restarts and keeps data consistent across a scaled-out deployment at the cost of network latency. You use IDistributedCache or higher-level libraries for serialization.",
+      "code": "builder.Services.AddStackExchangeRedisCache(o =>\n    o.Configuration = \"localhost:6379\");",
+      "tags": ["distributed-cache", "redis"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/distributed"]
+    },
+    {
+      "id": "caching-004",
+      "difficulty": "Beginner",
+      "question": "What is response caching?",
+      "answer": "Response caching uses HTTP cache headers such as Cache-Control to let clients and intermediaries cache responses, controlled in ASP.NET Core with the ResponseCache attribute or ResponseCaching middleware. It reduces server hits for cacheable GET responses. Because it relies on headers, it works best for public, non-personalized data.",
+      "code": "[ResponseCache(Duration = 60, Location = ResponseCacheLocation.Any)]\n[HttpGet]\npublic IActionResult Get() => Ok(_svc.Get());",
+      "tags": ["response-cache", "http"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/response"]
+    },
+    {
+      "id": "caching-005",
+      "difficulty": "Beginner",
+      "question": "What is output caching?",
+      "answer": "Output caching, introduced in .NET 7, stores the full response on the server and serves it to matching requests without re-executing the endpoint. It is configured with AddOutputCache and the OutputCache attribute or CacheOutput, and supports policies, tags, and expiration. It is more powerful than response caching because the server controls the cache.",
+      "code": "builder.Services.AddOutputCache();\napp.UseOutputCache();\napp.MapGet(\"/products\", Get).CacheOutput();",
+      "tags": ["output-cache", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/output"]
+    },
+    {
+      "id": "caching-006",
+      "difficulty": "Beginner",
+      "question": "What is a cache key?",
+      "answer": "A cache key uniquely identifies a cached entry and should include everything that affects the result, such as the resource id, user or tenant, query parameters, and culture. Collisions cause incorrect data to be served, so keys must be specific. Output caching derives keys from the request by default but lets you customize them.",
+      "tags": ["cache-key", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "caching-007",
+      "difficulty": "Beginner",
+      "question": "What is cache expiration?",
+      "answer": "Expiration defines how long an entry remains valid: absolute expiration sets a fixed lifetime, and sliding expiration extends it on each access. You can also remove entries explicitly or via eviction when memory is low. Choosing sensible expiration balances freshness against hit rate.",
+      "code": "_cache.Set(\"k\", v, new MemoryCacheEntryOptions\n{\n    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)\n});",
+      "tags": ["expiration", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "caching-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between client-side and server-side caching?",
+      "answer": "Client-side caching stores data in the browser or on the client, reducing network calls but giving the server less control, while server-side caching stores data on the server or a shared store and benefits all clients. Response caching spans both by using HTTP headers. They are complementary and often combined.",
+      "tags": ["client-cache", "server-cache"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/overview"]
+    },
+    {
+      "id": "caching-009",
+      "difficulty": "Beginner",
+      "question": "How do you cache data in a controller or service?",
+      "answer": "You inject IMemoryCache or IDistributedCache and use the get-or-create pattern: try to read the key, and on a miss compute the value and store it with an expiration. Keeping the cache access in a service keeps controllers clean. Be careful to avoid caching per-user data under a shared key.",
+      "code": "var data = await _cache.GetOrCreateAsync(\"products\", async e =>\n{\n    e.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);\n    return await _repo.GetAllAsync();\n});",
+      "tags": ["get-or-create", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "caching-010",
+      "difficulty": "Beginner",
+      "question": "When should you avoid caching a response?",
+      "answer": "You should avoid caching responses that are personalized, sensitive, or frequently changing, such as account details or real-time data. Caching them risks serving one user's data to another or showing stale information. Use no-store headers and bypass cache for authenticated endpoints unless the key includes the user.",
+      "tags": ["caching", "security"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/response"]
+    },
+    {
+      "id": "caching-011",
+      "difficulty": "Intermediate",
+      "question": "How does output caching differ from response caching?",
+      "answer": "Output caching stores responses on the server and can vary by query, header, or user, and supports tags for invalidation, so the server fully controls what is cached. Response caching relies on HTTP headers and the client or proxy to cache. Output caching is generally more flexible and is recommended for server-side response caching in .NET 7 and later.",
+      "tags": ["output-cache", "response-cache"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/output"]
+    },
+    {
+      "id": "caching-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure output cache policies?",
+      "answer": "You define named policies in AddOutputCache with an expiration and optional VaryBy rules, then apply them with [OutputCache(PolicyName = ...)] or CacheOutput. You can also vary by query, header, route value, or a custom key. Policies centralize caching rules for reuse across endpoints.",
+      "code": "builder.Services.AddOutputCache(o =>\n    o.AddPolicy(\"byId\", b => b\n        .SetVaryByRouteValue(\"id\")\n        .Expire(TimeSpan.FromSeconds(30))));",
+      "tags": ["output-cache", "policies"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/output"]
+    },
+    {
+      "id": "caching-013",
+      "difficulty": "Intermediate",
+      "question": "How do you invalidate cached data?",
+      "answer": "You remove entries by key or by tag. With IMemoryCache you call Remove, and with output caching you evict by tag using IOutputCacheStore.EvictByTagAsync when data changes. Distributed caches support key deletion, but you must invalidate on every instance or use a shared store. Event-driven invalidation keeps caches fresh.",
+      "code": "await _cacheStore.EvictByTagAsync(\"products\", default);",
+      "tags": ["invalidation", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/output#cache-revalidation"]
+    },
+    {
+      "id": "caching-014",
+      "difficulty": "Intermediate",
+      "question": "What is the cache stampede problem and how do you mitigate it?",
+      "answer": "A cache stampede happens when many requests miss the same key simultaneously and all recompute the expensive value, overloading the backend. You mitigate it with locking or a semaphore so only one caller recomputes, by using probabilistic early expiration, or by pre-warming the cache. Staggering expirations also reduces synchronized misses.",
+      "tags": ["stampede", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "caching-015",
+      "difficulty": "Intermediate",
+      "question": "How do you cache per-user data safely?",
+      "answer": "You include the user or tenant identifier in the cache key so entries cannot be shared, or you avoid caching personalized responses entirely. For output caching you can vary by a claim or a custom key derived from the user. Always verify that a cached response cannot leak data across users.",
+      "code": "app.MapGet(\"/me\", GetMe).CacheOutput(p => p\n    .SetVaryByHeader(\"Authorization\"));",
+      "tags": ["security", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/output"]
+    },
+    {
+      "id": "caching-016",
+      "difficulty": "Intermediate",
+      "question": "How does the cache tag helper work in Razor?",
+      "answer": "The cache tag helper caches the rendered HTML of its content in memory, with attributes for expiration, sliding expiration, and vary-by options on query, route, cookie, or header values. This caches fragments rather than whole pages. It uses the in-memory cache and is local to the server.",
+      "code": "<cache expires-after=\"@TimeSpan.FromMinutes(5)\"\n       vary-by-query=\"page\">\n  @await Component.InvokeAsync(\"Products\")\n</cache>",
+      "tags": ["cache-tag-helper", "razor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "caching-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IDistributedCache and IMemoryCache APIs?",
+      "answer": "IMemoryCache stores objects directly and offers rich eviction callbacks, while IDistributedCache works with byte arrays and requires serialization, with an async API suited to network stores. IDistributedCache is simpler but less feature-rich, which is why higher-level libraries such as FusionCache or HybridCache wrap it. HybridCache in .NET 9 combines a local cache with a distributed one.",
+      "tags": ["distributed-cache", "memory-cache"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/distributed"]
+    },
+    {
+      "id": "caching-018",
+      "difficulty": "Intermediate",
+      "question": "How do HTTP cache headers control caching behavior?",
+      "answer": "Cache-Control directives such as public, private, no-cache, no-store, and max-age tell clients and proxies how to cache, and ETag plus If-None-Match enable conditional requests returning 304. Headers are set with the ResponseCache attribute or manually on the response. Correct headers prevent stale or leaked content.",
+      "code": "[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None,\n    NoStore = true)]\n[HttpGet] public IActionResult Secret() => Ok();",
+      "tags": ["http-headers", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/response"]
+    },
+    {
+      "id": "caching-019",
+      "difficulty": "Intermediate",
+      "question": "How do you cache expensive database queries?",
+      "answer": "You cache the query result in memory or a distributed cache keyed by the parameters, with an expiration and explicit invalidation when the underlying data changes. Avoid caching EF Core tracked entities directly; cache detached DTOs instead. This reduces database load while keeping the app consistent.",
+      "tags": ["database", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory", "https://learn.microsoft.com/ef/core/performance/"]
+    },
+    {
+      "id": "caching-020",
+      "difficulty": "Intermediate",
+      "question": "How do you choose between memory, distributed, and output caching?",
+      "answer": "Use memory caching for small, non-critical, per-server data, distributed caching when data must be shared across instances, and output caching when you want to cache whole HTTP responses at the server. Many apps combine them: distributed for shared state and output caching for hot endpoints. Consider freshness, consistency, and failure behavior for each.",
+      "tags": ["trade-offs", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/overview"]
+    },
+    {
+      "id": "caching-021",
+      "difficulty": "Advanced",
+      "question": "How does HybridCache work in .NET 9?",
+      "answer": "HybridCache provides a unified API over a local in-memory cache and an optional distributed cache, handling stampede protection and serialization so you call GetOrCreateAsync once. It writes to both layers and reads from the fastest available, with configurable expiration. This simplifies the two-tier caching pattern that was previously manual.",
+      "code": "var value = await cache.GetOrCreateAsync(\"k\",\n    async ct => await LoadAsync(ct));",
+      "tags": ["hybrid-cache", "net9"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/hybrid"]
+    },
+    {
+      "id": "caching-022",
+      "difficulty": "Advanced",
+      "question": "How would you design cache invalidation across a distributed deployment?",
+      "answer": "You store the cache in a shared distributed store and invalidate by key or tag when data changes, or publish invalidation events through a message bus so every instance reacts. Output caching supports tag-based eviction, and HybridCache can back off to a distributed layer. Versioned keys or short expirations provide a fallback when perfect invalidation is impractical.",
+      "tags": ["distributed", "invalidation"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/distributed", "https://learn.microsoft.com/aspnet/core/performance/caching/output"]
+    },
+    {
+      "id": "caching-023",
+      "difficulty": "Advanced",
+      "question": "What are the risks of caching and how do you avoid serving stale or wrong data?",
+      "answer": "Risks include stale data, key collisions, cross-user leakage, and memory pressure that evicts useful entries. You mitigate them with correct keys, explicit invalidation, conservative expirations, and size limits. Monitoring cache hit rate and stale-data reports helps tune the strategy.",
+      "tags": ["risks", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/overview"]
+    },
+    {
+      "id": "caching-024",
+      "difficulty": "Advanced",
+      "question": "How do you measure cache effectiveness?",
+      "answer": "You track hit and miss ratios, average latency with and without cache, and backend call volume, often via metrics from OpenTelemetry or Application Insights. A low hit rate suggests poor keys or short expiration, and a high miss rate under load suggests stampede issues. These metrics guide tuning.",
+      "tags": ["metrics", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/overview", "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"]
+    },
+    {
+      "id": "caching-025",
+      "difficulty": "Advanced",
+      "question": "How does response compression interact with caching?",
+      "answer": "Response compression middleware compresses responses such as JSON and HTML to reduce bandwidth, and it works with caching but the Vary header must include Accept-Encoding so caches do not serve a compressed body to a client that cannot decode it. Compression adds CPU cost, so it should be applied to text formats and skipped for already-compressed content. Order matters: compression should run before caching writes the response.",
+      "code": "builder.Services.AddResponseCompression(o =>\n    o.EnableForHttps = true);\napp.UseResponseCompression();",
+      "tags": ["compression", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/response-compression"]
+    }
+  ]
+}

@@ -1,0 +1,229 @@
+{
+  "category": "Animations & Effects",
+  "slug": "animations",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "animations-001",
+      "difficulty": "Beginner",
+      "question": "How do you create a simple animation in .NET MAUI?",
+      "answer": "VisualElement exposes extension methods such as FadeTo, ScaleTo, RotateTo, TranslateTo, and ColorTo that animate a property over a duration and return a Task. You await the returned task or ignore it if the animation does not need to block. These built-in animations cover most common effects without custom code. They run on the UI thread using the platform animation systems.",
+      "tags": ["animations", "basics"],
+      "code": "await logo.FadeTo(0, 500);\nawait logo.FadeTo(1, 500);\nawait logo.ScaleTo(1.2, 250);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-002",
+      "difficulty": "Beginner",
+      "question": "What is the Animation class used for?",
+      "answer": "The Animation class lets you compose custom animations by defining one or more child animations with a callback that receives a progress value from 0 to 1. You commit the animation with Commit, passing the owner, name, rate, length, and easing. This is how you animate any property, not just the ones with built-in helpers. It also supports sequences and reusable animation objects.",
+      "tags": ["animations", "custom"],
+      "code": "var anim = new Animation(v => box.Opacity = v, 1, 0);\nanim.Commit(box, \"Fade\", 16, 800, Easing.CubicIn);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/custom"]
+    },
+    {
+      "id": "animations-003",
+      "difficulty": "Beginner",
+      "question": "What is easing in an animation?",
+      "answer": "Easing controls how the animation progresses over time, changing the rate of the value change to make motion feel natural. Built-in functions include Linear, SinIn, CubicIn, BounceOut, and SpringIn. Passing an easing function to a built-in animation or a Commit call applies it. Good easing makes motion feel polished rather than mechanical.",
+      "tags": ["animations", "easing"],
+      "code": "await view.TranslateTo(100, 0, 400, Easing.SpringOut);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/easing"]
+    },
+    {
+      "id": "animations-004",
+      "difficulty": "Beginner",
+      "question": "How do you animate a color change?",
+      "answer": "Use the ColorTo extension method, which interpolates between the current color and a target color over the duration. It works on color properties like BackgroundColor or TextColor of visual elements. For gradients or custom drawing, animate the underlying values and invalidate the view. ColorTo is the simplest option for common UI transitions.",
+      "tags": ["animations", "color"],
+      "code": "await label.ColorTo(Colors.Black, Colors.Red, c =>\n    label.TextColor = c, 600);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between RotateTo and RelRotateTo?",
+      "answer": "RotateTo animates the rotation to an absolute angle in degrees, so repeated calls with the same value have no further effect. RelRotateTo adds the value to the current rotation, so it is relative to the element's present angle. Use RotateTo when you target a specific orientation and RelRotateTo for effects that accumulate, such as spinning a control on each tap. The same absolute versus relative distinction applies to scale and translation helpers.",
+      "tags": ["animations", "rotation"],
+      "code": "await view.RotateTo(90, 300);    // to 90 degrees\nawait view.RelRotateTo(90, 300);  // +90 from current",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-006",
+      "difficulty": "Beginner",
+      "question": "How do you animate a translation?",
+      "answer": "Use TranslateTo to move an element by the given x and y offsets from its layout position over a duration. The translation does not change the layout, so siblings are unaffected. Combine horizontal and vertical values to move diagonally. Translations are commonly used for slide-in menus and swipe effects.",
+      "tags": ["animations", "translation"],
+      "code": "await panel.TranslateTo(0, -200, 300, Easing.CubicOut);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-007",
+      "difficulty": "Beginner",
+      "question": "What does the CancelAnimations method do?",
+      "answer": "CancelAnimations stops any running animations on a view, optionally limited to a specific animation name. This is useful before starting a new animation so effects do not overlap or fight each other. It is also important when a view is reused in a virtualized list. Always cancel before re-triggering to keep state predictable.",
+      "tags": ["animations", "cancellation"],
+      "code": "view.CancelAnimations();\nawait view.FadeTo(0, 200);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-008",
+      "difficulty": "Beginner",
+      "question": "How do you make an animation repeat?",
+      "answer": "Use the Animation.Commit overload that takes a repeat delegate, returning true to run again, or wrap the animation in a loop with a delay. For built-in helpers you can chain them or use a repeating Animation. Infinite animations should be cancellable and stopped when the page is not visible. Avoid tight loops without delay because they waste CPU.",
+      "tags": ["animations", "repeat"],
+      "code": "var pulse = new Animation(v => dot.Scale = v, 1, 1.3, Easing.SinInOut);\npulse.Commit(dot, \"Pulse\", 16, 700,\n    repeat: () => true);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/custom"]
+    },
+    {
+      "id": "animations-009",
+      "difficulty": "Beginner",
+      "question": "What is a VisualStateManager and how does it relate to animation?",
+      "answer": "VisualStateManager defines named visual states for a control and applies property values when the control enters each state, with optional transitions. States are declared in XAML and are ideal for expressing UI changes like Normal, Disabled, or Focused. Transitions between states can be animated, giving smooth feedback. It complements code-driven animations for state-based visuals.",
+      "tags": ["visual-states", "animations"],
+      "code": "<VisualStateManager.VisualStateGroups>\n  <VisualStateGroup x:Name=\"CommonStates\">\n    <VisualState x:Name=\"Normal\" />\n    <VisualState x:Name=\"Disabled\">\n      <VisualState.Setters>\n        <Setter Property=\"Opacity\" Value=\"0.5\" />\n      </VisualState.Setters>\n    </VisualState>\n  </VisualStateGroup>\n</VisualStateManager.VisualStateGroups>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/visual-states"]
+    },
+    {
+      "id": "animations-010",
+      "difficulty": "Beginner",
+      "question": "Why should animations be short?",
+      "answer": "Short animations feel responsive and keep the interface snappy, while long ones make the app feel slow and delay the user. Most UI feedback works well between 150 and 400 milliseconds. Reserve longer durations for deliberate transitions such as page changes. Respect the user's reduced-motion preference where the platform exposes it.",
+      "tags": ["animations", "ux"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-011",
+      "difficulty": "Intermediate",
+      "question": "How do you chain multiple animations sequentially?",
+      "answer": "Await each animation one after another so each starts when the previous completes, or add child animations to a parent Animation with BeginAt to sequence them precisely. Awaiting is simpler and reads well for short chains. BeginAt gives frame-accurate timing within a single committed animation. Choose based on whether you need exact overlap control.",
+      "tags": ["animations", "sequencing"],
+      "code": "await view.FadeTo(0, 200);\nawait view.TranslateTo(0, -100, 200);\nawait view.FadeTo(1, 200);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/custom"]
+    },
+    {
+      "id": "animations-012",
+      "difficulty": "Intermediate",
+      "question": "How do you run animations in parallel?",
+      "answer": "Start multiple animations without awaiting each one immediately, then await Task.WhenAll on their tasks. Because each animation returns a Task, you can coordinate completion this way. Alternatively compose a single Animation with child animations at the same BeginAt time. Parallel animations are useful for combined move-and-fade effects.",
+      "tags": ["animations", "parallel"],
+      "code": "await Task.WhenAll(\n    view.FadeTo(0, 300),\n    view.TranslateTo(0, -50, 300),\n    view.ScaleTo(0.9, 300));",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-013",
+      "difficulty": "Intermediate",
+      "question": "How do you animate a property that has no built-in helper?",
+      "answer": "Create an Animation with a callback that sets the property from the progress value, interpolating between start and end. Commit it to the element with a length and easing. This works for any numeric or interpolatable property, including custom bindable properties. It is the general escape hatch when no extension method exists.",
+      "tags": ["animations", "custom"],
+      "code": "var a = new Animation(v => bar.Progress = v, 0, 1);\na.Commit(bar, \"Progress\", 16, 1000, Easing.Linear);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/custom"]
+    },
+    {
+      "id": "animations-014",
+      "difficulty": "Intermediate",
+      "question": "How do you animate on a page appearing or disappearing?",
+      "answer": "Override OnAppearing and OnDisappearing on the page or handle the Appearing and Disappearing events, and start or stop animations there. Starting in OnAppearing ensures the element is laid out before animating. Stopping animations in OnDisappearing prevents background work and visual glitches. This is the right place for entrance effects.",
+      "tags": ["animations", "lifecycle"],
+      "code": "protected override async void OnAppearing()\n{\n    base.OnAppearing();\n    await content.FadeTo(1, 300);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/contentpage"]
+    },
+    {
+      "id": "animations-015",
+      "difficulty": "Intermediate",
+      "question": "How do you create a shake animation?",
+      "answer": "Compose a sequence of short TranslateTo calls that move the element back and forth with a small offset, using a duration short enough to feel like a shake. Cancel any running animation first so shakes do not stack. Restore the original position at the end. A custom Animation with a sine-based offset can produce a smoother shake.",
+      "tags": ["animations", "custom"],
+      "code": "for (int i = 0; i < 4; i++)\n{\n    await entry.TranslateTo(-8, 0, 40);\n    await entry.TranslateTo(8, 0, 40);\n}\nawait entry.TranslateTo(0, 0, 40);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use VisualStateManager to animate state changes?",
+      "answer": "Set the VisualStateGroup's Transitions or a specific VisualTransition with a Duration and easing so property changes animate when entering or leaving a state. Without transitions, state changes apply instantly. This keeps state-based visuals smooth and declarative. It pairs well with pointer and selection states on controls.",
+      "tags": ["visual-states", "animations"],
+      "code": "<VisualTransition To=\"Focused\" GeneratedDuration=\"0:0:0.2\">\n  <VisualTransition.GeneratedEasingFunction>\n    <CubicEase EasingMode=\"EaseOut\" />\n  </VisualTransition.GeneratedEasingFunction>\n</VisualTransition>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/visual-states"]
+    },
+    {
+      "id": "animations-017",
+      "difficulty": "Intermediate",
+      "question": "How do you animate a CollectionView item when it appears?",
+      "answer": "Handle the element's Loaded or Appearing event inside the item template and start a short animation, or use the CollectionView's ItemsUpdatingScrollMode and scroll events. Because items are virtualized and reused, always cancel and reset animations so recycled items do not appear mid-animation. Keep per-item animations short to avoid jank while scrolling. Alternatively animate a container once rather than every item.",
+      "tags": ["animations", "collectionview"],
+      "code": "<Label Loaded=\"OnItemLoaded\" Text=\"{Binding Name}\" />\n\nvoid OnItemLoaded(object s, EventArgs e)\n{\n    var v = (VisualElement)s;\n    v.Opacity = 0;\n    v.FadeTo(1, 250);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/collectionview/index"]
+    },
+    {
+      "id": "animations-018",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom easing function?",
+      "answer": "Implement Easing by providing a delegate that maps a normalized time value of 0 to 1 to a transformed value, or subclass and override Ease. Pass the instance to any animation helper or Commit call. Custom easing lets you match a brand's motion language. Keep the function continuous and bounded to avoid jumps.",
+      "tags": ["animations", "easing"],
+      "code": "var ease = new Easing(t => t * t * (3 - 2 * t));\nawait view.FadeTo(0, 500, ease);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/easing"]
+    },
+    {
+      "id": "animations-019",
+      "difficulty": "Intermediate",
+      "question": "How do you combine an animation with a gesture?",
+      "answer": "Handle a gesture recognizer's event, such as TapGestureRecognizer.Tapped or PanGestureRecognizer.PanUpdated, and start or update an animation in the handler. For panning, animate or set translation based on the gesture's total distance for a natural drag. Cancel animations when the gesture starts to avoid conflicts. This is how you build interactive drag and swipe effects.",
+      "tags": ["animations", "gestures"],
+      "code": "void OnPan(object s, PanUpdatedEventArgs e)\n{\n    if (e.StatusType == GestureStatus.Running)\n        card.TranslationX = e.TotalX;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/gestures/pan"]
+    },
+    {
+      "id": "animations-020",
+      "difficulty": "Intermediate",
+      "question": "How do you animate the opacity of an overlay?",
+      "answer": "Set the overlay's initial Opacity to 0 and IsVisible to true, then FadeTo 1 to show it, and fade back to 0 and set IsVisible false when hiding. Keep the overlay above other content with a Grid layer. Animating opacity is cheap and gives a smooth modal feel. Remember to disable interaction with content behind the overlay when it is visible.",
+      "tags": ["animations", "overlay"],
+      "code": "overlay.IsVisible = true;\nawait overlay.FadeTo(0.6, 200);\n// hide\nawait overlay.FadeTo(0, 200);\noverlay.IsVisible = false;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-021",
+      "difficulty": "Advanced",
+      "question": "How do you avoid memory leaks from long-running animations?",
+      "answer": "Stop and cancel animations when the owning view or page is unloaded or disappears, because a running animation holds references through its callbacks and timers. Use CancelAnimations in OnDisappearing and avoid capturing large object graphs in animation callbacks. Repeating animations that never stop keep the view and its data alive. Verify with profiling that pages are collected after navigation.",
+      "tags": ["animations", "memory"],
+      "code": "protected override void OnDisappearing()\n{\n    base.OnDisappearing();\n    spinner.CancelAnimations();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "animations-022",
+      "difficulty": "Advanced",
+      "question": "How do animations interact with the UI thread and rendering?",
+      "answer": "Built-in animations advance on the UI thread through the platform's animation loop, updating properties each frame and triggering a redraw. Because property changes and layout happen on the UI thread, animating layout-affecting properties like WidthRequest can be costly, while animating transforms and opacity is cheap because they do not re-layout. Prefer transform and opacity animations for smooth 60 frames per second. Avoid doing heavy work in animation callbacks.",
+      "tags": ["animations", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/performance"]
+    },
+    {
+      "id": "animations-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement a spring animation?",
+      "answer": "Use the built-in Easing.SpringOut or SpringIn with a transform animation, or model a spring by animating a value with a custom easing that overshoots and settles. Spring effects feel lively for toggles and cards. Keep the overshoot small so it does not look erratic. For precise physics, drive the value with a small simulation in an Animation callback.",
+      "tags": ["animations", "easing"],
+      "code": "await card.ScaleTo(1.0, 500, Easing.SpringOut);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/easing"]
+    },
+    {
+      "id": "animations-024",
+      "difficulty": "Advanced",
+      "question": "How do you coordinate an animation with data loading?",
+      "answer": "Expose an IsBusy or state property on the view model, start the loading task and the animation together, and stop the animation when the task completes or fails. Use try/finally so the animation always stops. This gives users feedback during slow operations without blocking. Bind the busy state to the UI so it reacts to the real operation.",
+      "tags": ["animations", "async"],
+      "code": "IsBusy = true;\nvar spin = spinner.RotateTo(360, 1000);\ntry { Items = await LoadAsync(); }\nfinally { spinner.CancelAnimations(); IsBusy = false; }",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "animations-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using VisualStateManager versus code-behind animations?",
+      "answer": "VisualStateManager is declarative, tied to control states, and easy to maintain and theme, but it is limited to state-driven property changes and simple transitions. Code-behind animations can express arbitrary motion and sequencing but scatter logic and are harder to reuse. Use visual states for state-based appearance and code or the Animation class for one-off or complex effects. Many apps combine both, keeping states declarative and reserving code for bespoke motion.",
+      "tags": ["animations", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/visual-states"]
+    }
+  ]
+}

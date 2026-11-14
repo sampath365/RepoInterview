@@ -1,0 +1,223 @@
+{
+  "category": "HTTP & Web Services",
+  "slug": "http",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "http-001",
+      "difficulty": "Beginner",
+      "question": "How do you make an HTTP request in .NET MAUI?",
+      "answer": "Use HttpClient, the standard .NET type for HTTP, which works the same across MAUI platforms. You send a request with GetAsync, PostAsync, or SendAsync and read the response content. Register the client through dependency injection so it is pooled and configured once. Always await the calls and handle failures instead of blocking the UI thread.",
+      "tags": ["http", "httpclient"],
+      "code": "var response = await httpClient.GetAsync(\"https://api.example.com/items\");\nresponse.EnsureSuccessStatusCode();\nvar json = await response.Content.ReadAsStringAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between GetAsync and PostAsync?",
+      "answer": "GetAsync sends a GET request to retrieve a resource and passes parameters in the URL query string, with no body. PostAsync sends a POST request with a body, typically JSON, to create a resource or submit data. GET should be safe and idempotent, while POST changes server state. Choose the method that matches the operation's semantics.",
+      "tags": ["http", "verbs"],
+      "code": "await http.GetAsync(\"/items/1\");\nawait http.PostAsync(\"/items\", content);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-003",
+      "difficulty": "Beginner",
+      "question": "How do you deserialize a JSON response in MAUI?",
+      "answer": "Read the response content as a string or stream and deserialize it with System.Text.Json using JsonSerializer.Deserialize<T>. Match the target type to the JSON shape and use options for case-insensitive matching or naming policies. For trimming and AOT, prefer source-generated serialization contexts. Check the status code before deserializing to avoid parsing error payloads.",
+      "tags": ["json", "http"],
+      "code": "var items = await response.Content\n    .ReadFromJsonAsync<List<Item>>();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-004",
+      "difficulty": "Beginner",
+      "question": "What is JSON and why is it used for web services?",
+      "answer": "JSON is a lightweight text format for representing structured data as objects, arrays, and primitives. It is compact, human-readable, and language-neutral, which is why most REST APIs use it. .NET serializes and deserializes it with System.Text.Json. Its simplicity makes it easy to inspect and debug over the wire.",
+      "tags": ["json", "rest"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-005",
+      "difficulty": "Beginner",
+      "question": "What is a REST API?",
+      "answer": "A REST API is a web service that exposes resources over HTTP using standard methods like GET, POST, PUT, and DELETE. Each resource has a URL, and the method and status code describe the operation and its outcome. REST APIs are stateless, so each request carries the information needed to process it. MAUI apps consume them with HttpClient and JSON.",
+      "tags": ["rest", "api"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-006",
+      "difficulty": "Beginner",
+      "question": "How do you check for network connectivity in MAUI?",
+      "answer": "Use the Connectivity class from MAUI Essentials, which exposes NetworkAccess to report whether the device has internet access. Subscribe to Connectivity.ConnectivityChanged to react when the network state changes. This lets you show offline messaging or queue requests. Connectivity indicates a network path, not that a specific server is reachable, so still handle request failures.",
+      "tags": ["connectivity", "network"],
+      "code": "if (Connectivity.Current.NetworkAccess == NetworkAccess.Internet)\n{\n    // online\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/communication/networking"]
+    },
+    {
+      "id": "http-007",
+      "difficulty": "Beginner",
+      "question": "What is a BaseAddress on HttpClient and why set it?",
+      "answer": "BaseAddress sets the root URI that relative request paths are combined with, so you can write GetAsync(\"items\") instead of the full URL. This centralizes the API host in one configuration point. Changing environments then means changing one value. It also reduces duplication and typo risk across the service.",
+      "tags": ["http", "httpclient"],
+      "code": "httpClient.BaseAddress = new Uri(\"https://api.example.com/\");\nvar r = await httpClient.GetAsync(\"v1/items\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-008",
+      "difficulty": "Beginner",
+      "question": "What does EnsureSuccessStatusCode do?",
+      "answer": "EnsureSuccessStatusCode throws an HttpRequestException if the response status code is not in the success range of 200 to 299. It is a quick guard that turns error responses into exceptions you can catch. It discards the body, so if you need error details, inspect the status and content yourself. Use it in the happy path and add explicit handling for expected error codes.",
+      "tags": ["http", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-009",
+      "difficulty": "Beginner",
+      "question": "How do you send JSON data in a POST request?",
+      "answer": "Create a StringContent or use the JsonContent helper, set the media type to application/json, and pass it to PostAsync. Serialize your object to a string with JsonSerializer or let JsonContent serialize it for you. Set the correct content type so the server parses the body. Await the response and check the status before reading the result.",
+      "tags": ["http", "post"],
+      "code": "var content = JsonContent.Create(newItem);\nvar response = await http.PostAsync(\"items\", content);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-010",
+      "difficulty": "Beginner",
+      "question": "Why should you not create a new HttpClient per request?",
+      "answer": "Creating an HttpClient for each request can exhaust sockets because connections are not released immediately, a problem known as socket exhaustion. Reusing a single client also reuses connections for better performance. The recommended pattern is to register it through IHttpClientFactory or as a typed client with dependency injection. This manages handler lifetime and pooling for you.",
+      "tags": ["httpclient", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-011",
+      "difficulty": "Intermediate",
+      "question": "How do you register and inject a typed HttpClient in MAUI?",
+      "answer": "Call AddHttpClient with your service interface and implementation in MauiProgram, and optionally configure the base address and headers in a lambda. The container injects the typed client, which wraps an HttpClient, into view models. This centralizes configuration and lets the handler be reused. It also makes the API service easy to mock in tests.",
+      "tags": ["httpclient", "di"],
+      "code": "builder.Services.AddHttpClient<IApiService, ApiService>(c =>\n{\n    c.BaseAddress = new Uri(\"https://api.example.com/\");\n    c.DefaultRequestHeaders.Add(\"Accept\", \"application/json\");\n});",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-012",
+      "difficulty": "Intermediate",
+      "question": "How do you add authentication headers to requests?",
+      "answer": "Set the Authorization header, typically a bearer token, on each request or on the client's DefaultRequestHeaders. Because tokens expire, refresh them before sending and avoid caching a stale header on a shared client. A DelegatingHandler that attaches and refreshes the token is a clean pattern. Store tokens in SecureStorage, not in plain settings.",
+      "tags": ["http", "auth"],
+      "code": "http.DefaultRequestHeaders.Authorization =\n    new AuthenticationHeaderValue(\"Bearer\", token);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/authentication"]
+    },
+    {
+      "id": "http-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use a DelegatingHandler to customize requests?",
+      "answer": "A DelegatingHandler sits in the HTTP pipeline and can inspect or modify requests and responses before they reach the network or the caller. Common uses include adding headers, logging, retrying, and handling token refresh. Register it with AddHttpMessageHandler in the client configuration. Keep handlers focused on one concern so they compose cleanly.",
+      "tags": ["http", "handlers"],
+      "code": "public class AuthHandler : DelegatingHandler\n{\n    protected override async Task<HttpResponseMessage> SendAsync(\n        HttpRequestMessage req, CancellationToken ct)\n    {\n        req.Headers.Authorization = new(\"Bearer\", GetToken());\n        return await base.SendAsync(req, ct);\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle HTTP errors and retries?",
+      "answer": "Catch HttpRequestException and TaskCanceledException, inspect status codes for expected errors such as 401 or 404, and surface friendly messages to the user. For transient failures, retry with exponential backoff using a library like Polly or a simple loop with delay. Do not retry non-idempotent requests blindly because they may duplicate work. Log failures for diagnosis.",
+      "tags": ["http", "errors"],
+      "code": "try\n{\n    var r = await http.GetAsync(\"items\");\n    r.EnsureSuccessStatusCode();\n}\ncatch (HttpRequestException ex)\n{\n    // show offline message\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-015",
+      "difficulty": "Intermediate",
+      "question": "How do you cancel an HTTP request?",
+      "answer": "Pass a CancellationToken to the HttpClient method, usually from a CancellationTokenSource you keep for the operation. Cancel the source when the user navigates away or starts a new request, which aborts the in-flight call. This prevents wasted work and stale UI updates. Store and dispose the source appropriately to avoid leaks.",
+      "tags": ["http", "cancellation"],
+      "code": "_cts?.Cancel();\n_cts = new CancellationTokenSource();\nvar r = await http.GetAsync(url, _cts.Token);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-016",
+      "difficulty": "Intermediate",
+      "question": "How do you connect to a local web service during development?",
+      "answer": "Local services run on the development machine, so the app must use an address reachable from the device or emulator, such as the host's LAN IP or a special alias for the emulator. On Android emulators the host is often 10.0.2.2, and iOS simulators can reach localhost. Plain HTTP is blocked by default, so configure cleartext exceptions or use HTTPS with a trusted dev certificate. Never ship these dev settings to production.",
+      "tags": ["http", "development"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/local-web-services"]
+    },
+    {
+      "id": "http-017",
+      "difficulty": "Intermediate",
+      "question": "How do you upload a file to a server from a MAUI app?",
+      "answer": "Build a MultipartFormDataContent, add the file as a StreamContent with a name and file name, and post it with PostAsync. Read the file through a stream from the picked FileResult rather than loading it fully into memory. Set the content type appropriately for the server. Handle progress and cancellation for large uploads.",
+      "tags": ["http", "upload"],
+      "code": "using var form = new MultipartFormDataContent();\nvar stream = await fileResult.OpenReadAsync();\nform.Add(new StreamContent(stream), \"file\", fileResult.FileName);\nvar response = await http.PostAsync(\"upload\", form);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-018",
+      "difficulty": "Intermediate",
+      "question": "How do you implement pull-to-refresh when loading remote data?",
+      "answer": "Wrap the list in a RefreshView, bind IsRefreshing to a view model property, and bind a RefreshCommand that reloads data. Set IsRefreshing to false when the load completes so the spinner stops. Handle errors so the indicator always resets. This gives users a familiar gesture to refresh remote content.",
+      "tags": ["refreshview", "http"],
+      "code": "<RefreshView IsRefreshing=\"{Binding IsBusy}\"\n             Command=\"{Binding LoadCommand}\">\n  <CollectionView ItemsSource=\"{Binding Items}\" />\n</RefreshView>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/controls/refreshview"]
+    },
+    {
+      "id": "http-019",
+      "difficulty": "Intermediate",
+      "question": "How do you configure the HttpClient timeout?",
+      "answer": "Set the Timeout property on the client or pass a CancellationToken with a linked timeout for individual calls. A global timeout applies to all requests through that client, while per-call cancellation gives finer control. Very long timeouts can leave the UI waiting; very short ones fail on slow networks. Choose a value that matches your API's expected latency.",
+      "tags": ["http", "timeout"],
+      "code": "http.Timeout = TimeSpan.FromSeconds(30);\n// or per call:\nusing var cts = new CancellationTokenSource(TimeSpan.FromSeconds(10));",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-020",
+      "difficulty": "Intermediate",
+      "question": "How do you use HttpClientFactory to manage handler lifetime?",
+      "answer": "IHttpClientFactory creates clients on demand while pooling the underlying handlers, so sockets are reused but configuration is not stale. Register it with AddHttpClient and inject either IHttpClientFactory or a typed client. The factory handles handler rotation so DNS changes are picked up. This avoids both per-request clients and long-lived stale handlers.",
+      "tags": ["httpclient", "factory"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement offline caching of web responses?",
+      "answer": "Store responses in a local cache such as a SQLite table or JSON files keyed by URL, and serve cached data when the network is unavailable or a request fails. Include a timestamp to expire stale entries and a policy for when to refresh. Return cached data immediately while fetching fresh data in the background for a responsive experience. Make the cache layer transparent to view models so they do not manage it.",
+      "tags": ["http", "caching"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-022",
+      "difficulty": "Advanced",
+      "question": "How do you configure source-generated JSON serialization for trimming and AOT?",
+      "answer": "Define a partial class deriving from JsonSerializerContext with JsonSerializable attributes for each type, then pass its Default or a named instance as the TypeInfoResolver to serializer options. This generates serialization code at build time, removing reflection so trimming and Native AOT keep the needed members. It also improves startup and throughput. Use it whenever you enable trimming or AOT for release builds.",
+      "tags": ["json", "aot"],
+      "code": "[JsonSerializable(typeof(List<Item>))]\ninternal partial class AppJsonContext : JsonSerializerContext { }\n\nvar items = JsonSerializer.Deserialize(json, AppJsonContext.Default.ListItem);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/nativeaot"]
+    },
+    {
+      "id": "http-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle TLS and certificate validation concerns in MAUI?",
+      "answer": "HTTPS is enforced by default and the platform validates certificates, so do not disable validation in production. During development against a local service you may need to trust a dev certificate or, on Android, allow cleartext for a specific host via a network security config. Pinning certificates adds security but complicates rotation. Prefer fixing the server certificate over bypassing validation in the client.",
+      "tags": ["http", "security"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/local-web-services"]
+    },
+    {
+      "id": "http-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement resilient API calls with retries and circuit breaking?",
+      "answer": "Use a policy library such as Polly to retry transient failures with exponential backoff and jitter, and a circuit breaker to stop hammering a failing service. Apply policies through a DelegatingHandler or the HTTP client builder so every call benefits. Distinguish transient errors from permanent ones so you do not retry 400-level responses. Combine with caching and offline handling for a robust experience.",
+      "tags": ["http", "resilience"],
+      "code": "builder.Services.AddHttpClient<IApiService, ApiService>()\n    .AddStandardResilienceHandler();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "http-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a real-time connection versus polling for live data?",
+      "answer": "A persistent connection such as SignalR or WebSockets pushes updates immediately and reduces wasted requests, but it needs connection management, reconnection logic, and server support. Polling is simpler to implement and works with plain REST but adds latency and redundant traffic, and it drains battery if too frequent. Choose push when timeliness matters and the server can support it, otherwise poll with a sensible interval and back off when idle. Many apps combine an initial REST fetch with a push channel for updates.",
+      "tags": ["realtime", "http"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    }
+  ]
+}
