@@ -1,0 +1,365 @@
+{
+  "category": "Integration Testing",
+  "slug": "integration",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "integration-001",
+      "difficulty": "Beginner",
+      "question": "What is an integration test?",
+      "answer": "An integration test verifies that two or more real components work together, such as your code and a database or a web API and its middleware. It sits between unit tests and full end-to-end tests in scope and speed. Its purpose is to catch wiring and contract problems that unit tests cannot.",
+      "tags": [
+        "integration",
+        "concepts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "integration-002",
+      "difficulty": "Beginner",
+      "question": "How does an integration test differ from a unit test?",
+      "answer": "A unit test exercises one unit in isolation with its dependencies replaced, while an integration test uses real dependencies to verify how they fit together. Integration tests are slower and less numerous but give higher confidence in the seams. Both are needed for a healthy suite.",
+      "tags": [
+        "integration",
+        "concepts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-003",
+      "difficulty": "Beginner",
+      "question": "How do you mark integration tests so they can be run separately?",
+      "answer": "Apply an NUnit category such as [Category(\"Integration\")] at the fixture or assembly level, then include or exclude it with --filter or --where. This lets CI run fast unit tests on every push and integration tests on a schedule or a merge. Keeping them categorised makes selection simple.",
+      "code": "[TestFixture]\n[Category(\"Integration\")]\npublic class OrderApiTests { }",
+      "tags": [
+        "integration",
+        "category"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/category.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests"
+      ]
+    },
+    {
+      "id": "integration-004",
+      "difficulty": "Beginner",
+      "question": "What is a test fixture that starts a real dependency called?",
+      "answer": "It is often called a fixture or a harness: a class that starts and stops a shared resource such as a database, message broker or web host for a group of tests. NUnit's [OneTimeSetUp] and [OneTimeTearDown] are the natural hooks for its lifetime. Centralising the setup avoids duplication across tests.",
+      "tags": [
+        "integration",
+        "fixtures"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimeteardown.html"
+      ]
+    },
+    {
+      "id": "integration-005",
+      "difficulty": "Beginner",
+      "question": "Why are integration tests usually slower than unit tests?",
+      "answer": "They perform real I/O such as opening database connections, starting a host or making HTTP calls, which takes far longer than in-memory calls. The extra cost buys realistic coverage of wiring and contracts. Categorising them lets you keep the fast feedback loop intact.",
+      "tags": [
+        "integration",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-006",
+      "difficulty": "Beginner",
+      "question": "How do you run an integration test against an in-memory web host?",
+      "answer": "Use WebApplicationFactory to start the app in memory and CreateClient to obtain an HttpClient that routes to it. This exercises the real pipeline without a network port. It is the standard approach for ASP.NET Core integration tests.",
+      "code": "await using var factory = new WebApplicationFactory<Program>();\nvar client = factory.CreateClient();",
+      "tags": [
+        "integration",
+        "webapplicationfactory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1"
+      ]
+    },
+    {
+      "id": "integration-007",
+      "difficulty": "Beginner",
+      "question": "What is a smoke test?",
+      "answer": "A smoke test is a shallow check that the application starts and its critical paths respond, used to catch gross breakage quickly. It is not exhaustive; it confirms the system is alive enough for deeper tests. Smoke tests are common right after deployment.",
+      "tags": [
+        "integration",
+        "smoke"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-008",
+      "difficulty": "Beginner",
+      "question": "How do you clean up resources created by an integration test?",
+      "answer": "Dispose hosts and containers in [OneTimeTearDown] or [TearDown], delete seeded data, and release any started processes. Cleanup prevents tests from leaking state into one another. A reliable teardown is as important as a reliable setup.",
+      "code": "[OneTimeTearDown]\npublic async Task Cleanup() => await _factory.DisposeAsync();",
+      "tags": [
+        "integration",
+        "cleanup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimeteardown.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "integration-009",
+      "difficulty": "Beginner",
+      "question": "What is an end-to-end test?",
+      "answer": "An end-to-end test drives the whole system through its external interface, often including a real database, external services and even a browser. It gives the highest confidence but is the slowest and most brittle layer. Keep the number of these tests small and focused on critical journeys.",
+      "tags": [
+        "integration",
+        "e2e"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-010",
+      "difficulty": "Beginner",
+      "question": "How do you assert on a database row after an integration test action?",
+      "answer": "Query the database through a fresh context or a direct connection and assert that the expected row exists with the expected values. Reading through a separate context avoids relying on cached state. This confirms the action actually persisted what it claimed.",
+      "code": "var saved = await new AppDbContext(options).Orders.FindAsync(id);\nAssert.That(saved, Is.Not.Null);",
+      "tags": [
+        "integration",
+        "database"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "integration-011",
+      "difficulty": "Intermediate",
+      "question": "How do you isolate integration tests that share a database?",
+      "answer": "Give each test its own transaction that is rolled back, its own schema, or its own database created and dropped per run, and seed only the data the test needs. Isolation prevents cross-test interference and order dependence. Choose the approach that balances speed against fidelity.",
+      "tags": [
+        "integration",
+        "isolation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/choosing-a-testing-strategy"
+      ]
+    },
+    {
+      "id": "integration-012",
+      "difficulty": "Intermediate",
+      "question": "What is Testcontainers and why is it useful?",
+      "answer": "Testcontainers spins up real dependencies such as SQL Server, PostgreSQL or Redis in disposable Docker containers for the duration of a test run. It gives high fidelity with good isolation and no shared environment. It requires a container runtime on the build agent.",
+      "tags": [
+        "integration",
+        "testcontainers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "integration-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test a component that calls an external HTTP API?",
+      "answer": "Either replace the outbound client with a stub handler so the test is deterministic, or, for a genuine integration check, point it at a controlled fake server. Most tests should stub the boundary and keep a small number of true integration tests. Determinism is the priority for the bulk of the suite.",
+      "code": "var handler = new Mock<HttpMessageHandler>();\nclient = new HttpClient(handler.Object);",
+      "tags": [
+        "integration",
+        "http"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory"
+      ]
+    },
+    {
+      "id": "integration-014",
+      "difficulty": "Intermediate",
+      "question": "How do you make integration tests deterministic when they involve time?",
+      "answer": "Inject a controllable clock or TimeProvider and advance it explicitly, rather than sleeping or relying on the wall clock. This removes timing flakiness. Deterministic time is one of the highest-value testability investments.",
+      "tags": [
+        "integration",
+        "determinism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.timeprovider",
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html"
+      ]
+    },
+    {
+      "id": "integration-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle configuration in integration tests?",
+      "answer": "Provide test-specific configuration through the host builder, environment variables or an in-memory configuration source, pointing at test resources. Never let an integration test read production configuration. Explicit test configuration keeps runs reproducible.",
+      "code": "builder.ConfigureAppConfiguration(c => c.AddInMemoryCollection(\n    new Dictionary<string, string> { [\"Api:BaseUrl\"] = \"http://localhost\" }));",
+      "tags": [
+        "integration",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test that a message is published to a queue?",
+      "answer": "Point the component at a test broker or a fake publisher, perform the action, and assert that the expected message was published with the right payload. Where a fake is used, verify the interaction; where a real broker is used, consume the message. Both approaches validate the contract.",
+      "tags": [
+        "integration",
+        "messaging"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "integration-017",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of a test host's service provider in integration tests?",
+      "answer": "It exposes the application's real composition so tests can resolve services and seed data through the same registrations production uses. This verifies that the wiring is correct. It also lets you reach internal components without duplicating construction logic.",
+      "tags": [
+        "integration",
+        "di"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-018",
+      "difficulty": "Intermediate",
+      "question": "How do you seed data for an integration test?",
+      "answer": "Insert the required rows in setup using the application's context or a direct script, then assert against them. Seed only what the test needs to keep it fast and readable. Reset the data before each test or fixture so runs are independent.",
+      "code": "[SetUp]\npublic async Task Seed()\n{\n    _db.Orders.Add(new Order { Id = 1, Total = 90 });\n    await _db.SaveChangesAsync();\n}",
+      "tags": [
+        "integration",
+        "seeding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database",
+        "https://learn.microsoft.com/en-us/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "integration-019",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on HTTP headers in an integration test?",
+      "answer": "Inspect response.Headers or response.Content.Headers, for example checking the Content-Type or a custom header, and assert with a constraint. Headers are part of the API contract. Asserting on them catches caching and content negotiation regressions.",
+      "code": "Assert.That(response.Content.Headers.ContentType.MediaType,\n    Is.EqualTo(\"application/json\"));",
+      "tags": [
+        "integration",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient"
+      ]
+    },
+    {
+      "id": "integration-020",
+      "difficulty": "Intermediate",
+      "question": "How do you keep integration tests fast enough for CI?",
+      "answer": "Share expensive resources at fixture level, run tests in parallel where isolation allows, keep the number of full end-to-end tests small, and categorise the heavy tests so a fast subset runs on every commit. Speed comes from fewer real resources and better isolation. Measure and prune slow tests regularly.",
+      "tags": [
+        "integration",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "integration-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between in-memory and containerised databases for integration tests?",
+      "answer": "An in-memory provider is fast and simple but may not match the real database's SQL behaviour, constraints or types, so it can miss provider-specific bugs. A containerised real database has high fidelity but is slower and needs a container runtime. Many teams use containers for critical data access and in-memory for lighter cases.",
+      "tags": [
+        "integration",
+        "database"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/providers/sqlite/",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    },
+    {
+      "id": "integration-022",
+      "difficulty": "Advanced",
+      "question": "How do you test resilience behaviour such as retries and circuit breakers?",
+      "answer": "Inject a handler that returns failures a controlled number of times, then assert that the operation eventually succeeds or that the circuit opens as designed. Simulating failures deterministically is the only reliable way to exercise resilience. Avoid relying on real outages.",
+      "tags": [
+        "integration",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "integration-023",
+      "difficulty": "Advanced",
+      "question": "How do you decide the boundary of an integration test?",
+      "answer": "Include the components whose interaction you want to verify and exclude everything else, replacing the excluded parts with fakes or test resources. A well-chosen boundary makes failures point clearly at the broken interaction. Testing too much makes diagnosis hard; too little misses the point of integration.",
+      "tags": [
+        "integration",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-024",
+      "difficulty": "Advanced",
+      "question": "How do you test a multi-service system without deploying every service?",
+      "answer": "Use contract or consumer-driven tests to verify each service against recorded expectations of its neighbours, and run a small number of true end-to-end tests for critical journeys. This catches contract drift cheaply. Full deployment of every service for every test is rarely practical.",
+      "tags": [
+        "integration",
+        "contracts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "integration-025",
+      "difficulty": "Advanced",
+      "question": "What are common causes of flaky integration tests and how do you fix them?",
+      "answer": "Common causes include shared mutable state, real clocks, fixed ports, unseeded randomness and reliance on external services. Fix them by isolating resources, injecting clocks, choosing dynamic ports and stubbing outbound calls. Treating flakiness as a defect rather than re-running is the only durable fix.",
+      "tags": [
+        "integration",
+        "flaky"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    }
+  ]
+}

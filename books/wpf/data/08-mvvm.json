@@ -1,0 +1,216 @@
+{
+  "category": "MVVM Pattern",
+  "slug": "mvvm",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "mvvm-001",
+      "difficulty": "Beginner",
+      "question": "What is the MVVM pattern?",
+      "answer": "MVVM stands for Model-View-ViewModel and separates an application into three roles. The Model holds data and business logic, the View is the XAML UI, and the ViewModel exposes data and commands for the View. Data binding and commands connect the View and ViewModel so they stay loosely coupled.",
+      "tags": ["mvvm", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-002",
+      "difficulty": "Beginner",
+      "question": "What is the role of the ViewModel?",
+      "answer": "The ViewModel is the presentation logic layer that exposes properties and commands the View binds to. It holds UI state such as whether a button is enabled and formats model data for display. It should have no direct reference to WPF controls so it stays testable.",
+      "tags": ["viewmodel", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the Model and the ViewModel?",
+      "answer": "The Model represents domain data and business rules and is independent of the UI. The ViewModel adapts the Model for a specific View by exposing bindable properties, commands, and validation. The Model knows nothing about the ViewModel, which keeps domain logic reusable.",
+      "tags": ["model", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-004",
+      "difficulty": "Beginner",
+      "question": "How do commands support MVVM?",
+      "answer": "Commands let the View trigger ViewModel logic without code-behind event handlers. The ViewModel exposes ICommand properties, and controls bind their Command property to them. This keeps the View declarative and the ViewModel free of UI references.",
+      "tags": ["commands", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.input.icommand"]
+    },
+    {
+      "id": "mvvm-005",
+      "difficulty": "Beginner",
+      "question": "How does a View get its ViewModel?",
+      "answer": "The View can create the ViewModel and assign it to DataContext in code or XAML, or a container or framework can inject it. In larger apps a dependency injection container supplies the ViewModel. Setting DataContext is what makes bindings resolve.",
+      "code": "public MainWindow()\n{\n    InitializeComponent();\n    DataContext = new MainViewModel();\n}",
+      "tags": ["datacontext", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-specify-the-binding-source"]
+    },
+    {
+      "id": "mvvm-006",
+      "difficulty": "Beginner",
+      "question": "What base class is commonly used for a ViewModel?",
+      "answer": "ViewModels typically implement INotifyPropertyChanged, often through a base class such as ViewModelBase or a library like CommunityToolkit.Mvvm's ObservableObject. The base class provides an OnPropertyChanged helper. This reduces boilerplate and keeps change notifications consistent.",
+      "code": "public class MainViewModel : ViewModelBase\n{\n    private string _name;\n    public string Name\n    {\n        get => _name;\n        set => SetProperty(ref _name, value);\n    }\n}",
+      "tags": ["base-class", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.componentmodel.inotifypropertychanged"]
+    },
+    {
+      "id": "mvvm-007",
+      "difficulty": "Beginner",
+      "question": "Why should a ViewModel avoid referencing WPF controls?",
+      "answer": "Referencing controls couples the ViewModel to the UI, making it hard to unit test and reuse. Instead the ViewModel exposes plain properties and commands that the View binds to. This separation is the main reason MVVM improves testability.",
+      "tags": ["testability", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-008",
+      "difficulty": "Beginner",
+      "question": "How do you handle a button click in MVVM?",
+      "answer": "Bind the button's Command to an ICommand exposed by the ViewModel instead of writing a Click handler. The command's Execute runs the logic and CanExecute controls whether the button is enabled. This keeps the click behavior in the ViewModel.",
+      "code": "<Button Content=\"Save\" Command=\"{Binding SaveCommand}\"/>",
+      "tags": ["commands", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.input.icommand"]
+    },
+    {
+      "id": "mvvm-009",
+      "difficulty": "Beginner",
+      "question": "What is a RelayCommand?",
+      "answer": "A RelayCommand is a common ICommand implementation that wraps a delegate for execution and an optional predicate for CanExecute. It lets you define commands with lambdas instead of a class per command. Many MVVM toolkits provide their own version, such as RelayCommand or DelegateCommand.",
+      "code": "public ICommand SaveCommand =>\n    new RelayCommand(_ => Save(), _ => CanSave());",
+      "tags": ["relaycommand", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.input.icommand"]
+    },
+    {
+      "id": "mvvm-010",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of a ViewModel locator?",
+      "answer": "A ViewModel locator maps a View to its ViewModel so the View can obtain it without hard-coding the type. It is often implemented as a resource or with a dependency injection container. This centralizes ViewModel creation and supports design-time data.",
+      "tags": ["viewmodel-locator", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-make-data-available-for-binding-in-xaml"]
+    },
+    {
+      "id": "mvvm-011",
+      "difficulty": "Intermediate",
+      "question": "How do you expose a collection in a ViewModel for binding?",
+      "answer": "Expose an ObservableCollection property and bind an ItemsControl's ItemsSource to it. Changes to the collection raise CollectionChanged and update the UI. The ViewModel owns the collection and populates it from the Model.",
+      "code": "public ObservableCollection<Order> Orders { get; } = new();",
+      "tags": ["collections", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-create-and-bind-to-an-observablecollection"]
+    },
+    {
+      "id": "mvvm-012",
+      "difficulty": "Intermediate",
+      "question": "How does a ViewModel notify the View that a property changed?",
+      "answer": "The ViewModel raises the PropertyChanged event from INotifyPropertyChanged, passing the property name. WPF updates any binding to that property. A base class typically provides a SetProperty helper that checks for equality and raises the event only when the value changes.",
+      "code": "protected bool SetProperty<T>(ref T field, T value,\n    [CallerMemberName] string name = null)\n{\n    if (EqualityComparer<T>.Default.Equals(field, value)) return false;\n    field = value;\n    OnPropertyChanged(name);\n    return true;\n}",
+      "tags": ["inotifypropertychanged", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-property-change-notification"]
+    },
+    {
+      "id": "mvvm-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle dialogs in MVVM without referencing the View?",
+      "answer": "Introduce a service interface such as IDialogService that the ViewModel calls, and implement it in the View layer. The ViewModel depends only on the interface, so it remains testable. The concrete implementation shows the actual dialog and returns the result.",
+      "tags": ["dialogs", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-014",
+      "difficulty": "Intermediate",
+      "question": "What is a value converter's role in MVVM?",
+      "answer": "Converters adapt values for display so the ViewModel can expose clean, UI-agnostic data. For example, a bool-to-visibility converter maps a ViewModel flag to Visibility. This keeps UI-specific formatting out of the ViewModel.",
+      "tags": ["converter", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-convert-bound-data"]
+    },
+    {
+      "id": "mvvm-015",
+      "difficulty": "Intermediate",
+      "question": "How do you keep CanExecute up to date in an MVVM command?",
+      "answer": "Raise the command's CanExecuteChanged when the relevant state changes, or rely on CommandManager.RequerySuggested to re-query after input. Many RelayCommand implementations expose a RaiseCanExecuteChanged method that triggers CommandManager.InvalidateRequerySuggested. Without this the button may stay enabled or disabled incorrectly.",
+      "tags": ["canexecute", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.input.icommand"]
+    },
+    {
+      "id": "mvvm-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use dependency injection with MVVM?",
+      "answer": "Register ViewModels and services in a DI container and resolve the ViewModel when the View is created. Services such as data access, dialogs, and navigation are injected through constructors. This improves testability and centralizes configuration.",
+      "code": "services.AddSingleton<IDataService, DataService>();\nservices.AddTransient<MainViewModel>();",
+      "tags": ["dependency-injection", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle validation in a ViewModel?",
+      "answer": "Implement IDataErrorInfo or INotifyDataErrorInfo on the ViewModel and validate in the setter or on a Validate method. Bindings surface the errors through Validation.Errors and a validation error template. INotifyDataErrorInfo supports multiple and asynchronous errors.",
+      "tags": ["validation", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-validation-logic-on-custom-objects"]
+    },
+    {
+      "id": "mvvm-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the Model and the ViewModel for a collection of items?",
+      "answer": "The Model collection holds domain entities such as a list of Customer objects. The ViewModel may wrap them in item ViewModels that add selection state, commands, or formatting. This wrapping keeps UI concerns out of the domain model.",
+      "tags": ["model", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-019",
+      "difficulty": "Intermediate",
+      "question": "How do you support design-time data in a ViewModel?",
+      "answer": "Use the d:DataContext or d:DesignInstance attribute in XAML to provide sample data for the designer. You can also have the ViewModel detect design mode and return mock data. This lets designers see a populated UI without running the full application.",
+      "code": "<Window d:DataContext=\"{d:DesignInstance Type=vm:MainViewModel,\n                             IsDesignTimeCreatable=True}\">",
+      "tags": ["design-time", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/markup-compatibility-mc-language-features"]
+    },
+    {
+      "id": "mvvm-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between TwoWay binding and commanding in MVVM?",
+      "answer": "TwoWay binding moves data between a control and a ViewModel property, such as text in a TextBox. Commanding invokes an action in the ViewModel, such as saving. Both keep the View declarative, but they serve data flow versus behavior.",
+      "tags": ["binding", "commands"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-declarations-overview"]
+    },
+    {
+      "id": "mvvm-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement navigation in MVVM?",
+      "answer": "Expose a navigation service that the ViewModel calls with a target, and let the View or shell host the current content in a ContentControl or Frame. The service resolves the target ViewModel and updates the host. This keeps navigation logic testable and out of the View.",
+      "tags": ["navigation", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/navigation-overview"]
+    },
+    {
+      "id": "mvvm-022",
+      "difficulty": "Advanced",
+      "question": "How do you use async operations in a ViewModel?",
+      "answer": "Expose an async method or an async command that awaits work and raises PropertyChanged on completion. Because await resumes on the captured synchronization context, updates to bound properties happen on the UI thread. Use an IsBusy flag to disable commands during the operation.",
+      "code": "public async Task LoadAsync()\n{\n    IsBusy = true;\n    Orders = new ObservableCollection<Order>(await _service.GetAsync());\n    IsBusy = false;\n}",
+      "tags": ["async", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "mvvm-023",
+      "difficulty": "Advanced",
+      "question": "How do you compose multiple ViewModels in a larger application?",
+      "answer": "A parent ViewModel exposes child ViewModels as properties, and the View binds nested ContentControls to them with DataTemplates. This creates a tree of ViewModels that mirrors the UI. Messaging or a mediator can let sibling ViewModels communicate without direct references.",
+      "tags": ["composition", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "mvvm-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of MVVM?",
+      "answer": "MVVM improves testability, separation of concerns, and maintainability for complex UIs. It adds indirection and boilerplate, which can be overkill for small tools. Teams often adopt it with a toolkit such as CommunityToolkit.Mvvm to reduce ceremony.",
+      "tags": ["mvvm", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "mvvm-025",
+      "difficulty": "Advanced",
+      "question": "How can a ViewModel communicate with another ViewModel without tight coupling?",
+      "answer": "Use a messaging or mediator service that publishes and subscribes to typed messages. The sender raises a message and interested receivers handle it, with no direct references. This decouples ViewModels and works well with a toolkit's messenger such as WeakReferenceMessenger.",
+      "tags": ["messaging", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/weak-event-patterns"]
+    }
+  ]
+}

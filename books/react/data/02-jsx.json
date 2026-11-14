@@ -1,0 +1,344 @@
+{
+  "category": "JSX & Rendering",
+  "slug": "jsx",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "jsx-001",
+      "difficulty": "Beginner",
+      "question": "What is JSX and why does React use it?",
+      "answer": "JSX is a syntax extension that lets you write HTML-like markup directly in JavaScript. It compiles to function calls that create React elements, so it is a more readable way to build the element tree. React uses it because it keeps markup and the logic that drives it together instead of splitting them across files. It also enables compile-time checks and editor tooling.",
+      "tags": [
+        "jsx",
+        "syntax"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "jsx-002",
+      "difficulty": "Beginner",
+      "question": "How do you embed a JavaScript expression in JSX?",
+      "answer": "You wrap any JavaScript expression in curly braces, and React evaluates it and inserts the result into the tree. You can place expressions in text, in attribute values and inside style objects. Statements such as if or for are not allowed, but expressions and function calls are. This is how dynamic values like variables and computed results reach the markup.",
+      "code": "const name = 'Ada';\nconst el = <h1>Hello, {name}!</h1>;\nconst total = <p>{1 + 2 + 3}</p>;",
+      "tags": [
+        "jsx",
+        "expressions"
+      ],
+      "references": [
+        "https://react.dev/learn/javascript-in-jsx-with-curly-braces"
+      ]
+    },
+    {
+      "id": "jsx-003",
+      "difficulty": "Beginner",
+      "question": "What are the differences between JSX attributes and HTML attributes?",
+      "answer": "JSX attributes mostly mirror HTML but use camelCase for multi-word names, so class becomes className and for becomes htmlFor. Because JSX compiles to JavaScript, attribute names must be valid identifiers and cannot collide with reserved words. Event handlers use camelCase names like onClick and receive functions. Data and aria attributes keep their hyphenated lowercase form.",
+      "tags": [
+        "jsx",
+        "attributes"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "jsx-004",
+      "difficulty": "Beginner",
+      "question": "How do you write a comment inside JSX?",
+      "answer": "You cannot use plain JavaScript comments between elements in JSX; instead you wrap a comment in braces and a block comment. Outside of JSX, in the surrounding JavaScript, normal line and block comments work as usual. The brace form is the idiomatic way to annotate markup. It is evaluated as an expression and produces nothing visible.",
+      "code": "<div>\n  {/* This comment is inside JSX */}\n  <p>Hello</p>\n</div>",
+      "tags": [
+        "jsx",
+        "comments"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "jsx-005",
+      "difficulty": "Beginner",
+      "question": "Why must a component return a single parent element?",
+      "answer": "JSX must return exactly one root element because the compiler turns markup into a single expression that creates one element. To return several siblings, wrap them in a container such as a div or use a fragment. Fragments let you group elements without adding an extra node to the DOM. This keeps the returned value a well-formed element tree.",
+      "tags": [
+        "jsx",
+        "fragments"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Fragment"
+      ]
+    },
+    {
+      "id": "jsx-006",
+      "difficulty": "Beginner",
+      "question": "What is a fragment and when should you use one?",
+      "answer": "A fragment is a special component that lets you group multiple elements without creating an extra DOM node. You write it as the empty tag syntax or as React.Fragment. Use it when a wrapper div would break your layout or add unwanted nesting, such as inside a table or flex container. Fragments can only take the key prop, not other attributes.",
+      "code": "function List() {\n  return (\n    <>\n      <li>One</li>\n      <li>Two</li>\n    </>\n  );\n}",
+      "tags": [
+        "fragments",
+        "jsx"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Fragment"
+      ]
+    },
+    {
+      "id": "jsx-007",
+      "difficulty": "Beginner",
+      "question": "How do you render a list in JSX?",
+      "answer": "You transform an array of data into an array of elements using the map method and then place that array in JSX. React renders each element in order, and you should give each one a unique key. Returning a single expression from the map callback keeps the code readable. You can also filter the data before mapping.",
+      "code": "const items = ['a', 'b', 'c'];\nconst list = (\n  <ul>\n    {items.map((item) => <li key={item}>{item}</li>)}\n  </ul>\n);",
+      "tags": [
+        "jsx",
+        "lists"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "jsx-008",
+      "difficulty": "Beginner",
+      "question": "How do you apply inline styles in JSX?",
+      "answer": "Inline styles use the style attribute with a JavaScript object instead of a CSS string. Property names are camelCase, and numeric values are treated as pixels unless you specify a unit. You build the object in an expression and pass it to style. For anything beyond a few dynamic values, a class or CSS file is usually cleaner.",
+      "code": "const box = { padding: 12, backgroundColor: 'navy', color: '#fff' };\nconst el = <div style={box}>Styled</div>;",
+      "tags": [
+        "jsx",
+        "styles"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/common"
+      ]
+    },
+    {
+      "id": "jsx-009",
+      "difficulty": "Beginner",
+      "question": "How do you conditionally render content in JSX?",
+      "answer": "You can use a ternary operator or the logical AND operator to choose what to render based on a condition. Returning null renders nothing, and you can also branch before the return statement with an early return. Because JSX is an expression, conditional operators fit naturally inside it. Avoid deeply nested ternaries, which hurt readability.",
+      "code": "const el = <div>{isLoggedIn ? <Home /> : <Login />}</div>;\nconst note = <div>{count > 0 && <span>{count} items</span>}</div>;",
+      "tags": [
+        "jsx",
+        "conditional-rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "jsx-010",
+      "difficulty": "Beginner",
+      "question": "What is the role of the className attribute?",
+      "answer": "JSX uses className instead of class because class is a reserved word in JavaScript. You assign it a string, or build the string dynamically from an expression or helper. For multiple conditional classes, template literals or a small helper keep the logic readable. The rendered DOM still receives the standard class attribute.",
+      "code": "const cls = `btn ${isActive ? 'btn-active' : ''}`;\nconst el = <button className={cls}>Go</button>;",
+      "tags": [
+        "jsx",
+        "className"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "jsx-011",
+      "difficulty": "Intermediate",
+      "question": "How do you spread props onto an element in JSX?",
+      "answer": "You use the spread syntax with braces to pass all properties of an object as individual props. This is handy for forwarding a set of props to a child or a DOM element. Order matters, because later attributes override earlier ones, so place explicit props after the spread to guarantee their values. Spreading everything blindly can leak unexpected props to the DOM.",
+      "code": "const props = { id: 'name', placeholder: 'Name' };\nconst el = <input {...props} required />;",
+      "tags": [
+        "jsx",
+        "spread"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "jsx-012",
+      "difficulty": "Intermediate",
+      "question": "What does JSX compile into?",
+      "answer": "JSX compiles into function calls that create React elements, historically React.createElement and now the automatic jsx runtime from react/jsx-runtime. The runtime variant means you no longer need to import React in every file. Each call returns a plain object describing the type, props and children. Understanding this explains why JSX is just JavaScript.",
+      "tags": [
+        "jsx",
+        "compilation"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createElement"
+      ]
+    },
+    {
+      "id": "jsx-013",
+      "difficulty": "Intermediate",
+      "question": "Why can you not use if statements directly inside JSX?",
+      "answer": "JSX is an expression that produces a value, so it can only contain other expressions, and an if statement is a control-flow statement with no value. You can instead use the ternary operator, logical operators, or compute the value before returning. Moving branching logic above the return often reads better than embedding it. Function calls that contain statements are allowed because the call itself is an expression.",
+      "tags": [
+        "jsx",
+        "expressions"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "jsx-014",
+      "difficulty": "Intermediate",
+      "question": "How do you render HTML from a string safely?",
+      "answer": "React escapes text by default, so a string placed in JSX is shown literally and cannot inject markup. To render trusted HTML you can use dangerouslySetInnerHTML with an object that has an __html key. This bypasses escaping and opens the door to cross-site scripting if the content is untrusted. Prefer sanitizing the HTML or rendering structured data as elements instead.",
+      "tags": [
+        "jsx",
+        "security"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/common"
+      ]
+    },
+    {
+      "id": "jsx-015",
+      "difficulty": "Intermediate",
+      "question": "What happens if you return false, null, undefined or true from a component?",
+      "answer": "React renders nothing for null, undefined, false and true, which is why the logical AND pattern works for conditional rendering. An empty string also renders nothing visible, while the number 0 renders the character zero, a frequent source of accidental output. Arrays render their items in sequence. Knowing these rules helps you avoid stray values appearing on screen.",
+      "tags": [
+        "jsx",
+        "rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "jsx-016",
+      "difficulty": "Intermediate",
+      "question": "What is props.children and how is it used?",
+      "answer": "props.children is whatever you place between a component opening and closing tags, and it can be a single element, an array, text or a function. It lets a component wrap or compose arbitrary content. When there are multiple children they arrive as an array, so handle them with care. Using children keeps components flexible and avoids passing content through many named props.",
+      "tags": [
+        "jsx",
+        "children"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component"
+      ]
+    },
+    {
+      "id": "jsx-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle boolean attributes in JSX?",
+      "answer": "A boolean attribute passed as true renders the attribute, and passing false omits it, so you can write disabled={isDisabled}. For true you may also write the attribute shorthand with no value. Unlike HTML strings, JSX does not treat the mere presence of a false value as truthy. This maps cleanly onto how React sets DOM properties.",
+      "code": "<button disabled={isLoading}>Save</button>\n<input required />",
+      "tags": [
+        "jsx",
+        "attributes"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/common"
+      ]
+    },
+    {
+      "id": "jsx-018",
+      "difficulty": "Intermediate",
+      "question": "Why does React warn about unknown DOM attributes?",
+      "answer": "React validates attribute names against known DOM properties to catch typos and naming mismatches. If you use a lowercase, unknown attribute that is not a valid DOM property, React warns because it will not be applied as expected. Custom data and aria attributes are allowed, and custom elements pass attributes through. Fixing the warning usually means correcting the casing or the name.",
+      "tags": [
+        "jsx",
+        "warnings"
+      ],
+      "references": [
+        "https://react.dev/warnings/unknown-prop"
+      ]
+    },
+    {
+      "id": "jsx-019",
+      "difficulty": "Intermediate",
+      "question": "How do you add whitespace and line breaks in JSX?",
+      "answer": "JSX collapses whitespace around newlines, so blank lines between elements are removed and do not create spaces. To force a space, use an explicit expression such as a space string in braces, or write the text on one line. For line breaks inside text you can use a br element. Understanding this prevents surprising spacing in rendered output.",
+      "code": "<p>Hello{' '}world</p>",
+      "tags": [
+        "jsx",
+        "whitespace"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "jsx-020",
+      "difficulty": "Intermediate",
+      "question": "What are the rules for naming components?",
+      "answer": "Component names must start with a capital letter so JSX can tell them apart from lowercase HTML tags. A lowercase tag like div becomes a DOM element, while an uppercase name like Card is treated as a component reference. Names should be descriptive and PascalCase by convention. This distinction is a common cause of components silently rendering as unknown tags.",
+      "tags": [
+        "jsx",
+        "naming"
+      ],
+      "references": [
+        "https://react.dev/learn/your-first-component"
+      ]
+    },
+    {
+      "id": "jsx-021",
+      "difficulty": "Advanced",
+      "question": "How does the automatic JSX runtime change your imports?",
+      "answer": "With the automatic runtime introduced in React 17, the compiler imports the functions it needs from react/jsx-runtime for you. That means you no longer import React just to use JSX, which trims unused imports and simplifies files. You still import hooks and other APIs from react when you use them. Older toolchains can opt into the classic runtime that calls React.createElement.",
+      "tags": [
+        "jsx",
+        "tooling"
+      ],
+      "references": [
+        "https://react.dev/blog/2020/09/22/introducing-the-new-jsx-transform"
+      ]
+    },
+    {
+      "id": "jsx-022",
+      "difficulty": "Advanced",
+      "question": "How can you type-check or validate JSX beyond JavaScript?",
+      "answer": "Tools like TypeScript or Flow add static types to props and JSX, catching mismatched attributes and missing required props at build time. The prop-types package offers a lighter runtime check but is largely superseded by type systems. Linters such as the ESLint react plugins catch incorrect patterns and accessibility issues. Combining a type system with linting gives the strongest safety net.",
+      "tags": [
+        "jsx",
+        "typescript"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "jsx-023",
+      "difficulty": "Advanced",
+      "question": "What is the purpose of the key attribute when rendering arrays of fragments?",
+      "answer": "When you return a list of fragments, each fragment needs a key so React can track its position and identity. You cannot put a key on the shorthand empty-tag syntax; you must use the explicit React.Fragment form. Without stable keys React may reuse the wrong fragment and misplace state. This mirrors the rules for any list of elements.",
+      "code": "items.map((it) => (\n  <React.Fragment key={it.id}>\n    <dt>{it.term}</dt>\n    <dd>{it.def}</dd>\n  </React.Fragment>\n))",
+      "tags": [
+        "jsx",
+        "fragments"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Fragment"
+      ]
+    },
+    {
+      "id": "jsx-024",
+      "difficulty": "Advanced",
+      "question": "How does JSX handle expressions that throw errors?",
+      "answer": "An error thrown while evaluating an expression during render propagates up and, if not caught by an error boundary, unmounts the tree. This is why guarding against null or undefined before accessing properties matters in JSX expressions. Error boundaries let you show a fallback instead of a blank screen. Keeping render expressions defensive improves resilience.",
+      "tags": [
+        "jsx",
+        "errors"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "jsx-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of inline functions and objects in JSX?",
+      "answer": "Creating a new function or object on every render is usually cheap and does not by itself cause performance problems. It matters mainly when that prop is passed to a memoized child, because a new reference defeats React.memo and can trigger extra renders. In those cases you can stabilize the value with useCallback or useMemo or hoist it outside the component. Optimize only when profiling shows a real cost.",
+      "tags": [
+        "jsx",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo",
+        "https://react.dev/reference/react/useCallback"
+      ]
+    }
+  ]
+}

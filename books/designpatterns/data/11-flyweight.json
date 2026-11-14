@@ -1,0 +1,212 @@
+{
+  "category": "Flyweight Pattern",
+  "slug": "flyweight",
+  "icon": "memory",
+  "questions": [
+    {
+      "id": "flyweight-001",
+      "difficulty": "Beginner",
+      "question": "How does the Flyweight pattern reduce memory usage?",
+      "answer": "Flyweight is a structural pattern that reduces memory usage by sharing common state among many similar objects. It separates intrinsic state, which is shared and immutable, from extrinsic state, which is unique and passed in by the caller. It is valuable when you must create a very large number of objects.",
+      "tags": ["flyweight", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between intrinsic and extrinsic state?",
+      "answer": "Intrinsic state is the part of an object that is constant and can be shared across many instances, such as a character glyph. Extrinsic state is the context-dependent part, such as the position of that character, and is stored outside the flyweight and passed in when needed. Moving shared data into the flyweight is what saves memory.",
+      "tags": ["flyweight", "state"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-003",
+      "difficulty": "Beginner",
+      "question": "What is a flyweight factory?",
+      "answer": "A flyweight factory creates and caches flyweight instances so the same intrinsic state is reused rather than recreated. When asked for a flyweight, it returns an existing one if present or creates and stores a new one. This ensures sharing and keeps the number of instances bounded.",
+      "tags": ["flyweight", "factory"],
+      "code": "public sealed class GlyphFactory\n{\n    private readonly Dictionary<char, Glyph> _cache = new();\n    public Glyph Get(char c) =>\n        _cache.TryGetValue(c, out var g) ? g : _cache[c] = new Glyph(c);\n}",
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-004",
+      "difficulty": "Beginner",
+      "question": "When is Flyweight worth using?",
+      "answer": "Use it when an application creates a very large number of objects that consume significant memory and much of their state can be shared. If object counts are modest or state cannot be meaningfully shared, the added complexity is not justified. The pattern shines in text editors, maps, and games.",
+      "tags": ["flyweight", "performance"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-005",
+      "difficulty": "Beginner",
+      "question": "Why must flyweights be immutable?",
+      "answer": "Because a single flyweight is shared by many contexts, any mutation would affect all of them unpredictably. Immutability guarantees that shared intrinsic state stays consistent. Extrinsic state that varies is kept outside the flyweight.",
+      "tags": ["flyweight", "immutability"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-006",
+      "difficulty": "Beginner",
+      "question": "What is a classic example of the Flyweight pattern?",
+      "answer": "A text editor storing one glyph object per character in a document can use flyweights for the character shape and store position and formatting separately. A tile map in a game can share tile type objects across thousands of tiles. Both cases have many objects with a small shared core of data.",
+      "tags": ["flyweight", "examples"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-007",
+      "difficulty": "Beginner",
+      "question": "How does string interning relate to Flyweight?",
+      "answer": "String interning stores a single copy of each distinct string literal and reuses it, which is exactly the sharing idea of Flyweight. The .NET runtime interns literals automatically, and you can intern dynamically with String.Intern. This saves memory when many identical strings occur.",
+      "tags": ["flyweight", "strings"],
+      "code": "string a = string.Intern(someDynamic);\nbool shared = ReferenceEquals(a, \"hello\");",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.string.intern"]
+    },
+    {
+      "id": "flyweight-008",
+      "difficulty": "Beginner",
+      "question": "What is the main trade-off of the Flyweight pattern?",
+      "answer": "It reduces memory at the cost of increased complexity because state must be split into shared and external parts and the factory must manage the cache. Extrinsic state handling adds parameters and logic. It is worth it only when memory pressure is real and measurable.",
+      "tags": ["flyweight", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-009",
+      "difficulty": "Beginner",
+      "question": "How does the flyweight factory decide when to create a new instance?",
+      "answer": "It computes a key from the intrinsic state and looks it up in a cache. If present, it returns the cached flyweight; otherwise it creates one, stores it, and returns it. The key must fully represent the shared state so distinct flyweights are not merged incorrectly.",
+      "tags": ["flyweight", "factory"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-010",
+      "difficulty": "Beginner",
+      "question": "How does Flyweight differ from a simple cache?",
+      "answer": "A flyweight is a shared immutable object whose identity is reused wherever its intrinsic state matches, and clients rely on that sharing. A cache is a general performance store that may hold mutable results and can be evicted independently. Flyweight is about sharing object state, while caching is about avoiding recomputation.",
+      "tags": ["flyweight", "caching"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a thread-safe flyweight factory?",
+      "answer": "Use a ConcurrentDictionary with GetOrAdd so concurrent requests share a single instance per key. The factory method passed to GetOrAdd may run more than once but only one result is stored, which is fine for immutable flyweights. This avoids locks around the whole lookup.",
+      "tags": ["flyweight", "concurrency"],
+      "code": "private readonly ConcurrentDictionary<char, Glyph> _cache = new();\npublic Glyph Get(char c) => _cache.GetOrAdd(c, k => new Glyph(k));",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2"]
+    },
+    {
+      "id": "flyweight-012",
+      "difficulty": "Intermediate",
+      "question": "How do you decide what belongs in intrinsic versus extrinsic state?",
+      "answer": "Put in intrinsic state the data that is identical across the largest number of contexts and never changes, since sharing it saves the most. Keep extrinsic state for values that differ per context or change frequently. The goal is to maximize the shared portion while keeping the object usable.",
+      "tags": ["flyweight", "state"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-013",
+      "difficulty": "Intermediate",
+      "question": "How can the Flyweight pattern reduce garbage collection pressure?",
+      "answer": "By reusing shared instances instead of allocating one per logical object, you create far fewer managed objects. Fewer allocations mean fewer collections and shorter pauses. This is especially valuable for large collections of similar small objects.",
+      "tags": ["flyweight", "gc"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/garbage-collection/"]
+    },
+    {
+      "id": "flyweight-014",
+      "difficulty": "Intermediate",
+      "question": "How does Flyweight interact with value types and structs in C#?",
+      "answer": "Value types are copied on assignment, so they do not share identity like flyweights do. However, keeping intrinsic state in small readonly structs inside a flyweight can improve locality. True sharing requires a reference type managed by the factory.",
+      "tags": ["flyweight", "structs"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/value-types"]
+    },
+    {
+      "id": "flyweight-015",
+      "difficulty": "Intermediate",
+      "question": "How would you model a document with flyweights for character formatting?",
+      "answer": "Represent character glyphs and font/format descriptors as flyweights keyed by their properties, and store a list of lightweight runs with positions and a reference to the shared flyweight. The document holds only the varying positions and references. This keeps memory proportional to distinct formats, not characters.",
+      "tags": ["flyweight", "text"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-016",
+      "difficulty": "Intermediate",
+      "question": "What is the role of a registry or pool in Flyweight?",
+      "answer": "The registry, usually the flyweight factory, maps keys to shared instances and ensures uniqueness of each intrinsic state. It is the component that realizes sharing. Without it, each context would create its own copy and defeat the pattern.",
+      "tags": ["flyweight", "registry"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test a flyweight implementation?",
+      "answer": "Assert that requesting the same intrinsic state twice returns the same instance and that different states return different instances. Verify that extrinsic state passed to operations does not mutate the flyweight. Also check that the factory does not grow unbounded for a bounded set of keys.",
+      "tags": ["flyweight", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "flyweight-018",
+      "difficulty": "Intermediate",
+      "question": "How does Flyweight relate to object pooling?",
+      "answer": "Flyweight shares a single immutable instance across many contexts, while pooling reuses mutable instances one borrower at a time. Pooling reduces allocation churn for expensive objects, whereas flyweight reduces memory for many similar objects. They solve different problems and can coexist.",
+      "tags": ["flyweight", "pooling"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.objectpool"]
+    },
+    {
+      "id": "flyweight-019",
+      "difficulty": "Intermediate",
+      "question": "How do you bound the size of a flyweight cache?",
+      "answer": "If the set of intrinsic states is finite, the cache is naturally bounded. If keys can be unbounded, cap the cache or use a weak reference so unused flyweights can be collected. Microsoft.Extensions.Caching.Memory offers size limits and eviction policies for this.",
+      "tags": ["flyweight", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.caching.memory.imemorycache"]
+    },
+    {
+      "id": "flyweight-020",
+      "difficulty": "Intermediate",
+      "question": "When can Flyweight make performance worse?",
+      "answer": "If the shared state is small or sharing is limited, the extra indirection and lookup cost can outweigh memory savings. Passing extrinsic state also adds parameters and can hurt cache locality. Measure memory and throughput before and after to confirm a benefit.",
+      "tags": ["flyweight", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "flyweight-021",
+      "difficulty": "Advanced",
+      "question": "How do you combine Flyweight with Composite in a large document model?",
+      "answer": "Use Composite to model the document tree of paragraphs and runs, and Flyweight to share character and style objects referenced by the runs. The tree provides structure while flyweights keep memory low. This combination is common in editors and layout engines.",
+      "tags": ["flyweight", "composite"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-022",
+      "difficulty": "Advanced",
+      "question": "How does the runtime's string interning differ from a custom flyweight cache?",
+      "answer": "String interning is a runtime-level mechanism that keeps one copy of each literal in the intern pool and is process-wide. A custom flyweight cache is application-specific, keyed by domain state, and can be scoped or disposed. Interned strings live for the process, while custom flyweights can be bounded or collected.",
+      "tags": ["flyweight", "interning"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.string.intern"]
+    },
+    {
+      "id": "flyweight-023",
+      "difficulty": "Advanced",
+      "question": "How would you apply Flyweight to a tile-based game map?",
+      "answer": "Define a tile type flyweight holding shared data like texture, terrain cost, and flags, and store the map as a grid of references to these types plus any per-cell state. Thousands of cells then share a handful of tile type objects. Rendering iterates the grid and looks up shared assets.",
+      "tags": ["flyweight", "games"],
+      "code": "public sealed record TileType(string Texture, int Cost, bool Blocks);\n// Grid stores TileType references and optional per-cell state.",
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "flyweight-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep flyweights efficient in a multithreaded, high-throughput service?",
+      "answer": "Build the flyweight cache eagerly at startup for known keys and use lock-free concurrent collections for lookups. Keep flyweights immutable and small so they are safe to share without synchronization. Avoid per-request allocation by reusing flyweight references from a static registry.",
+      "tags": ["flyweight", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/collections/thread-safe/"]
+    },
+    {
+      "id": "flyweight-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure whether Flyweight is actually saving memory?",
+      "answer": "Use tools like the .NET runtime counters, dotnet-counters, or a memory profiler to compare allocated bytes and object counts before and after. Estimate the expected savings from shared state times the instance count. Confirm that the cache itself is not growing beyond the finite key set.",
+      "tags": ["flyweight", "diagnostics"],
+      "code": "dotnet-counters monitor --process-id <pid> System.Runtime",
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/dotnet-counters"]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "category": "CI/CD & Test Reporting",
+  "slug": "ci-cd",
+  "icon": "pipeline",
+  "questions": [
+    {
+      "id": "ci-cd-001",
+      "difficulty": "Beginner",
+      "question": "How do you run xUnit tests in a CI pipeline?",
+      "answer": "Restore, build, and run dotnet test, which discovers and executes the xUnit tests and returns a non-zero exit code when any test fails, failing the pipeline step. Add the coverage collector and a results logger as needed. Pin the SDK version in the pipeline so the run is reproducible.",
+      "code": "dotnet test MySolution.sln --configuration Release",
+      "tags": ["ci", "dotnet-test"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-002",
+      "difficulty": "Beginner",
+      "question": "How do you produce a test results file for CI?",
+      "answer": "Pass a logger to dotnet test, for example --logger \"trx\" to emit a Visual Studio test results file that CI systems can parse and display. Other formats are available through logger packages. Publishing the results file lets the pipeline show which tests failed without reading raw console output.",
+      "code": "dotnet test --logger \"trx;LogFileName=results.trx\"",
+      "tags": ["trx", "reporting"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-003",
+      "difficulty": "Beginner",
+      "question": "How do you run tests in Release configuration?",
+      "answer": "Pass --configuration Release to dotnet test so the tests run against optimised, release-built binaries, which can reveal issues hidden by debug builds such as different JIT behaviour or conditional compilation. Many teams run tests in Release in CI and Debug locally. Be consistent about which configuration the pipeline uses.",
+      "tags": ["configuration", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-004",
+      "difficulty": "Beginner",
+      "question": "How do you fail the build when a test fails?",
+      "answer": "dotnet test returns a non-zero exit code on failure, and CI systems fail the step when a command returns non-zero, so no special handling is required. Ensure your pipeline does not swallow the exit code by piping the command into another process that always succeeds. Check the step's result in the pipeline log if failures are being ignored.",
+      "tags": ["exit-code", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-005",
+      "difficulty": "Beginner",
+      "question": "How do you publish test results in GitHub Actions?",
+      "answer": "Run dotnet test with a trx logger, then use a test-report action to publish the results and, if configured, annotate the pull request with failures. Uploading the trx file as an artefact is a simple fallback. Many teams also add a status check so a failing suite blocks the merge.",
+      "code": "- run: dotnet test --logger \"trx;LogFileName=results.trx\"\n- uses: actions/upload-artifact@v4\n  with:\n    name: test-results\n    path: '**/*.trx'",
+      "tags": ["github-actions", "reporting"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-006",
+      "difficulty": "Beginner",
+      "question": "Why should you cache NuGet packages in CI?",
+      "answer": "Caching the NuGet package folder avoids downloading the same packages on every build, which noticeably shortens pipeline time. CI providers offer a cache action keyed on the lock file or project files so the cache invalidates when dependencies change. Restore is the usual first step and the main beneficiary.",
+      "tags": ["caching", "nuget"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-007",
+      "difficulty": "Beginner",
+      "question": "How do you install the required .NET SDK in CI?",
+      "answer": "Use the setup-dotnet action or the equivalent task for your CI provider and specify the SDK version, ideally matching the global.json in the repository. Pinning the version keeps the runtime consistent with developers' machines. If global.json is present, the action can read the version automatically.",
+      "code": "- uses: actions/setup-dotnet@v4\n  with:\n    dotnet-version: '9.0.x'",
+      "tags": ["sdk", "setup"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-008",
+      "difficulty": "Beginner",
+      "question": "What is a build matrix and why use it for tests?",
+      "answer": "A build matrix runs the same job across several combinations of OS, SDK, or configuration, so you can verify the code on multiple platforms and runtime versions in one pipeline. This catches platform-specific bugs and compatibility regressions. Keep the matrix small enough that the pipeline stays reasonably fast.",
+      "tags": ["matrix", "cross-platform"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-009",
+      "difficulty": "Beginner",
+      "question": "How do you separate unit and integration tests in CI?",
+      "answer": "Tag the tests with traits and run two steps, one filtering to the unit category for every commit and another running the integration category where the required services are available. This keeps the fast feedback loop quick while still running the slower tests. Use the same filter syntax in both stages.",
+      "code": "dotnet test --filter \"Category=Unit\"\ndotnet test --filter \"Category=Integration\"",
+      "tags": ["stages", "filtering"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "ci-cd-010",
+      "difficulty": "Beginner",
+      "question": "Why should CI runs be reproducible?",
+      "answer": "A reproducible build uses pinned SDK and dependency versions and a clean environment, so a failure can be recreated locally. Flaky infrastructure and drifting package versions make failures hard to diagnose. Reproducibility turns a red build into an actionable signal.",
+      "tags": ["reproducibility", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-011",
+      "difficulty": "Intermediate",
+      "question": "How do you collect and publish coverage in CI?",
+      "answer": "Run dotnet test with the XPlat Code Coverage collector, convert the results with ReportGenerator if you need HTML, and upload them to your coverage service or as a pipeline artefact. Many providers surface the coverage percentage on the build summary. Add a threshold so coverage cannot regress unnoticed.",
+      "code": "dotnet test --collect:\"XPlat Code Coverage\"\nreportgenerator -reports:**/coverage.cobertura.xml \\\n  -targetdir:coverage -reporttypes:Html",
+      "tags": ["coverage", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"]
+    },
+    {
+      "id": "ci-cd-012",
+      "difficulty": "Intermediate",
+      "question": "How do you run tests in parallel in CI?",
+      "answer": "Split the test suite across several jobs, either by project or by trait filter, so the jobs run concurrently and the wall-clock time drops. xUnit's own parallelisation uses the available cores within a job. Balance the split so no single job dominates the total time.",
+      "tags": ["parallel", "sharding"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "ci-cd-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle flaky tests in a pipeline?",
+      "answer": "Identify flaky tests from historical results, quarantine them with a trait so they do not block the main gate, and track fixing them as work items. Retrying a flaky test can hide the problem, so use retries only as a temporary measure with visibility. A reliable suite is worth more than a fast one that cannot be trusted.",
+      "tags": ["flaky", "retries"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "ci-cd-014",
+      "difficulty": "Intermediate",
+      "question": "How do you run integration tests that need Docker in CI?",
+      "answer": "Most hosted CI runners provide Docker, so Testcontainers can start the required services during the test run. Ensure the runner has a working container runtime and enough resources, and add a trait so the tests can be excluded where Docker is unavailable. Clean up containers after the run to free resources.",
+      "tags": ["testcontainers", "docker"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "ci-cd-015",
+      "difficulty": "Intermediate",
+      "question": "What is a build gate and how do you configure one?",
+      "answer": "A build gate is a required status check that must pass before a change can merge, such as the test job plus coverage and lint checks. Configure branch protection to require the check and to require it to be up to date with the target branch. Gates keep broken code out of the main branch.",
+      "tags": ["gates", "branch-protection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-016",
+      "difficulty": "Intermediate",
+      "question": "How do you capture logs and diagnostics from failed tests in CI?",
+      "answer": "xUnit can attach output to test results with ITestOutputHelper, and the trx file records it, so publishing results preserves the diagnostic text. For container-based tests, capture container logs on failure. Having the diagnostics in the pipeline is what makes a CI-only failure debuggable.",
+      "code": "public class LoggedTests(ITestOutputHelper output)\n{\n    [Fact]\n    public void Runs() => output.WriteLine(\"diagnostic\");\n}",
+      "tags": ["logging", "diagnostics"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "ci-cd-017",
+      "difficulty": "Intermediate",
+      "question": "How do you version and publish test results over time?",
+      "answer": "Store the trx or coverage files as build artefacts or push them to a reporting service so you can trend pass rate, duration, and coverage across builds. Trends reveal slow degradation such as a creeping suite time or rising flakiness. Without history a single green build tells you very little.",
+      "tags": ["trends", "artefacts"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-018",
+      "difficulty": "Intermediate",
+      "question": "How do you speed up a slow CI test stage?",
+      "answer": "Profile which tests and fixtures are slowest, cache dependencies, run jobs in parallel, and move genuinely slow tests to a stage that runs less often. Reducing redundant setup with shared fixtures is often the biggest win. Measure after each change so you know it helped.",
+      "tags": ["performance", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "ci-cd-019",
+      "difficulty": "Intermediate",
+      "question": "How do you run tests on a pull request and on the main branch differently?",
+      "answer": "On pull requests run the fast, blocking stages such as unit tests and coverage, and on the main branch add the slower end-to-end and performance stages that are not needed to validate every change. This keeps the merge loop quick while still testing the integrated result. Use the same test code with different filters per trigger.",
+      "tags": ["pull-requests", "triggers"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "ci-cd-020",
+      "difficulty": "Intermediate",
+      "question": "What is a self-hosted runner and when do you need one?",
+      "answer": "A self-hosted runner is a machine you manage that executes CI jobs, giving you control over hardware, installed software, and network access. You need one when the workload requires specific hardware, private network access, or container features the hosted runners lack. The trade-off is that you must maintain and secure the machine.",
+      "tags": ["runners", "infrastructure"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a CI pipeline for a large solution with many test projects?",
+      "answer": "Split the solution into stages, build once, then run the test projects in parallel jobs that reuse the build output. Apply a fast, blocking unit stage and separate non-blocking stages for integration, end-to-end, and performance. Use path filters so a change to one area does not trigger unrelated slow stages.",
+      "tags": ["pipeline-design", "scaling"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "ci-cd-022",
+      "difficulty": "Advanced",
+      "question": "How do you ensure tests do not leak state between CI runs?",
+      "answer": "Give each run a clean environment, use unique database or container names per run, and delete resources in a finally block or teardown. Never rely on data left by a previous build, because concurrent runs will interfere. Treat every CI run as starting from nothing.",
+      "tags": ["isolation", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "ci-cd-023",
+      "difficulty": "Advanced",
+      "question": "How do you measure the value of a CI test stage?",
+      "answer": "Track the defects the stage catches, its failure rate, its duration, and how often it blocks a merge for a real problem rather than a flaky test. A stage that rarely fails and takes a long time may not be earning its cost. Use the data to decide whether to keep, split, or move the stage.",
+      "tags": ["metrics", "value"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "ci-cd-024",
+      "difficulty": "Advanced",
+      "question": "How do you run a smoke-test stage against a deployed environment?",
+      "answer": "After deployment, run a small, fast set of tests tagged as smoke that exercise the critical paths against the real environment, and fail the deployment if they break. Keep the smoke set tiny so it stays fast and reliable, and avoid mutating shared data. This verifies the deployment itself, which in-process tests cannot.",
+      "tags": ["smoke-tests", "deployment"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "ci-cd-025",
+      "difficulty": "Advanced",
+      "question": "How do you make a test suite trustworthy enough to gate deployments?",
+      "answer": "Eliminate flakiness, keep the suite fast enough to run on every change, and make failures clearly indicate the broken behaviour. Cover the critical paths with integration tests that exercise the real deployment shape. A gate is only as good as the suite behind it, so invest in reliability before tightening the rules.",
+      "tags": ["trust", "gates"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

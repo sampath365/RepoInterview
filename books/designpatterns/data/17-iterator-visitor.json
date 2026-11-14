@@ -1,0 +1,217 @@
+{
+  "category": "Iterator & Visitor",
+  "slug": "iterator-visitor",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "iterator-visitor-001",
+      "difficulty": "Beginner",
+      "question": "What is the Iterator pattern?",
+      "answer": "Iterator provides a way to traverse the elements of a collection sequentially without exposing its internal representation. It separates the traversal algorithm from the collection. In .NET this is expressed through IEnumerable and IEnumerator.",
+      "tags": ["iterator", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/iterator"]
+    },
+    {
+      "id": "iterator-visitor-002",
+      "difficulty": "Beginner",
+      "question": "What is the Visitor pattern?",
+      "answer": "Visitor lets you add new operations to a set of object types without modifying those types. The operation is defined in a visitor with a method per element type, and elements accept the visitor. This enables double dispatch and keeps operations separate from the data structure.",
+      "tags": ["visitor", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-003",
+      "difficulty": "Beginner",
+      "question": "How does foreach use the Iterator pattern?",
+      "answer": "foreach calls GetEnumerator on the collection and then MoveNext and Current on the enumerator. This is the Iterator pattern driven by the compiler. Any type implementing IEnumerable can be used with foreach.",
+      "tags": ["iterator", "foreach"],
+      "code": "foreach (var item in collection)\n    Console.WriteLine(item);",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/iterators"]
+    },
+    {
+      "id": "iterator-visitor-004",
+      "difficulty": "Beginner",
+      "question": "When is the Visitor pattern useful?",
+      "answer": "Use Visitor when you have a stable set of element types and need to perform many unrelated operations over them. It keeps each operation in its own visitor instead of spreading logic across the elements. It is common in compilers, document processing, and serialization.",
+      "tags": ["visitor", "design"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-005",
+      "difficulty": "Beginner",
+      "question": "What are the roles in the Iterator pattern?",
+      "answer": "The iterator defines methods to move through elements, such as MoveNext and Current. The concrete iterator tracks the current position. The aggregate provides a way to create an iterator, and the client uses the iterator to traverse.",
+      "tags": ["iterator", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/iterator"]
+    },
+    {
+      "id": "iterator-visitor-006",
+      "difficulty": "Beginner",
+      "question": "How do you implement a custom iterator with yield return?",
+      "answer": "A method returning IEnumerable that uses yield return produces a compiler-generated state machine. Each yield return supplies the next value lazily. This is the simplest way to write iterators in C#.",
+      "tags": ["iterator", "yield"],
+      "code": "public IEnumerable<int> Range(int from, int to)\n{\n    for (int i = from; i < to; i++) yield return i;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/iterators"]
+    },
+    {
+      "id": "iterator-visitor-007",
+      "difficulty": "Beginner",
+      "question": "What are the roles in the Visitor pattern?",
+      "answer": "The visitor declares a Visit method for each element type. Concrete visitors implement the operation. Elements define an Accept method that calls the matching Visit method on the visitor, passing themselves.",
+      "tags": ["visitor", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-008",
+      "difficulty": "Beginner",
+      "question": "What does double dispatch mean in the Visitor pattern?",
+      "answer": "Double dispatch selects the method to run based on both the visitor's type and the element's type. The element calls visitor.Visit(this), so the concrete element type is known at compile time inside Accept. This is how Visitor adds type-specific behavior without casting.",
+      "tags": ["visitor", "dispatch"],
+      "code": "public void Accept(IVisitor v) => v.Visit(this);",
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-009",
+      "difficulty": "Beginner",
+      "question": "Why separate iteration from the collection?",
+      "answer": "Separating traversal lets the same collection be iterated in different ways without changing it. It also allows multiple independent iterations to proceed at once. The collection exposes data while iterators own traversal state.",
+      "tags": ["iterator", "design"],
+      "references": ["https://refactoring.guru/design-patterns/iterator"]
+    },
+    {
+      "id": "iterator-visitor-010",
+      "difficulty": "Beginner",
+      "question": "What is the main drawback of the Visitor pattern?",
+      "answer": "Adding a new element type requires updating the visitor interface and every concrete visitor, which is invasive. Visitor works best when element types are stable and operations change often. If element types change frequently, it can be more work than adding methods to the elements.",
+      "tags": ["visitor", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement IEnumerable and IEnumerator manually?",
+      "answer": "Implement IEnumerable to return an IEnumerator, and implement IEnumerator with MoveNext, Current, and Reset. Track an index and check bounds in MoveNext. Most of the time yield return is easier than writing the state machine by hand.",
+      "tags": ["iterator", "ienumerator"],
+      "code": "public bool MoveNext()\n{\n    if (_index >= _items.Count) return false;\n    _current = _items[_index++];\n    return true;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.ienumerator"]
+    },
+    {
+      "id": "iterator-visitor-012",
+      "difficulty": "Intermediate",
+      "question": "What are the pitfalls of modifying a collection during iteration?",
+      "answer": "Many collections throw InvalidOperationException if the collection is modified while enumerating, because the enumerator detects a version change. Collect changes and apply them after the loop, or iterate over a copy. Concurrent collections allow safe concurrent modification but weak consistency.",
+      "tags": ["iterator", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.list-1"]
+    },
+    {
+      "id": "iterator-visitor-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use Visitor with the Composite pattern?",
+      "answer": "Elements expose Accept and containers iterate their children, calling Accept on each, which is a visitor over a tree. Each visitor defines behavior for leaves and containers. This lets you add tree-wide operations like rendering or exporting without touching the nodes.",
+      "tags": ["visitor", "composite"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-014",
+      "difficulty": "Intermediate",
+      "question": "How do you make an iterator lazy and efficient?",
+      "answer": "Use yield return so values are produced on demand rather than materialized up front. Chain LINQ operators to keep evaluation deferred until enumeration. Avoid converting to a list unless you need random access or multiple passes.",
+      "tags": ["iterator", "lazy"],
+      "code": "IEnumerable<int> query = numbers\n    .Where(n => n % 2 == 0)\n    .Select(n => n * n);",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/deferred-execution"]
+    },
+    {
+      "id": "iterator-visitor-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle state in a visitor that accumulates results?",
+      "answer": "A visitor can hold fields to accumulate results across elements during traversal. After visiting the tree, read the accumulated value. This makes visitors stateful but keeps the element types unchanged.",
+      "tags": ["visitor", "state"],
+      "code": "public sealed class CountVisitor : IVisitor\n{\n    public int Count { get; private set; }\n    public void Visit(Leaf l) => Count++;\n}",
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-016",
+      "difficulty": "Intermediate",
+      "question": "How do you write an async iterator in C#?",
+      "answer": "Use async IAsyncEnumerable<T> with yield return and await to produce values asynchronously. Consumers use await foreach. This is ideal for streaming data from a source without buffering everything.",
+      "tags": ["iterator", "async"],
+      "code": "public async IAsyncEnumerable<Item> StreamAsync()\n{\n    while (await _source.HasMoreAsync())\n        yield return await _source.NextAsync();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/generate-consume-asynchronous-stream"]
+    },
+    {
+      "id": "iterator-visitor-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test an Iterator implementation?",
+      "answer": "Enumerate the sequence and assert the exact order and values, including empty and single-element cases. Verify that the iterator is lazy by checking side effects are deferred until enumeration. For async iterators, test cancellation and completion.",
+      "tags": ["iterator", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "iterator-visitor-018",
+      "difficulty": "Intermediate",
+      "question": "How do you add a new operation with Visitor without editing elements?",
+      "answer": "Implement a new visitor class with a Visit method per element type and pass it to each element's Accept. The element classes do not change. This is the primary benefit of Visitor for stable hierarchies.",
+      "tags": ["visitor", "extensibility"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "iterator-visitor-019",
+      "difficulty": "Intermediate",
+      "question": "How does the Iterator pattern support multiple simultaneous traversals?",
+      "answer": "Each call to GetEnumerator returns a separate enumerator with its own position. Multiple enumerators can therefore traverse the same collection independently. This is why you can nest foreach loops over one collection.",
+      "tags": ["iterator", "traversal"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1"]
+    },
+    {
+      "id": "iterator-visitor-020",
+      "difficulty": "Intermediate",
+      "question": "How does Visitor compare with pattern matching in C#?",
+      "answer": "C# switch expressions with type patterns can dispatch on an object's type, which covers many Visitor use cases more concisely. However, pattern matching puts the logic at the call site and can miss exhaustiveness without analyzer support. Visitor centralizes the operation in a class and gives compile-time exhaustiveness when the visitor interface is complete.",
+      "tags": ["visitor", "pattern-matching"],
+      "code": "string label = shape switch\n{\n    Circle c => $\"circle {c.Radius}\",\n    Square s => \"square\",\n    _ => throw new ArgumentOutOfRangeException()\n};",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/functional/pattern-matching"]
+    },
+    {
+      "id": "iterator-visitor-021",
+      "difficulty": "Advanced",
+      "question": "How do you avoid boxing and allocations in hot iterator paths?",
+      "answer": "Return concrete struct enumerators from methods that are used in tight loops so the compiler can use them without boxing. Avoid LINQ in hot paths because it allocates delegates and iterators. Struct enumerators and Span-based iteration reduce allocation pressure.",
+      "tags": ["iterator", "performance"],
+      "code": "public struct Enumerator { /* struct enumerator */ }",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/"]
+    },
+    {
+      "id": "iterator-visitor-022",
+      "difficulty": "Advanced",
+      "question": "How do you design a visitor that supports cancellation or early exit?",
+      "answer": "Return a control value from Visit that signals continue or stop, and let containers check it while iterating children. Alternatively, throw a dedicated exception or use a cancellation token. This allows traversal to abort early when a result is found.",
+      "tags": ["visitor", "cancellation"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "iterator-visitor-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep an iterator safe when the underlying data changes asynchronously?",
+      "answer": "Snapshot the data at the start of iteration or use a concurrent collection with weak consistency guarantees. Document whether the iterator reflects live changes. For streaming, use channels with explicit completion so the consumer knows when the sequence ends.",
+      "tags": ["iterator", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.channels.channel-1"]
+    },
+    {
+      "id": "iterator-visitor-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle resource disposal in iterators?",
+      "answer": "If an iterator acquires resources, wrap the logic in try/finally so the finally runs when enumeration ends or the enumerator is disposed. foreach disposes the enumerator automatically. For async iterators, use await using and ensure cleanup runs on cancellation.",
+      "tags": ["iterator", "disposal"],
+      "code": "public IEnumerable<Line> ReadLines(string path)\n{\n    using var reader = File.OpenText(path);\n    while (reader.ReadLine() is { } line) yield return line;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/iterators"]
+    },
+    {
+      "id": "iterator-visitor-025",
+      "difficulty": "Advanced",
+      "question": "When should you choose Visitor over adding methods to element classes?",
+      "answer": "Choose Visitor when the element hierarchy is stable but you frequently add new operations, since operations stay in their own classes. Choose methods on elements when the operations are few and closely tied to the data. Visitor also helps when operations need to accumulate state across the whole structure.",
+      "tags": ["visitor", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    }
+  ]
+}

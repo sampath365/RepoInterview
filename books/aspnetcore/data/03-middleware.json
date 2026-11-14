@@ -1,0 +1,213 @@
+{
+  "category": "Middleware & Request Pipeline",
+  "slug": "middleware",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "middleware-001",
+      "difficulty": "Beginner",
+      "question": "What is middleware in ASP.NET Core?",
+      "answer": "Middleware is software assembled into the request pipeline to handle requests and responses. Each component can inspect or modify the request, short-circuit the pipeline by not calling the next delegate, or pass control onward with next(). Middleware is configured in Program.cs and executes in the order it is added, so ordering is critical.",
+      "tags": ["middleware", "pipeline"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-002",
+      "difficulty": "Beginner",
+      "question": "What does the next() delegate do in middleware?",
+      "answer": "next() invokes the next middleware component in the pipeline and returns a Task that completes when the rest of the pipeline finishes. By calling await next() you allow the request to continue, and by not calling it you terminate the pipeline and produce the response yourself. Code after await next() runs as the response flows back out, which is useful for timing, logging, or header manipulation.",
+      "tags": ["middleware", "next"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between app.Use, app.Run, and app.Map?",
+      "answer": "app.Use adds a middleware that can call the next component, app.Run adds a terminal middleware that never calls next and ends the pipeline, and app.Map branches the pipeline based on a path prefix. Map creates a separate pipeline for matching paths, which is useful for area-specific configuration. Only one app.Run should typically appear and it should be last.",
+      "tags": ["use", "run", "map"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-004",
+      "difficulty": "Beginner",
+      "question": "Why does middleware order matter?",
+      "answer": "Middleware runs in registration order on the way in and reverse order on the way out, so a component that depends on another must be registered after it. For example, routing must come before authorization, and authentication before authorization, otherwise endpoints and users are not resolved. Misordered middleware is one of the most common causes of subtle security and behavior bugs.",
+      "tags": ["ordering", "pipeline"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"]
+    },
+    {
+      "id": "middleware-005",
+      "difficulty": "Beginner",
+      "question": "What is the correct order of common middleware in Program.cs?",
+      "answer": "The typical order is exception handling, HSTS, HTTPS redirection, static files, routing, CORS, authentication, authorization, and then endpoint mapping. UseExceptionHandler or UseDeveloperExceptionPage should be first so it catches downstream exceptions. UseRouting before UseAuthentication and UseAuthorization ensures endpoints are known when policies are evaluated.",
+      "code": "app.UseExceptionHandler(\"/error\");\napp.UseHsts();\napp.UseHttpsRedirection();\napp.UseStaticFiles();\napp.UseRouting();\napp.UseAuthentication();\napp.UseAuthorization();\napp.MapControllers();",
+      "tags": ["ordering", "best-practices"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"]
+    },
+    {
+      "id": "middleware-006",
+      "difficulty": "Beginner",
+      "question": "What is terminal middleware?",
+      "answer": "Terminal middleware is a component that does not call the next delegate, so it ends the pipeline and produces the response. app.Run is the canonical example, and static file middleware or an endpoint can also act as terminal. Because nothing runs after it, terminal middleware must fully handle the request and response.",
+      "tags": ["terminal", "pipeline"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between middleware and an HTTP module?",
+      "answer": "Middleware is a code-first, composable component configured explicitly in the pipeline and testable in isolation, while HTTP modules were configured in web.config and hooked into a fixed set of ASP.NET Framework events. Middleware can be short-circuited, reordered, and branched per path, giving much more control. This flexibility is a key reason ASP.NET Core is easier to reason about than legacy ASP.NET.",
+      "tags": ["middleware", "http-module"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-008",
+      "difficulty": "Beginner",
+      "question": "What is a common use case for custom middleware?",
+      "answer": "Custom middleware is used for cross-cutting concerns such as request logging, correlation ID propagation, exception handling, timing, tenant resolution, or API key validation. It lets you apply behavior uniformly without duplicating it in every endpoint. If the logic only applies to some endpoints or needs model state, filters or endpoint filters may be a better fit.",
+      "tags": ["custom-middleware", "cross-cutting"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"]
+    },
+    {
+      "id": "middleware-009",
+      "difficulty": "Beginner",
+      "question": "How do you write a simple custom middleware using app.Use?",
+      "answer": "You can use the inline app.Use overload with an HttpContext and a RequestDelegate to add small logic without a separate class. The delegate can await next before or after doing work, which is enough for simple cases like adding a header.",
+      "code": "app.Use(async (context, next) =>\n{\n    context.Response.Headers.Append(\"X-App\", \"demo\");\n    await next();\n});",
+      "tags": ["custom-middleware", "use"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"]
+    },
+    {
+      "id": "middleware-010",
+      "difficulty": "Beginner",
+      "question": "What happens if middleware throws an exception?",
+      "answer": "The exception propagates back up the pipeline to the nearest exception-handling middleware, and if none handles it the server returns a 500 response. Exception-handling middleware such as UseExceptionHandler or the developer exception page should therefore be registered early. Unhandled exceptions also trigger logging at the Error level.",
+      "tags": ["exceptions", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"]
+    },
+    {
+      "id": "middleware-011",
+      "difficulty": "Intermediate",
+      "question": "How do you write a convention-based middleware class?",
+      "answer": "A convention-based middleware class takes a RequestDelegate in its constructor and exposes an InvokeAsync(HttpContext) method, and it is added with app.UseMiddleware<T>(). This approach keeps the class testable and lets you inject other services through the constructor. The InvokeAsync method must return a Task and is called once per request.",
+      "code": "public class TimingMiddleware\n{\n    private readonly RequestDelegate _next;\n    public TimingMiddleware(RequestDelegate next) => _next = next;\n    public async Task InvokeAsync(HttpContext ctx)\n    {\n        var sw = Stopwatch.StartNew();\n        await _next(ctx);\n        sw.Stop();\n    }\n}",
+      "tags": ["custom-middleware", "invoke"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"]
+    },
+    {
+      "id": "middleware-012",
+      "difficulty": "Intermediate",
+      "question": "What is IMiddleware and when would you use it instead of convention-based middleware?",
+      "answer": "IMiddleware defines an InvokeAsync(HttpContext, RequestDelegate) method and is registered as a service, so it supports constructor injection with scoped services and a per-request lifetime. Convention-based middleware is instantiated once at startup and its constructor cannot take scoped services, so use IMiddleware when you need scoped dependencies in the middleware itself. The trade-off is that IMiddleware requires DI registration and is slightly less common.",
+      "tags": ["imiddleware", "custom-middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/extensibility"]
+    },
+    {
+      "id": "middleware-013",
+      "difficulty": "Intermediate",
+      "question": "How do you branch the middleware pipeline with Map and MapWhen?",
+      "answer": "app.Map(path, pipeline) branches the pipeline for requests whose path starts with the given prefix, and app.MapWhen(predicate, pipeline) branches when a predicate over HttpContext is true. Both create a separate pipeline that does not automatically rejoin the main one unless the branch calls next through the outer pipeline. Use them for path- or condition-specific behavior such as a separate API pipeline.",
+      "tags": ["map", "branching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between app.UseWhen and app.MapWhen?",
+      "answer": "app.UseWhen branches the pipeline but rejoins the main pipeline after the branch finishes, while app.MapWhen branches and does not automatically rejoin. UseWhen is handy when you want to apply extra middleware only for some requests and then continue normally. MapWhen is used when the branch should fully handle the request or form a distinct pipeline.",
+      "tags": ["usewhen", "mapwhen"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-015",
+      "difficulty": "Intermediate",
+      "question": "How do you capture and modify the response body in middleware?",
+      "answer": "You swap HttpContext.Response.Body with a MemoryStream, let the rest of the pipeline write, then read the captured content and write the desired output to the original stream. You must restore the original stream afterward and be careful about large responses and streaming. For simple header or status changes you should avoid buffering the body entirely.",
+      "code": "var original = ctx.Response.Body;\nusing var buffer = new MemoryStream();\nctx.Response.Body = buffer;\nawait _next(ctx);\nbuffer.Position = 0;\nvar text = await new StreamReader(buffer).ReadToEndAsync();\nctx.Response.Body = original;",
+      "tags": ["response-body", "streams"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"]
+    },
+    {
+      "id": "middleware-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between middleware and filters?",
+      "answer": "Middleware operates on every request in the pipeline and knows nothing about MVC specifics such as actions and model state, while filters run within the MVC or endpoint pipeline and have access to action context, model binding, and results. Filters are better for action-specific concerns like validation, and middleware is better for global cross-cutting concerns like logging or error handling. Filters also support dependency injection with a per-request lifetime.",
+      "tags": ["filters", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"]
+    },
+    {
+      "id": "middleware-017",
+      "difficulty": "Intermediate",
+      "question": "How do you conditionally enable middleware per environment?",
+      "answer": "You read IWebHostEnvironment from the builder and branch in Program.cs, for example showing the developer exception page only in Development and HSTS plus a custom error handler in production. Environment checks keep debugging aids out of production while still providing informative errors locally. app.Environment.IsDevelopment() is the idiomatic check.",
+      "code": "if (app.Environment.IsDevelopment())\n    app.UseDeveloperExceptionPage();\nelse\n    app.UseExceptionHandler(\"/error\");",
+      "tags": ["environments", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/environments"]
+    },
+    {
+      "id": "middleware-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of UseRouting and UseEndpoints?",
+      "answer": "UseRouting matches the incoming request to an endpoint and stores it in HttpContext, and UseEndpoints executes the matched endpoint. In .NET 6+ the minimal hosting model adds routing automatically and MapXxx calls register endpoints, but the concepts remain. UseAuthorization must run between them when routing is explicit so the matched endpoint's metadata is available.",
+      "tags": ["routing", "endpoints"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "middleware-019",
+      "difficulty": "Intermediate",
+      "question": "How would you implement request logging middleware with a correlation ID?",
+      "answer": "You generate or read a correlation ID, add it to the response headers and to a logging scope, then log request start and completion with the status code and elapsed time. The scope makes the ID appear on all log entries for that request. Libraries such as Serilog or built-in W3C trace context can also provide correlation across services.",
+      "code": "app.Use(async (ctx, next) =>\n{\n    var id = ctx.Request.Headers[\"X-Correlation-Id\"].FirstOrDefault()\n             ?? Guid.NewGuid().ToString();\n    ctx.Response.Headers[\"X-Correlation-Id\"] = id;\n    using (logger.BeginScope(new { CorrelationId = id }))\n        await next();\n});",
+      "tags": ["logging", "correlation"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/logging/"]
+    },
+    {
+      "id": "middleware-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between UseExceptionHandler and a try/catch in middleware?",
+      "answer": "UseExceptionHandler is a built-in middleware that catches exceptions from later middleware, logs them, and produces a configured response such as a redirect to an error endpoint, and in .NET 8 it supports the IExceptionHandler interface for custom logic. A manual try/catch in custom middleware gives full control but you must handle logging, content type, and re-throwing correctly. Prefer the built-in handler plus IExceptionHandler for consistency.",
+      "tags": ["exception-handler", "error-handling"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"]
+    },
+    {
+      "id": "middleware-021",
+      "difficulty": "Advanced",
+      "question": "How does endpoint routing integrate with middleware execution?",
+      "answer": "UseRouting resolves an endpoint from the request using the route table and sets HttpContext.GetEndpoint(), and UseEndpoints (or the implicit mapping in the minimal hosting model) invokes the endpoint's RequestDelegate. Middleware placed between UseRouting and UseEndpoints can read endpoint metadata and run per-endpoint logic. This is how authorization, CORS, and rate limiting inspect endpoint-specific policies.",
+      "tags": ["endpoint-routing", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "middleware-022",
+      "difficulty": "Advanced",
+      "question": "How would you build reusable middleware packaged as a NuGet library?",
+      "answer": "You package the middleware class and an IApplicationBuilder extension method in a library, exposing a UseMyFeature(options) API and an options class. You document ordering requirements and register any needed services through a matching AddMyFeature extension. Keeping it convention-based or IMiddleware-based, with no assumptions about the host, makes it reusable across apps.",
+      "tags": ["extensibility", "nuget"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"]
+    },
+    {
+      "id": "middleware-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle streaming responses and avoid buffering in middleware?",
+      "answer": "Middleware that modifies the response should avoid buffering large or streaming payloads, because replacing Response.Body breaks server-sent events, gRPC, and file streaming. You can check for Content-Length or use a feature or metadata to skip buffering, and only wrap the body when you know the response is small. For transformations, prefer dedicated filters or results that own the writing.",
+      "tags": ["streaming", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write", "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"]
+    },
+    {
+      "id": "middleware-024",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of many middleware components?",
+      "answer": "Each middleware adds a delegate invocation and potentially async state machine overhead, so dozens of components can measurably increase per-request cost. Keep the pipeline lean, avoid unnecessary async hops, and consider combining related logic or using endpoint filters for narrower scope. Terminal middleware that ends the pipeline early, such as static files, actually improves performance by skipping later work.",
+      "tags": ["performance", "pipeline"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "middleware-025",
+      "difficulty": "Advanced",
+      "question": "How do you ensure middleware is safe for concurrent requests and correct scoped service usage?",
+      "answer": "Convention-based middleware is instantiated once, so it must be stateless and thread-safe, storing no per-request data in fields. Scoped services should be resolved from HttpContext.RequestServices or by using IMiddleware so a new instance is created per request. Never capture scoped services in a singleton middleware constructor, as that leads to lifetime errors or data leaking between requests.",
+      "tags": ["concurrency", "scoped-services"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/extensibility", "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    }
+  ]
+}

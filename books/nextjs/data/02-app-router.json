@@ -1,0 +1,340 @@
+{
+  "category": "App Router vs Pages Router",
+  "slug": "app-router",
+  "icon": "route",
+  "questions": [
+    {
+      "id": "app-router-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the App Router and the Pages Router?",
+      "answer": "The Pages Router uses the pages/ directory with getServerSideProps and getStaticProps for data. The App Router uses app/ with React Server Components, nested layouts, streaming, and Server Actions. The App Router is the default for new apps and is built on React 19 features. Both can run side by side during migration.",
+      "tags": [
+        "app-router",
+        "pages-router"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing"
+      ]
+    },
+    {
+      "id": "app-router-002",
+      "difficulty": "Beginner",
+      "question": "Where do routes live in the App Router?",
+      "answer": "Routes live in folders under the app/ directory. Each folder represents a URL segment and becomes accessible when it contains a page.tsx file. Nested folders create nested URL paths. Only reserved filenames such as page, layout, and route define routing behavior.",
+      "tags": [
+        "routing",
+        "file-conventions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/defining-routes"
+      ]
+    },
+    {
+      "id": "app-router-003",
+      "difficulty": "Beginner",
+      "question": "What is a Client Component in the App Router?",
+      "answer": "A Client Component is a component marked with the 'use client' directive at the top of its file. It runs in the browser and can use state, effects, event handlers, and browser APIs. It still renders on the server for the initial HTML, then hydrates on the client. Mark a component as client only when it needs interactivity.",
+      "code": "'use client';\nimport { useState } from 'react';",
+      "tags": [
+        "client-components",
+        "use-client"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "app-router-004",
+      "difficulty": "Beginner",
+      "question": "What is the default component type in the app directory?",
+      "answer": "Components in the app/ directory are React Server Components by default. They render on the server, can be async, and never send their JavaScript to the client. This reduces bundle size and lets them access data and secrets directly. You opt into client behavior with the 'use client' directive.",
+      "tags": [
+        "server-components",
+        "default"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "app-router-005",
+      "difficulty": "Beginner",
+      "question": "How do you migrate a page from the Pages Router to the App Router?",
+      "answer": "Move the file from pages/ to a matching folder under app/ and rename it page.tsx. Replace data fetching functions like getServerSideProps with async component code, and move shared UI into layout.tsx. Add 'use client' to interactive components. Migrate route by route so both routers can coexist.",
+      "tags": [
+        "migration",
+        "app-router"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration"
+      ]
+    },
+    {
+      "id": "app-router-006",
+      "difficulty": "Beginner",
+      "question": "What is the root layout and why is it required?",
+      "answer": "The root layout at app/layout.tsx is required and must render the <html> and <body> tags. It wraps every route in the application and defines shared structure. It is a Server Component and can include metadata and global providers. Next.js will error at build time if it is missing.",
+      "code": "export default function RootLayout({ children }) {\n  return (\n    <html lang=\"en\">\n      <body>{children}</body>\n    </html>\n  );\n}",
+      "tags": [
+        "layout",
+        "root-layout"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/layout"
+      ]
+    },
+    {
+      "id": "app-router-007",
+      "difficulty": "Beginner",
+      "question": "How do you navigate between pages in the App Router?",
+      "answer": "Use the Link component from next/link for declarative navigation and prefetching. For programmatic navigation, use the useRouter hook from next/navigation inside a Client Component. Full page reloads with anchor tags are avoided so client-side transitions stay fast. Link preserves scroll behavior and prefetches in-viewport links.",
+      "code": "import Link from 'next/link';\nexport default function Nav() {\n  return <Link href=\"/blog\">Blog</Link>;\n}",
+      "tags": [
+        "navigation",
+        "link"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating"
+      ]
+    },
+    {
+      "id": "app-router-008",
+      "difficulty": "Beginner",
+      "question": "Can the App Router and Pages Router coexist?",
+      "answer": "Yes, app/ and pages/ can exist in the same project during a gradual migration. Routes are matched so that app/ takes precedence for overlapping paths. Shared components can be reused from either router. You remove the pages directory once migration is complete.",
+      "tags": [
+        "migration",
+        "coexistence"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/upgrading/app-router-migration"
+      ]
+    },
+    {
+      "id": "app-router-009",
+      "difficulty": "Beginner",
+      "question": "What is the not-found.tsx file?",
+      "answer": "not-found.tsx renders UI when a route is not matched or when the notFound() function is called. It works like a 404 page scoped to its segment. It is a Server Component by default and can be nested for different sections. Calling notFound() throws and triggers the nearest not-found boundary.",
+      "tags": [
+        "not-found",
+        "error-handling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/not-found"
+      ]
+    },
+    {
+      "id": "app-router-010",
+      "difficulty": "Beginner",
+      "question": "What does the 'use client' directive do?",
+      "answer": "The 'use client' directive marks a file as the boundary where client-side code begins. The component and everything it imports into the client graph run in the browser. It must be the first statement in the file. Server Components can render Client Components but not the reverse unless passed as props.",
+      "tags": [
+        "use-client",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/directives/use-client"
+      ]
+    },
+    {
+      "id": "app-router-011",
+      "difficulty": "Intermediate",
+      "question": "When should you use a Client Component?",
+      "answer": "Use a Client Component when you need state, effects, event handlers, refs, or browser APIs. Also use it for libraries that rely on those features. Keep the 'use client' boundary as low in the tree as possible so most of the tree stays server-rendered. Pass Server Components to Client Components as children to preserve their server rendering.",
+      "tags": [
+        "client-components",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "app-router-012",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data from a Server Component to a Client Component?",
+      "answer": "You pass data as props, but the values must be serializable across the network boundary. Functions are not serializable unless they are Server Actions, which can be passed as props. You can also pass Server Components as children props to Client Components. Dates, Maps, and Sets are supported by the React serialization format.",
+      "tags": [
+        "serialization",
+        "composition"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "app-router-013",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of the App Router?",
+      "answer": "The App Router offers layouts, streaming, Server Components, and colocated data fetching, improving performance and developer experience. The cost is a steeper learning curve around server and client boundaries, plus caching rules that changed across versions. Teams must understand serialization and the runtime split. For new projects the benefits generally outweigh the complexity.",
+      "tags": [
+        "trade-offs",
+        "architecture"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing"
+      ]
+    },
+    {
+      "id": "app-router-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between params and searchParams?",
+      "answer": "params holds dynamic route segments, such as [slug], and searchParams holds query string values. In Next.js 15 both are asynchronous and must be awaited in pages and layouts. params is available to layouts and pages; searchParams is only available to pages. Both are useful for server-rendered content.",
+      "code": "export default async function Page({ params }) {\n  const { slug } = await params;\n  return <h1>{slug}</h1>;\n}",
+      "tags": [
+        "params",
+        "search-params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ]
+    },
+    {
+      "id": "app-router-015",
+      "difficulty": "Intermediate",
+      "question": "How does the App Router handle nested layouts?",
+      "answer": "Each folder can define a layout.tsx that wraps its pages and deeper layouts. Layouts nest automatically following the folder hierarchy, and shared UI stays mounted across navigation. This preserves state and avoids re-rendering the shell. You cannot opt a page out of a parent layout, but you can restructure with route groups.",
+      "tags": [
+        "layouts",
+        "nesting"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/layouts-and-templates"
+      ]
+    },
+    {
+      "id": "app-router-016",
+      "difficulty": "Intermediate",
+      "question": "What is a template.tsx and how does it differ from a layout?",
+      "answer": "template.tsx is similar to a layout but creates a new instance for each child on navigation, so it remounts. This means effects re-run and state resets on every navigation within the segment. Use a template when you need enter animations or per-page side effects. Layouts are preferred for persistent shared UI.",
+      "tags": [
+        "template",
+        "layouts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/template"
+      ]
+    },
+    {
+      "id": "app-router-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a 404 for a dynamic route?",
+      "answer": "Call the notFound() function from next/navigation when a record does not exist. It throws a special error that renders the nearest not-found.tsx boundary and sets a 404 status. You can also set dynamicParams to control behavior for ungenerated params. This is preferred over returning empty UI.",
+      "code": "import { notFound } from 'next/navigation';\nif (!post) notFound();",
+      "tags": [
+        "not-found",
+        "dynamic-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/not-found"
+      ]
+    },
+    {
+      "id": "app-router-018",
+      "difficulty": "Intermediate",
+      "question": "Can you use context providers in the App Router?",
+      "answer": "Context providers must be Client Components because they use hooks and state. You create a provider file marked with 'use client' and wrap children in the root layout. Server Components can still be rendered as children passed through the provider. Keep providers as low as possible to avoid making the whole tree client-rendered.",
+      "code": "'use client';\nexport function Providers({ children }) {\n  return <ThemeContext.Provider value=\"dark\">{children}</ThemeContext.Provider>;\n}",
+      "tags": [
+        "context",
+        "providers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "app-router-019",
+      "difficulty": "Intermediate",
+      "question": "What are the benefits of colocating files in the App Router?",
+      "answer": "You can place components, tests, styles, and utilities inside a route folder without making them routes. Only reserved filenames like page.tsx and route.ts become routable. This keeps related code together and improves discoverability. It avoids a separate global components folder for route-specific pieces.",
+      "tags": [
+        "colocation",
+        "project-structure"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/getting-started/project-structure"
+      ]
+    },
+    {
+      "id": "app-router-020",
+      "difficulty": "Intermediate",
+      "question": "How do you share state between a Server Component and a Client Component?",
+      "answer": "Server Components cannot hold interactive state, so you lift state into a Client Component. The server passes initial data down as props, and the client manages changes from there. For app-wide state use a Client Component provider in the root layout. This keeps server rendering for data and client rendering for interaction.",
+      "tags": [
+        "state",
+        "composition"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "app-router-021",
+      "difficulty": "Advanced",
+      "question": "How does the App Router differ architecturally from the Pages Router?",
+      "answer": "The App Router renders with React Server Components and streams HTML using Suspense, whereas the Pages Router prerenders whole pages with data functions. The App Router nests layouts and supports colocated data fetching and Server Actions. It also changes caching to per-request and per-fetch controls. These differences shift data and rendering logic into components.",
+      "tags": [
+        "architecture",
+        "rsc"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "app-router-022",
+      "difficulty": "Advanced",
+      "question": "How does React 19 change Client Components in the App Router?",
+      "answer": "React 19 allows ref as a normal prop, adds the use() hook for reading promises and context, and introduces form actions. useFormStatus and useActionState simplify pending and error handling in Client Components. These features reduce boilerplate around forms and data. Next.js 15 builds directly on React 19.",
+      "tags": [
+        "react-19",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/blog/next-15",
+        "https://react.dev/blog/2024/12/05/react-19"
+      ]
+    },
+    {
+      "id": "app-router-023",
+      "difficulty": "Advanced",
+      "question": "What happens when a Client Component imports a Server Component?",
+      "answer": "A Client Component cannot import a Server Component directly, because the import would pull it into the client graph and make it a Client Component. Instead you pass the Server Component as a children or other prop from a Server Component parent. This keeps the server rendering while allowing client interactivity around it. It is the recommended composition pattern.",
+      "tags": [
+        "composition",
+        "boundaries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "app-router-024",
+      "difficulty": "Advanced",
+      "question": "How does the App Router handle error boundaries?",
+      "answer": "error.tsx defines a Client Component error boundary that catches errors thrown in its segment and below. It receives error and reset props to display a message and retry rendering. A global-error.tsx handles errors in the root layout itself. Errors in layouts are caught by the parent segment's boundary.",
+      "code": "'use client';\nexport default function Error({ error, reset }) {\n  return <button onClick={reset}>Retry</button>;\n}",
+      "tags": [
+        "error-handling",
+        "error-boundary"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/error"
+      ]
+    },
+    {
+      "id": "app-router-025",
+      "difficulty": "Advanced",
+      "question": "How do route groups and parallel routes interact?",
+      "answer": "Route groups organize code without affecting URLs, while parallel routes render multiple pages in the same layout via named slots like @modal. Combining them lets you give each slot its own layout and organization. Parallel routes support independent loading and error states per slot. They are commonly used for dashboards and modals.",
+      "tags": [
+        "parallel-routes",
+        "route-groups"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/parallel-routes"
+      ]
+    }
+  ]
+}

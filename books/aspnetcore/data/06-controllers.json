@@ -1,0 +1,217 @@
+{
+  "category": "Controllers, Actions & Results",
+  "slug": "controllers",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "controllers-001",
+      "difficulty": "Beginner",
+      "question": "What is a controller in ASP.NET Core?",
+      "answer": "A controller is a class that groups related request-handling logic into actions, typically inheriting from Controller for MVC with views or ControllerBase for APIs. It is discovered by routing and instantiated per request, with dependencies injected through its constructor. Controllers use attributes to declare routes, HTTP methods, and authorization.",
+      "tags": ["controllers", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/actions"]
+    },
+    {
+      "id": "controllers-002",
+      "difficulty": "Beginner",
+      "question": "What is an action method?",
+      "answer": "An action is a public method on a controller that handles a request and returns an IActionResult or a value. Actions are selected by routing based on the HTTP method, route template, and action name, and their parameters are bound from route, query, and body data. Non-public methods and those marked with NonAction are not treated as actions.",
+      "tags": ["actions", "controllers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/actions"]
+    },
+    {
+      "id": "controllers-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Controller and ControllerBase?",
+      "answer": "ControllerBase provides the API-focused base class with helpers like Ok, NotFound, and BadRequest but no view support, while Controller derives from ControllerBase and adds view-related members such as View, ViewBag, and ViewData. API controllers typically inherit from ControllerBase to avoid pulling in view dependencies. MVC controllers that render views inherit from Controller.",
+      "tags": ["controllerbase", "controllers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/"]
+    },
+    {
+      "id": "controllers-004",
+      "difficulty": "Beginner",
+      "question": "What does the [ApiController] attribute do?",
+      "answer": "The [ApiController] attribute enables API-specific behaviors such as automatic 400 responses for invalid model state, binding of complex parameters from the body, inference of [FromRoute]/[FromQuery] for simple types, and multipart/form-data handling. It also requires attribute routing and enriches API Explorer metadata for OpenAPI. It is applied to API controllers to reduce boilerplate.",
+      "tags": ["apicontroller", "web-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/#apicontroller-attribute"]
+    },
+    {
+      "id": "controllers-005",
+      "difficulty": "Beginner",
+      "question": "What are the common IActionResult return types?",
+      "answer": "Common results include Ok, Created, CreatedAtAction, NoContent, BadRequest, NotFound, Unauthorized, Forbid, Conflict, and StatusCode for arbitrary codes. For controllers you can return IActionResult, and for typed results in minimal APIs you can use TypedResults. Using explicit results makes status codes and content types clear and testable.",
+      "tags": ["action-results", "http"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/action-return-types"]
+    },
+    {
+      "id": "controllers-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between IActionResult and ActionResult<T>?",
+      "answer": "IActionResult is an untyped interface implemented by all action results and hides the response type, while ActionResult<T> wraps either a T value or an IActionResult, giving compile-time type information and better OpenAPI metadata. ActionResult<T> lets you write return Ok(value) or return NotFound() in the same action with strong typing. Prefer it for API actions that return data.",
+      "code": "[HttpGet(\"{id}\")]\npublic ActionResult<Product> Get(int id)\n{\n    var p = _repo.Find(id);\n    return p is null ? NotFound() : p;\n}",
+      "tags": ["actionresult", "web-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/action-return-types"]
+    },
+    {
+      "id": "controllers-007",
+      "difficulty": "Beginner",
+      "question": "How do you specify the HTTP method and route for an action?",
+      "answer": "You use method attributes such as [HttpGet], [HttpPost], [HttpPut], and [HttpDelete], optionally with a template, or [Route] combined with [AcceptVerbs]. The template appends to the controller route unless it is absolute. Method attributes restrict which requests reach the action and are essential for correct routing.",
+      "code": "[ApiController]\n[Route(\"api/[controller]\")]\npublic class ProductsController : ControllerBase\n{\n    [HttpGet(\"{id:int}\")]\n    public IActionResult Get(int id) => Ok();\n}",
+      "tags": ["routing", "http-methods"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"]
+    },
+    {
+      "id": "controllers-008",
+      "difficulty": "Beginner",
+      "question": "What are action filters?",
+      "answer": "Action filters are attributes that run code before or after an action method executes, such as logging, validation, or modifying the result. They implement IActionFilter or IAsyncActionFilter and can short-circuit the action by setting a result. Filters are part of the MVC and endpoint filter pipeline and can be applied globally, per controller, or per action.",
+      "tags": ["filters", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"]
+    },
+    {
+      "id": "controllers-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ViewResult and JsonResult?",
+      "answer": "ViewResult renders a Razor view into HTML using the view engine, while JsonResult serializes an object to JSON and sets the content type to application/json. In API controllers you usually return the object directly or use Ok, letting the framework serialize with the configured formatters. Choosing the right result controls both the body and the content type.",
+      "tags": ["results", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/action-return-types"]
+    },
+    {
+      "id": "controllers-010",
+      "difficulty": "Beginner",
+      "question": "How do you return a 201 Created response from a POST action?",
+      "answer": "You use CreatedAtAction or CreatedAtRoute, which set the 201 status, the Location header pointing to the new resource, and the response body. CreatedAtAction names the action to generate the URL, and CreatedAtRoute uses a route name. This follows REST conventions for resource creation.",
+      "code": "var created = _repo.Add(dto);\nreturn CreatedAtAction(nameof(Get), new { id = created.Id }, created);",
+      "tags": ["created", "rest"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/action-return-types"]
+    },
+    {
+      "id": "controllers-011",
+      "difficulty": "Intermediate",
+      "question": "How does action selection work in MVC?",
+      "answer": "Action selection uses the route data to find candidate actions by name, HTTP method, and constraints, then applies action constraint attributes to filter the candidates further. If multiple candidates remain, the framework throws an ambiguous match error. Explicit routes and constraints reduce ambiguity and make selection deterministic.",
+      "tags": ["action-selection", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"]
+    },
+    {
+      "id": "controllers-012",
+      "difficulty": "Intermediate",
+      "question": "What is the order in which MVC filters run?",
+      "answer": "Filters run in a defined order: authorization filters first, then resource filters, then model binding, then action filters, then exception filters, and finally result filters, with each type having an execution phase around the action. Within the same type, order is set by the Order property and scope is global, then controller, then action. This layered order lets each filter type address a specific concern.",
+      "tags": ["filters", "order"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters#filter-order"]
+    },
+    {
+      "id": "controllers-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom action filter?",
+      "answer": "You implement IActionFilter or IAsyncActionFilter and register the filter globally in options.Filters or apply it as an attribute. The filter receives an ActionExecutingContext before the action and an ActionExecutedContext after, and it can set context.Result to short-circuit. Filters that need dependencies should be resolved through DI by registering the type.",
+      "code": "public class LogActionFilter : IActionFilter\n{\n    public void OnActionExecuting(ActionExecutingContext c) { }\n    public void OnActionExecuted(ActionExecutedContext c) { }\n}",
+      "tags": ["custom-filter", "filters"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"]
+    },
+    {
+      "id": "controllers-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between resource filters and action filters?",
+      "answer": "Resource filters run before model binding and after the rest of the pipeline, which makes them ideal for caching, short-circuiting, or implementing request-level behavior that must happen before the action. Action filters run after model binding and have access to the bound arguments. Use resource filters when you need to act before binding or to wrap the whole action execution.",
+      "tags": ["resource-filters", "filters"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"]
+    },
+    {
+      "id": "controllers-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle exceptions in controllers?",
+      "answer": "You can use exception filters implementing IExceptionFilter to catch exceptions per action, or a global IExceptionHandler with UseExceptionHandler for a consistent response. Exception filters can mark the exception handled and produce a result, but they cannot catch exceptions thrown in other filters or in the result. A global handler is usually preferred for uniform error responses.",
+      "tags": ["exception-filters", "error-handling"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters#exception-filters"]
+    },
+    {
+      "id": "controllers-016",
+      "difficulty": "Intermediate",
+      "question": "How do you implement content negotiation in an API controller?",
+      "answer": "Content negotiation is handled by output formatters that match the request's Accept header to a supported media type, returning JSON by default and XML if configured with AddXmlSerializerFormatters. You can force a format with the Produces attribute or return specific results. Configuring formatters correctly ensures clients receive the representation they ask for.",
+      "code": "builder.Services.AddControllers()\n    .AddXmlSerializerFormatters();",
+      "tags": ["content-negotiation", "formatters"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/advanced/formatting"]
+    },
+    {
+      "id": "controllers-017",
+      "difficulty": "Intermediate",
+      "question": "What does [ProducesResponseType] do?",
+      "answer": "It documents the response types and status codes an action can return, which improves generated OpenAPI documentation and client code generation. You can apply it multiple times for different status codes and specify the type and content type. The [ApiController] attribute combined with this produces accurate API metadata.",
+      "code": "[ProducesResponseType(StatusCodes.Status200OK)]\n[ProducesResponseType(StatusCodes.Status404NotFound)]\n[HttpGet(\"{id}\")]\npublic ActionResult<Product> Get(int id) => Ok();",
+      "tags": ["openapi", "documentation"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/action-return-types"]
+    },
+    {
+      "id": "controllers-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use IActionResult with asynchronous actions?",
+      "answer": "Asynchronous actions return Task<IActionResult> or Task<ActionResult<T>> and use async/await for I/O such as database or HTTP calls. The framework awaits the task and processes the result when it completes. Returning async results keeps threads free and improves scalability under load.",
+      "code": "[HttpGet]\npublic async Task<ActionResult<List<Order>>> Get()\n    => await _repo.GetOrdersAsync();",
+      "tags": ["async", "actions"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/"]
+    },
+    {
+      "id": "controllers-019",
+      "difficulty": "Intermediate",
+      "question": "How do you override the model state validation response?",
+      "answer": "You can customize the automatic 400 response by configuring ApiBehaviorOptions.InvalidModelStateResponseFactory, or suppress it with SuppressModelStateInvalidFilter and validate manually. The factory receives an ActionContext and returns an IActionResult, letting you shape the error payload. This is useful for producing consistent ProblemDetails or custom error contracts.",
+      "code": "builder.Services.Configure<ApiBehaviorOptions>(o =>\n    o.InvalidModelStateResponseFactory = ctx =>\n        new BadRequestObjectResult(new { error = \"invalid\" }));",
+      "tags": ["model-state", "api-behavior"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/#configure-model-validation-response"]
+    },
+    {
+      "id": "controllers-020",
+      "difficulty": "Intermediate",
+      "question": "How do you use route and query data in an action signature?",
+      "answer": "Simple types default to route values when the name matches a route parameter, otherwise to query string, and you can force the source with [FromRoute], [FromQuery], or [FromHeader]. Complex types bind from the body in API controllers. Explicit source attributes remove ambiguity and improve readability.",
+      "code": "[HttpGet(\"search\")]\npublic IActionResult Search([FromQuery] string q,\n    [FromQuery] int page = 1) => Ok();",
+      "tags": ["binding", "actions"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"]
+    },
+    {
+      "id": "controllers-021",
+      "difficulty": "Advanced",
+      "question": "How does the MVC action invoker pipeline execute an action?",
+      "answer": "The action invoker resolves the controller, runs authorization filters, model binding, and action filters, then invokes the action method, converts the returned object into an IActionResult if needed, and runs result filters before executing the result. Exception filters wrap the invocation to handle errors. Understanding this order is key to placing cross-cutting logic correctly.",
+      "tags": ["action-invoker", "internals"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"]
+    },
+    {
+      "id": "controllers-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement endpoint filters in minimal APIs versus action filters in controllers?",
+      "answer": "Minimal API endpoint filters implement IEndpointFilter with an InvokeAsync(EndpointFilterInvocationContext, EndpointFilterDelegate) method and are added with AddEndpointFilter, running per endpoint or group. Controller filters implement the MVC filter interfaces and run within the MVC pipeline with access to action context. Both support DI, but endpoint filters are simpler and scoped to the endpoint rather than the MVC action pipeline.",
+      "code": "app.MapGet(\"/orders\", GetAll)\n   .AddEndpointFilter<ValidationFilter>();",
+      "tags": ["endpoint-filters", "minimal-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filters"]
+    },
+    {
+      "id": "controllers-023",
+      "difficulty": "Advanced",
+      "question": "How do you write a custom output formatter?",
+      "answer": "You derive from TextOutputFormatter or OutputFormatter, override CanWriteResult and WriteResponseBodyAsync, and register it in MvcOptions.OutputFormatters or through AddControllers options. Custom formatters let you support media types such as CSV or a custom binary format with content negotiation. You must handle the media type mappings and encoding correctly.",
+      "tags": ["output-formatter", "extensibility"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/advanced/custom-formatters"]
+    },
+    {
+      "id": "controllers-024",
+      "difficulty": "Advanced",
+      "question": "How do you unit test a controller that uses filters and model state?",
+      "answer": "You instantiate the controller with mocked or fake dependencies and call actions directly, asserting on the returned IActionResult type and value. Filters are not executed in direct calls, so you test filter logic separately by invoking its methods with a constructed context. Integration tests using WebApplicationFactory are better when you need the full filter and binding pipeline.",
+      "tags": ["testing", "controllers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests", "https://learn.microsoft.com/aspnet/core/mvc/controllers/testing"]
+    },
+    {
+      "id": "controllers-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of attribute routing versus convention-based routing in large APIs?",
+      "answer": "Attribute routing keeps each endpoint's URL next to its code, which improves discoverability and supports precise templates and constraints, but it spreads routing information across many files and can hide the overall API surface. Convention-based routing centralizes patterns and reduces duplication for uniform controllers but offers less control per endpoint. Large APIs commonly mix them, using conventions for broad structure and attributes for exceptions.",
+      "tags": ["routing", "trade-offs"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"]
+    }
+  ]
+}

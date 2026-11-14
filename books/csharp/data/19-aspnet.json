@@ -1,0 +1,286 @@
+{
+  "category": "ASP.NET Core & Web",
+  "slug": "aspnet",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "aspnet-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ASP.NET Core and ASP.NET Framework?",
+      "answer": "ASP.NET Core is a cross-platform, open-source framework that runs on modern .NET on Windows, Linux, and macOS, whereas ASP.NET Framework only runs on Windows on the full .NET Framework. ASP.NET Core unifies MVC and Web API into one programming model, has built-in dependency injection, is side-by-side versionable, and is far faster and more modular. ASP.NET Framework is in maintenance mode and receives only security and reliability fixes, so new projects should target ASP.NET Core.",
+      "tags": ["aspnet-core", "aspnet-framework", "cross-platform"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core",
+        "https://learn.microsoft.com/dotnet/standard/choosing-core-framework-server"
+      ]
+    },
+    {
+      "id": "aspnet-002",
+      "difficulty": "Beginner",
+      "question": "What is the minimal hosting model and what does WebApplication.CreateBuilder do?",
+      "answer": "The minimal hosting model, introduced in .NET 6, replaces Startup.cs with a single top-level Program.cs that configures services and the request pipeline in one place. WebApplication.CreateBuilder(args) creates a builder preconfigured with sensible defaults such as Kestrel, configuration providers, logging, and the DI container. You register services on builder.Services, call builder.Build() to obtain a WebApplication, add middleware, map endpoints, and call app.Run(). The older Startup class with ConfigureServices and Configure is still supported for backwards compatibility.",
+      "code": "var builder = WebApplication.CreateBuilder(args);\nbuilder.Services.AddControllers();\nvar app = builder.Build();\napp.MapControllers();\napp.Run();",
+      "tags": ["minimal-hosting", "webapplication", "program-cs"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel"
+      ]
+    },
+    {
+      "id": "aspnet-003",
+      "difficulty": "Beginner",
+      "question": "What are the three service lifetimes in the ASP.NET Core dependency injection container?",
+      "answer": "Transient services are created every time they are requested, scoped services are created once per client request (per scope), and singleton services are created once for the lifetime of the application. They are registered with AddTransient, AddScoped, and AddSingleton respectively. Choosing the wrong lifetime causes bugs such as a singleton capturing a scoped service, which effectively promotes that scoped instance to a singleton, so always match the lifetime to the state the service holds.",
+      "code": "builder.Services.AddSingleton<IClock, SystemClock>();\nbuilder.Services.AddScoped<IOrderRepository, OrderRepository>();\nbuilder.Services.AddTransient<IEmailSender, SmtpEmailSender>();",
+      "tags": ["dependency-injection", "lifetimes", "services"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "aspnet-004",
+      "difficulty": "Beginner",
+      "question": "When would you choose controllers over minimal APIs?",
+      "answer": "Minimal APIs define endpoints as lambda expressions mapped directly on the WebApplication and are ideal for small services, microservices, and lightweight JSON APIs with little ceremony. Controllers are classes that group related actions and support features such as filters, conventions, content negotiation, and rich model binding, which suits large applications with many endpoints and cross-cutting concerns. Both build on the same routing system and can be mixed in a single application.",
+      "tags": ["minimal-apis", "controllers", "web-api"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis",
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "aspnet-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between attribute routing and conventional routing?",
+      "answer": "Conventional routing defines route templates centrally, typically with app.MapControllerRoute, and matches incoming URLs to controller actions by pattern. Attribute routing places templates directly on actions with attributes such as [Route], [HttpGet], and [HttpPost], giving precise per-endpoint control and HTTP verb mapping. Attribute routing is the default and recommended approach for Web APIs, while conventional routing is common for MVC applications with many similar controller/action pairs.",
+      "tags": ["routing", "attribute-routing", "conventional-routing"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/routing",
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"
+      ]
+    },
+    {
+      "id": "aspnet-006",
+      "difficulty": "Beginner",
+      "question": "How does model binding and DataAnnotations validation work in ASP.NET Core?",
+      "answer": "Model binding maps request data from route values, query string, form fields, and JSON bodies to action parameters or complex types, using attributes such as [FromRoute], [FromQuery], [FromBody], and [FromForm] to specify sources. You annotate model properties with DataAnnotations attributes like [Required], [StringLength], [Range], and [RegularExpression], and ASP.NET Core validates them during binding. With the [ApiController] attribute, an invalid model automatically produces a 400 response with a ProblemDetails body containing the errors exposed through ModelState.",
+      "code": "public class CreateUser\n{\n    [Required, StringLength(50)]\n    public string Name { get; set; } = \"\";\n    [Range(18, 120)]\n    public int Age { get; set; }\n}",
+      "tags": ["model-binding", "validation", "dataannotations"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding",
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "aspnet-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between IActionResult and ActionResult<T>?",
+      "answer": "IActionResult is an interface implemented by every action result such as OkObjectResult, NotFoundResult, and FileResult, and it is used when an action can produce several different result types. ActionResult<T> is a generic type that lets an action return either a value of type T or an IActionResult, giving OpenAPI/Swagger a concrete success response type while still allowing status codes. Returning ActionResult<T> therefore improves API metadata and keeps action code concise.",
+      "code": "public ActionResult<Product> Get(int id)\n{\n    var product = _repo.Find(id);\n    if (product is null)\n        return NotFound();\n    return product;\n}",
+      "tags": ["action-results", "web-api", "swagger"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "aspnet-008",
+      "difficulty": "Beginner",
+      "question": "How does configuration and environment handling work in ASP.NET Core?",
+      "answer": "Configuration is composed from ordered providers including appsettings.json, appsettings.{Environment}.json, user secrets, environment variables, and command-line arguments, where later providers override earlier ones. The environment name comes from ASPNETCORE_ENVIRONMENT and defaults to Production, and Development enables the developer exception page and more verbose logging. You can branch on app.Environment.IsDevelopment() or inject IWebHostEnvironment to change behavior per environment, and logging is configured through the same builder.",
+      "tags": ["configuration", "environments", "logging"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/environments"
+      ]
+    },
+    {
+      "id": "aspnet-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between authentication and authorization?",
+      "answer": "Authentication establishes who the user is by validating credentials such as a cookie or a JWT and producing a ClaimsPrincipal on HttpContext.User. Authorization then decides whether that authenticated identity is permitted to perform an action, enforced with [Authorize], roles, or policies. Authentication must run before authorization in the pipeline via UseAuthentication and UseAuthorization, and an unauthenticated request results in a 401 while an unauthorized one results in a 403.",
+      "tags": ["authentication", "authorization", "security"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/",
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "aspnet-010",
+      "difficulty": "Beginner",
+      "question": "How do you serve static files in ASP.NET Core?",
+      "answer": "Add app.UseStaticFiles() to the pipeline to serve files from the wwwroot folder, placing it early so files are handled before the routing middleware. Static files are served without authorization by default, so files that must be protected should not live in wwwroot. UseStaticFiles can take a StaticFileOptions instance to configure content types, caching headers, or a custom file provider, and UseDefaultFiles plus UseDirectoryBrowser add default-document and directory listing support.",
+      "tags": ["static-files", "wwwroot", "middleware"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/static-files"
+      ]
+    },
+    {
+      "id": "aspnet-011",
+      "difficulty": "Intermediate",
+      "question": "How does the middleware pipeline work and why does ordering matter?",
+      "answer": "Middleware components are assembled into a pipeline in the order they are added in Program.cs, and each component can run logic before and after calling next to pass control onward. Ordering matters because components such as UseExceptionHandler, UseHttpsRedirection, UseCors, UseAuthentication, and UseAuthorization must appear before the endpoints they protect. A component that does not call next short-circuits the pipeline, which is how terminal middleware such as UseStaticFiles responds without invoking later components.",
+      "code": "app.UseExceptionHandler();\napp.UseHttpsRedirection();\napp.UseCors();\napp.UseAuthentication();\napp.UseAuthorization();\napp.MapControllers();",
+      "tags": ["middleware", "pipeline", "ordering"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/order"
+      ]
+    },
+    {
+      "id": "aspnet-012",
+      "difficulty": "Intermediate",
+      "question": "What types of filters exist in ASP.NET Core MVC and what is each used for?",
+      "answer": "MVC filters run at different stages of request processing: authorization filters run first, resource filters run around model binding, action filters run before and after the action, exception filters handle unhandled exceptions, and result filters run around result execution. They can be registered globally, per controller, or per action, and they support dependency injection through the container. Filters are useful for cross-cutting concerns such as logging, validation, and caching that need MVC-specific context.",
+      "tags": ["filters", "mvc", "cross-cutting"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ]
+    },
+    {
+      "id": "aspnet-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between an action filter and middleware?",
+      "answer": "Middleware is part of the low-level request pipeline, runs for every request, and has no knowledge of MVC concepts such as controllers, actions, or model state. Action filters run only around MVC and Razor Pages action execution and have access to ActionExecutingContext and ActionExecutedContext, making them ideal for concerns that need action metadata. Use middleware for transport-level concerns like exception handling and CORS, and use filters for MVC-specific cross-cutting logic.",
+      "tags": ["action-filters", "middleware", "mvc"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"
+      ]
+    },
+    {
+      "id": "aspnet-014",
+      "difficulty": "Intermediate",
+      "question": "What is the options pattern and how do IOptions, IOptionsSnapshot, and IOptionsMonitor differ?",
+      "answer": "The options pattern binds a configuration section to a strongly typed class with services.Configure<TOptions>(config.GetSection(...)), avoiding scattered IConfiguration usage. IOptions is a singleton that never changes after startup, IOptionsSnapshot is scoped and recomputed per request which suits reloadable configuration, and IOptionsMonitor is a singleton that exposes CurrentValue and raises change notifications. Choose the interface based on whether the values must react to configuration reloads at runtime.",
+      "code": "builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection(\"Jwt\"));\n\npublic class TokenService(IOptionsSnapshot<JwtOptions> options)\n{\n    private readonly JwtOptions _opts = options.Value;\n}",
+      "tags": ["options-pattern", "configuration", "di"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options"
+      ]
+    },
+    {
+      "id": "aspnet-015",
+      "difficulty": "Intermediate",
+      "question": "How do you configure JWT bearer authentication in ASP.NET Core?",
+      "answer": "You call AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(...) and set TokenValidationParameters for the issuer, audience, signing key, and lifetime validation, then add app.UseAuthentication() and app.UseAuthorization(). The handler validates the token from the Authorization: Bearer header and populates HttpContext.User with its claims. In production, prefer validating signatures against the identity provider's published metadata and keys rather than a hardcoded symmetric secret.",
+      "code": "builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)\n    .AddJwtBearer(o =>\n    {\n        o.TokenValidationParameters = new TokenValidationParameters\n        {\n            ValidateIssuer = true,\n            ValidateAudience = true,\n            ValidateLifetime = true,\n            ValidIssuer = config[\"Jwt:Issuer\"],\n            IssuerSigningKey = new SymmetricSecurityKey(key)\n        };\n    });",
+      "tags": ["jwt", "bearer", "authentication"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "aspnet-016",
+      "difficulty": "Intermediate",
+      "question": "What is policy-based authorization and how do you create a custom policy?",
+      "answer": "Policy-based authorization decouples authorization rules from roles by registering named policies that are built from requirements and evaluated by handlers. You register a policy with services.AddAuthorization(options => options.AddPolicy(\"AtLeast21\", p => p.Requirements.Add(new MinimumAgeRequirement(21)))), implement an AuthorizationHandler for the requirement, and apply the policy with [Authorize(Policy = \"AtLeast21\")]. Policies can combine multiple requirements and use claims or custom logic, making them more flexible than legacy role checks.",
+      "code": "builder.Services.AddAuthorization(o =>\n    o.AddPolicy(\"AtLeast21\", p => p.Requirements.Add(new MinimumAgeRequirement(21))));\n\n[Authorize(Policy = \"AtLeast21\")]\npublic IActionResult Buy() => Ok();",
+      "tags": ["authorization", "policies", "claims"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/policies"
+      ]
+    },
+    {
+      "id": "aspnet-017",
+      "difficulty": "Intermediate",
+      "question": "How does CORS work in ASP.NET Core and how is it configured?",
+      "answer": "Browsers enforce the same-origin policy, and CORS is a server-side opt-in that tells browsers which cross-origin requests are allowed through response headers. You register policies with AddCors and enable them with app.UseCors, and the middleware must run after UseRouting and before UseAuthorization. Configure origins, methods, and headers explicitly, and remember that AllowCredentials cannot be combined with AllowAnyOrigin for security reasons.",
+      "code": "builder.Services.AddCors(o => o.AddPolicy(\"web\", p => p\n    .WithOrigins(\"https://app.example.com\")\n    .AllowAnyHeader()\n    .AllowAnyMethod()));\n\napp.UseCors(\"web\");",
+      "tags": ["cors", "security", "middleware"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/cors"
+      ]
+    },
+    {
+      "id": "aspnet-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle exceptions globally in ASP.NET Core?",
+      "answer": "Use app.UseExceptionHandler to catch unhandled exceptions and produce a consistent response, and app.UseDeveloperExceptionPage only in development. In .NET 8 the recommended approach is AddProblemDetails combined with UseExceptionHandler, which writes an RFC 7807 ProblemDetails response and can include a trace id for correlation. For custom logic you can implement IExceptionHandler and register it, but you should never leak stack traces or internal details in production responses.",
+      "code": "builder.Services.AddProblemDetails();\napp.UseExceptionHandler();\n\n// In development only\nif (app.Environment.IsDevelopment())\n    app.UseDeveloperExceptionPage();",
+      "tags": ["exception-handling", "problem-details", "error-handling"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling",
+        "https://learn.microsoft.com/aspnet/core/web-api/handle-errors"
+      ]
+    },
+    {
+      "id": "aspnet-019",
+      "difficulty": "Intermediate",
+      "question": "How does FluentValidation integrate with ASP.NET Core?",
+      "answer": "FluentValidation defines validation rules in separate validator classes deriving from AbstractValidator<T>, keeping validation logic out of the model and supporting complex, conditional, and reusable rules. You register validators with AddValidatorsFromAssembly and enable automatic integration with AddFluentValidationAutoValidation, which runs them as part of the MVC model validation pipeline. Failed rules populate ModelState, so [ApiController] endpoints still return the standard 400 ProblemDetails response.",
+      "code": "public class CreateUserValidator : AbstractValidator<CreateUser>\n{\n    public CreateUserValidator()\n    {\n        RuleFor(x => x.Name).NotEmpty().MaximumLength(50);\n        RuleFor(x => x.Age).InclusiveBetween(18, 120);\n    }\n}",
+      "tags": ["fluentvalidation", "validation", "web-api"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "aspnet-020",
+      "difficulty": "Intermediate",
+      "question": "What are best practices for designing and versioning REST APIs, and how do you document them?",
+      "answer": "Design around resources and HTTP semantics: use nouns in URIs, the correct verbs and status codes, idempotent PUT/DELETE, and consistent error payloads such as ProblemDetails. Version APIs explicitly (for example via URL segment, header, or query string) using the Microsoft.AspNetCore.Mvc.Versioning package, and avoid breaking changes within a version. Generate OpenAPI documents with Microsoft.AspNetCore.OpenApi or Swashbuckle and expose interactive docs such as Swagger UI in non-production environments.",
+      "tags": ["rest", "versioning", "openapi"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/versioning",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "aspnet-021",
+      "difficulty": "Advanced",
+      "question": "How does the built-in rate limiting middleware work in ASP.NET Core?",
+      "answer": "AddRateLimiter registers named policies using a fixed window, sliding window, token bucket, or concurrency limiter, and app.UseRateLimiter enables them in the pipeline. You apply a policy globally, per controller with [EnableRateLimiting], or per endpoint with RequireRateLimiting, and you can partition limits by API key, user, or IP address using RateLimitPartition. Rejected requests return 503 by default but the rejection response can be customized, commonly to 429 with a Retry-After header.",
+      "code": "builder.Services.AddRateLimiter(o => o.AddFixedWindowLimiter(\"fixed\", opt =>\n{\n    opt.PermitLimit = 100;\n    opt.Window = TimeSpan.FromMinutes(1);\n}));\n\napp.UseRateLimiter();\napp.MapControllers().RequireRateLimiting(\"fixed\");",
+      "tags": ["rate-limiting", "performance", "middleware"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    },
+    {
+      "id": "aspnet-022",
+      "difficulty": "Advanced",
+      "question": "How does output caching differ from response caching, and where does response compression fit?",
+      "answer": "Output caching, added in .NET 7, stores entire responses server-side and is configured with AddOutputCache and app.UseOutputCache, then applied with .CacheOutput or a named policy on endpoints. Unlike response caching it does not depend on client or proxy cache headers and lets you invalidate entries by tag with IOutputCacheStore.EvictByTagAsync. Response compression is complementary: AddResponseCompression plus UseResponseCompression compresses payloads such as gzip or Brotli to reduce bandwidth regardless of caching.",
+      "code": "builder.Services.AddOutputCache();\nbuilder.Services.AddResponseCompression(o => o.EnableForHttps = true);\napp.UseResponseCompression();\napp.UseOutputCache();\napp.MapGet(\"/products\", GetProducts).CacheOutput(p => p.Expire(TimeSpan.FromMinutes(1)));",
+      "tags": ["output-caching", "response-compression", "performance"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output",
+        "https://learn.microsoft.com/aspnet/core/performance/response-compression"
+      ]
+    },
+    {
+      "id": "aspnet-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement health checks in ASP.NET Core?",
+      "answer": "AddHealthChecks registers health checks and MapHealthChecks exposes an endpoint, commonly /health, that reports Healthy, Degraded, or Unhealthy. You add checks for databases, brokers, and external services with packages such as AspNetCore.HealthChecks.SqlServer, and you can tag and filter checks so Kubernetes liveness probes differ from readiness probes. Health endpoints should be restricted or placed on an internal port so they do not leak sensitive dependency details.",
+      "code": "builder.Services.AddHealthChecks()\n    .AddDbContextCheck<AppDbContext>(\"db\", tags: new[] { \"ready\" });\n\napp.MapHealthChecks(\"/health/ready\", new HealthCheckOptions\n{\n    Predicate = r => r.Tags.Contains(\"ready\")\n});",
+      "tags": ["health-checks", "monitoring", "hosting"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/health-checks"
+      ]
+    },
+    {
+      "id": "aspnet-024",
+      "difficulty": "Advanced",
+      "question": "How do you run background work and manage outbound HTTP calls in ASP.NET Core?",
+      "answer": "Implement IHostedService or derive from BackgroundService and register it with AddHostedService; the generic host starts it on startup and signals cancellation on shutdown. In long-running loops you should honor the injected CancellationToken, and you must never resolve scoped services directly from a singleton hosted service. Use IServiceScopeFactory to create a scope per unit of work, and use IHttpClientFactory (AddHttpClient) to obtain HttpClient instances so sockets are pooled and DNS changes are respected instead of newing up clients.",
+      "code": "public class Worker(IServiceScopeFactory scopeFactory) : BackgroundService\n{\n    protected override async Task ExecuteAsync(CancellationToken ct)\n    {\n        using var scope = scopeFactory.CreateScope();\n        var repo = scope.ServiceProvider.GetRequiredService<IJobRepository>();\n        // process work, honoring ct\n    }\n}",
+      "tags": ["background-services", "httpclientfactory", "hosted-services"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ]
+    },
+    {
+      "id": "aspnet-025",
+      "difficulty": "Advanced",
+      "question": "When would you use SignalR versus gRPC for real-time or service-to-service communication?",
+      "answer": "SignalR provides an abstraction over WebSockets with automatic fallback to server-sent events or long polling and supports server-to-client push, groups, and reconnection, making it well suited to browser clients and real-time UI scenarios. gRPC is a contract-first, HTTP/2-based RPC framework using Protocol Buffers that offers high performance, streaming, and strong typing, ideal for service-to-service calls and polyglot microservices. gRPC-Web is needed for browser clients, whereas SignalR already works natively in browsers, so choose based on client type, latency, and whether you need request/response RPC or push messaging.",
+      "tags": ["signalr", "grpc", "real-time"],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/signalr",
+        "https://learn.microsoft.com/aspnet/core/grpc/"
+      ]
+    }
+  ]
+}

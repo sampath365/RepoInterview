@@ -1,0 +1,215 @@
+{
+  "category": "Repository & Unit of Work",
+  "slug": "repository-uow",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "repository-uow-001",
+      "difficulty": "Beginner",
+      "question": "What is the Repository pattern?",
+      "answer": "Repository mediates between the domain and the data mapping layer, providing a collection-like interface for accessing aggregates. It hides the details of persistence behind domain-oriented methods. This keeps domain code free of queries and database specifics.",
+      "tags": ["repository", "persistence"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-002",
+      "difficulty": "Beginner",
+      "question": "What is the Unit of Work pattern?",
+      "answer": "Unit of Work maintains a list of objects affected by a business transaction and coordinates writing out changes as a single atomic operation. It tracks changes and commits them together, often with a transaction. In EF Core the DbContext itself is a unit of work.",
+      "tags": ["unit-of-work", "persistence"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-003",
+      "difficulty": "Beginner",
+      "question": "Why use a repository instead of using the DbContext directly?",
+      "answer": "A repository centralizes query and persistence logic behind an abstraction the domain understands, reducing duplication. It also makes it easier to swap or fake the data source in tests. The trade-off is that a thin repository over an already-abstract DbContext can add little value.",
+      "tags": ["repository", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-004",
+      "difficulty": "Beginner",
+      "question": "How does EF Core's DbContext act as a unit of work?",
+      "answer": "DbContext tracks entities it has loaded or attached and records their state changes. SaveChanges persists all pending changes in one transaction. Change tracking plus a single SaveChanges is the Unit of Work behavior.",
+      "tags": ["unit-of-work", "efcore"],
+      "code": "var order = await db.Orders.FindAsync(id);\norder.Status = OrderStatus.Shipped;\nawait db.SaveChangesAsync();",
+      "references": ["https://learn.microsoft.com/ef/core/dbcontext-configuration/"]
+    },
+    {
+      "id": "repository-uow-005",
+      "difficulty": "Beginner",
+      "question": "What methods does a typical repository expose?",
+      "answer": "Common methods include GetById, Add, Update, Remove, and query methods specific to the aggregate, such as GetActiveOrders. It should not expose IQueryable unless you deliberately want query composition outside the repository. The interface speaks in domain terms.",
+      "tags": ["repository", "api"],
+      "code": "public interface IOrderRepository\n{\n    Task<Order?> GetByIdAsync(Guid id, CancellationToken ct);\n    void Add(Order order);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-006",
+      "difficulty": "Beginner",
+      "question": "How does Unit of Work improve consistency?",
+      "answer": "It groups multiple changes into one transaction so they either all succeed or all fail. This prevents partial writes that leave data inconsistent. The commit point is explicit, usually a single SaveChanges or transaction commit.",
+      "tags": ["unit-of-work", "transactions"],
+      "references": ["https://learn.microsoft.com/ef/core/saving/transactions"]
+    },
+    {
+      "id": "repository-uow-007",
+      "difficulty": "Beginner",
+      "question": "Should a repository return domain entities or DTOs?",
+      "answer": "A repository should return domain entities or aggregates, keeping persistence concerns out of the domain. DTOs belong to the application or presentation layer and are produced by mapping entities. Mixing them couples the domain to transport shapes.",
+      "tags": ["repository", "ddd"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/"]
+    },
+    {
+      "id": "repository-uow-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a repository and a DAO?",
+      "answer": "A repository works in domain terms and often handles aggregates, hiding persistence details. A DAO, data access object, is usually closer to the database and exposes table or query operations. Repositories aim to make persistence look like an in-memory collection.",
+      "tags": ["repository", "dao"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-009",
+      "difficulty": "Beginner",
+      "question": "When might you not need a repository?",
+      "answer": "If the application is simple CRUD and the ORM already provides a clean abstraction, an extra repository layer adds ceremony without benefit. Repositories pay off when the domain is complex and you want to isolate persistence. Many teams use DbContext directly in simple apps.",
+      "tags": ["repository", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-010",
+      "difficulty": "Beginner",
+      "question": "How does dependency injection help with repositories?",
+      "answer": "Register the repository interface with its implementation and inject it where needed, so the domain depends on the abstraction. Lifetimes, usually scoped, align the repository with the unit of work per request. Tests can substitute a fake repository.",
+      "tags": ["repository", "dependency-injection"],
+      "code": "builder.Services.AddScoped<IOrderRepository, OrderRepository>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "repository-uow-011",
+      "difficulty": "Intermediate",
+      "question": "Should repositories expose IQueryable?",
+      "answer": "Exposing IQueryable leaks the persistence provider and lets callers build queries that may not translate, which couples the domain to EF. It also makes the abstraction hard to fake. Prefer explicit query methods or specifications that return materialized results.",
+      "tags": ["repository", "iqueryable"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-012",
+      "difficulty": "Intermediate",
+      "question": "How do you use the specification pattern with repositories?",
+      "answer": "Encapsulate query criteria in specification objects that a repository can accept, keeping query logic out of the domain and the repository. The specification describes what to fetch in domain terms. This supports reuse and testing of query rules.",
+      "tags": ["repository", "specification"],
+      "code": "public interface ISpec<T> { Expression<Func<T, bool>> ToExpression(); }",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement Unit of Work on top of EF Core?",
+      "answer": "Wrap the DbContext in an IUnitOfWork that exposes repositories and a Commit method delegating to SaveChanges. Register both scoped so one instance is shared per request. Avoid wrapping too thinly, since DbContext already provides the behavior.",
+      "tags": ["unit-of-work", "efcore"],
+      "code": "public sealed class UnitOfWork(AppDb db) : IUnitOfWork\n{\n    public Task<int> CommitAsync(CancellationToken ct) => db.SaveChangesAsync(ct);\n}",
+      "references": ["https://learn.microsoft.com/ef/core/saving/"]
+    },
+    {
+      "id": "repository-uow-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test a service that depends on a repository?",
+      "answer": "Provide a fake or in-memory implementation of the repository interface and assert the service's behavior. This avoids a real database and keeps tests fast. For integration tests, use a real provider against a test database to validate queries.",
+      "tags": ["repository", "testing"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/"]
+    },
+    {
+      "id": "repository-uow-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle transactions across multiple repositories?",
+      "answer": "Share one unit of work and one DbContext across the repositories so a single SaveChanges or transaction covers all changes. Use an explicit transaction when you need multiple SaveChanges. This keeps the atomic boundary clear.",
+      "tags": ["unit-of-work", "transactions"],
+      "code": "await using var tx = await db.Database.BeginTransactionAsync();\n// ... multiple operations\nawait tx.CommitAsync();",
+      "references": ["https://learn.microsoft.com/ef/core/saving/transactions"]
+    },
+    {
+      "id": "repository-uow-016",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent an anemic repository that just forwards calls?",
+      "answer": "Add domain-meaningful methods and, where useful, encapsulate query criteria so the repository expresses intent rather than mirroring CRUD. If every method just forwards to the DbContext, the abstraction is not earning its keep. Consider whether a repository is needed at all.",
+      "tags": ["repository", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-017",
+      "difficulty": "Intermediate",
+      "question": "How do repositories fit with CQRS?",
+      "answer": "Repositories are typically used on the command side to load and save aggregates. On the query side, a simpler read model with direct queries or a query service is often more efficient. This keeps the write model rich and the read model fast.",
+      "tags": ["repository", "cqrs"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/"]
+    },
+    {
+      "id": "repository-uow-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle concurrency conflicts in a unit of work?",
+      "answer": "Use optimistic concurrency with a version or rowversion column so conflicting updates fail and can be retried or surfaced. EF Core throws DbUpdateConcurrencyException, which you handle by reloading and merging. For critical sections, pessimistic locking may be appropriate.",
+      "tags": ["unit-of-work", "concurrency"],
+      "references": ["https://learn.microsoft.com/ef/core/saving/concurrency"]
+    },
+    {
+      "id": "repository-uow-019",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a generic repository without losing domain clarity?",
+      "answer": "A generic base repository can handle common operations, but expose aggregate-specific repositories that add domain methods. Keep the generic part minimal so it does not become a leaky IQueryable wrapper. Domain-specific methods carry the real meaning.",
+      "tags": ["repository", "generics"],
+      "code": "public class Repository<T>(AppDb db) where T : class\n{\n    protected readonly AppDb Db = db;\n    public Task<T?> GetAsync(object id) => Db.Set<T>().FindAsync(id).AsTask();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-020",
+      "difficulty": "Intermediate",
+      "question": "How does the repository pattern support swapping data stores?",
+      "answer": "Because the domain depends on the repository interface, a different implementation can target another store without changing the domain. In practice, swapping stores is rare and leaks through query behavior, so weigh the real need. The abstraction is more valuable for testing than for hypothetical migrations.",
+      "tags": ["repository", "abstraction"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "repository-uow-021",
+      "difficulty": "Advanced",
+      "question": "How do you handle aggregate boundaries with repositories?",
+      "answer": "A repository should load and save a whole aggregate through its root, preserving invariants. References between aggregates are by identity, and each aggregate has its own repository. This keeps transactional boundaries aligned with consistency needs.",
+      "tags": ["repository", "ddd"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/microservice-domain-model"]
+    },
+    {
+      "id": "repository-uow-022",
+      "difficulty": "Advanced",
+      "question": "What are the performance pitfalls of a unit of work with change tracking?",
+      "answer": "Tracking many entities increases memory and CPU and can make SaveChanges slow because it inspects every tracked entity. Use AsNoTracking for read-only queries and keep the tracked set small per scope. For bulk operations, use bulk APIs or ExecuteUpdate and ExecuteDelete.",
+      "tags": ["unit-of-work", "performance"],
+      "code": "var dtos = await db.Orders.AsNoTracking()\n    .Select(o => new OrderDto(o.Id, o.Total))\n    .ToListAsync();",
+      "references": ["https://learn.microsoft.com/ef/core/performance/"]
+    },
+    {
+      "id": "repository-uow-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement an outbox with a unit of work to publish events reliably?",
+      "answer": "Write domain events to an outbox table in the same transaction as the data changes. A background process reads the outbox and publishes messages, marking them sent. This guarantees at-least-once delivery without distributed transactions.",
+      "tags": ["unit-of-work", "outbox"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "repository-uow-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep the domain model free of persistence concerns with repositories?",
+      "answer": "Keep entities as plain domain objects and let the repository and mapping handle persistence. Avoid attributes or base classes tied to the ORM in the domain where feasible. Use separate persistence models or configurations to isolate storage details.",
+      "tags": ["repository", "ddd"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/"]
+    },
+    {
+      "id": "repository-uow-025",
+      "difficulty": "Advanced",
+      "question": "When does a repository abstraction become an anti-pattern?",
+      "answer": "It becomes an anti-pattern when it merely wraps the ORM, exposes IQueryable, or forces every query through a leaky interface that adds no value. It also hurts when it hides needed capabilities like bulk operations or projections. Keep it only where it genuinely isolates the domain or aids testing.",
+      "tags": ["repository", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    }
+  ]
+}

@@ -1,0 +1,341 @@
+{
+  "category": "Caching & Rate Limiting",
+  "slug": "caching",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "caching-001",
+      "difficulty": "Beginner",
+      "question": "What is response caching?",
+      "answer": "Response caching stores an HTTP response and reuses it for subsequent matching requests, either in the client, an intermediary, or the server. It reduces server work and latency. The server communicates cacheability and freshness through headers such as Cache-Control and ETag.",
+      "tags": [
+        "caching",
+        "http"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ]
+    },
+    {
+      "id": "caching-002",
+      "difficulty": "Beginner",
+      "question": "What does the Cache-Control header do?",
+      "answer": "Cache-Control directives such as max-age, no-store, no-cache, and private control how and for how long a response may be cached and by whom. For sensitive data use no-store so nothing caches it. Getting these directives right is central to correct caching.",
+      "tags": [
+        "caching",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ],
+      "code": "Cache-Control: public, max-age=60"
+    },
+    {
+      "id": "caching-003",
+      "difficulty": "Beginner",
+      "question": "What is in-memory caching in ASP.NET Core?",
+      "answer": "IMemoryCache stores objects in the server's memory keyed by a string, with optional expiration and eviction policies. It is fast and simple but local to each instance. In a multi-instance deployment each instance has its own cache.",
+      "tags": [
+        "caching",
+        "memory-cache"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/memory"
+      ],
+      "code": "var value = _cache.GetOrCreate(\"key\", e =>\n{\n    e.AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5);\n    return Load();\n});"
+    },
+    {
+      "id": "caching-004",
+      "difficulty": "Beginner",
+      "question": "What is distributed caching?",
+      "answer": "A distributed cache such as Redis or SQL Server is shared across instances, so all nodes see the same data and it survives restarts. It is essential for scale-out and for session-like data. The trade-off is network latency compared to in-memory caching.",
+      "tags": [
+        "caching",
+        "distributed"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/distributed"
+      ],
+      "code": "builder.Services.AddStackExchangeRedisCache(o =>\n    o.Configuration = \"localhost:6379\");"
+    },
+    {
+      "id": "caching-005",
+      "difficulty": "Beginner",
+      "question": "What is output caching?",
+      "answer": "Output caching stores entire responses on the server and serves them without re-executing the endpoint, controlled with the [OutputCache] attribute or the OutputCache middleware. It is more flexible than response caching because the cache is server-side and can be varied by policy. It is available in .NET 7 and later.",
+      "tags": [
+        "caching",
+        "output-cache"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output"
+      ],
+      "code": "[OutputCache(Duration = 60)]\n[HttpGet]\npublic IActionResult Get() => Ok(_repo.All());"
+    },
+    {
+      "id": "caching-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between response caching and output caching?",
+      "answer": "Response caching relies on HTTP cache headers and lets clients and proxies cache, while output caching stores responses in server-side storage and gives you programmatic control over eviction and variation. Output caching works even when intermediaries are absent. Both reduce repeated work.",
+      "tags": [
+        "caching",
+        "output-cache"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output"
+      ]
+    },
+    {
+      "id": "caching-007",
+      "difficulty": "Beginner",
+      "question": "What is rate limiting?",
+      "answer": "Rate limiting restricts how many requests a client may make in a time window, protecting the service from overload and abuse. ASP.NET Core provides built-in rate limiting middleware in .NET 7 and later. Rejected requests typically receive 429 Too Many Requests.",
+      "tags": [
+        "rate-limiting",
+        "throttling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ],
+      "code": "app.UseRateLimiter();"
+    },
+    {
+      "id": "caching-008",
+      "difficulty": "Beginner",
+      "question": "What status code does a rate limiter return?",
+      "answer": "429 Too Many Requests, ideally with a Retry-After header indicating when the client may try again. This tells well-behaved clients to back off. Document the limits so clients can plan.",
+      "tags": [
+        "rate-limiting",
+        "status-codes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    },
+    {
+      "id": "caching-009",
+      "difficulty": "Beginner",
+      "question": "What is a cache key?",
+      "answer": "A cache key uniquely identifies a cached entry, and it must include every input that changes the response, such as path, query string, user identity, and version. A key that omits an input can serve the wrong data to the wrong caller. Designing keys carefully prevents cache poisoning.",
+      "tags": [
+        "caching",
+        "keys"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/memory"
+      ]
+    },
+    {
+      "id": "caching-010",
+      "difficulty": "Beginner",
+      "question": "When should you not cache a response?",
+      "answer": "Do not cache responses containing per-user secrets or rapidly changing data unless the cache is correctly partitioned and short-lived. For authenticated or sensitive endpoints prefer no-store. Caching the wrong thing is worse than not caching at all.",
+      "tags": [
+        "caching",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ]
+    },
+    {
+      "id": "caching-011",
+      "difficulty": "Intermediate",
+      "question": "How do you choose between memory, distributed, and output caching?",
+      "answer": "Use in-memory caching for small, hot, per-instance data, distributed caching for shared data across instances, and output caching for whole responses that are expensive to produce. They can be combined, for example output caching in front of data that is itself cached. Match the mechanism to the sharing and lifetime requirements.",
+      "tags": [
+        "caching",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/overview"
+      ]
+    },
+    {
+      "id": "caching-012",
+      "difficulty": "Intermediate",
+      "question": "How do you invalidate cache entries?",
+      "answer": "Set expirations for time-based invalidation and evict explicitly on writes using a known key, or use cache tags and eviction APIs in output caching. Event-driven invalidation is more complex but more accurate. Always define an invalidation strategy before adding a cache.",
+      "tags": [
+        "caching",
+        "invalidation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output#cache-revalidation"
+      ]
+    },
+    {
+      "id": "caching-013",
+      "difficulty": "Intermediate",
+      "question": "How do you vary output caching by query string or user?",
+      "answer": "Configure the policy with SetVaryByQuery, SetVaryByHeader, or SetVaryByRouteValue so entries differ by those inputs, or define named policies for reuse. This prevents one caller's response being served to another. Over-varying reduces the hit rate, so vary only on meaningful inputs.",
+      "tags": [
+        "caching",
+        "output-cache"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output"
+      ],
+      "code": "builder.Services.AddOutputCache(o =>\n    o.AddPolicy(\"per-user\", b => b.SetVaryByHeader(\"Authorization\")));"
+    },
+    {
+      "id": "caching-014",
+      "difficulty": "Intermediate",
+      "question": "How do you configure rate limiting policies?",
+      "answer": "Register AddRateLimiter and define named policies with a fixed, sliding, or token bucket algorithm, then apply them globally, per endpoint, or per route group with RequireRateLimiting. Partition by API key, user, or IP so limits apply per client. Return a clear 429 with Retry-After.",
+      "tags": [
+        "rate-limiting",
+        "policies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ],
+      "code": "builder.Services.AddRateLimiter(o =>\n    o.AddFixedWindowLimiter(\"fixed\", opt => opt.PermitLimit = 100));"
+    },
+    {
+      "id": "caching-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between fixed window and sliding window rate limiting?",
+      "answer": "A fixed window counts requests in discrete intervals and can allow bursts at boundaries, while a sliding window smooths the limit over time and is fairer. Token bucket allows bursts up to the bucket size while enforcing an average rate. Choose based on whether burst tolerance matters.",
+      "tags": [
+        "rate-limiting",
+        "algorithms"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    },
+    {
+      "id": "caching-016",
+      "difficulty": "Intermediate",
+      "question": "How do you partition rate limits per client?",
+      "answer": "Use a partitioner that keys on the API key, authenticated user id, or client IP, and apply the policy per endpoint. This prevents one noisy client from exhausting the limit for everyone. Return 429 with Retry-After so clients back off.",
+      "tags": [
+        "rate-limiting",
+        "partitioning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ],
+      "code": "o.AddPolicy(\"per-user\", ctx =>\n    RateLimitPartition.GetFixedWindowLimiter(\n        ctx.User.Identity?.Name ?? ctx.Connection.RemoteIpAddress?.ToString(),\n        _ => new FixedWindowRateLimiterOptions { PermitLimit = 50 }));"
+    },
+    {
+      "id": "caching-017",
+      "difficulty": "Intermediate",
+      "question": "How do you cache data that is expensive to compute?",
+      "answer": "Cache the computed result with a short expiration and stampede protection, so concurrent misses do not all recompute. HybridCache in .NET 9 combines in-memory and distributed layers and handles stampede protection for you. Choose keys that include all inputs.",
+      "tags": [
+        "caching",
+        "hybrid"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/hybrid"
+      ]
+    },
+    {
+      "id": "caching-018",
+      "difficulty": "Intermediate",
+      "question": "What is a cache stampede and how do you prevent it?",
+      "answer": "A stampede happens when many requests miss the same key at once and all recompute, overwhelming the backing store. Prevent it with locking, single-flight, or a library such as HybridCache that serializes recomputation. Randomized jitter on expirations also spreads the load.",
+      "tags": [
+        "caching",
+        "stampede"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/hybrid"
+      ]
+    },
+    {
+      "id": "caching-019",
+      "difficulty": "Intermediate",
+      "question": "How does conditional request handling with ETag reduce load?",
+      "answer": "The server returns an ETag with the representation, and clients send If-None-Match on later requests, allowing a cheap 304 Not Modified instead of a full body. This saves bandwidth and serialization. It requires a stable validator such as a hash or row version.",
+      "tags": [
+        "caching",
+        "etag"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ]
+    },
+    {
+      "id": "caching-020",
+      "difficulty": "Intermediate",
+      "question": "How do you use cache tags for eviction?",
+      "answer": "Tag output cache entries when they are created and evict by tag when underlying data changes, for example evicting all product listings after a product update. This is more precise than time-based expiry. Tags keep related entries consistent.",
+      "tags": [
+        "caching",
+        "invalidation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output"
+      ],
+      "code": "app.MapGet(\"/products\", GetAll).CacheOutput(p => p.Tag(\"products\"));"
+    },
+    {
+      "id": "caching-021",
+      "difficulty": "Advanced",
+      "question": "How do you prevent serving stale data after a write?",
+      "answer": "Invalidate or evict the affected keys in the same logical operation as the write, or use short expirations with tags, and consider a version or timestamp in the key so new data naturally uses a new key. Cache-aside with write-through invalidation is a common, reliable pattern. Test the invalidation path explicitly.",
+      "tags": [
+        "caching",
+        "invalidation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/output#cache-revalidation"
+      ]
+    },
+    {
+      "id": "caching-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a distributed rate limiter?",
+      "answer": "Use a shared store such as Redis with atomic operations or a library that implements the algorithm centrally, because in-process limiters do not coordinate across instances. This ensures the limit is global. Accept the added dependency and latency for correctness.",
+      "tags": [
+        "rate-limiting",
+        "distributed"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    },
+    {
+      "id": "caching-023",
+      "difficulty": "Advanced",
+      "question": "How do you combine rate limiting with authentication and quotas?",
+      "answer": "Partition by authenticated identity or subscription tier so each client has an appropriate quota, and layer a global limit for abuse protection. Return 429 with Retry-After and clear headers so clients can adapt. Quotas often also need accounting for billing.",
+      "tags": [
+        "rate-limiting",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    },
+    {
+      "id": "caching-024",
+      "difficulty": "Advanced",
+      "question": "What are the security risks of caching?",
+      "answer": "Caching private responses without varying on identity can leak one user's data to another, and cache keys derived from untrusted input can be poisoned. Always partition on the identity inputs that matter and use no-store for sensitive responses. Review Vary headers and shared caches carefully.",
+      "tags": [
+        "caching",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ]
+    },
+    {
+      "id": "caching-025",
+      "difficulty": "Advanced",
+      "question": "How do you tune cache expiration for correctness and hit rate?",
+      "answer": "Use long expirations with explicit invalidation for data that changes predictably, and short expirations with jitter for volatile data. Balance freshness requirements against the cost of recomputation. Monitor staleness complaints and adjust, rather than guessing.",
+      "tags": [
+        "caching",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/overview"
+      ]
+    }
+  ]
+}

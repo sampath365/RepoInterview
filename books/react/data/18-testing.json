@@ -1,0 +1,338 @@
+{
+  "category": "Testing with React Testing Library",
+  "slug": "testing",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What is React Testing Library?",
+      "answer": "React Testing Library is a lightweight library for testing React components by interacting with them the way a user would. It encourages querying by role, label and text rather than implementation details. This makes tests resilient to refactors. It works with any test runner and is commonly paired with Jest or Vitest.",
+      "tags": [
+        "testing",
+        "rtl"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/intro/"
+      ]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "What is the guiding principle of React Testing Library?",
+      "answer": "The more your tests resemble the way software is used, the more confidence they give you. Tests should interact through the DOM as a user would, clicking buttons and typing text. This discourages asserting on component internals. The result is tests that catch real regressions and survive refactors.",
+      "tags": [
+        "testing",
+        "philosophy"
+      ],
+      "references": [
+        "https://testing-library.com/docs/guiding-principles"
+      ]
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "How do you render a component in a test?",
+      "answer": "You call render with the component and JSX props, which mounts it into a container attached to document.body. The function returns queries and utilities like rerender and unmount. You can then assert on what appears in the DOM. This mirrors how the component behaves in the app.",
+      "code": "render(<Button label='Save' />);\nexpect(screen.getByRole('button', { name: 'Save' })).toBeInTheDocument();",
+      "tags": [
+        "testing",
+        "render"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/api"
+      ]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "What are the recommended queries in Testing Library?",
+      "answer": "Prefer queries that reflect how users and assistive technology find elements: getByRole first, then getByLabelText, getByPlaceholderText, getByText and getByDisplayValue. These are accessible and resilient. Avoid test ids unless nothing better exists. The query order is documented as a priority guide.",
+      "tags": [
+        "testing",
+        "queries"
+      ],
+      "references": [
+        "https://testing-library.com/docs/queries/about"
+      ]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between getBy, queryBy and findBy?",
+      "answer": "getBy throws if no matching element is found, queryBy returns null instead and is used to assert absence, and findBy returns a promise that resolves when the element appears, which suits async updates. Choosing the right one avoids flaky tests. Use findBy for anything that appears after an await.",
+      "tags": [
+        "testing",
+        "queries"
+      ],
+      "references": [
+        "https://testing-library.com/docs/queries/about"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "How do you simulate a user click?",
+      "answer": "You use userEvent from user-event, which is preferred, or fireEvent from the library. userEvent.click dispatches a full set of realistic events including focus and pointer events. You await userEvent calls because they return promises. This gives behavior closer to a real user than fireEvent.",
+      "code": "const user = userEvent.setup();\nawait user.click(screen.getByRole('button'));",
+      "tags": [
+        "testing",
+        "events"
+      ],
+      "references": [
+        "https://testing-library.com/docs/user-event/intro"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "How do you assert on text content?",
+      "answer": "You query by text and assert with a matcher, such as expect(screen.getByText('Saved')).toBeInTheDocument(). The toBeInTheDocument matcher comes from jest-dom. For dynamic content use findByText and await it. This keeps assertions close to what the user sees.",
+      "tags": [
+        "testing",
+        "assertions"
+      ],
+      "references": [
+        "https://testing-library.com/docs/ecosystem-jest-dom"
+      ]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "What is jest-dom?",
+      "answer": "jest-dom adds custom matchers such as toBeInTheDocument, toHaveTextContent and toBeDisabled that make DOM assertions readable. It is imported once in the test setup file. The matchers give clearer failure messages than checking properties directly. It works with Jest and Vitest.",
+      "tags": [
+        "testing",
+        "jest-dom"
+      ],
+      "references": [
+        "https://testing-library.com/docs/ecosystem-jest-dom"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid testing implementation details?",
+      "answer": "Tests that assert on internal state, method names or component structure break whenever you refactor, even if behavior is unchanged. They also fail to catch real user-facing bugs. Testing through the rendered output and interactions keeps tests meaningful. This is the core reason to use Testing Library.",
+      "tags": [
+        "testing",
+        "best-practices"
+      ],
+      "references": [
+        "https://testing-library.com/docs/guiding-principles"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "How do you test that an element is not present?",
+      "answer": "You use queryBy with a negative assertion, such as expect(screen.queryByText('Error')).not.toBeInTheDocument(). Using getBy would throw instead of failing the assertion. For async cases use waitForElementToBeRemoved or a negative findBy. This correctly verifies absence.",
+      "tags": [
+        "testing",
+        "assertions"
+      ],
+      "references": [
+        "https://testing-library.com/docs/queries/about"
+      ]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you test asynchronous UI updates?",
+      "answer": "You use findBy queries or waitFor to wait for the DOM to reflect the update, and await userEvent interactions. This lets promises and effects resolve before asserting. Avoid arbitrary timeouts, which make tests slow and flaky. Waiting on observable changes is more reliable.",
+      "code": "expect(await screen.findByText('Loaded')).toBeInTheDocument();",
+      "tags": [
+        "testing",
+        "async"
+      ],
+      "references": [
+        "https://testing-library.com/docs/async-utilities"
+      ]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you mock API calls in tests?",
+      "answer": "You mock the network layer, such as fetch or axios, or use a tool like Mock Service Worker to intercept requests at the network level. MSW is preferred because it keeps your code calling real fetch while returning controlled responses. This tests the real data flow without a live server. Always clean up mocks between tests.",
+      "tags": [
+        "testing",
+        "mocking"
+      ],
+      "references": [
+        "https://mswjs.io/docs/"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test components that use context or providers?",
+      "answer": "You wrap the component in the required providers with test values, often through a custom render helper that includes common providers. This avoids repeating setup in every test. You can also test the fallback behavior when a provider is missing. Keeping the helper in one place makes tests consistent.",
+      "code": "function renderWithProviders(ui) {\n  return render(<ThemeProvider>{ui}</ThemeProvider>);\n}",
+      "tags": [
+        "testing",
+        "providers"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/api"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test a component that fetches data?",
+      "answer": "You mock the network response, render the component, assert the loading state, then await the loaded content. Assert on the final user-visible result rather than the fetch call details. Test the error path by returning an error response. This covers the states users actually see.",
+      "tags": [
+        "testing",
+        "data-fetching"
+      ],
+      "references": [
+        "https://testing-library.com/docs/async-utilities"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between unit and integration tests in React?",
+      "answer": "A unit test exercises a small piece in isolation, often a hook or a pure function, with dependencies mocked. An integration test renders several components together and verifies their combined behavior, closer to how the app runs. Integration tests give more confidence for UI, while unit tests pinpoint logic. A healthy suite balances both.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://testing-library.com/docs/guiding-principles"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test custom hooks?",
+      "answer": "You can use renderHook from the library to call a hook in a test component and inspect its return value, or test the hook through a component that uses it. Test the observable behavior and state transitions. Wrap hooks that need context in providers. This keeps hook tests focused and realistic.",
+      "code": "const { result } = renderHook(() => useCounter());\nact(() => result.current.increment());",
+      "tags": [
+        "testing",
+        "hooks"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/api"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle act warnings?",
+      "answer": "act warnings mean state updated outside of React's awareness, usually from an unresolved promise or timer in a test. Fix them by awaiting the user interactions and async utilities so updates happen inside act. Avoid wrapping everything in manual act calls. Correct async testing removes the warnings.",
+      "tags": [
+        "testing",
+        "act"
+      ],
+      "references": [
+        "https://testing-library.com/docs/async-utilities"
+      ]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test form submission?",
+      "answer": "You render the form, type into fields with userEvent, click submit and assert on the resulting UI or the called handler. Use accessible queries for fields so the test also verifies labels. Check both the success and validation error paths. This mirrors how a user completes the form.",
+      "code": "await user.type(screen.getByLabelText('Email'), 'a@b.com');\nawait user.click(screen.getByRole('button', { name: 'Send' }));",
+      "tags": [
+        "testing",
+        "forms"
+      ],
+      "references": [
+        "https://testing-library.com/docs/user-event/intro"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you assert accessibility in tests?",
+      "answer": "You query by role and accessible name, which fails if markup is not accessible, and add jest-axe to run automated checks. This catches missing labels and invalid aria usage. Accessibility tests are inexpensive and catch real issues. They complement manual keyboard and screen reader testing.",
+      "tags": [
+        "testing",
+        "accessibility"
+      ],
+      "references": [
+        "https://github.com/nickcolley/jest-axe"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test routing?",
+      "answer": "You render the app inside a memory router with initial entries for the route under test, then assert on the rendered page and navigation. This avoids touching the real URL. Test redirects and protected routes by setting up the appropriate auth state. Routing tests stay fast and deterministic.",
+      "tags": [
+        "testing",
+        "routing"
+      ],
+      "references": [
+        "https://testing-library.com/docs/example-react-router"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "How do you decide what to test with a testing trophy mindset?",
+      "answer": "Write mostly integration tests that render real components and exercise user flows, a smaller number of unit tests for complex logic, and a few end-to-end tests for critical paths. This balance gives high confidence per test while keeping the suite fast and maintainable. Avoid the inverted pyramid of many brittle unit tests. Focus on behavior users depend on.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://testing-library.com/docs/guiding-principles"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "What is the best way to test a component that throws during render?",
+      "answer": "Render a child that throws inside an error boundary and assert the fallback appears, and spy on the logging function to confirm the error was reported. Suppress the expected console error to keep output clean. Then test that a retry or reset recovers the UI. These tests protect the failure paths that are easy to break.",
+      "tags": [
+        "testing",
+        "error-boundaries"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/api"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of snapshot tests?",
+      "answer": "Snapshots are quick to write and catch unintended output changes, but large snapshots are hard to review and often updated blindly, giving false confidence. Use small, targeted snapshots or prefer explicit assertions on visible output. Inline snapshots keep the expectation next to the test. Treat snapshot updates as code review, not a formality.",
+      "tags": [
+        "testing",
+        "snapshots"
+      ],
+      "references": [
+        "https://testing-library.com/docs/guiding-principles"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep tests from becoming flaky?",
+      "answer": "Avoid fixed timeouts and instead wait for observable changes with findBy and waitFor. Control time with fake timers only when necessary and restore them after. Mock network and randomness deterministically. Keep tests independent so order does not matter. Flakiness usually signals a real async bug or a leaky abstraction.",
+      "tags": [
+        "testing",
+        "reliability"
+      ],
+      "references": [
+        "https://testing-library.com/docs/async-utilities"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure and improve test coverage meaningfully?",
+      "answer": "Coverage shows which lines ran, not whether behavior is correct, so use it to find untested paths rather than as a target. Focus on critical user flows, error paths and complex logic. Combine coverage with mutation testing or code review to gauge assertion quality. High coverage of trivial code is less valuable than good integration tests.",
+      "tags": [
+        "testing",
+        "coverage"
+      ],
+      "references": [
+        "https://testing-library.com/docs/guiding-principles"
+      ]
+    }
+  ]
+}

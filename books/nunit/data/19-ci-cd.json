@@ -1,0 +1,364 @@
+{
+  "category": "CI/CD & Test Reporting",
+  "slug": "ci-cd",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "ci-cd-001",
+      "difficulty": "Beginner",
+      "question": "How do you run NUnit tests in a CI pipeline?",
+      "answer": "Build the solution and run dotnet test on the test projects, optionally with a category filter to select the right suite. The test adapter for NUnit lets dotnet test discover and run the tests. Results are returned as a standard test report.",
+      "code": "dotnet test --configuration Release --filter \"TestCategory!=Integration\"",
+      "tags": [
+        "ci",
+        "dotnettest"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test",
+        "https://github.com/nunit/nunit3-vs-adapter"
+      ]
+    },
+    {
+      "id": "ci-cd-002",
+      "difficulty": "Beginner",
+      "question": "Why should CI fail the build when a test fails?",
+      "answer": "A failing test means the change is not ready, so the pipeline must stop and report it rather than deploying. Failing fast prevents broken code from reaching later stages. A green build must mean the tests actually passed.",
+      "tags": [
+        "ci",
+        "quality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test"
+      ]
+    },
+    {
+      "id": "ci-cd-003",
+      "difficulty": "Beginner",
+      "question": "How do you publish test results from an NUnit run in Azure Pipelines?",
+      "answer": "Use the PublishTestResults task pointed at the TRX or NUnit XML files produced by the test run, setting the format appropriately. This surfaces pass and fail details in the build summary. It also links failures to the build that produced them.",
+      "tags": [
+        "ci",
+        "reporting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-test-results-v2",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Test-Result-XML-Format.html"
+      ]
+    },
+    {
+      "id": "ci-cd-004",
+      "difficulty": "Beginner",
+      "question": "What is a TRX file?",
+      "answer": "TRX is the Visual Studio test results format produced by the VSTest platform, and it is what dotnet test emits when you set a logger. CI systems commonly consume TRX to display results. It contains per-test outcomes, durations and messages.",
+      "code": "dotnet test --logger \"trx;LogFileName=results.trx\"",
+      "tags": [
+        "ci",
+        "reporting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test",
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-vstest"
+      ]
+    },
+    {
+      "id": "ci-cd-005",
+      "difficulty": "Beginner",
+      "question": "How do you collect coverage in a CI pipeline?",
+      "answer": "Run dotnet test with the XPlat Code Coverage collector and publish the resulting Cobertura file through the pipeline's coverage task. Optionally merge reports for the whole solution. This makes coverage visible on every build.",
+      "code": "dotnet test --collect:\"XPlat Code Coverage\"",
+      "tags": [
+        "ci",
+        "coverage"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core"
+      ]
+    },
+    {
+      "id": "ci-cd-006",
+      "difficulty": "Beginner",
+      "question": "How do you build a .NET project in a CI pipeline?",
+      "answer": "Use the dotnet build command or the platform's .NET task with a restore step, targeting the Release configuration. Building before testing ensures compilation errors are caught separately from test failures. Caching NuGet packages speeds up the job.",
+      "code": "dotnet restore\ndotnet build --configuration Release --no-restore",
+      "tags": [
+        "ci",
+        "build"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core",
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net"
+      ]
+    },
+    {
+      "id": "ci-cd-007",
+      "difficulty": "Beginner",
+      "question": "How do you run tests in a GitHub Actions workflow?",
+      "answer": "Use actions/setup-dotnet to install the SDK and then run dotnet test, optionally uploading the TRX file as an artifact. This is the standard .NET test job on GitHub Actions. The workflow file lives in .github/workflows.",
+      "code": "- uses: actions/setup-dotnet@v4\n  with:\n    dotnet-version: '8.0.x'\n- run: dotnet test --logger \"trx\"",
+      "tags": [
+        "ci",
+        "githubactions"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net",
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test"
+      ]
+    },
+    {
+      "id": "ci-cd-008",
+      "difficulty": "Beginner",
+      "question": "Why run tests in Release configuration in CI?",
+      "answer": "Release builds apply optimisations and can surface issues that Debug hides, and they match what will be deployed. Testing the configuration you ship is more meaningful. Debug-only test runs can miss such differences.",
+      "tags": [
+        "ci",
+        "build"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "ci-cd-009",
+      "difficulty": "Beginner",
+      "question": "How do you filter which tests run in a pipeline stage?",
+      "answer": "Use the --filter option with an expression such as TestCategory=Unit to include or exclude categories. This lets a fast stage run unit tests and a later stage run integration tests. Categorising tests is what makes this selection possible.",
+      "code": "dotnet test --filter \"TestCategory=Unit\"",
+      "tags": [
+        "ci",
+        "filtering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests",
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test"
+      ]
+    },
+    {
+      "id": "ci-cd-010",
+      "difficulty": "Beginner",
+      "question": "What is a build artifact?",
+      "answer": "A build artifact is a file produced by the pipeline and kept for later stages or inspection, such as the compiled binaries, a NuGet package, test results or a coverage report. Uploading artifacts makes results available after the job finishes. They are the inputs to deployment stages.",
+      "tags": [
+        "ci",
+        "artifacts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core",
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net"
+      ]
+    },
+    {
+      "id": "ci-cd-011",
+      "difficulty": "Intermediate",
+      "question": "How do you speed up a CI test job?",
+      "answer": "Cache NuGet packages and build outputs, run tests in parallel, split the suite across agents, and keep slow integration tests out of the fast stage. Restoring and building incrementally avoids repeated work. Measure the job duration to target the biggest cost.",
+      "tags": [
+        "ci",
+        "performance"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core"
+      ]
+    },
+    {
+      "id": "ci-cd-012",
+      "difficulty": "Intermediate",
+      "question": "How do you publish an NUnit XML report?",
+      "answer": "Run the tests with a logger that emits NUnit XML, or use the NUnit console runner with --result, then publish that file with the pipeline's test results task selecting the NUnit format. Some CI systems accept NUnit XML directly. This preserves the full test detail.",
+      "code": "dotnet test --logger \"nunit;LogFileName=results.xml\"",
+      "tags": [
+        "ci",
+        "reporting"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Test-Result-XML-Format.html",
+        "https://github.com/nunit/nunit-console"
+      ]
+    },
+    {
+      "id": "ci-cd-013",
+      "difficulty": "Intermediate",
+      "question": "How do you enforce a coverage gate in a pipeline?",
+      "answer": "Set a minimum coverage threshold in the coverage tool or in the pipeline's coverage task, and fail the job when the value is below it. This prevents coverage regressions from being merged. Keep the threshold realistic and focused on the code that matters.",
+      "tags": [
+        "ci",
+        "coverage"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core"
+      ]
+    },
+    {
+      "id": "ci-cd-014",
+      "difficulty": "Intermediate",
+      "question": "How do you run a subset of tests in parallel across CI agents?",
+      "answer": "Use a matrix or a job template that splits the suite by category or by assembly, so each agent runs a slice, then merge the results. This reduces wall-clock time for large suites. The split must preserve isolation between the slices.",
+      "tags": [
+        "ci",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2"
+      ]
+    },
+    {
+      "id": "ci-cd-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle flaky tests in a pipeline?",
+      "answer": "Detect them by tracking failures that pass on retry, quarantine them out of the main gate while you fix the root cause, and never let a permanent retry policy hide real defects. NUnit's Retry attribute can mask flakiness if used carelessly. Treat flakiness as a defect.",
+      "tags": [
+        "ci",
+        "flaky"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "ci-cd-016",
+      "difficulty": "Intermediate",
+      "question": "How do you produce a test report that non-developers can read?",
+      "answer": "Publish the results through the pipeline's test reporting so the build summary shows counts, durations and failures, and attach the HTML report as an artifact. Some teams also generate an Allure or similar report. Clear reporting builds trust in the suite.",
+      "tags": [
+        "ci",
+        "reporting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-test-results-v2",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Test-Result-XML-Format.html"
+      ]
+    },
+    {
+      "id": "ci-cd-017",
+      "difficulty": "Intermediate",
+      "question": "How do you run tests as part of a pull request check?",
+      "answer": "Configure the pipeline to trigger on pull requests and require the test job to pass before merge, typically through branch policies. This keeps the main branch green. Fast unit tests should run on every PR, with heavier suites on merge or nightly.",
+      "tags": [
+        "ci",
+        "prchecks"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2"
+      ]
+    },
+    {
+      "id": "ci-cd-018",
+      "difficulty": "Intermediate",
+      "question": "How do you keep secrets out of test pipelines?",
+      "answer": "Store credentials in the platform's secret store or variable group and reference them as environment variables, never in the repository. Use ephemeral test credentials where possible. Rotate any secret that was ever committed.",
+      "tags": [
+        "ci",
+        "secrets"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2"
+      ]
+    },
+    {
+      "id": "ci-cd-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between continuous integration and continuous delivery for tests?",
+      "answer": "Continuous integration runs the build and tests on every change to catch problems early, while continuous delivery keeps the software in a releasable state and deploys through automated stages. Tests underpin both, with fast suites gating every commit and broader suites gating releases. The pipeline structure reflects these different needs.",
+      "tags": [
+        "ci",
+        "cd"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2"
+      ]
+    },
+    {
+      "id": "ci-cd-020",
+      "difficulty": "Intermediate",
+      "question": "How do you publish the test duration to find slow tests?",
+      "answer": "Enable the TRX logger or a report that records per-test durations, then review the slowest tests in the build summary or a report tool. Long-running tests are candidates for optimisation or demotion to a slower stage. Visibility is the first step to speed.",
+      "tags": [
+        "ci",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-test-results-v2"
+      ]
+    },
+    {
+      "id": "ci-cd-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a multi-stage pipeline for unit, integration and end-to-end tests?",
+      "answer": "Run fast unit tests first as a gate, then integration tests once the unit stage passes, and finally the slow end-to-end tests, often in parallel or nightly. Each stage publishes its own results and artifacts. This ordering gives quick feedback while still running the full suite.",
+      "tags": [
+        "ci",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2",
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net"
+      ]
+    },
+    {
+      "id": "ci-cd-022",
+      "difficulty": "Advanced",
+      "question": "How do you merge and publish coverage from multiple test projects in one pipeline?",
+      "answer": "Collect a Cobertura file per project, merge them with ReportGenerator, and publish the merged report once. This gives a single solution-wide figure for the gate. Merging avoids one project masking another's gaps.",
+      "tags": [
+        "ci",
+        "coverage"
+      ],
+      "references": [
+        "https://github.com/danielpalme/ReportGenerator",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "ci-cd-023",
+      "difficulty": "Advanced",
+      "question": "How do you version and publish a test report as a build artifact?",
+      "answer": "Name the artifact with the build number and upload the TRX, NUnit XML and coverage files so each run is traceable. Retention policies keep storage bounded. Versioned artifacts let you compare results across builds.",
+      "tags": [
+        "ci",
+        "artifacts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/publish-test-results-v2",
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net"
+      ]
+    },
+    {
+      "id": "ci-cd-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of running the full suite on every commit?",
+      "answer": "Running everything on every commit maximises confidence but slows feedback and consumes agents, so developers wait and may bypass the pipeline. Running a fast subset on every commit and the full suite on merge or nightly balances speed and coverage. The choice depends on suite duration and risk.",
+      "tags": [
+        "ci",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2"
+      ]
+    },
+    {
+      "id": "ci-cd-025",
+      "difficulty": "Advanced",
+      "question": "How do you make a CI test job reproducible across machines?",
+      "answer": "Pin the SDK and tool versions, restore packages from a lock file or a cached feed, avoid relying on machine state, and run tests in a container or a clean agent. Reproducibility removes the classic it-works-on-my-machine failures. Pinned inputs also make results comparable between builds.",
+      "tags": [
+        "ci",
+        "design"
+      ],
+      "references": [
+        "https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/tasks/reference/dotnet-core-cli-v2"
+      ]
+    }
+  ]
+}

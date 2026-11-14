@@ -1,0 +1,216 @@
+{
+  "category": "Fixtures & Shared Context",
+  "slug": "fixtures",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "fixtures-001",
+      "difficulty": "Beginner",
+      "question": "What is a fixture in xUnit?",
+      "answer": "A fixture is a class that holds setup and teardown for a shared resource, such as a database connection or a web host, that several tests need. xUnit supports class fixtures, collection fixtures, and assembly fixtures, each with a different lifetime. Fixtures are the idiomatic replacement for global setup and teardown in xUnit.",
+      "tags": ["fixtures", "shared-context"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-002",
+      "difficulty": "Beginner",
+      "question": "How do you create a class fixture?",
+      "answer": "Create a class with the shared setup, implement IDisposable or IAsyncLifetime for cleanup, and make the test class implement IClassFixture<T> where T is the fixture. xUnit constructs the fixture once and passes it to the test class constructor, so every test in that class receives the same instance. The fixture is disposed after the last test in the class.",
+      "code": "public class DbFixture : IDisposable\n{\n    public DbFixture() => Conn = Open();\n    public DbConnection Conn { get; }\n    public void Dispose() => Conn.Dispose();\n}\n\npublic class OrderTests : IClassFixture<DbFixture>\n{\n    public OrderTests(DbFixture fx) => _fx = fx;\n}",
+      "tags": ["class-fixture", "lifecycle"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-003",
+      "difficulty": "Beginner",
+      "question": "What is the lifetime of a class fixture?",
+      "answer": "xUnit creates one instance of a class fixture per test class and shares it across every test in that class. The instance is disposed once, after the last test in the class finishes, regardless of pass or fail. Because it is shared, tests must not mutate fixture state in a way that affects other tests in the same class.",
+      "tags": ["class-fixture", "lifetime"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-004",
+      "difficulty": "Beginner",
+      "question": "How do you share a fixture across multiple test classes?",
+      "answer": "Use a collection fixture. Define a class decorated with [CollectionDefinition(\"Name\")] that implements ICollectionFixture<TFixture>, then annotate each test class with [Collection(\"Name\")]. The fixture is created once for the whole collection and disposed after the last test in the last class. In v3 you can use the generic [Collection<T>] attribute to avoid string names.",
+      "code": "[CollectionDefinition(\"Server\")]\npublic class ServerCollection : ICollectionFixture<ServerFixture> { }\n\n[Collection(\"Server\")]\npublic class A { }\n[Collection(\"Server\")]\npublic class B { }",
+      "tags": ["collection-fixture", "sharing"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-005",
+      "difficulty": "Beginner",
+      "question": "What is an assembly fixture and when would you use one?",
+      "answer": "An assembly fixture is created once for the entire test assembly and is available to all test classes that request it. It is declared with [assembly: AssemblyFixture(typeof(TFixture))] and injected through a constructor parameter, without needing IClassFixture or a collection. Use it for truly global, expensive resources such as starting a shared server or applying a database migration once per assembly.",
+      "code": "[assembly: AssemblyFixture(typeof(Migrator))]\n\npublic class OrderTests\n{\n    public OrderTests(Migrator m) => _m = m;\n}",
+      "tags": ["assembly-fixture", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fixtures-006",
+      "difficulty": "Beginner",
+      "question": "How do you perform asynchronous cleanup in a fixture?",
+      "answer": "Implement IAsyncLifetime and its InitializeAsync and DisposeAsync methods instead of IDisposable when setup or teardown involves awaiting. xUnit awaits both methods, so the resource is fully released before the fixture is considered finished. In v3, IAsyncLifetime's methods return ValueTask and the interface now inherits IAsyncDisposable, so a fixture that implements both IDisposable and IAsyncLifetime has only DisposeAsync called.",
+      "code": "public class ApiFixture : IAsyncLifetime\n{\n    public async ValueTask InitializeAsync()\n        => _server = await StartAsync();\n    public async ValueTask DisposeAsync()\n        => await _server.DisposeAsync();\n}",
+      "tags": ["iasynclifetime", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fixtures-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a class fixture and a collection fixture?",
+      "answer": "A class fixture is scoped to a single test class and shared only by its tests, while a collection fixture is shared by every test class that belongs to the named collection. A collection fixture is created once for the whole group and therefore offers more reuse but more coupling between classes. Use a class fixture by default and a collection fixture only when the resource is expensive and safely shareable.",
+      "tags": ["class-fixture", "collection-fixture"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-008",
+      "difficulty": "Beginner",
+      "question": "Why does xUnit create a new test class instance for each test even when a fixture is shared?",
+      "answer": "The class instance holds per-test state, so recreating it guarantees that fields are reset and tests remain independent. The fixture is a separate object with a longer lifetime that is injected into each new instance. This separation lets you share expensive infrastructure without sharing mutable per-test state.",
+      "tags": ["isolation", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-009",
+      "difficulty": "Beginner",
+      "question": "How do you access a fixture inside a test method?",
+      "answer": "Store the fixture in a private readonly field assigned in the test class constructor, then use that field in the test methods. xUnit injects fixtures only through the constructor, so the field is the bridge to the test bodies. This also keeps the dependency explicit and makes the fixture easy to mock in focused unit tests.",
+      "code": "public class OrderTests : IClassFixture<DbFixture>\n{\n    private readonly DbFixture _fx;\n    public OrderTests(DbFixture fx) => _fx = fx;\n\n    [Fact]\n    public void Uses_fixture() => Assert.NotNull(_fx.Conn);\n}",
+      "tags": ["constructor-injection", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-010",
+      "difficulty": "Beginner",
+      "question": "Can a test class use more than one class fixture?",
+      "answer": "Yes. A test class can implement multiple IClassFixture<T> interfaces and receive each fixture as a constructor parameter. xUnit creates and disposes each fixture for the class. Keep the number small so the class does not depend on too much shared state.",
+      "code": "public class Tests : IClassFixture<DbFixture>, IClassFixture<ClockFixture>\n{\n    public Tests(DbFixture db, ClockFixture clock) { }\n}",
+      "tags": ["class-fixture", "multiple"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-011",
+      "difficulty": "Intermediate",
+      "question": "How do collection fixtures affect parallelization?",
+      "answer": "All test classes in the same collection run sequentially because they share the collection fixture, while collections run in parallel with each other. This is the intended way to protect a resource that cannot tolerate concurrent access, such as a single database. Be aware that a large collection effectively serialises a big chunk of the suite, so keep collections small.",
+      "tags": ["collection-fixture", "parallelization"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "fixtures-012",
+      "difficulty": "Intermediate",
+      "question": "What is the order of construction and disposal between a collection fixture and a class fixture?",
+      "answer": "xUnit creates the collection fixture first, then creates a class fixture for each test class, then creates the test class instance for each test. Disposal happens in reverse: test class, class fixture, and finally the collection fixture after all classes finish. Relying on precise cross-fixture ordering is fragile, so keep fixtures independent of each other.",
+      "tags": ["lifecycle", "ordering"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-013",
+      "difficulty": "Intermediate",
+      "question": "How do you reset state in a shared fixture between tests?",
+      "answer": "Prefer making the shared resource immutable or transaction-scoped so each test starts clean, for example by rolling back a transaction per test. If state must be reset, do it in the test class constructor or a per-test helper rather than in the fixture, because the fixture is not recreated per test. Document clearly which parts of a shared fixture are safe to mutate.",
+      "tags": ["state", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IClassFixture and ICollectionFixture in terms of interfaces?",
+      "answer": "Both are marker interfaces, but IClassFixture<T> is implemented by the test class itself, while ICollectionFixture<T> is implemented by the collection definition class that is decorated with [CollectionDefinition]. The collection definition owns the fixture type, and participating classes only reference the collection by name. This indirection is what allows one fixture instance to serve many classes.",
+      "tags": ["interfaces", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use a fixture with dependency injection?",
+      "answer": "Have the fixture build and own an IServiceProvider, register the services your tests need, and expose either the provider or a typed resolver. Tests then ask the fixture for the service under test, which keeps the container configuration in one place. Disposing the provider in the fixture's cleanup releases all scoped and singleton services.",
+      "code": "public class AppFixture : IDisposable\n{\n    public ServiceProvider Services { get; }\n    public AppFixture()\n    {\n        var sc = new ServiceCollection();\n        sc.AddSingleton<IClock, FakeClock>();\n        Services = sc.BuildServiceProvider();\n    }\n    public void Dispose() => Services.Dispose();\n}",
+      "tags": ["dependency-injection", "fixtures"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "fixtures-016",
+      "difficulty": "Intermediate",
+      "question": "How can a fixture expose services resolved in a new scope per test?",
+      "answer": "Expose the IServiceProvider from the fixture and create a scope at the start of each test, resolving services from that scope and disposing it at the end. This mirrors how a real application handles scoped services and prevents state leaking between tests. A small helper method on the fixture can hide the scope management.",
+      "code": "using var scope = _fx.Services.CreateScope();\nvar svc = scope.ServiceProvider.GetRequiredService<IOrders>();",
+      "tags": ["scopes", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "fixtures-017",
+      "difficulty": "Intermediate",
+      "question": "Why is it a bad practice to put test methods on a fixture class?",
+      "answer": "A fixture should own infrastructure and lifecycle, not assertions, because mixing the two blurs responsibility and makes the fixture hard to reuse across classes. Test methods on a fixture also run with the fixture's own lifetime, which can confuse ordering and cleanup. Keep fixtures as plain setup objects and put all tests in test classes that consume them.",
+      "tags": ["design", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-018",
+      "difficulty": "Intermediate",
+      "question": "How do you share a fixture across test assemblies?",
+      "answer": "You cannot share an in-memory fixture instance across assemblies, so instead extract the setup logic into a shared helper library and have each assembly create its own fixture that uses it. If the shared resource is external, such as a container or a database, each assembly can connect to the same running instance. Assembly fixtures are scoped to one assembly only.",
+      "tags": ["assemblies", "fixtures"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fixtures-019",
+      "difficulty": "Intermediate",
+      "question": "How do you make a fixture fail fast if its resource cannot start?",
+      "answer": "Throw from the fixture constructor or InitializeAsync so xUnit reports a clear setup failure for every test in the scope. A descriptive exception is far better than letting each test fail individually with a confusing error. Some teams also record the startup exception and rethrow it from each test for a consistent message.",
+      "tags": ["fail-fast", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IAsyncLifetime and IDisposable for a fixture?",
+      "answer": "IDisposable is synchronous and is called by xUnit after the fixture scope ends, which is fine for quick in-memory cleanup. IAsyncLifetime adds InitializeAsync and DisposeAsync and lets you await asynchronous startup and shutdown, which is essential for network or database resources. In v3 the async methods return ValueTask, and a fixture should implement one approach rather than both.",
+      "tags": ["iasynclifetime", "idisposable"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fixtures-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a fixture that supports per-test isolation and shared infrastructure?",
+      "answer": "Make the expensive part, such as the server or container, the shared fixture, and give each test a cheap per-test handle like a transaction, a new HTTP client, or a fresh in-memory database. The shared fixture exposes a factory that produces the per-test handle and cleans it up, so isolation is preserved without paying the startup cost repeatedly. This combination is the basis of most well-performing integration test suites.",
+      "tags": ["isolation", "integration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "fixtures-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of mutable state in collection fixtures?",
+      "answer": "Because a collection fixture is shared by all tests in the collection and those tests run sequentially but in unspecified order, mutation of fixture state creates hidden coupling and order-dependent failures. A test that passes in isolation may fail after another test changed the shared state. Keep fixtures read-only where possible and use per-test scopes or transactions for anything that must change.",
+      "tags": ["state", "collection-fixture"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "fixtures-023",
+      "difficulty": "Advanced",
+      "question": "How does xUnit v3's generic collection attribute improve fixture usage?",
+      "answer": "In v3 you can annotate a test class with [Collection<MyCollectionDefinition>] instead of [Collection(\"MyCollection\")], which removes the magic string and lets the compiler verify that the collection definition type exists. This eliminates a common runtime error caused by a typo in the collection name. It also makes refactoring the collection type safe because the compiler finds every reference.",
+      "code": "[Collection<DbCollection>]\npublic class OrderTests\n{\n    public OrderTests(DbFixture fx) => _fx = fx;\n}",
+      "tags": ["v3", "collection"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fixtures-024",
+      "difficulty": "Advanced",
+      "question": "How do you decide between an assembly fixture and a collection fixture?",
+      "answer": "Choose an assembly fixture when the resource is truly global and safe for the whole run, such as applying migrations once or starting a single shared server, because it is created once and can be injected into any class. Choose a collection fixture when only a subset of classes need the resource or when you want tighter scoping and disposal after a group. Assembly fixtures reduce startup cost but increase coupling to a single global instance.",
+      "tags": ["assembly-fixture", "collection-fixture"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "fixtures-025",
+      "difficulty": "Advanced",
+      "question": "How do you profile and reduce the cost of test fixtures?",
+      "answer": "Measure the time spent in fixture setup separately from the time spent in tests, for example by logging timestamps around initialization. If startup dominates, widen the fixture scope, cache expensive artefacts, or replace the real dependency with a faster test double. Only optimise after measuring, because over-sharing fixtures introduces coupling that costs more in maintenance than it saves in runtime.",
+      "tags": ["performance", "fixtures"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

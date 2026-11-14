@@ -1,0 +1,212 @@
+{
+  "category": "Creational Patterns Overview",
+  "slug": "creational-overview",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "creational-overview-001",
+      "difficulty": "Beginner",
+      "question": "What are creational design patterns?",
+      "answer": "Creational patterns deal with object creation, separating the code that uses objects from the details of how they are constructed. They help control instantiation, hide concrete types, and make construction flexible without scattering new calls everywhere. The classic GoF creational patterns are Singleton, Factory Method, Abstract Factory, Builder, and Prototype.",
+      "tags": ["creational", "overview"],
+      "references": ["https://refactoring.guru/design-patterns/creational-patterns"]
+    },
+    {
+      "id": "creational-overview-002",
+      "difficulty": "Beginner",
+      "question": "Why not just use the new keyword everywhere?",
+      "answer": "Calling new directly hard-codes a concrete type into the caller, so changing or varying the implementation means editing every call site. It also makes unit testing harder because you cannot substitute a fake or a configured variant. Creational patterns centralize and abstract construction so callers depend on interfaces rather than concrete classes.",
+      "tags": ["creational", "coupling"],
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "creational-overview-003",
+      "difficulty": "Beginner",
+      "question": "Which creational pattern does the .NET DI container primarily use?",
+      "answer": "Dependency injection containers use a factory-style mechanism, registering a mapping from an abstraction to a concrete type and resolving instances on demand. Lifetime options such as singleton, scoped, and transient decide whether a cached instance or a new one is returned. This is effectively a configurable abstract factory driven by the container.",
+      "tags": ["dependency-injection", "factory"],
+      "code": "var builder = WebApplication.CreateBuilder(args);\nbuilder.Services.AddSingleton<IClock, SystemClock>();\nbuilder.Services.AddScoped<IOrderRepository, SqlOrderRepository>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "creational-overview-004",
+      "difficulty": "Beginner",
+      "question": "What problem does the Singleton pattern solve?",
+      "answer": "Singleton ensures a class has exactly one instance and provides a global point of access to it. It is used for resources that must be shared, such as a configuration store or a cache. The trade-off is that global state complicates testing and can hide dependencies.",
+      "tags": ["singleton", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/singleton"]
+    },
+    {
+      "id": "creational-overview-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Factory Method and Abstract Factory?",
+      "answer": "Factory Method creates one product through a method that subclasses or callers can override, while Abstract Factory creates families of related products through an interface with several creation methods. Abstract Factory is useful when products must be used together, such as a UI toolkit producing matching buttons and checkboxes. Both hide concrete types, but Abstract Factory groups related factories behind one abstraction.",
+      "tags": ["factory-method", "abstract-factory"],
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "creational-overview-006",
+      "difficulty": "Beginner",
+      "question": "What does the Builder pattern help you construct?",
+      "answer": "Builder constructs a complex object step by step, separating the construction process from its representation. It is valuable when an object has many optional parts or when the same steps should produce different configurations. A fluent builder also reads well, turning a long constructor call into a sequence of named steps.",
+      "tags": ["builder", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "creational-overview-007",
+      "difficulty": "Beginner",
+      "question": "What does the Prototype pattern do?",
+      "answer": "Prototype creates new objects by cloning an existing instance rather than calling a constructor. It is useful when construction is expensive or when you want to copy a configured object and tweak a few fields. In .NET this is often implemented with a Clone method or ICloneable, though a typed copy method is usually preferred.",
+      "tags": ["prototype", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/prototype"]
+    },
+    {
+      "id": "creational-overview-008",
+      "difficulty": "Beginner",
+      "question": "What is object pooling and how does it relate to creational patterns?",
+      "answer": "Object pooling reuses a set of pre-created instances instead of allocating and discarding them, which reduces garbage collection pressure for expensive objects. It is a creational concern because it changes how instances are obtained and returned. .NET provides ObjectPool via the Microsoft.Extensions.ObjectPool package for this purpose.",
+      "tags": ["pooling", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.objectpool"]
+    },
+    {
+      "id": "creational-overview-009",
+      "difficulty": "Beginner",
+      "question": "How does the .NET runtime create instances for the container?",
+      "answer": "The default container uses reflection to select a public constructor and resolves each parameter recursively from registered services. If you register a factory delegate or an instance, it uses that instead of reflection. This is why constructor injection with clear dependencies works smoothly with the built-in container.",
+      "tags": ["dependency-injection", "reflection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "creational-overview-010",
+      "difficulty": "Beginner",
+      "question": "What is lazy initialization and when is it useful?",
+      "answer": "Lazy initialization defers creating an object until it is first needed, which can save startup time and memory when the object may never be used. .NET provides Lazy<T> with thread-safe modes for this purpose. It is useful for expensive resources like database connections or large caches.",
+      "tags": ["lazy", "performance"],
+      "code": "private readonly Lazy<Report> _report =\n    new(() => BuildExpensiveReport(), LazyThreadSafetyMode.ExecutionAndPublication);",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.lazy-1"]
+    },
+    {
+      "id": "creational-overview-011",
+      "difficulty": "Intermediate",
+      "question": "How do creational patterns improve testability?",
+      "answer": "They let tests substitute fakes, stubs, or configured variants by controlling how dependencies are produced. When a class asks a factory or the container for an abstraction, a test can provide a test double instead of the production type. This isolates the unit under test from slow or external resources.",
+      "tags": ["testing", "creational"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "creational-overview-012",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of using a DI container versus manual construction?",
+      "answer": "A container centralizes registration, manages lifetimes, and resolves deep object graphs automatically, which scales well as dependencies grow. The cost is indirection, harder navigation, and potential runtime errors from misconfiguration that a compiler would catch with manual new calls. For small apps or libraries, hand-wiring can be simpler and more transparent.",
+      "tags": ["dependency-injection", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "creational-overview-013",
+      "difficulty": "Intermediate",
+      "question": "How do you choose between Singleton and a DI-managed single instance?",
+      "answer": "A registered singleton in the DI container gives the same shared-instance behavior while keeping the dependency explicit and substitutable in tests. The static Singleton pattern hides the dependency and makes isolation difficult. Prefer the container-scoped singleton unless you truly need a static entry point.",
+      "tags": ["singleton", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "creational-overview-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a simple factory and the Factory Method pattern?",
+      "answer": "A simple factory is a single class with a method that returns different concrete types based on input, and it is not a GoF pattern. Factory Method is a GoF pattern where creation is deferred to subclasses or an overridable method so the family of products can vary. The simple factory centralizes creation but still requires editing when a new type is added.",
+      "tags": ["factory-method", "simple-factory"],
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "creational-overview-015",
+      "difficulty": "Intermediate",
+      "question": "When should you use Builder instead of a constructor with many parameters?",
+      "answer": "Use Builder when the parameter list is long, many parameters are optional, or the same construction steps produce different representations. A builder makes intent readable and prevents the argument-ordering mistakes common with telescoping constructors. For a handful of required parameters, a plain constructor or a record with init properties is simpler.",
+      "tags": ["builder", "constructors"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    },
+    {
+      "id": "creational-overview-016",
+      "difficulty": "Intermediate",
+      "question": "How do records and init-only properties affect creational patterns in modern C#?",
+      "answer": "Records with init-only properties provide concise immutable construction and value equality, often replacing simple builders for configuration-like objects. The with expression produces a modified copy, which is a language-level form of the Prototype pattern. For complex step-by-step assembly, a builder still adds value.",
+      "tags": ["records", "prototype"],
+      "code": "public record OrderOptions(decimal TaxRate, string Currency);\nvar eu = new OrderOptions(0.2m, \"EUR\");\nvar us = eu with { Currency = \"USD\" };",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"]
+    },
+    {
+      "id": "creational-overview-017",
+      "difficulty": "Intermediate",
+      "question": "How does the Abstract Factory pattern support cross-platform UI code?",
+      "answer": "An abstract factory exposes creation methods for each widget in a family, and concrete factories implement the family for a specific platform. Client code works only with the factory interface, so switching platforms means swapping the factory, not editing the UI logic. This keeps platform-specific types out of the application code.",
+      "tags": ["abstract-factory", "cross-platform"],
+      "code": "public interface IWidgetFactory\n{\n    IButton CreateButton();\n    ICheckBox CreateCheckBox();\n}",
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "creational-overview-018",
+      "difficulty": "Intermediate",
+      "question": "What is the relationship between creational patterns and the composition root?",
+      "answer": "The composition root is the single place where the object graph is assembled, and it is where factories, builders, and container registrations belong. Keeping creation there means the rest of the code receives ready dependencies and stays free of construction logic. This concentrates the impact of changing an implementation to one location.",
+      "tags": ["composition-root", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "creational-overview-019",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid the cost of reflection in container-based creation?",
+      "answer": "You can register factory delegates or pre-compiled constructors so the container does not reflect on each resolution. Some containers compile delegates at startup, and you can also use source generators or compiled expression trees. The goal is to pay the reflection cost once rather than per request.",
+      "tags": ["performance", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "creational-overview-020",
+      "difficulty": "Intermediate",
+      "question": "What are the risks of using static factory methods on a class?",
+      "answer": "Static factory methods such as Create can encapsulate validation, caching, and subtype selection, and they read well with named alternatives. The risks are that they cannot be overridden or substituted in tests and that they create a hidden dependency on the class. For injectable behavior, an interface-based factory is usually better.",
+      "tags": ["factory", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/factory"]
+    },
+    {
+      "id": "creational-overview-021",
+      "difficulty": "Advanced",
+      "question": "How does the Prototype pattern interact with deep versus shallow copying?",
+      "answer": "A shallow copy duplicates the top-level object but shares references to nested objects, so mutating a shared child affects both copies. A deep copy recursively clones the graph, which is safer for mutable state but more expensive and must handle cycles. Choosing depends on whether the clone is expected to diverge independently.",
+      "tags": ["prototype", "cloning"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.object.memberwiseclone"]
+    },
+    {
+      "id": "creational-overview-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement a thread-safe singleton without a lock on every access?",
+      "answer": "A static readonly field initialized by the runtime gives thread safety because the CLR guarantees type initialization happens once. Using Lazy<T> with ExecutionAndPublication is another safe option that also supports lazy creation. The classic double-checked locking with a lock and volatile field works but is easy to get wrong.",
+      "tags": ["singleton", "threading"],
+      "code": "public sealed class Registry\n{\n    private static readonly Registry _instance = new();\n    public static Registry Instance => _instance;\n    private Registry() { }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.lazy-1"]
+    },
+    {
+      "id": "creational-overview-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between an abstract factory and the service locator anti-pattern?",
+      "answer": "An abstract factory is a focused abstraction that creates a known family of products and is injected where needed. A service locator hands an object a general resolver and lets it pull arbitrary dependencies at runtime, hiding real dependencies. Abstract factories keep dependencies explicit, while service locators obscure them and make testing harder.",
+      "tags": ["abstract-factory", "service-locator"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "creational-overview-024",
+      "difficulty": "Advanced",
+      "question": "How do creational patterns support dependency injection lifetimes and scoping?",
+      "answer": "Registering a factory lets you decide per-resolution whether to return a shared or new instance, which is how scoped and singleton lifetimes are realized. A scoped factory can pull the current request scope so the same instance is shared within a unit of work. This decouples the consuming code from lifetime management entirely.",
+      "tags": ["dependency-injection", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "creational-overview-025",
+      "difficulty": "Advanced",
+      "question": "How can builder and prototype patterns be combined effectively?",
+      "answer": "A builder can accept a prototype as its starting point and produce copies with specific overrides, which is useful for templating scenarios. The prototype supplies a known-good baseline and the builder applies variations in a controlled sequence. This combination keeps complex configuration readable while avoiding repeated full construction.",
+      "tags": ["builder", "prototype"],
+      "references": ["https://refactoring.guru/design-patterns/builder"]
+    }
+  ]
+}

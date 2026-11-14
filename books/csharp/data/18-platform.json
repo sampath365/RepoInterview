@@ -1,0 +1,374 @@
+{
+  "category": ".NET Platform & Tooling",
+  "slug": "platform",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "platform-001",
+      "difficulty": "Beginner",
+      "question": "What is the Common Language Runtime (CLR)?",
+      "answer": "The CLR is the virtual machine that executes managed .NET code, providing just-in-time compilation of IL to native code, automatic garbage collection, type safety, exception handling, and threading. It also enforces the security and memory-safety rules that make managed code safer than raw native code. On modern .NET the implementation is CoreCLR, which runs on Windows, Linux, and macOS, whereas the older .NET Framework used a Windows-only CLR.",
+      "tags": [
+        "clr",
+        "runtime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/clr",
+        "https://learn.microsoft.com/dotnet/standard/managed-execution-process"
+      ]
+    },
+    {
+      "id": "platform-002",
+      "difficulty": "Beginner",
+      "question": "What are the Common Type System (CTS) and the Common Language Specification (CLS)?",
+      "answer": "The CTS defines how types are declared, used, and managed in the runtime, specifying that all types derive from System.Object and distinguishing value types from reference types, along with rules for visibility, inheritance, and interfaces. The CLS is a subset of the CTS that a language must support to interoperate with other .NET languages, so a library marked [assembly: CLSCompliant(true)] avoids types and members that only some languages understand. Following the CLS is important when your library will be consumed from languages other than C#.",
+      "code": "[assembly: CLSCompliant(true)]",
+      "tags": [
+        "cts",
+        "cls",
+        "interop"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/base-types/common-type-system",
+        "https://learn.microsoft.com/dotnet/standard/language-independence"
+      ]
+    },
+    {
+      "id": "platform-003",
+      "difficulty": "Beginner",
+      "question": "What is an assembly, and what is metadata?",
+      "answer": "An assembly is the fundamental unit of deployment, versioning, and reuse in .NET; it is typically a .dll or .exe that contains compiled IL, a manifest describing its identity and dependencies, and metadata. Metadata is the self-describing information about the types and members an assembly defines and references, which the runtime uses for loading, reflection, and cross-assembly calls. Because metadata is embedded, .NET components do not rely on separate type libraries or header files the way classic COM and C++ did.",
+      "tags": [
+        "assemblies",
+        "metadata"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/assembly/",
+        "https://learn.microsoft.com/dotnet/standard/managed-code"
+      ]
+    },
+    {
+      "id": "platform-004",
+      "difficulty": "Beginner",
+      "question": "What is strong naming an assembly?",
+      "answer": "Strong naming signs an assembly with an RSA key pair, producing a strong name that includes the public key and a public key token, which gives the assembly a globally unique identity and prevents name collisions. It also allows the assembly to be placed in the global assembly cache on .NET Framework and was historically used to detect tampering. Strong names are not a security boundary: on .NET Framework the signature is verified, but .NET Core and .NET 5+ do not validate strong-name signatures at load time, so they do not guarantee trust.",
+      "code": "<SignAssembly>true</SignAssembly>\n<AssemblyOriginatorKeyFile>key.snk</AssemblyOriginatorKeyFile>",
+      "tags": [
+        "strong-naming",
+        "assembly-identity"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/assembly/strong-named"
+      ]
+    },
+    {
+      "id": "platform-005",
+      "difficulty": "Beginner",
+      "question": "What are NuGet packages?",
+      "answer": "NuGet is the package manager for .NET, and a package is a .nupkg archive containing assemblies, content, and metadata such as dependencies and a version. Modern projects reference packages with a PackageReference item in the project file, and dotnet restore resolves and downloads the transitive dependency graph into a local cache. Publishing your own package is done with dotnet pack, optionally pushing to nuget.org or a private feed.",
+      "code": "<ItemGroup>\n  <PackageReference Include=\"Serilog\" Version=\"4.0.0\" />\n</ItemGroup>",
+      "tags": [
+        "nuget",
+        "packages"
+      ],
+      "references": [
+        "https://learn.microsoft.com/nuget/what-is-nuget",
+        "https://learn.microsoft.com/nuget/create-packages/creating-a-package-msbuild"
+      ]
+    },
+    {
+      "id": "platform-006",
+      "difficulty": "Beginner",
+      "question": "What is an SDK-style project file?",
+      "answer": "An SDK-style project uses a minimal .csproj that imports a project SDK, typically Microsoft.NET.Sdk, and relies on sensible defaults instead of listing every file. Source files are included implicitly by glob, common properties and targets are provided by the SDK, and dependencies use PackageReference. This format is used by .NET Core and .NET 5+ and can also target .NET Framework, and it replaces the verbose legacy project format.",
+      "code": "<Project Sdk=\"Microsoft.NET.Sdk\">\n  <PropertyGroup>\n    <OutputType>Exe</OutputType>\n    <TargetFramework>net8.0</TargetFramework>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n</Project>",
+      "tags": [
+        "csproj",
+        "sdk-style",
+        "msbuild"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/project-sdk/overview"
+      ]
+    },
+    {
+      "id": "platform-007",
+      "difficulty": "Beginner",
+      "question": "What are target frameworks and TFMs?",
+      "answer": "A target framework is the set of APIs a project is compiled against, identified by a Target Framework Moniker such as net8.0 for .NET 8, net9.0 for .NET 9, net48 for .NET Framework 4.8, or netstandard2.0 for the .NET Standard contract. The TargetFramework property in the project file selects it, and the compiler restricts you to APIs that exist in that framework. Choosing a target framework determines which platforms the app or library can run on.",
+      "code": "<TargetFramework>net8.0</TargetFramework>",
+      "tags": [
+        "target-framework",
+        "tfm"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/frameworks"
+      ]
+    },
+    {
+      "id": "platform-008",
+      "difficulty": "Beginner",
+      "question": "How do .NET Framework, .NET Core, and .NET 5+ relate?",
+      "answer": ".NET Framework is the original Windows-only implementation, with 4.8 as its final major version, and it remains supported for existing Windows applications. .NET Core was a cross-platform, open-source rewrite released from 1.0 to 3.1 that dropped the Framework name in version 5, and .NET 5 and later are simply called .NET and continue the Core lineage with even-numbered releases as LTS. New development should target modern .NET, such as .NET 8 LTS or .NET 9, because it offers better performance, containers, and cross-platform support.",
+      "tags": [
+        "net-framework",
+        "net-core",
+        "versions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/versions/",
+        "https://learn.microsoft.com/dotnet/core/porting/"
+      ]
+    },
+    {
+      "id": "platform-009",
+      "difficulty": "Beginner",
+      "question": "What are the most common dotnet CLI commands?",
+      "answer": "dotnet new scaffolds a project or file from a template, dotnet build compiles it, dotnet run builds and executes it, and dotnet test discovers and runs tests. dotnet publish produces deployment output, dotnet pack creates a NuGet package, and dotnet add package adds a dependency. These commands work identically across platforms and drive the same MSBuild engine the IDEs use.",
+      "code": "dotnet new console -o MyApp\ndotnet build\ndotnet test\ndotnet publish -c Release -r linux-x64",
+      "tags": [
+        "dotnet-cli",
+        "tooling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/tools/dotnet"
+      ]
+    },
+    {
+      "id": "platform-010",
+      "difficulty": "Beginner",
+      "question": "What is a solution file and how do you work with it from the CLI?",
+      "answer": "A solution file groups multiple projects so they can be opened and built together, and the traditional format uses a .sln extension with its own text syntax. You manage it with dotnet sln add, dotnet sln remove, and dotnet sln list, and building the solution builds all contained projects. .NET 9 introduced the simpler XML-based .slnx format, which is more readable and merge-friendly.",
+      "code": "dotnet new sln -n MyApp\ndotnet sln add src/MyApp/MyApp.csproj",
+      "tags": [
+        "solution",
+        "sln"
+      ],
+      "references": [
+        "https://learn.microsoft.com/visualstudio/msbuild/msbuild"
+      ]
+    },
+    {
+      "id": "platform-011",
+      "difficulty": "Intermediate",
+      "question": "What are IL, JIT, ReadyToRun, and NativeAOT?",
+      "answer": "C# compiles to Intermediate Language (IL, also called CIL) stored in the assembly, and the just-in-time compiler translates that IL to native machine code at runtime, method by method, using tiered compilation to optimize hot paths. ReadyToRun precompiles IL to native code ahead of time for faster startup while keeping IL for fallback and tiering, and NativeAOT compiles the entire app to a standalone native executable with no JIT. NativeAOT gives the fastest startup and lowest memory but does not support runtime code generation or unrestricted reflection, so libraries relying on those features are incompatible.",
+      "code": "dotnet publish -c Release -r linux-x64 \\\n  -p:PublishAot=true",
+      "tags": [
+        "il",
+        "jit",
+        "native-aot"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/deploying/native-aot/",
+        "https://learn.microsoft.com/dotnet/core/deploying/ready-to-run"
+      ]
+    },
+    {
+      "id": "platform-012",
+      "difficulty": "Intermediate",
+      "question": "What is multi-targeting and when do you use it?",
+      "answer": "Multi-targeting compiles a single project for several target frameworks by listing them in the plural TargetFrameworks property, producing an output folder per framework. You then use conditional compilation symbols such as NET8_0_OR_GREATER or MSBuild conditions to include code or package references only where they are supported. It is common for libraries that must support both modern .NET and .NET Standard or .NET Framework consumers.",
+      "code": "<TargetFrameworks>net8.0;netstandard2.0</TargetFrameworks>\n\n#if NET8_0_OR_GREATER\n    // modern API\n#endif",
+      "tags": [
+        "multi-targeting",
+        "conditional-compilation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/frameworks"
+      ]
+    },
+    {
+      "id": "platform-013",
+      "difficulty": "Intermediate",
+      "question": "What is .NET Standard and is it still recommended?",
+      "answer": ".NET Standard is a formal specification of the APIs that every .NET implementation must provide, letting one library run on .NET Framework, .NET Core, and other implementations; netstandard2.0 has the broadest reach and netstandard2.1 adds newer APIs but is not supported by .NET Framework. Since .NET 5 unified the platform, Microsoft recommends new libraries target a concrete framework such as net8.0 for access to the full API surface and performance improvements. .NET Standard remains useful only when a library must also support .NET Framework or older runtimes.",
+      "tags": [
+        "net-standard",
+        "library-targeting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/net-standard"
+      ]
+    },
+    {
+      "id": "platform-014",
+      "difficulty": "Intermediate",
+      "question": "What is MSBuild and how does it relate to the dotnet CLI?",
+      "answer": "MSBuild is the XML-based build engine for .NET, and every SDK-style project file is an MSBuild file made up of properties, items, and targets. The dotnet CLI commands such as build and publish are thin wrappers that invoke MSBuild, which is why they honor the same project settings. You can customize builds by adding targets and properties in the project file or in imported files like Directory.Build.props, and run MSBuild directly with dotnet msbuild when needed.",
+      "code": "dotnet msbuild -t:Build -p:Configuration=Release",
+      "tags": [
+        "msbuild",
+        "build"
+      ],
+      "references": [
+        "https://learn.microsoft.com/visualstudio/msbuild/msbuild"
+      ]
+    },
+    {
+      "id": "platform-015",
+      "difficulty": "Intermediate",
+      "question": "What is global.json and why use it?",
+      "answer": "global.json is an optional file placed in a project directory or higher that pins which .NET SDK version the CLI should use, ensuring a consistent toolchain across a team and in CI. It can specify an exact version and a rollForward policy that controls whether a newer patch, feature band, or major version may satisfy the request. Without it, dotnet commands use the highest installed SDK, which can cause surprising build differences between machines.",
+      "code": "{\n  \"sdk\": {\n    \"version\": \"8.0.400\",\n    \"rollForward\": \"latestFeature\"\n  }\n}",
+      "tags": [
+        "global-json",
+        "sdk-versioning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/tools/global-json"
+      ]
+    },
+    {
+      "id": "platform-016",
+      "difficulty": "Intermediate",
+      "question": "What is Directory.Build.props?",
+      "answer": "Directory.Build.props is an MSBuild file that the build engine automatically imports for every project in its directory and all subdirectories, letting you define shared properties such as LangVersion, Nullable, TargetFramework, or common package references in one place. This avoids duplicating the same settings across many project files and keeps them consistent. A companion file, Directory.Build.targets, is imported later and is used for shared targets and items that need to run after the project is evaluated.",
+      "code": "<Project>\n  <PropertyGroup>\n    <LangVersion>latest</LangVersion>\n    <Nullable>enable</Nullable>\n  </PropertyGroup>\n</Project>",
+      "tags": [
+        "directory-build-props",
+        "msbuild"
+      ],
+      "references": [
+        "https://learn.microsoft.com/visualstudio/msbuild/customize-by-directory"
+      ]
+    },
+    {
+      "id": "platform-017",
+      "difficulty": "Intermediate",
+      "question": "What are runtime identifiers (RIDs)?",
+      "answer": "A runtime identifier names a specific target platform, such as win-x64, linux-arm64, or osx-arm64, and is defined by the RuntimeIdentifier property or the -r command-line option. RIDs are required for self-contained publishing, NativeAOT, and any scenario where RID-specific native assets must be selected. The .NET RID catalog lists the supported values, and portable RIDs are being replaced by the graph-based RID system to simplify cross-distribution targeting.",
+      "code": "dotnet publish -c Release -r win-x64 --self-contained",
+      "tags": [
+        "rid",
+        "publishing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/rid-catalog"
+      ]
+    },
+    {
+      "id": "platform-018",
+      "difficulty": "Intermediate",
+      "question": "What is single-file publishing?",
+      "answer": "Single-file publishing bundles the application and its dependencies into one executable by setting PublishSingleFile, so end users see a single file to deploy. Managed assemblies are loaded directly from the bundle, and native libraries can be embedded with IncludeNativeLibrariesForSelfExtract or left beside the executable. It is often combined with self-contained publishing and trimming to reduce the size, and on .NET 5 and later it works together with ReadyToRun and NativeAOT options.",
+      "code": "dotnet publish -c Release -r linux-x64 --self-contained \\\n  -p:PublishSingleFile=true",
+      "tags": [
+        "single-file",
+        "publishing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/deploying/single-file/overview"
+      ]
+    },
+    {
+      "id": "platform-019",
+      "difficulty": "Intermediate",
+      "question": "What is trimming and what are its risks?",
+      "answer": "Trimming analyzes the application's static references and removes unused code from the app and its dependencies, reducing the published size, and it is enabled with PublishTrimmed. The main risk is that code reached only through reflection or late binding can be removed or broken, so the SDK emits trim warnings and you can preserve members with attributes such as DynamicallyAccessedMembers or with a trimmer root descriptor. TrimMode controls how aggressive trimming is, and trimming works with self-contained and NativeAOT publishes.",
+      "code": "dotnet publish -c Release -r linux-x64 --self-contained \\\n  -p:PublishTrimmed=true",
+      "tags": [
+        "trimming",
+        "reflection",
+        "publishing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/deploying/trimming/trim-self-contained"
+      ]
+    },
+    {
+      "id": "platform-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between self-contained and framework-dependent deployment?",
+      "answer": "A framework-dependent deployment contains only your application and requires the matching .NET runtime to be installed on the target machine, producing a small output. A self-contained deployment includes the runtime and libraries with the app, so it runs without a separate runtime install but is much larger and requires a specific runtime identifier. Framework-dependent is the default and usually preferred for servers and containers where the runtime is provided, while self-contained suits scenarios where you cannot control the host environment.",
+      "code": "dotnet publish -c Release -r linux-x64 --self-contained false\n# vs\n# --self-contained true",
+      "tags": [
+        "deployment",
+        "self-contained",
+        "framework-dependent"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/deploying/deploy-with-cli"
+      ]
+    },
+    {
+      "id": "platform-021",
+      "difficulty": "Advanced",
+      "question": "How do you containerize a .NET application with Docker?",
+      "answer": "The standard approach is a multi-stage Dockerfile: build and publish with the larger SDK image, then copy only the published output into a smaller runtime image such as mcr.microsoft.com/dotnet/aspnet for web apps. Since .NET 8 you can skip the Dockerfile entirely with dotnet publish /t:PublishContainer, which builds an image from project properties and supports chiseled or distroless base images and a non-root user. For NativeAOT or self-contained apps, a runtime-deps image is enough because the runtime is already inside the output.",
+      "code": "FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build\nWORKDIR /src\nCOPY . .\nRUN dotnet publish -c Release -o /app\n\nFROM mcr.microsoft.com/dotnet/aspnet:8.0\nWORKDIR /app\nCOPY --from=build /app .\nENTRYPOINT [\"dotnet\", \"MyApp.dll\"]",
+      "tags": [
+        "docker",
+        "containers",
+        "publishing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/docker/build-container",
+        "https://learn.microsoft.com/dotnet/core/docker/publish-as-container"
+      ]
+    },
+    {
+      "id": "platform-022",
+      "difficulty": "Advanced",
+      "question": "How does the built-in dependency injection container work?",
+      "answer": "Microsoft.Extensions.DependencyInjection provides an IServiceCollection where services are registered with a lifetime: AddTransient creates a new instance per resolution, AddScoped creates one per scope, and AddSingleton creates one for the application's lifetime. You resolve services through an IServiceProvider, and ASP.NET Core creates a scope per HTTP request so scoped services are shared within that request. Constructor injection is the preferred pattern, and you must avoid captive dependencies, where a longer-lived service holds a shorter-lived one, because that keeps the shorter-lived instance alive and can break scoped semantics.",
+      "code": "var services = new ServiceCollection();\nservices.AddSingleton<IClock, SystemClock>();\nservices.AddScoped<IOrderRepository, OrderRepository>();\nservices.AddTransient<OrderService>();\n\nusing var provider = services.BuildServiceProvider();\nusing var scope = provider.CreateScope();\nvar svc = scope.ServiceProvider.GetRequiredService<OrderService>();",
+      "tags": [
+        "dependency-injection",
+        "service-lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-usage"
+      ]
+    },
+    {
+      "id": "platform-023",
+      "difficulty": "Advanced",
+      "question": "How do configuration and the options pattern work in .NET?",
+      "answer": "IConfiguration is built from one or more providers, such as appsettings.json, appsettings.{Environment}.json, environment variables, user secrets in development, and command-line arguments, with later providers overriding earlier ones. Configuration keys form a hierarchy, and environment variables use a double underscore such as ConnectionStrings__Default to represent nesting. The options pattern binds a configuration section to a strongly typed class with services.Configure<TOptions>, which you then consume as IOptions<T> for constant values, IOptionsSnapshot<T> for per-request reloads, or IOptionsMonitor<T> for change notifications, and you can validate it with data annotations or ValidateOnStart.",
+      "code": "builder.Services.Configure<SmtpOptions>(\n    builder.Configuration.GetSection(\"Smtp\"));\n\npublic class Mailer(IOptions<SmtpOptions> options)\n{\n    private readonly SmtpOptions _o = options.Value;\n}",
+      "tags": [
+        "configuration",
+        "options-pattern",
+        "appsettings"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/configuration",
+        "https://learn.microsoft.com/dotnet/core/extensions/options"
+      ]
+    },
+    {
+      "id": "platform-024",
+      "difficulty": "Advanced",
+      "question": "What are the host builder, the minimal hosting model, and background services?",
+      "answer": "The generic host, built with Host.CreateDefaultBuilder, wires up configuration, dependency injection, logging, and application lifetime, and ASP.NET Core 6 and later use the minimal hosting model where WebApplication.CreateBuilder combines host and web setup in a few statements instead of a separate Startup class. IHostedService defines code that runs when the host starts and stops, and BackgroundService is a convenient base class for long-running work that loops until cancellation is requested. Background services are registered with AddHostedService and should honor the provided CancellationToken so they shut down cleanly.",
+      "code": "public class Worker(ILogger<Worker> log) : BackgroundService\n{\n    protected override async Task ExecuteAsync(CancellationToken ct)\n    {\n        while (!ct.IsCancellationRequested)\n        {\n            log.LogInformation(\"tick\");\n            await Task.Delay(1000, ct);\n        }\n    }\n}\n\nbuilder.Services.AddHostedService<Worker>();",
+      "tags": [
+        "generic-host",
+        "minimal-hosting",
+        "background-service"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/generic-host",
+        "https://learn.microsoft.com/dotnet/core/extensions/workers"
+      ]
+    },
+    {
+      "id": "platform-025",
+      "difficulty": "Advanced",
+      "question": "How do logging abstractions, GC configuration, globalization mode, and cross-platform concerns affect a .NET app?",
+      "answer": "Microsoft.Extensions.Logging provides ILogger<T> and ILoggerFactory so code depends on the abstraction rather than a specific library, with pluggable providers such as console, debug, and OpenTelemetry and filtering by log level. The garbage collector can run in workstation mode, tuned for low latency on client machines, or server mode, which uses a heap per core for throughput and is the default for ASP.NET Core; you configure it with the ServerGarbageCollection and ConcurrentGarbageCollection properties or runtime settings. Setting InvariantGlobalization to true removes the ICU dependency and shrinks containers, but all culture-aware operations behave as invariant, which is unsuitable when you need real localization. For cross-platform code, avoid Windows-only APIs, use Path.Combine and Environment.NewLine instead of hard-coded separators, and account for case-sensitive file systems and differing line endings.",
+      "code": "<PropertyGroup>\n  <ServerGarbageCollection>true</ServerGarbageCollection>\n  <InvariantGlobalization>true</InvariantGlobalization>\n</PropertyGroup>",
+      "tags": [
+        "logging",
+        "garbage-collection",
+        "globalization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/logging",
+        "https://learn.microsoft.com/dotnet/core/runtime-config/garbage-collector"
+      ]
+    }
+  ]
+}

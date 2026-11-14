@@ -1,0 +1,221 @@
+{
+  "category": "Backup, Restore & Recovery Models",
+  "slug": "backup-restore",
+  "icon": "file",
+  "questions": [
+    {
+      "id": "backup-restore-001",
+      "difficulty": "Beginner",
+      "question": "What are the three recovery models?",
+      "answer": "SIMPLE logs minimally and truncates the log at checkpoints, so you can restore only to the last backup. FULL logs all changes and supports point-in-time recovery but requires log backups. BULK_LOGGED minimally logs bulk operations to reduce log growth while still allowing point-in-time recovery except through the bulk operation.",
+      "tags": ["recovery-model", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/recovery-models-sql-server"]
+    },
+    {
+      "id": "backup-restore-002",
+      "difficulty": "Beginner",
+      "question": "What is a full backup?",
+      "answer": "A full backup captures the entire database as it exists at the moment the backup completes, along with enough log to make it consistent. It is the base for all other backups and restore chains. Full backups can be large and slow, so they are usually taken less frequently than log backups.",
+      "code": "BACKUP DATABASE Sales TO DISK = 'D:\\Backups\\Sales_full.bak';",
+      "tags": ["full-backup", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/full-database-backups-sql-server"]
+    },
+    {
+      "id": "backup-restore-003",
+      "difficulty": "Beginner",
+      "question": "What is a differential backup?",
+      "answer": "A differential backup captures all changes since the last full backup, so it is smaller and faster than a full backup. Restoring it requires the last full backup plus the most recent differential. Deltas grow over time, so a new full backup resets the chain.",
+      "code": "BACKUP DATABASE Sales TO DISK = 'D:\\Backups\\Sales_diff.bak' WITH DIFFERENTIAL;",
+      "tags": ["differential-backup", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/differential-backups-sql-server"]
+    },
+    {
+      "id": "backup-restore-004",
+      "difficulty": "Beginner",
+      "question": "What is a transaction log backup?",
+      "answer": "A log backup copies the portion of the transaction log since the last log backup, capturing every change so the database can be restored to a point in time. It is available only in the FULL and BULK_LOGGED recovery models. Frequent log backups keep the log small and limit potential data loss.",
+      "code": "BACKUP LOG Sales TO DISK = 'D:\\Backups\\Sales_log.trn';",
+      "tags": ["log-backup", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/transaction-log-backups-sql-server"]
+    },
+    {
+      "id": "backup-restore-005",
+      "difficulty": "Beginner",
+      "question": "What is a restore and what are the basic steps?",
+      "answer": "A restore rebuilds a database from backups, starting with a full backup and then applying differential and log backups in order. Use WITH NORECOVERY on intermediate restores so the database stays ready for more backups, and WITH RECOVERY on the final one to bring it online. The chain must be unbroken.",
+      "code": "RESTORE DATABASE Sales FROM DISK = 'D:\\Backups\\Sales_full.bak'\nWITH NORECOVERY;",
+      "tags": ["restore", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-and-recovery-overview-sql-server"]
+    },
+    {
+      "id": "backup-restore-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between RESTORE WITH RECOVERY and WITH NORECOVERY?",
+      "answer": "WITH RECOVERY brings the database online and rolls back any uncommitted transactions, ending the restore chain. WITH NORECOVERY leaves the database in a restoring state so more backups can be applied. Using the wrong option either brings the database online too early or leaves it inaccessible.",
+      "tags": ["restore", "norecovery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-and-recovery-overview-sql-server"]
+    },
+    {
+      "id": "backup-restore-007",
+      "difficulty": "Beginner",
+      "question": "Why do you need log backups in the full recovery model?",
+      "answer": "In FULL recovery the log cannot be truncated until the log records are backed up, so without regular log backups the log grows without bound until it fills the disk. Log backups also enable point-in-time recovery. Taking full backups alone does not truncate the log.",
+      "tags": ["log-backup", "recovery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/recovery-models-sql-server"]
+    },
+    {
+      "id": "backup-restore-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a copy-only backup and a regular backup?",
+      "answer": "A copy-only backup does not affect the normal backup chain, so it does not disturb the sequence of differential or log backups. It is useful for ad hoc backups before a risky operation. A regular backup resets the differential base and participates in the chain.",
+      "code": "BACKUP DATABASE Sales TO DISK = 'D:\\Backups\\Sales_copy.bak'\nWITH COPY_ONLY;",
+      "tags": ["copy-only", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/copy-only-backups-sql-server"]
+    },
+    {
+      "id": "backup-restore-009",
+      "difficulty": "Beginner",
+      "question": "How do you verify that a backup is valid?",
+      "answer": "Use RESTORE VERIFYONLY to check that a backup set is readable and complete without actually restoring it. This catches corrupt or truncated backup files early. Combine it with periodic test restores to a non-production server.",
+      "code": "RESTORE VERIFYONLY FROM DISK = 'D:\\Backups\\Sales_full.bak';",
+      "tags": ["verify", "backup"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/restore-statements-verifyonly-transact-sql"]
+    },
+    {
+      "id": "backup-restore-010",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the backup checksum and CHECKSUM option?",
+      "answer": "The CHECKSUM option computes a checksum during the backup so corruption can be detected when the backup is restored. Without it, a corrupted backup may not be discovered until you need it. Enabling checksums and page verification is a recommended practice.",
+      "code": "BACKUP DATABASE Sales TO DISK = 'D:\\Backups\\Sales.bak'\nWITH CHECKSUM;",
+      "tags": ["checksum", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/possible-media-errors-during-backup-and-restore-sql-server"]
+    },
+    {
+      "id": "backup-restore-011",
+      "difficulty": "Intermediate",
+      "question": "How do you restore to a point in time?",
+      "answer": "Restore the last full backup WITH NORECOVERY, then apply differential and log backups in order, using STOPAT on the final log restore to specify the target moment. The database must be in the FULL recovery model and the log chain must include the time you want. This is how you recover from an accidental data change.",
+      "code": "RESTORE LOG Sales FROM DISK = 'D:\\Backups\\Sales_log.trn'\nWITH RECOVERY, STOPAT = '2024-05-01T14:30:00';",
+      "tags": ["point-in-time", "restore"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-a-sql-server-database-to-a-point-in-time-full-recovery-model"]
+    },
+    {
+      "id": "backup-restore-012",
+      "difficulty": "Intermediate",
+      "question": "What is a tail-log backup?",
+      "answer": "A tail-log backup captures the log records not yet backed up, taken after a failure and before restoring, so you do not lose the changes since the last log backup. It requires the database to be accessible and is taken WITH NORECOVERY to leave it ready for restore. It is the final link needed for a complete point-in-time recovery.",
+      "code": "BACKUP LOG Sales TO DISK = 'D:\\Backups\\Sales_tail.trn'\nWITH NORECOVERY;",
+      "tags": ["tail-log", "restore"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/tail-log-backups-sql-server"]
+    },
+    {
+      "id": "backup-restore-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between RESTORE and ATTACH?",
+      "answer": "RESTORE rebuilds a database from backup files and applies the recovery process, producing a consistent database. ATTACH makes existing data and log files part of the instance without going through a backup, which is faster but requires the files to be consistent and is not a substitute for a restore-based recovery strategy. Attaching a database with a broken log can fail or require a rebuild.",
+      "tags": ["attach", "restore"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/database-detach-and-attach-sql-server"]
+    },
+    {
+      "id": "backup-restore-014",
+      "difficulty": "Intermediate",
+      "question": "How do you take a backup without affecting performance too much?",
+      "answer": "Use compression to reduce size and I/O, schedule backups off-peak, back up to a fast dedicated drive or share, and consider file or filegroup backups for very large databases. Copy-only backups avoid disturbing the chain during maintenance. On Enterprise, backup to a mirrored media set adds redundancy.",
+      "code": "BACKUP DATABASE Sales TO DISK = 'D:\\Backups\\Sales.bak'\nWITH COMPRESSION, CHECKSUM;",
+      "tags": ["backup-performance", "compression"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/backup-compression-sql-server"]
+    },
+    {
+      "id": "backup-restore-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a file backup and a full backup?",
+      "answer": "A full database backup captures the whole database as one unit, while file and filegroup backups capture individual files and are useful for very large databases where a full backup is impractical. Restoring requires the file backups plus the log backups that cover them. File backups enable piecemeal restore of just the damaged files.",
+      "tags": ["file-backup", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/full-file-backups-sql-server"]
+    },
+    {
+      "id": "backup-restore-016",
+      "difficulty": "Intermediate",
+      "question": "What is a media set and how does backup to multiple files help?",
+      "answer": "A media set is the collection of backup files written by one backup operation, and you can spread a backup across several files or devices to parallelize I/O. Writing to multiple equally sized files can dramatically speed up large backups and restores. You must manage the whole set together.",
+      "code": "BACKUP DATABASE Sales\nTO DISK = 'D:\\B1.bak', DISK = 'E:\\B2.bak';\n-- faster than a single file",
+      "tags": ["media-set", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/media-sets-media-families-and-backup-sets-sql-server"]
+    },
+    {
+      "id": "backup-restore-017",
+      "difficulty": "Intermediate",
+      "question": "How do you move a database to another server using backup and restore?",
+      "answer": "Back up the database on the source, copy the backup file, restore it on the destination WITH MOVE to place the files at the desired paths, and fix orphaned users. You may need to recreate logins or use contained users. Restore WITH MOVE is required when the original file paths do not exist on the target.",
+      "code": "RESTORE DATABASE Sales\nFROM DISK = 'D:\\Sales.bak'\nWITH MOVE 'Sales' TO 'D:\\Data\\Sales.mdf',\n     MOVE 'Sales_log' TO 'D:\\Log\\Sales_log.ldf';",
+      "tags": ["restore", "migration"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-a-database-backup-using-ssms"]
+    },
+    {
+      "id": "backup-restore-018",
+      "difficulty": "Intermediate",
+      "question": "What is DBCC CHECKDB and why should you run it?",
+      "answer": "DBCC CHECKDB checks the logical and physical integrity of a database, detecting corruption that could make a restore necessary. Run it regularly on a schedule, ideally on a copy or secondary to reduce load on production. Its results tell you whether a backup is trustworthy and whether you have a data integrity problem.",
+      "code": "DBCC CHECKDB('Sales') WITH NO_INFOMSGS;",
+      "tags": ["checkdb", "integrity"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/database-console-commands/dbcc-checkdb-transact-sql"]
+    },
+    {
+      "id": "backup-restore-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a logical and a physical backup device?",
+      "answer": "A physical device is a path to a file or tape, such as D:\\Backups\\Sales.bak. A logical device is a friendly name you create with sp_addumpdevice that maps to a physical path, so scripts reference the name rather than the path. Logical devices make backup scripts portable across servers.",
+      "code": "EXEC sp_addumpdevice 'disk', 'SalesBackup', 'D:\\Backups\\Sales.bak';",
+      "tags": ["backup-device", "backup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/backup-devices-sql-server"]
+    },
+    {
+      "id": "backup-restore-020",
+      "difficulty": "Intermediate",
+      "question": "How do you restore a database from a suspect or corrupt state?",
+      "answer": "If you have a good backup chain, restore from the last full and subsequent backups, which is why backups must be validated. If the database is suspect but the files are intact, you may be able to repair or rebuild the log. DBCC CHECKDB and emergency mode repairs are last resorts and can lose data.",
+      "tags": ["corruption", "recovery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-and-recovery-overview-sql-server"]
+    },
+    {
+      "id": "backup-restore-021",
+      "difficulty": "Advanced",
+      "question": "How does the simple recovery model affect recovery point objective?",
+      "answer": "In SIMPLE recovery the log is truncated at checkpoints, so you can restore only to the last full or differential backup, meaning data loss up to that point. The recovery point objective is therefore the age of the last backup. If you need tighter RPO, you must use FULL or BULK_LOGGED with frequent log backups.",
+      "tags": ["rpo", "recovery-model"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/recovery-models-sql-server"]
+    },
+    {
+      "id": "backup-restore-022",
+      "difficulty": "Advanced",
+      "question": "What is a piecewise or piecemeal restore?",
+      "answer": "Piecemeal restore brings a database online filegroup by filegroup, starting with the primary filegroup, so critical data becomes available while the rest is restored. It is useful for very large databases with multiple filegroups and partial data loss. It requires file or filegroup backups and the appropriate log backups.",
+      "tags": ["piecemeal-restore", "filegroup"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/piecemeal-restores-sql-server"]
+    },
+    {
+      "id": "backup-restore-023",
+      "difficulty": "Advanced",
+      "question": "How does backup compression interact with TDE?",
+      "answer": "When a database is encrypted with TDE, the backup is also encrypted, and encrypted data compresses poorly, so backup compression provides little benefit and costs CPU. This means TDE backups are often larger and slower than unencrypted ones. Plan storage and backup windows accordingly.",
+      "tags": ["tde", "compression"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/backup-compression-sql-server"]
+    },
+    {
+      "id": "backup-restore-024",
+      "difficulty": "Advanced",
+      "question": "What is the difference between restoring a database and recovering it?",
+      "answer": "The restore phase copies pages from the backups into the data files, and the recovery phase applies the log to bring the database to a consistent, transactionally correct state, rolling forward committed and rolling back uncommitted transactions. Both are part of the restore process but conceptually distinct. Understanding them explains why WITH NORECOVERY defers the recovery step.",
+      "tags": ["restore", "recovery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-and-recovery-overview-sql-server"]
+    },
+    {
+      "id": "backup-restore-025",
+      "difficulty": "Advanced",
+      "question": "How do you design a backup strategy for a critical database?",
+      "answer": "Choose the FULL recovery model for point-in-time capability, take regular full backups as the base, frequent differentials to shorten the chain, and frequent log backups to limit data loss. Store copies offsite or in another region, encrypt and verify them, and regularly test a restore to prove the plan works. Document and automate the schedule with maintenance plans or a tool.",
+      "tags": ["backup-strategy", "design"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/back-up-and-restore-of-sql-server-databases"]
+    }
+  ]
+}

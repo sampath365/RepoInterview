@@ -1,0 +1,220 @@
+{
+  "category": "Graphics, Shapes & 2D/3D",
+  "slug": "graphics",
+  "icon": "shapes",
+  "questions": [
+    {
+      "id": "graphics-001",
+      "difficulty": "Beginner",
+      "question": "What are the shape classes in WPF?",
+      "answer": "WPF provides Shape-derived classes such as Rectangle, Ellipse, Line, Polyline, Polygon, and Path. They are UI elements that draw themselves and participate in layout. Shapes support Fill, Stroke, StrokeThickness, and other drawing properties.",
+      "tags": ["shapes", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/shapes-and-basic-drawing-in-wpf-overview"]
+    },
+    {
+      "id": "graphics-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a Shape and a Geometry?",
+      "answer": "A Shape is a UIElement that draws a geometry and takes part in layout and hit testing. A Geometry defines a shape's outline as data and is not a visual by itself. You use Geometry for clipping, hit testing, and as the data for a Path.",
+      "tags": ["shapes", "geometry"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/geometry-overview"]
+    },
+    {
+      "id": "graphics-003",
+      "difficulty": "Beginner",
+      "question": "What is a Path and how does it use path markup syntax?",
+      "answer": "Path is a shape that draws a Geometry, and its Data property accepts either a Geometry object or a compact path mini-language string. The mini-language uses commands such as M for move, L for line, and C for curve. This makes complex figures concise in XAML.",
+      "code": "<Path Stroke=\"Black\" Fill=\"Gold\"\n      Data=\"M 10,10 L 100,10 L 100,60 Z\"/>",
+      "tags": ["path", "geometry"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/path-markup-syntax"]
+    },
+    {
+      "id": "graphics-004",
+      "difficulty": "Beginner",
+      "question": "How do you draw a line?",
+      "answer": "Use the Line shape and set X1, Y1, X2, and Y2 for the endpoints plus Stroke and StrokeThickness for appearance. Line does not fill, so only stroke properties apply. It participates in layout based on its bounding box.",
+      "code": "<Line X1=\"0\" Y1=\"0\" X2=\"100\" Y2=\"100\"\n      Stroke=\"SteelBlue\" StrokeThickness=\"2\"/>",
+      "tags": ["shapes", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/shapes-and-basic-drawing-in-wpf-overview"]
+    },
+    {
+      "id": "graphics-005",
+      "difficulty": "Beginner",
+      "question": "What is a Brush in WPF?",
+      "answer": "A Brush defines how an area is painted. Types include SolidColorBrush, LinearGradientBrush, RadialGradientBrush, ImageBrush, and VisualBrush. Brushes are Freezable and can be applied to backgrounds, fills, strokes, and foregrounds.",
+      "tags": ["brush", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/wpf-brushes-overview"]
+    },
+    {
+      "id": "graphics-006",
+      "difficulty": "Beginner",
+      "question": "How do you create a gradient brush?",
+      "answer": "Use LinearGradientBrush with GradientStops that define colors and offsets, and optionally set the start and end points. RadialGradientBrush paints from a center outward. Gradients are declarative and can be animated.",
+      "code": "<Rectangle Width=\"200\" Height=\"100\">\n  <Rectangle.Fill>\n    <LinearGradientBrush StartPoint=\"0,0\" EndPoint=\"1,0\">\n      <GradientStop Color=\"SteelBlue\" Offset=\"0\"/>\n      <GradientStop Color=\"White\" Offset=\"1\"/>\n    </LinearGradientBrush>\n  </Rectangle.Fill>\n</Rectangle>",
+      "tags": ["gradient", "brush"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/wpf-brushes-overview"]
+    },
+    {
+      "id": "graphics-007",
+      "difficulty": "Beginner",
+      "question": "What is an ImageBrush?",
+      "answer": "ImageBrush paints an area with an image. You set its ImageSource to an image URI and can control tiling and stretching with TileMode and Stretch. It is useful for textured backgrounds and pattern fills.",
+      "code": "<Border.Background>\n  <ImageBrush ImageSource=\"/Assets/texture.png\" TileMode=\"Tile\"/>\n</Border.Background>",
+      "tags": ["imagebrush", "brush"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/wpf-brushes-overview"]
+    },
+    {
+      "id": "graphics-008",
+      "difficulty": "Beginner",
+      "question": "How do you display an image in WPF?",
+      "answer": "Use the Image element and set its Source to an image URI or a BitmapImage. Control scaling with Stretch and preserve quality with the render options. WPF loads common formats such as PNG, JPEG, BMP, and GIF.",
+      "code": "<Image Source=\"/Assets/logo.png\" Stretch=\"Uniform\"\n       RenderOptions.BitmapScalingMode=\"HighQuality\"/>",
+      "tags": ["image", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/imaging-overview"]
+    },
+    {
+      "id": "graphics-009",
+      "difficulty": "Beginner",
+      "question": "What is a Transform in WPF?",
+      "answer": "A Transform changes how an element or geometry is drawn without affecting layout. Common transforms include TranslateTransform, ScaleTransform, RotateTransform, and SkewTransform, and TransformGroup combines them. Transforms are applied through the RenderTransform or LayoutTransform property.",
+      "tags": ["transform", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/transforms-overview"]
+    },
+    {
+      "id": "graphics-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between RenderTransform and LayoutTransform?",
+      "answer": "RenderTransform applies after layout, so the element is drawn transformed but its layout size is unchanged. LayoutTransform applies before layout, so surrounding elements reflow to accommodate the transformed size. Use RenderTransform for animation and LayoutTransform when layout must respect the transform.",
+      "tags": ["transform", "layout"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/transforms-overview"]
+    },
+    {
+      "id": "graphics-011",
+      "difficulty": "Intermediate",
+      "question": "How do you combine multiple geometries?",
+      "answer": "Use GeometryGroup to combine geometries without merging their outlines, or CombinedGeometry with a GeometryCombineMode such as Union, Intersect, Exclude, or Xor to produce a single merged geometry. CombinedGeometry is useful for holes and boolean operations.",
+      "code": "<Path Fill=\"SteelBlue\">\n  <Path.Data>\n    <CombinedGeometry GeometryCombineMode=\"Exclude\">\n      <CombinedGeometry.Geometry1>\n        <EllipseGeometry RadiusX=\"50\" RadiusY=\"50\"/>\n      </CombinedGeometry.Geometry1>\n      <CombinedGeometry.Geometry2>\n        <EllipseGeometry RadiusX=\"25\" RadiusY=\"25\"/>\n      </CombinedGeometry.Geometry2>\n    </CombinedGeometry>\n  </Path.Data>\n</Path>",
+      "tags": ["geometry", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/geometry-overview"]
+    },
+    {
+      "id": "graphics-012",
+      "difficulty": "Intermediate",
+      "question": "How do you clip an element to a shape?",
+      "answer": "Set the element's Clip property to a Geometry such as a RectangleGeometry or EllipseGeometry. Anything outside the geometry is not drawn and does not receive hit testing. Clipping is a lightweight way to create shaped containers.",
+      "code": "<Border Width=\"120\" Height=\"120\">\n  <Border.Clip>\n    <EllipseGeometry Center=\"60,60\" RadiusX=\"60\" RadiusY=\"60\"/>\n  </Border.Clip>\n</Border>",
+      "tags": ["clip", "geometry"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/how-to-clip-a-region-with-a-geometry"]
+    },
+    {
+      "id": "graphics-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Opacity and OpacityMask?",
+      "answer": "Opacity applies a uniform transparency to the whole element. OpacityMask uses a brush to vary transparency across the element, so different regions can have different alpha. OpacityMask enables effects like fading edges and gradient transparency.",
+      "tags": ["opacity", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/opacity-masks-overview"]
+    },
+    {
+      "id": "graphics-014",
+      "difficulty": "Intermediate",
+      "question": "How do you draw 3D content in WPF?",
+      "answer": "Use the Viewport3D element and define a Model3D with a GeometryModel3D that has a MeshGeometry3D and a Material. Add a light and a camera, and wrap the model in ModelVisual3D. WPF renders the 3D scene using its retained graphics pipeline.",
+      "code": "<Viewport3D>\n  <Viewport3D.Camera>\n    <PerspectiveCamera Position=\"0,0,5\" LookDirection=\"0,0,-1\"/>\n  </Viewport3D.Camera>\n  <ModelVisual3D>\n    <ModelVisual3D.Content>\n      <GeometryModel3D>\n        <GeometryModel3D.Geometry>\n          <MeshGeometry3D Positions=\"0,0,0 1,0,0 0,1,0\"\n                          TriangleIndices=\"0 1 2\"/>\n        </GeometryModel3D.Geometry>\n        <GeometryModel3D.Material>\n          <DiffuseMaterial Brush=\"SteelBlue\"/>\n        </GeometryModel3D.Material>\n      </GeometryModel3D>\n    </ModelVisual3D.Content>\n  </ModelVisual3D>\n</Viewport3D>",
+      "tags": ["3d", "viewport3d"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/3-d-graphics-overview"]
+    },
+    {
+      "id": "graphics-015",
+      "difficulty": "Intermediate",
+      "question": "What is a DrawingBrush and when is it useful?",
+      "answer": "A DrawingBrush paints an area with a Drawing, which can contain geometries, images, and other drawings. It is useful for patterns, icons, and scalable backgrounds. Because it is vector-based, it scales cleanly.",
+      "tags": ["drawingbrush", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/wpf-brushes-overview"]
+    },
+    {
+      "id": "graphics-016",
+      "difficulty": "Intermediate",
+      "question": "How do you create a shape with a drop shadow?",
+      "answer": "Apply a DropShadowEffect to the element's Effect property, setting ShadowDepth, BlurRadius, Opacity, and Color. Effects render the element to a bitmap and post-process it, so they cost performance. Use them sparingly on static content.",
+      "code": "<Border Background=\"White\">\n  <Border.Effect>\n    <DropShadowEffect ShadowDepth=\"3\" BlurRadius=\"8\" Opacity=\"0.4\"/>\n  </Border.Effect>\n</Border>",
+      "tags": ["effects", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/effects-overview"]
+    },
+    {
+      "id": "graphics-017",
+      "difficulty": "Intermediate",
+      "question": "What is the VisualBrush used for?",
+      "answer": "VisualBrush paints an area with the content of another visual, effectively a live snapshot. It is used for reflections, previews, and magnifier effects. The brush updates when the source visual changes.",
+      "code": "<Rectangle Width=\"200\" Height=\"50\">\n  <Rectangle.Fill>\n    <VisualBrush Visual=\"{Binding ElementName=Source}\"/>\n  </Rectangle.Fill>\n</Rectangle>",
+      "tags": ["visualbrush", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/wpf-brushes-overview"]
+    },
+    {
+      "id": "graphics-018",
+      "difficulty": "Intermediate",
+      "question": "How do you render an element to a bitmap?",
+      "answer": "Use RenderTargetBitmap to render a Visual at a given pixel size and DPI, then save it with a BitmapEncoder such as PngBitmapEncoder. This is how you export a visual or take a snapshot. Remember to account for DPI scaling in the pixel size.",
+      "code": "var rtb = new RenderTargetBitmap(800, 600, 96, 96, PixelFormats.Pbgra32);\nrtb.Render(myElement);\nvar encoder = new PngBitmapEncoder();\nencoder.Frames.Add(BitmapFrame.Create(rtb));",
+      "tags": ["render", "bitmap"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/how-to-render-a-visual-to-a-bitmap"]
+    },
+    {
+      "id": "graphics-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a SolidColorBrush and a gradient brush for performance?",
+      "answer": "A SolidColorBrush is the cheapest to render because it fills with a single color. Gradient brushes are more expensive because the renderer interpolates colors across the area. For large or animated areas, prefer solid colors or freeze gradient brushes.",
+      "tags": ["performance", "brushes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-2d-graphics-and-imaging"]
+    },
+    {
+      "id": "graphics-020",
+      "difficulty": "Intermediate",
+      "question": "How do you draw text along a path or with effects?",
+      "answer": "WPF does not directly support text on a path in the built-in TextBlock, but you can convert text to geometry with FormattedText and use it as Path data, or use a third-party control. Effects and outlines can be applied to text using Typography and Effects. For simple cases, overlaying TextBlock on a Canvas works.",
+      "tags": ["text", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-text"]
+    },
+    {
+      "id": "graphics-021",
+      "difficulty": "Advanced",
+      "question": "How does WPF's retained-mode rendering affect graphics performance?",
+      "answer": "WPF keeps a display list of drawing instructions and re-renders only invalidated regions, so static visuals are cheap. However, frequently changing properties such as size, transform, or brush can force redraws. Keeping visuals simple and using transforms and animations instead of layout changes improves performance.",
+      "tags": ["performance", "rendering"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/graphics-rendering-registry-settings"]
+    },
+    {
+      "id": "graphics-022",
+      "difficulty": "Advanced",
+      "question": "How do you create custom 2D drawing with the DrawingContext?",
+      "answer": "Derive from FrameworkElement or a similar type and override OnRender, then draw with the DrawingContext methods such as DrawRectangle, DrawEllipse, and DrawText. WPF calls OnRender when the element is invalidated. This gives full control over rendering at the visual level.",
+      "code": "protected override void OnRender(DrawingContext dc)\n{\n    dc.DrawEllipse(Brushes.SteelBlue, new Pen(Brushes.Black, 1),\n        new Point(50, 50), 40, 40);\n}",
+      "tags": ["onrender", "drawingcontext"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/drawing-objects-overview"]
+    },
+    {
+      "id": "graphics-023",
+      "difficulty": "Advanced",
+      "question": "How do you combine 3D and 2D content in a WPF application?",
+      "answer": "You can overlay 2D elements on a Viewport3D by placing both in a Grid or Canvas, or use a VisualBrush to map 2D content onto a 3D surface. Viewport2DVisual3D lets you place interactive 2D elements directly on a 3D mesh. This enables rich mixed content.",
+      "tags": ["3d", "interop"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/3-d-graphics-overview"]
+    },
+    {
+      "id": "graphics-024",
+      "difficulty": "Advanced",
+      "question": "What are the performance trade-offs of Effects in WPF?",
+      "answer": "Effects such as Blur and DropShadow are pixel shaders that render the element to an intermediate surface, which is expensive and disables some hardware acceleration paths. Applying them to large areas or animated elements can hurt performance. Use them sparingly and prefer alternative visuals when possible.",
+      "tags": ["effects", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-taking-advantage-of-hardware"]
+    },
+    {
+      "id": "graphics-025",
+      "difficulty": "Advanced",
+      "question": "How do you hit test shapes and geometries?",
+      "answer": "Use VisualTreeHelper.HitTest with a point or geometry to find visuals under the cursor, or call Geometry.FillContains and StrokeContains for geometry-level tests. Hit testing respects the element's geometry, including transparency. You can filter results with a HitTestResultCallback.",
+      "code": "VisualTreeHelper.HitTest(myCanvas, point,\n    result => { /* handle hit */ return HitTestResultBehavior.Continue; },\n    new PointHitTestParameters(point));",
+      "tags": ["hit-testing", "graphics"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/graphics-multimedia/hit-testing-in-the-visual-layer"]
+    }
+  ]
+}

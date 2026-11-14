@@ -1,0 +1,334 @@
+{
+  "category": "Data Fetching & Server State",
+  "slug": "data-fetching",
+  "icon": "cloud",
+  "questions": [
+    {
+      "id": "data-fetching-001",
+      "difficulty": "Beginner",
+      "question": "How do you fetch data in React?",
+      "answer": "The common pattern is to fetch inside a useEffect, store the result and loading and error state, and render accordingly. You should cancel or ignore stale responses to avoid race conditions. For simple cases this works fine. For anything complex a data library handles caching and retries.",
+      "code": "useEffect(() => {\n  let active = true;\n  fetch(url).then((r) => r.json()).then((d) => {\n    if (active) setData(d);\n  });\n  return () => { active = false; };\n}, [url]);",
+      "tags": [
+        "data-fetching",
+        "useEffect"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "data-fetching-002",
+      "difficulty": "Beginner",
+      "question": "What is server state versus client state?",
+      "answer": "Server state is data that lives on a server and is fetched into the app, such as a user profile or a list of orders. Client state is owned by the app, such as whether a menu is open. They have different needs: server state needs caching, refetching and invalidation, while client state is simpler. Libraries like TanStack Query specialize in server state.",
+      "tags": [
+        "data-fetching",
+        "server-state"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/overview"
+      ]
+    },
+    {
+      "id": "data-fetching-003",
+      "difficulty": "Beginner",
+      "question": "Why is fetching in useEffect tricky?",
+      "answer": "Effects do not know about each other, so caching, deduplication and refetching must be built by hand. Race conditions can let a slow response overwrite a newer one. There is no built-in retry or background refresh. These gaps are why data libraries exist.",
+      "tags": [
+        "data-fetching",
+        "useEffect"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "data-fetching-004",
+      "difficulty": "Beginner",
+      "question": "How do you handle loading and error states?",
+      "answer": "Track three states, typically data, loading and error, and render a spinner while loading and a message on error. Distinguish an empty result from loading so the UI is accurate. Reset the error when retrying. Good state handling prevents confusing blank screens.",
+      "tags": [
+        "data-fetching",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "data-fetching-005",
+      "difficulty": "Beginner",
+      "question": "What is TanStack Query?",
+      "answer": "TanStack Query, formerly React Query, is a library for fetching, caching and synchronizing server state. It provides hooks like useQuery and useMutation with caching, background refetching, retries and stale-while-revalidate behavior. It removes most manual loading and error boilerplate. It is one of the most popular server state tools for React.",
+      "code": "const { data, isLoading } = useQuery({\n  queryKey: ['todos'],\n  queryFn: fetchTodos,\n});",
+      "tags": [
+        "data-fetching",
+        "tanstack-query"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/overview"
+      ]
+    },
+    {
+      "id": "data-fetching-006",
+      "difficulty": "Beginner",
+      "question": "What is a race condition in data fetching?",
+      "answer": "A race condition happens when responses arrive out of order, so an older request can resolve after a newer one and overwrite the correct data. This occurs when the query changes quickly, such as typing in a search box. Cancelling requests or ignoring stale results prevents it. Data libraries handle this automatically.",
+      "tags": [
+        "data-fetching",
+        "race-conditions"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "data-fetching-007",
+      "difficulty": "Beginner",
+      "question": "How do you cancel a fetch request?",
+      "answer": "You create an AbortController, pass its signal to fetch, and call abort in the effect cleanup so the request stops when the component unmounts or inputs change. This frees resources and avoids setting state after unmount. Handle the resulting abort error gracefully. Data libraries wrap this for you.",
+      "tags": [
+        "data-fetching",
+        "cancellation"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/AbortController"
+      ]
+    },
+    {
+      "id": "data-fetching-008",
+      "difficulty": "Beginner",
+      "question": "What is a mutation in TanStack Query?",
+      "answer": "A mutation is an operation that changes data on the server, such as a create, update or delete, handled with useMutation. Unlike queries, mutations are not run automatically; you call the mutate function. After success you typically invalidate related queries so they refetch. Mutations also expose pending and error state.",
+      "tags": [
+        "data-fetching",
+        "mutations"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/mutations"
+      ]
+    },
+    {
+      "id": "data-fetching-009",
+      "difficulty": "Beginner",
+      "question": "Why should you not fetch in the render body?",
+      "answer": "Render must be pure and can run multiple times, be paused or restarted, so starting a request there causes duplicate and unpredictable calls. Fetching belongs in effects or a data layer that manages it. Keeping render pure is a core React contract. Side effects in render lead to subtle, hard-to-debug behavior.",
+      "tags": [
+        "data-fetching",
+        "purity"
+      ],
+      "references": [
+        "https://react.dev/learn/keeping-components-pure"
+      ]
+    },
+    {
+      "id": "data-fetching-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a query and a mutation?",
+      "answer": "A query reads data and is safe to cache, refetch and deduplicate, so libraries run it automatically. A mutation changes data, so it runs only when you call it and usually invalidates related queries. Keeping this distinction clarifies how to structure server interactions. It also guides which tool to reach for.",
+      "tags": [
+        "data-fetching",
+        "queries"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/queries"
+      ]
+    },
+    {
+      "id": "data-fetching-011",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid request waterfalls?",
+      "answer": "Fetch independent data in parallel rather than awaiting one request before starting the next. Route-level loaders and data libraries start requests together for a page. Server rendering can also fetch related data in one round trip. Parallelizing removes the sequential delays that dominate perceived load time.",
+      "tags": [
+        "data-fetching",
+        "performance"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/data-loading"
+      ]
+    },
+    {
+      "id": "data-fetching-012",
+      "difficulty": "Intermediate",
+      "question": "What is stale-while-revalidate?",
+      "answer": "Stale-while-revalidate serves cached data immediately while fetching a fresh copy in the background, then updates the UI when the new data arrives. Users see content instantly and it silently becomes current. This is a core strategy in TanStack Query. It balances speed with freshness.",
+      "tags": [
+        "data-fetching",
+        "caching"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/caching"
+      ]
+    },
+    {
+      "id": "data-fetching-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement optimistic updates?",
+      "answer": "You update the cache immediately with the expected result, keep the previous value, and roll back if the request fails. This makes the UI feel instant for actions like toggling a like. TanStack Query provides onMutate, onError and onSettled hooks for this. Reconcile with the server response to avoid drift.",
+      "tags": [
+        "data-fetching",
+        "optimistic-ui"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/optimistic-updates"
+      ]
+    },
+    {
+      "id": "data-fetching-014",
+      "difficulty": "Intermediate",
+      "question": "How do you deduplicate identical requests?",
+      "answer": "Data libraries key requests by query key and share the in-flight promise, so multiple components requesting the same data trigger one network call. Without a library you would cache promises yourself. Deduplication reduces server load and avoids duplicate spinners. Consistent keys make it effective.",
+      "tags": [
+        "data-fetching",
+        "caching"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/query-keys"
+      ]
+    },
+    {
+      "id": "data-fetching-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle pagination?",
+      "answer": "You track the current page or cursor and include it in the request key so each page is cached separately. For infinite scrolling you use an infinite query that appends pages as the user reaches the end. Keep the page state in the URL so views are shareable. Prefetching the next page improves perceived speed.",
+      "tags": [
+        "data-fetching",
+        "pagination"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/paginated-queries"
+      ]
+    },
+    {
+      "id": "data-fetching-016",
+      "difficulty": "Intermediate",
+      "question": "How do you refetch data on window focus or reconnect?",
+      "answer": "Data libraries can automatically refetch when the window regains focus or the network reconnects, keeping the UI fresh without manual polling. You configure this per query if the default is too aggressive. This is one of the biggest advantages over hand-rolled fetching. It keeps data current with minimal code.",
+      "tags": [
+        "data-fetching",
+        "refetch"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/window-focus-refetching"
+      ]
+    },
+    {
+      "id": "data-fetching-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use Suspense with data fetching?",
+      "answer": "Suspense-enabled data libraries throw a promise while loading so a Suspense boundary shows the fallback, then render with data ready. This removes loading conditionals from components. Combine it with error boundaries for failures. The library must support the Suspense mode.",
+      "tags": [
+        "data-fetching",
+        "suspense"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "data-fetching-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle authentication in fetches?",
+      "answer": "You include credentials or an auth token in the request, often by wrapping fetch in a helper or using the library's fetch options. Handle 401 responses by refreshing the token or redirecting to login. Never store long-lived secrets in the client. Centralizing the logic keeps auth consistent across calls.",
+      "tags": [
+        "data-fetching",
+        "auth"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API"
+      ]
+    },
+    {
+      "id": "data-fetching-019",
+      "difficulty": "Intermediate",
+      "question": "How do you cache and invalidate data?",
+      "answer": "Queries are cached by key and marked stale after a configured time, triggering background refetches. After a mutation you invalidate the affected keys so they refetch. Fine-grained keys make invalidation precise. This keeps the UI consistent without manual bookkeeping.",
+      "tags": [
+        "data-fetching",
+        "caching"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/query-invalidation"
+      ]
+    },
+    {
+      "id": "data-fetching-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors and retries?",
+      "answer": "You show an error state with a retry action, and configure limited automatic retries with backoff for transient failures. Distinguish network errors from validation errors so you do not retry the latter. Log unexpected errors for diagnosis. Data libraries expose retry configuration and error objects.",
+      "tags": [
+        "data-fetching",
+        "errors"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/query-retries"
+      ]
+    },
+    {
+      "id": "data-fetching-021",
+      "difficulty": "Advanced",
+      "question": "How do you manage server state versus client state cleanly?",
+      "answer": "Keep server state in a data library that handles caching and synchronization, and keep UI state in local state or a lightweight store. Avoid copying server data into global client state, which creates two sources of truth. Derive display values from the cached server data instead. This separation removes a large class of sync bugs.",
+      "tags": [
+        "data-fetching",
+        "architecture"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/overview"
+      ]
+    },
+    {
+      "id": "data-fetching-022",
+      "difficulty": "Advanced",
+      "question": "How do you prefetch data for a route?",
+      "answer": "You start the request before the route renders, using a loader or by calling the library's prefetch function on hover or navigation intent. Prefetching fills the cache so the next screen appears instantly. Be careful not to over-fetch data the user may never need. Intent-based prefetching balances speed and bandwidth.",
+      "tags": [
+        "data-fetching",
+        "prefetching"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/prefetching"
+      ]
+    },
+    {
+      "id": "data-fetching-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between client-side and server-side data fetching?",
+      "answer": "Client-side fetching loads data after the app renders, which is simple but adds a round trip and can hurt first paint. Server-side fetching, including in React Server Components or route loaders, gets data before rendering so the HTML arrives complete. A hybrid approach fetches critical data on the server and defers the rest. The choice affects SEO, time to first byte and complexity.",
+      "tags": [
+        "data-fetching",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "data-fetching-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep data consistent across tabs or users?",
+      "answer": "You can refetch on focus and reconnect, poll at a sensible interval, or subscribe to real-time updates through websockets or server-sent events. Real-time pushes keep multiple clients in sync without polling. Invalidate caches when a mutation succeeds so other views refresh. Choose the mechanism based on how fresh the data must be.",
+      "tags": [
+        "data-fetching",
+        "realtime"
+      ],
+      "references": [
+        "https://tanstack.com/query/latest/docs/framework/react/guides/window-focus-refetching"
+      ]
+    },
+    {
+      "id": "data-fetching-025",
+      "difficulty": "Advanced",
+      "question": "How do you avoid the pitfalls of fetching in effects at scale?",
+      "answer": "Hand-rolled effects lack caching, deduplication, retries and background refresh, which leads to duplicate requests and inconsistent state as an app grows. Adopt a data library or route loaders that centralize these concerns, and reserve effects for genuinely one-off work. Standardizing the data layer makes behavior predictable across the app. This is usually the single biggest reliability improvement for a growing React codebase.",
+      "tags": [
+        "data-fetching",
+        "best-practices"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    }
+  ]
+}

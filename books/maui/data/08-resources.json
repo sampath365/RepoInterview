@@ -1,0 +1,221 @@
+{
+  "category": "Resources, Styles & Themes",
+  "slug": "resources",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "resources-001",
+      "difficulty": "Beginner",
+      "question": "What is a ResourceDictionary in .NET MAUI?",
+      "answer": "A ResourceDictionary is a keyed collection of reusable objects such as colors, styles, templates, and converters. You define resources in XAML with ResourceDictionary elements and reference them by key using StaticResource or DynamicResource. Dictionaries can be merged so shared resources live in one file. They promote consistency and reduce duplication across the app.",
+      "tags": ["resources", "overview"],
+      "code": "<ResourceDictionary>\n  <Color x:Key=\"Primary\">#512BD4</Color>\n  <x:Double x:Key=\"Spacing\">12</x:Double>\n</ResourceDictionary>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-002",
+      "difficulty": "Beginner",
+      "question": "When would you choose StaticResource instead of DynamicResource?",
+      "answer": "StaticResource resolves the resource once when the element is created and is more efficient, but it does not react to later changes. DynamicResource resolves the value at runtime and updates the element if the resource changes, at some performance cost. Use StaticResource for values that do not change and DynamicResource when a resource is replaced at runtime, such as switching themes.",
+      "tags": ["resources", "dynamicresource"],
+      "code": "<Label TextColor=\"{StaticResource Primary}\" />\n<Label TextColor=\"{DynamicResource ThemeText}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-003",
+      "difficulty": "Beginner",
+      "question": "What is a Style in .NET MAUI?",
+      "answer": "A Style groups setter values for one or more properties so they can be applied to many controls. You define a Style with a TargetType and Setter children and reference it by key or apply it implicitly. Implicit styles apply to all controls of a type when no key is given. Styles reduce repetition and keep the look consistent.",
+      "tags": ["styles", "xaml"],
+      "code": "<Style TargetType=\"Button\">\n  <Setter Property=\"BackgroundColor\" Value=\"#512BD4\" />\n  <Setter Property=\"TextColor\" Value=\"White\" />\n</Style>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/styles/xaml"]
+    },
+    {
+      "id": "resources-004",
+      "difficulty": "Beginner",
+      "question": "What is an implicit style versus an explicit style?",
+      "answer": "An implicit style has no x:Key and applies automatically to every control of its TargetType within scope. An explicit style has an x:Key and is applied only when you reference it, for example Style=\"{StaticResource PrimaryButton}\". Implicit styles give app-wide defaults while explicit styles target specific cases. You can combine them so a control uses an explicit style that is based on the implicit one.",
+      "tags": ["styles", "implicit"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/styles/xaml"]
+    },
+    {
+      "id": "resources-005",
+      "difficulty": "Beginner",
+      "question": "How do you merge resource dictionaries in MAUI?",
+      "answer": "Add dictionaries to a ResourceDictionary's MergedDictionaries collection so their resources become available in the parent scope. You typically merge a Colors.xaml and Styles.xaml into the app-level dictionary in App.xaml. Merging lets you split resources by concern while still exposing them globally. Later dictionaries can override earlier keys.",
+      "tags": ["resources", "merged-dictionaries"],
+      "code": "<ResourceDictionary.MergedDictionaries>\n  <ResourceDictionary Source=\"Resources/Colors.xaml\" />\n  <ResourceDictionary Source=\"Resources/Styles.xaml\" />\n</ResourceDictionary.MergedDictionaries>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-006",
+      "difficulty": "Beginner",
+      "question": "Where are app-wide resources defined in a MAUI project?",
+      "answer": "App-wide resources are usually defined in App.xaml, either directly or by merging dictionaries from the Resources folder. Because the Application-level dictionary sits at the root of the visual tree, its resources are visible to every page. The default template ships Colors.xaml and Styles.xaml merged there. Page-level resources override app-level ones for that page only.",
+      "tags": ["resources", "app-resources"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-007",
+      "difficulty": "Beginner",
+      "question": "How does a ControlTemplate differ from a DataTemplate?",
+      "answer": "A ControlTemplate redefines the visual structure of a control, letting you change how a control looks while keeping its behavior. A DataTemplate describes how a data object is rendered, for example each item in a CollectionView. ControlTemplate uses TemplateBinding to bind to the templated control's properties, while DataTemplate binds to the data item. Both are usually stored as keyed resources.",
+      "tags": ["controltemplate", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/controltemplate"]
+    },
+    {
+      "id": "resources-008",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the Colors.xaml file in the default template?",
+      "answer": "Colors.xaml is a resource dictionary that centralizes the app's color palette as named Color resources. Keeping colors in one file makes rebranding and theming easier because you change values in a single place. Styles in Styles.xaml reference these color keys rather than hard-coded values. This separation of palette from style is a good practice.",
+      "tags": ["resources", "colors"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-009",
+      "difficulty": "Beginner",
+      "question": "How do you reference a resource in code-behind?",
+      "answer": "Call TryGetResource or index the Resources dictionary on an element, page, or the Application to fetch a resource by key. You can also resolve resources from a merged dictionary via its indexer. In practice you rarely need to, because XAML handles lookups, but it is useful for building UI dynamically. Always null-check the result because a missing key returns null or false.",
+      "tags": ["resources", "code-behind"],
+      "code": "if (Application.Current.Resources\n        .TryGetValue(\"Primary\", out var value))\n{\n    var color = (Color)value;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-010",
+      "difficulty": "Beginner",
+      "question": "What is app theming in .NET MAUI?",
+      "answer": "Theming is the practice of defining named resources for colors and styles and swapping them to change the app's appearance, often between light and dark modes. MAUI reacts to the OS theme through AppThemeBinding and the RequestedThemeChanged event. Centralizing theme values in resource dictionaries makes switching straightforward. Themes should cover colors, fonts, and any style that changes with the mode.",
+      "tags": ["theming", "apptheme"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/theming"]
+    },
+    {
+      "id": "resources-011",
+      "difficulty": "Intermediate",
+      "question": "How does AppThemeBinding work?",
+      "answer": "AppThemeBinding selects one of two values based on the current app theme, with Light and Dark properties, and an optional Default. You apply it to any bindable property to switch automatically when the system theme changes. It is the simplest way to support dark mode without code. For more control you can override theme resources at runtime.",
+      "tags": ["theming", "appthemebinding"],
+      "code": "<Label TextColor=\"{AppThemeBinding Light=Black, Dark=White}\" />\n<Label TextColor=\"{AppThemeBinding Light={StaticResource TextLight},\n                                Dark={StaticResource TextDark}}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/system-theme-changes"]
+    },
+    {
+      "id": "resources-012",
+      "difficulty": "Intermediate",
+      "question": "How do you create a style based on another style?",
+      "answer": "Set the BasedOn property of a Style to another style, typically referenced with StaticResource. The derived style inherits all setters and can override or add more. This lets you define a base control style and specialize it for variants such as a danger button. BasedOn is resolved at parse time, so the base style must be defined earlier in scope.",
+      "tags": ["styles", "basedon"],
+      "code": "<Style x:Key=\"DangerButton\" TargetType=\"Button\"\n       BasedOn=\"{StaticResource PrimaryButton}\">\n  <Setter Property=\"BackgroundColor\" Value=\"Red\" />\n</Style>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/styles/xaml"]
+    },
+    {
+      "id": "resources-013",
+      "difficulty": "Intermediate",
+      "question": "What are CascadingStyleSheets and how are they used in MAUI?",
+      "answer": "MAUI supports a subset of CSS through CascadingStyleSheets for styling controls by type, class, or id. You add a StyleSheet resource and reference it, then apply class names with the StyleClass property. CSS can be convenient for web developers or large style sheets, but it covers fewer properties than XAML styles. Most apps mix CSS for bulk styling with XAML styles for control templates.",
+      "tags": ["css", "styles"],
+      "code": "<ContentPage.Resources>\n  <StyleSheet Source=\"/Resources/Styles/app.css\" />\n</ContentPage.Resources>\n<Button StyleClass=\"primary\" Text=\"OK\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/styles/css"]
+    },
+    {
+      "id": "resources-014",
+      "difficulty": "Intermediate",
+      "question": "How do you switch themes at runtime?",
+      "answer": "You change the values of keyed resources in the Application's resource dictionary or swap entire merged dictionaries, and elements bound with DynamicResource update automatically. Alternatively you set Application.Current.UserAppTheme to Light or Dark to override the system theme. Using DynamicResource is what makes live updates possible. Plan your theme keys up front so swapping is a single operation.",
+      "tags": ["theming", "dynamicresource"],
+      "code": "Application.Current.UserAppTheme = AppTheme.Dark;\nApplication.Current.Resources[\"ThemeText\"] = Colors.White;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/theming"]
+    },
+    {
+      "id": "resources-015",
+      "difficulty": "Intermediate",
+      "question": "What is a StyleClass and how does it relate to visual states?",
+      "answer": "StyleClass assigns a class name to a control so a style defined for that class applies, and the class can be toggled at runtime. Visual states use state triggers to change property values when a control enters a state like Normal, Disabled, or Selected. Combining them lets you apply a base class style and let visual states refine it. Style classes are mainly used with CSS and with the built-in style system.",
+      "tags": ["styles", "visual-states"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/visual-states"]
+    },
+    {
+      "id": "resources-016",
+      "difficulty": "Intermediate",
+      "question": "How do you define and apply a ControlTemplate for a content page?",
+      "answer": "Define a ControlTemplate as a keyed resource with a ContentPresenter for the page content, then set it on the page through ControlTemplate or via an implicit style for ContentPage. The presenter marks where the page's own content is inserted. This is how you build a shared page shell such as a custom header and footer. Use TemplateBinding to expose properties from the templated page.",
+      "tags": ["controltemplate", "resources"],
+      "code": "<ControlTemplate x:Key=\"PageTemplate\" TargetType=\"ContentPage\">\n  <Grid RowDefinitions=\"Auto,*\">\n    <Label Text=\"Header\" />\n    <ContentPresenter Grid.Row=\"1\" />\n  </Grid>\n</ControlTemplate>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/controltemplate"]
+    },
+    {
+      "id": "resources-017",
+      "difficulty": "Intermediate",
+      "question": "How do you share a resource dictionary between multiple apps or projects?",
+      "answer": "Move the dictionary into a shared class library or a MAUI Class Library and reference it from each app. Add the assembly's XAML namespace and merge the dictionary by its resource path. This avoids duplicating colors and styles across solutions. Keep the shared library free of app-specific logic so it stays reusable.",
+      "tags": ["resources", "sharing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-018",
+      "difficulty": "Intermediate",
+      "question": "What is the OnPlatform and OnIdiom markup used for in resources?",
+      "answer": "OnPlatform selects a value based on the running platform, and OnIdiom selects a value based on whether the device is a phone, tablet, desktop, or TV. They are commonly used inside resources and styles to vary colors, sizes, or fonts per device. You can provide per-platform values in XAML or code. They keep platform differences declarative rather than hidden in code-behind.",
+      "tags": ["onplatform", "onidiom"],
+      "code": "<Label FontSize=\"{OnIdiom Phone=14, Tablet=18, Desktop=16}\" />\n<Label Margin=\"{OnPlatform Android='8', iOS='12'}\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/configure-multi-targeting"]
+    },
+    {
+      "id": "resources-019",
+      "difficulty": "Intermediate",
+      "question": "How do you localize resources for multiple languages?",
+      "answer": "Put user-visible strings in RESX resource files named for each culture and read them through a generated ResourceManager wrapper. Bind the wrapper to the UI, often with a markup extension, so text updates per culture. Setting the culture before the UI loads ensures the right strings appear. Localizing resources works alongside resource dictionaries, which hold styles rather than text.",
+      "tags": ["localization", "resources"],
+      "code": "public static class AppResources\n{\n    static readonly ResourceManager M =\n        new(\"MyApp.Resources.AppResources\", typeof(AppResources).Assembly);\n    public static string Hello => M.GetString(\"Hello\")!;\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "resources-020",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of defining resources at the page level versus app level?",
+      "answer": "App-level resources are available everywhere and centralize the design system, but they are always loaded and can grow large. Page-level resources are scoped and released with the page, which is better for one-off values, but they risk duplication. A common strategy is app-level palettes and base styles with page-level overrides. Balance reuse against load cost and clarity.",
+      "tags": ["resources", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-021",
+      "difficulty": "Advanced",
+      "question": "How does resource lookup traverse the visual tree?",
+      "answer": "When a resource is requested, MAUI searches the element's own resources, then walks up through parent elements to the page and finally the Application, and also checks merged dictionaries at each level. The first match wins, so closer scopes override farther ones. DynamicResource re-evaluates this lookup when resources change. Understanding the order explains why a local resource shadows an app resource.",
+      "tags": ["resources", "lookup"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-022",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of DynamicResource?",
+      "answer": "DynamicResource keeps a live link to the key and re-resolves the value whenever resources change, which adds bookkeeping and can trigger extra property updates. In hot paths such as item templates this overhead adds up across many elements. Use StaticResource for values that never change and reserve DynamicResource for genuinely themeable or runtime-mutable resources. Profiling large lists helps confirm whether the cost matters.",
+      "tags": ["resources", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/resource-dictionaries"]
+    },
+    {
+      "id": "resources-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement a custom markup extension that resolves a resource?",
+      "answer": "Derive from IMarkupExtension or IMarkupExtension<T>, implement ProvideValue to return the object the XAML parser should use, and read the service provider to access the target and context. Register it in the XAML namespace so you can use it as an attribute. This is how built-in extensions like StaticResource are implemented. Keep ProvideValue fast because it runs during parsing.",
+      "tags": ["markup-extensions", "resources"],
+      "code": "[ContentProperty(nameof(Key))]\npublic class MyResourceExtension : IMarkupExtension\n{\n    public string Key { get; set; } = string.Empty;\n    public object ProvideValue(IServiceProvider sp)\n        => Application.Current!.Resources[Key];\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/xaml/markup-extensions/create"]
+    },
+    {
+      "id": "resources-024",
+      "difficulty": "Advanced",
+      "question": "How do you react to system theme changes programmatically?",
+      "answer": "Subscribe to Application.Current.RequestedThemeChanged and read the RequestedTheme property to detect light or dark mode changes. In the handler you can update resources, set UserAppTheme, or refresh values that are not bound with AppThemeBinding. Unsubscribe when the subscriber is torn down to avoid leaks. This is useful when theming logic goes beyond simple per-property switches.",
+      "tags": ["theming", "events"],
+      "code": "Application.Current!.RequestedThemeChanged += (s, e) =>\n{\n    var dark = e.RequestedTheme == AppTheme.Dark;\n    // update custom resources\n};",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/system-theme-changes"]
+    },
+    {
+      "id": "resources-025",
+      "difficulty": "Advanced",
+      "question": "How do resource dictionaries interact with XAML compilation and trimming?",
+      "answer": "XAML compilation turns resource references into generated code, so StaticResource lookups are resolved quickly and typo'd keys surface at build time in many cases. During trimming, unused resources referenced only by string keys can be removed unless they are reachable from compiled code, so keep dynamic keys alive with explicit references or trimming settings. Merged dictionaries must be included in the build so their compiled forms exist. Being deliberate about how keys are referenced avoids missing-resource errors in release builds.",
+      "tags": ["xamlc", "trimming"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/trimming"]
+    }
+  ]
+}

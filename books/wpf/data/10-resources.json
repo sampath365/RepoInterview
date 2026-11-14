@@ -1,0 +1,219 @@
+{
+  "category": "Resources & Resource Dictionaries",
+  "slug": "resources",
+  "icon": "archive",
+  "questions": [
+    {
+      "id": "resources-001",
+      "difficulty": "Beginner",
+      "question": "What is a resource in WPF?",
+      "answer": "A resource is a reusable object such as a brush, style, template, or converter that is stored in a ResourceDictionary and referenced by key. Resources let you define a value once and share it across many elements. They are looked up from the element upward through the resource tree.",
+      "tags": ["resources", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-002",
+      "difficulty": "Beginner",
+      "question": "How do you define and use a resource in XAML?",
+      "answer": "Add the object to a Resources collection with an x:Key and reference it with StaticResource or DynamicResource. The key must be unique within its scope. Resources can be defined on any FrameworkElement, on a ResourceDictionary, or at application scope.",
+      "code": "<Window.Resources>\n  <SolidColorBrush x:Key=\"Accent\" Color=\"SteelBlue\"/>\n</Window.Resources>\n<TextBlock Foreground=\"{StaticResource Accent}\" Text=\"Hello\"/>",
+      "tags": ["resources", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-how-to-define-and-reference"]
+    },
+    {
+      "id": "resources-003",
+      "difficulty": "Beginner",
+      "question": "What is a ResourceDictionary?",
+      "answer": "A ResourceDictionary is a collection of resources keyed by object. It can be merged into other dictionaries and loaded from separate XAML files. Resource dictionaries are the standard way to organize and share styles and themes.",
+      "tags": ["resourcedictionary", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between StaticResource and DynamicResource?",
+      "answer": "StaticResource resolves the resource once when the element is loaded, which is faster. DynamicResource keeps a reference and re-resolves when the resource changes, which supports runtime theme changes. Use StaticResource unless the value may change at runtime.",
+      "code": "<TextBlock Foreground=\"{StaticResource Accent}\"/>\n<TextBlock Background=\"{DynamicResource PanelBrush}\"/>",
+      "tags": ["resources", "lookup"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dynamicresource-markup-extension"]
+    },
+    {
+      "id": "resources-005",
+      "difficulty": "Beginner",
+      "question": "Where are application-level resources defined?",
+      "answer": "Application-level resources are defined in the Application.Resources collection in App.xaml. They are available to every window and control in the application. This is the usual place for shared styles, brushes, and converters.",
+      "code": "<Application.Resources>\n  <SolidColorBrush x:Key=\"AppAccent\" Color=\"Teal\"/>\n</Application.Resources>",
+      "tags": ["application-resources", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "resources-006",
+      "difficulty": "Beginner",
+      "question": "How do you reference a resource from code?",
+      "answer": "Use FindResource to look up a resource in the element's scope, which throws if not found, or TryFindResource which returns null. You can also index into a ResourceDictionary directly by key. FindResource searches the element's own resources, then ancestors, then application resources.",
+      "code": "var brush = (Brush)this.FindResource(\"Accent\");\nvar maybe = this.TryFindResource(\"Missing\");",
+      "tags": ["findresource", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-how-to-define-and-reference"]
+    },
+    {
+      "id": "resources-007",
+      "difficulty": "Beginner",
+      "question": "What is the resource lookup order?",
+      "answer": "WPF searches for a resource starting at the element and moving up through its logical parents to the window and then the application. Within a dictionary, merged dictionaries are searched after the local entries. The first match wins, so nearer resources override farther ones.",
+      "tags": ["resources", "lookup"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-008",
+      "difficulty": "Beginner",
+      "question": "Can a resource be an object other than a brush or style?",
+      "answer": "Yes, a resource can be any object, including a converter, a collection, a command, a data source, or a custom class instance. This makes resources useful for dependency injection of small helpers into XAML. Some objects require the XAML parser to know how to construct them.",
+      "tags": ["resources", "objects"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-009",
+      "difficulty": "Beginner",
+      "question": "What is x:Key used for in a resource dictionary?",
+      "answer": "x:Key assigns the lookup key that references use to find the resource. Keys are usually strings but can be other objects. Resources without a key are implicit styles keyed by their TargetType.",
+      "code": "<Style x:Key=\"PrimaryButton\" TargetType=\"Button\"/>",
+      "tags": ["xkey", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-010",
+      "difficulty": "Beginner",
+      "question": "Why should brushes be frozen when stored as resources?",
+      "answer": "Freezing a brush makes it immutable, so WPF no longer tracks changes and can share it efficiently across elements and even threads. Frozen resources reduce memory and CPU overhead. Call Freeze on Freezable resources such as brushes and geometries.",
+      "code": "<SolidColorBrush x:Key=\"Accent\" Color=\"SteelBlue\"\n                 PresentationOptions:Freeze=\"True\"/>",
+      "tags": ["freezable", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/freezable-objects-overview"]
+    },
+    {
+      "id": "resources-011",
+      "difficulty": "Intermediate",
+      "question": "How do you merge resource dictionaries?",
+      "answer": "Add a ResourceDictionary with a Source URI to the MergedDictionaries collection. Merged dictionaries are searched after the local resources of the parent dictionary. This lets you compose shared themes and component dictionaries into an application.",
+      "code": "<Application.Resources>\n  <ResourceDictionary>\n    <ResourceDictionary.MergedDictionaries>\n      <ResourceDictionary Source=\"Themes/Light.xaml\"/>\n    </ResourceDictionary.MergedDictionaries>\n  </ResourceDictionary>\n</Application.Resources>",
+      "tags": ["merged-dictionaries", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/merged-resource-dictionaries"]
+    },
+    {
+      "id": "resources-012",
+      "difficulty": "Intermediate",
+      "question": "How do you load a resource dictionary at runtime?",
+      "answer": "Create a ResourceDictionary and set its Source to a pack URI or a relative path, then add it to MergedDictionaries. This is how applications swap themes or load feature-specific resources on demand. The URI can reference another assembly with the pack scheme.",
+      "code": "var dict = new ResourceDictionary\n{\n    Source = new Uri(\"pack://application:,,,/MyApp;component/Themes/Dark.xaml\")\n};",
+      "tags": ["runtime", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/pack-uris-in-wpf"]
+    },
+    {
+      "id": "resources-013",
+      "difficulty": "Intermediate",
+      "question": "What is a pack URI?",
+      "answer": "A pack URI is a scheme that identifies resources inside one or more assemblies, such as images and resource dictionaries. The form pack://application:,,,/AssemblyName;component/Path.xaml locates a file in a referenced assembly. It is the standard way to reference resources across projects.",
+      "code": "<Image Source=\"/Assets/logo.png\"/>\n<ResourceDictionary Source=\"/MyLib;component/Themes/Generic.xaml\"/>",
+      "tags": ["pack-uri", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/pack-uris-in-wpf"]
+    },
+    {
+      "id": "resources-014",
+      "difficulty": "Intermediate",
+      "question": "How do you access resources from a merged dictionary in code?",
+      "answer": "After the dictionary is merged into the application resources, use FindResource or index into Application.Current.Resources. The lookup traverses merged dictionaries automatically. Ensure the dictionary is merged before you look up its keys.",
+      "code": "var brush = (Brush)Application.Current.FindResource(\"Accent\");",
+      "tags": ["resources", "runtime"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/merged-resource-dictionaries"]
+    },
+    {
+      "id": "resources-015",
+      "difficulty": "Intermediate",
+      "question": "How do you override a resource in a nested scope?",
+      "answer": "Define a resource with the same key in a more local Resources collection, such as on a window or a panel. Because lookup starts at the element and moves outward, the nearer resource wins. This is how you customize a shared theme for a specific view.",
+      "tags": ["resources", "scoping"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-016",
+      "difficulty": "Intermediate",
+      "question": "What are the differences between resource dictionaries and styles for reuse?",
+      "answer": "A resource dictionary is a container that can hold many kinds of resources, including styles. Styles are individual reusable sets of property values. In practice you store styles inside resource dictionaries and merge those dictionaries where needed.",
+      "tags": ["resources", "styles"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "resources-017",
+      "difficulty": "Intermediate",
+      "question": "How do you reference a resource defined in another assembly?",
+      "answer": "Use a pack URI with the assembly name and component path in the Source of a merged dictionary or in a StaticResource reference. The referenced assembly must contain the dictionary as a compiled resource. This is common for shared theme libraries.",
+      "code": "<ResourceDictionary Source=\"/CommonThemes;component/Controls.xaml\"/>",
+      "tags": ["pack-uri", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/pack-uris-in-wpf"]
+    },
+    {
+      "id": "resources-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a resource and a local value for precedence?",
+      "answer": "A value set directly on an element is a local value and has higher precedence than a value applied through a style or template. Resources only supply the object that a setter or property references. Understanding precedence explains why a local setter overrides a style.",
+      "tags": ["resources", "precedence"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dependency-property-value-precedence"]
+    },
+    {
+      "id": "resources-019",
+      "difficulty": "Intermediate",
+      "question": "How do you share a resource across multiple windows?",
+      "answer": "Define it in Application.Resources so every window in the application can access it. Alternatively merge a shared dictionary into each window's resources. Application scope avoids duplicating the definition.",
+      "tags": ["application-resources", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "resources-020",
+      "difficulty": "Intermediate",
+      "question": "What are the differences between implicit and explicit resource keys for styles?",
+      "answer": "An explicit key, set with x:Key, requires a reference by that key. An implicit style omits the key and uses the TargetType, so it applies automatically to matching elements. Implicit styles simplify defaults but can be harder to trace.",
+      "tags": ["styles", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "resources-021",
+      "difficulty": "Advanced",
+      "question": "How do DynamicResource references track changes to a resource?",
+      "answer": "A DynamicResource stores a reference to the key and subscribes to resource changes. When the resource is replaced in a dictionary or merged dictionaries change, WPF re-evaluates the value and updates the target. This is how runtime theme switching works without reloading the UI.",
+      "tags": ["dynamicresource", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/dynamicresource-markup-extension"]
+    },
+    {
+      "id": "resources-022",
+      "difficulty": "Advanced",
+      "question": "What happens when a resource key is not found?",
+      "answer": "StaticResource throws a ResourceReferenceKeyNotFoundException at load time if the key is missing. DynamicResource leaves the property at its previous or default value and raises a resource-not-found trace instead of throwing. Using TryFindResource in code returns null rather than throwing.",
+      "tags": ["resources", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement runtime theme switching?",
+      "answer": "Store theme resources in separate dictionaries and use DynamicResource references in the UI. To switch, clear and replace the theme dictionary in Application.Current.Resources.MergedDictionaries. Because the references are dynamic, the UI updates immediately.",
+      "code": "Application.Current.Resources.MergedDictionaries[0] =\n    new ResourceDictionary { Source = new Uri(\"Themes/Dark.xaml\", UriKind.Relative) };",
+      "tags": ["theming", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/merged-resource-dictionaries"]
+    },
+    {
+      "id": "resources-024",
+      "difficulty": "Advanced",
+      "question": "How does resource lookup behave inside templates and namescopes?",
+      "answer": "Resources referenced inside a template are resolved against the templated parent and the element tree at runtime, not only the template's own scope. FindResource walks up from the templated element. This is why application and window resources are reachable from within control templates.",
+      "tags": ["resources", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/systems/xaml-resources-overview"]
+    },
+    {
+      "id": "resources-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations for resource dictionaries?",
+      "answer": "Each StaticResource lookup at load time traverses the resource tree, so keeping the hierarchy shallow helps. Merging many dictionaries increases lookup cost, and duplicate keys can cause subtle overrides. Freeze shared Freezables and avoid excessive DynamicResource references for performance-critical properties.",
+      "tags": ["performance", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-application-resources"]
+    }
+  ]
+}

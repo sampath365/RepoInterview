@@ -1,0 +1,229 @@
+{
+  "category": "Device Features (Camera, Location, Sensors)",
+  "slug": "device-features",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "device-features-001",
+      "difficulty": "Beginner",
+      "question": "How do you take a photo with the camera in .NET MAUI?",
+      "answer": "Use MediaPicker from MAUI Essentials, which exposes CapturePhotoAsync and PickPhotoAsync. CapturePhotoAsync opens the camera and returns a FileResult with the captured image, while PickPhotoAsync lets the user choose from the gallery. Request camera and storage permissions first. The result is a file you can read or copy into your app's storage.",
+      "tags": ["mediapicker", "camera"],
+      "code": "var photo = await MediaPicker.Default.CapturePhotoAsync();\nif (photo is not null)\n{\n    using var stream = await photo.OpenReadAsync();\n    // save or display\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device-media/picker"]
+    },
+    {
+      "id": "device-features-002",
+      "difficulty": "Beginner",
+      "question": "How do you get the device's current location?",
+      "answer": "Use the Geolocation class from MAUI Essentials and call GetLocationAsync, which returns a Location with latitude and longitude. You must request the location permission first and handle the case where it is denied. Set an accuracy and a timeout appropriate to your needs. Continuous tracking uses the ListeningStarted or a background service.",
+      "tags": ["geolocation", "location"],
+      "code": "var status = await Permissions.RequestAsync<Permissions.LocationWhenInUse>();\nif (status == PermissionStatus.Granted)\n{\n    var loc = await Geolocation.Default.GetLocationAsync(\n        new GeolocationRequest(GeolocationAccuracy.Medium));\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/geolocation"]
+    },
+    {
+      "id": "device-features-003",
+      "difficulty": "Beginner",
+      "question": "What are the sensors available through MAUI Essentials?",
+      "answer": "MAUI exposes accelerometer, gyroscope, magnetometer, compass, and barometer through the ISensor interface. You read the sensor's data through its ReadingChanged event, or call Start and Stop to control monitoring. Sensors may not exist on every device, so check IsSupported first. This lets you react to device motion and orientation.",
+      "tags": ["sensors", "device"],
+      "code": "if (Accelerometer.Default.IsSupported)\n{\n    Accelerometer.Default.ReadingChanged += (s, e) =>\n        Debug.WriteLine(e.Reading.Acceleration);\n    Accelerometer.Default.Start(SensorSpeed.UI);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/sensors"]
+    },
+    {
+      "id": "device-features-004",
+      "difficulty": "Beginner",
+      "question": "How do you request a permission in .NET MAUI?",
+      "answer": "Use the Permissions API, such as Permissions.RequestAsync<Permissions.Camera>(), which prompts the user if needed and returns a PermissionStatus. Check the status before using the feature and show a helpful message if it is denied. Declare the permission in the platform manifest so the request can succeed. Some permissions require usage descriptions on Apple platforms.",
+      "tags": ["permissions", "device"],
+      "code": "var status = await Permissions.RequestAsync<Permissions.Camera>();\nif (status != PermissionStatus.Granted)\n{\n    await DisplayAlert(\"Camera\", \"Permission required\", \"OK\");\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/permissions"]
+    },
+    {
+      "id": "device-features-005",
+      "difficulty": "Beginner",
+      "question": "How do you open a map at a location?",
+      "answer": "Use the Map.OpenAsync method from MAUI Essentials with a latitude, longitude, or placemark to launch the platform's maps app. You can also open a map for a search query or directions. This hands off to the native map application rather than embedding a map. For an in-app map, use the Map control and add pins.",
+      "tags": ["map", "location"],
+      "code": "await Map.Default.OpenAsync(\n    new Location(47.6, -122.3),\n    new MapLaunchOptions { Name = \"Seattle\" });",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/maps"]
+    },
+    {
+      "id": "device-features-006",
+      "difficulty": "Beginner",
+      "question": "How do you get the device's battery status?",
+      "answer": "Use the Battery class, which exposes ChargeLevel, State, and PowerSource, plus the BatteryChanged event for updates. This is useful for adapting behavior on low battery or when charging. Values are approximate and vary by platform. Always handle the case where battery information is unavailable.",
+      "tags": ["battery", "device"],
+      "code": "var level = Battery.Default.ChargeLevel;\nvar state = Battery.Default.State;\nBattery.Default.BatteryChanged += (s, e) => { };",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/battery"]
+    },
+    {
+      "id": "device-features-007",
+      "difficulty": "Beginner",
+      "question": "How do you use the flashlight or torch?",
+      "answer": "Use the Flashlight class, which exposes IsSupported, TurnOnAsync, and TurnOffAsync. Check IsSupported first because not every device has a flash unit. Toggle it from a button and turn it off when leaving the page to avoid draining the battery. This is a small but common utility feature.",
+      "tags": ["flashlight", "device"],
+      "code": "if (Flashlight.Default.IsSupported)\n    await Flashlight.Default.TurnOnAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/flashlight"]
+    },
+    {
+      "id": "device-features-008",
+      "difficulty": "Beginner",
+      "question": "How do you get device information such as model and OS version?",
+      "answer": "Use DeviceInfo, which reports Model, Manufacturer, Platform, Idiom, and VersionString among others. This helps tailor the UI or diagnostics to the actual device. The values are read-only and available without permissions. Log them in crash reports to understand the environment.",
+      "tags": ["deviceinfo", "device"],
+      "code": "var model = DeviceInfo.Model;\nvar version = DeviceInfo.VersionString;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/information"]
+    },
+    {
+      "id": "device-features-009",
+      "difficulty": "Beginner",
+      "question": "How do you provide haptic feedback in MAUI?",
+      "answer": "Use HapticFeedback, which exposes Click and LongPress with a HapticFeedbackType. It gives tactile feedback for interactions, complementing visual cues. Support varies by device, so treat it as an enhancement rather than a requirement. Avoid excessive haptics that can feel noisy or drain the battery.",
+      "tags": ["haptic", "device"],
+      "code": "HapticFeedback.Default.Perform(HapticFeedbackType.Click);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/haptic-feedback"]
+    },
+    {
+      "id": "device-features-010",
+      "difficulty": "Beginner",
+      "question": "How do you convert an address to coordinates and back?",
+      "answer": "Use the Geocoding class, which exposes GetLocationsAsync to turn an address string into a list of locations and GetPlacemarksAsync to turn coordinates into placemarks. This is useful for search and display of readable addresses. Results depend on the platform geocoder and may be empty for unknown addresses. Handle null and empty results gracefully.",
+      "tags": ["geocoding", "location"],
+      "code": "var locations = await Geocoding.Default\n    .GetLocationsAsync(\"Seattle, WA\");\nvar placemarks = await Geocoding.Default\n    .GetPlacemarksAsync(47.6, -122.3);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/geocoding"]
+    },
+    {
+      "id": "device-features-011",
+      "difficulty": "Intermediate",
+      "question": "How do you subscribe to location updates continuously?",
+      "answer": "Use Geolocation's continuous listening through GetLocationAsync with a request, or the ListeningStarted and ListeningStopped events, or poll on a timer depending on the API version. For foreground tracking, subscribe to position changes and update the UI as they arrive. For background tracking you need platform-specific background services and entitlements. Stop listening when tracking is no longer needed to save battery.",
+      "tags": ["geolocation", "tracking"],
+      "code": "var request = new GeolocationRequest(\n    GeolocationAccuracy.Best, TimeSpan.FromSeconds(10));\nvar location = await Geolocation.Default.GetLocationAsync(request);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/geolocation"]
+    },
+    {
+      "id": "device-features-012",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a denied or permanently denied permission?",
+      "answer": "When the status is Denied or Disabled, explain why the feature needs the permission and provide a path to settings. If the user denied permanently, the OS will not show the prompt again, so guide them to the app settings page. Design the feature to degrade gracefully so the rest of the app still works. Never block the whole app on an optional permission.",
+      "tags": ["permissions", "ux"],
+      "code": "if (status == PermissionStatus.Denied)\n{\n    await DisplayAlert(\"Permission needed\",\n        \"Enable camera in Settings to continue.\", \"OK\");\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/permissions"]
+    },
+    {
+      "id": "device-features-013",
+      "difficulty": "Intermediate",
+      "question": "How do you pick a file or photo from the device?",
+      "answer": "Use FilePicker for arbitrary files and MediaPicker.PickPhotoAsync for images. Both return a result with a stream you can read. For multiple files use PickMultipleAsync and iterate the results. Request permissions where required and copy picked content if it must persist, because the returned location can be temporary.",
+      "tags": ["filepicker", "mediapicker"],
+      "code": "var files = await FilePicker.Default.PickMultipleAsync();\nforeach (var f in files)\n{\n    using var s = await f.OpenReadAsync();\n    // process\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/storage/file-picker"]
+    },
+    {
+      "id": "device-features-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use the accelerometer to detect device shake?",
+      "answer": "Subscribe to Accelerometer.ReadingChanged and compute the magnitude of the acceleration vector, comparing it to a threshold to detect a shake. Debounce detections so a single shake does not fire repeatedly. Start and stop the sensor with the page lifecycle to save power. Always check IsSupported because some devices lack the sensor.",
+      "tags": ["accelerometer", "sensors"],
+      "code": "Accelerometer.Default.ReadingChanged += (s, e) =>\n{\n    var a = e.Reading.Acceleration;\n    var magnitude = Math.Sqrt(a.X * a.X + a.Y * a.Y + a.Z * a.Z);\n    if (magnitude > 2.0) OnShake();\n};",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/sensors"]
+    },
+    {
+      "id": "device-features-015",
+      "difficulty": "Intermediate",
+      "question": "How do you read the compass heading?",
+      "answer": "Subscribe to Compass.ReadingChanged, which reports the heading in degrees relative to magnetic north, and update your UI accordingly. Check IsSupported first and start the sensor only while needed. Heading accuracy can be affected by nearby magnetic fields. Smooth the readings if the raw values jitter.",
+      "tags": ["compass", "sensors"],
+      "code": "Compass.Default.ReadingChanged += (s, e) =>\n    arrow.Rotation = -e.Reading.HeadingMagneticNorth;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/sensors"]
+    },
+    {
+      "id": "device-features-016",
+      "difficulty": "Intermediate",
+      "question": "How do you control screen behavior such as keeping the display awake?",
+      "answer": "Use DeviceDisplay.KeepScreenOn to prevent the screen from sleeping, for example during navigation or media playback. Read DeviceDisplay.MainDisplayInfo for screen density, size, and orientation, and subscribe to MainDisplayInfoChanged for orientation changes. Reset KeepScreenOn when it is no longer needed to save battery. These APIs are part of MAUI Essentials.",
+      "tags": ["display", "device"],
+      "code": "DeviceDisplay.KeepScreenOn = true;\nvar info = DeviceDisplay.MainDisplayInfo;\nvar density = info.Density;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/display"]
+    },
+    {
+      "id": "device-features-017",
+      "difficulty": "Intermediate",
+      "question": "How do you launch another app or open a browser from MAUI?",
+      "answer": "Use Launcher.OpenAsync with a URI to open a website, and the launcher also handles files and custom schemes. Browser.OpenAsync opens a URL in the system browser with options for how it is presented. For dialing use PhoneDialer, and for email use Email with a message. These hand off to native apps and return whether the action succeeded.",
+      "tags": ["launcher", "device"],
+      "code": "await Browser.Default.OpenAsync(\n    \"https://learn.microsoft.com/dotnet/maui\",\n    BrowserLaunchMode.SystemPreferred);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/open-browser"]
+    },
+    {
+      "id": "device-features-018",
+      "difficulty": "Intermediate",
+      "question": "How do you share content to other apps?",
+      "answer": "Use Share.RequestAsync with text, a URI, or a file to open the platform share sheet. This lets users send content to messaging, email, and other apps without custom integrations. Provide a title where supported for context. Sharing files requires a valid path and any needed permissions.",
+      "tags": ["share", "device"],
+      "code": "await Share.Default.RequestAsync(new ShareTextRequest\n{\n    Text = \"Check this out\",\n    Uri = \"https://learn.microsoft.com/dotnet/maui\"\n});",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/data/share"]
+    },
+    {
+      "id": "device-features-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use text-to-speech in MAUI?",
+      "answer": "Use TextToSpeech, which exposes SpeakAsync to speak text and GetLocalesAsync to list available voices. You can pass SpeechOptions to control pitch, volume, and locale. It is useful for accessibility and audio feedback. Stop any ongoing speech before starting a new one to avoid overlap.",
+      "tags": ["texttospeech", "accessibility"],
+      "code": "await TextToSpeech.Default.SpeakAsync(\"Hello there\");\nvar locales = await TextToSpeech.Default.GetLocalesAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device-media/text-to-speech"]
+    },
+    {
+      "id": "device-features-020",
+      "difficulty": "Intermediate",
+      "question": "How do you detect and handle the device's orientation?",
+      "answer": "Read DeviceDisplay.MainDisplayInfo.Orientation or subscribe to MainDisplayInfoChanged to react to rotation, and use OnIdiom plus responsive layouts to adapt. You can also constrain supported orientations per platform in the manifest or Info.plist. Prefer layouts that adapt automatically so you need less code for orientation. Testing on a device or rotating emulator confirms behavior.",
+      "tags": ["orientation", "display"],
+      "code": "DeviceDisplay.MainDisplayInfoChanged += (s, e) =>\n{\n    var o = e.DisplayInfo.Orientation;\n};",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/display"]
+    },
+    {
+      "id": "device-features-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement background location tracking?",
+      "answer": "Background tracking requires platform-specific services because the OS restricts background work, such as a foreground service with a notification on Android and background modes with entitlements on iOS. You declare the capabilities, start the service, and handle location updates through the platform API or a library. Battery and privacy rules are strict, so request only the permissions you need and explain usage. Always stop tracking when the user ends the feature.",
+      "tags": ["location", "background"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/geolocation"]
+    },
+    {
+      "id": "device-features-022",
+      "difficulty": "Advanced",
+      "question": "How do you manage sensor power consumption and lifecycle?",
+      "answer": "Start sensors only when the screen that uses them is visible and stop them in OnDisappearing or when the app is paused. Choose the coarsest SensorSpeed that meets your needs because higher rates cost more power. Unsubscribe from ReadingChanged handlers you no longer need. Handling app lifecycle events ensures sensors are not left running in the background.",
+      "tags": ["sensors", "performance"],
+      "code": "protected override void OnDisappearing()\n{\n    base.OnDisappearing();\n    Accelerometer.Default.Stop();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/sensors"]
+    },
+    {
+      "id": "device-features-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle platform differences when using the camera?",
+      "answer": "Camera behavior differs across platforms in permission models, temporary file locations, and metadata such as orientation. On iOS you must provide usage descriptions in Info.plist, while Android needs camera and storage permissions in the manifest. The returned file may be in a cache directory, so copy it if you must keep it. Test on real devices because emulators often lack a camera.",
+      "tags": ["camera", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device-media/picker"]
+    },
+    {
+      "id": "device-features-024",
+      "difficulty": "Advanced",
+      "question": "How do you abstract device features for testability?",
+      "answer": "Wrap each device API behind an interface in shared code and implement it with the real Essentials call, then inject the interface into view models. Tests can substitute a fake that returns canned locations or sensor readings. This keeps device-specific behavior out of your business logic. It also lets you swap implementations per platform if needed.",
+      "tags": ["device", "testing"],
+      "code": "public interface ILocationService\n{\n    Task<Location?> GetAsync();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/geolocation"]
+    },
+    {
+      "id": "device-features-025",
+      "difficulty": "Advanced",
+      "question": "What are the privacy and store-review considerations when using device features?",
+      "answer": "Stores require you to declare and justify sensitive capabilities such as location, camera, and contacts, and to provide clear permission rationale and privacy policy disclosures. Apple requires usage descriptions and a privacy manifest for certain APIs, and Google Play requires a data safety declaration. Requesting more than you use leads to rejection or removal. Minimize data collection, explain usage in context, and let users opt out where possible.",
+      "tags": ["privacy", "device"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/ios/privacy-manifest"]
+    }
+  ]
+}

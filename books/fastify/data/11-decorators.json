@@ -1,0 +1,336 @@
+{
+  "category": "Decorators & Extensibility",
+  "slug": "decorators",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "decorators-001",
+      "difficulty": "Beginner",
+      "question": "What is a decorator in Fastify?",
+      "answer": "A decorator is a custom property or method added to the Fastify instance, request, or reply using fastify.decorate. It is how you extend the framework with your own helpers. Decorators are scoped to the encapsulation context where they are added. They give you a clean, discoverable way to share functionality.",
+      "tags": [
+        "decorators",
+        "basics"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-002",
+      "difficulty": "Beginner",
+      "question": "How do you add a custom method to the Fastify instance?",
+      "answer": "You call fastify.decorate with a name and a function, which becomes available as fastify.name. Inside plugins you use the instance passed to the plugin. Decorating the same name twice throws an error. This is the standard extension mechanism.",
+      "tags": [
+        "decorators",
+        "instance"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ],
+      "code": "fastify.decorate('getNow', () => new Date())\nconst now = fastify.getNow()"
+    },
+    {
+      "id": "decorators-003",
+      "difficulty": "Beginner",
+      "question": "How do you decorate the request object?",
+      "answer": "You call fastify.decorateRequest with a property name and a default value, then set it in a hook. The decorator makes the property available on every request. For objects you should use a getter or set the value per request to avoid sharing state. This is how you attach the authenticated user.",
+      "tags": [
+        "decorators",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ],
+      "code": "fastify.decorateRequest('user', null)\nfastify.addHook('preHandler', async (req) => {\n  req.user = await loadUser(req)\n})"
+    },
+    {
+      "id": "decorators-004",
+      "difficulty": "Beginner",
+      "question": "How do you decorate the reply object?",
+      "answer": "You call fastify.decorateReply with a name and value, giving every reply access to your helper. This is useful for custom send helpers. The same scoping and duplicate rules apply as other decorators. Keep reply decorators focused on response concerns.",
+      "tags": [
+        "decorators",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ],
+      "code": "fastify.decorateReply('ok', function (data) {\n  this.send({ ok: true, data })\n})"
+    },
+    {
+      "id": "decorators-005",
+      "difficulty": "Beginner",
+      "question": "What happens if you decorate an existing property?",
+      "answer": "Fastify throws an error to prevent accidental shadowing of framework or plugin properties. If you truly need to override, you must pass the dependencies option to fastify-plugin or choose a different name. This strictness avoids subtle bugs. It also makes decorator ownership clear.",
+      "tags": [
+        "decorators",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-006",
+      "difficulty": "Beginner",
+      "question": "Why do decorators not leak outside their plugin by default?",
+      "answer": "Decorators are added to the encapsulated instance created for each plugin, so siblings and parents cannot see them. This isolation prevents naming collisions and keeps features independent. Wrap the plugin with fastify-plugin to share a decorator with the parent. This is the core of Fastify's extension model.",
+      "tags": [
+        "decorators",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    },
+    {
+      "id": "decorators-007",
+      "difficulty": "Beginner",
+      "question": "Can decorators be functions, objects, or primitives?",
+      "answer": "Yes, decorate accepts any value, so you can attach functions, objects, arrays, or primitives. Functions and objects are most common for helpers and clients. Be mindful of shared mutable objects across requests. Prefer factories or per-request assignment for stateful data.",
+      "tags": [
+        "decorators",
+        "types"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-008",
+      "difficulty": "Beginner",
+      "question": "How do you access a decorator inside a route handler?",
+      "answer": "If it decorates the instance, you reach it through the instance reference or the request/reply if decorated there. For instance decorators in a handler, use the enclosing fastify variable or a closure. For request decorators, use request.name. This is why plugin structure matters.",
+      "tags": [
+        "decorators",
+        "usage"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between decorate and decorateRequest?",
+      "answer": "decorate adds to the Fastify instance, while decorateRequest adds to each request object. Instance decorators hold shared services like a database client. Request decorators hold per-request state like the current user. Choosing the right target keeps data lifetimes correct.",
+      "tags": [
+        "decorators",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-010",
+      "difficulty": "Beginner",
+      "question": "How do you share a decorator across the whole application?",
+      "answer": "You add it inside a plugin wrapped with fastify-plugin, so the decorator is attached to the parent scope and visible app-wide. Register that plugin early so dependents can use it. Declaring dependencies enforces ordering. This is the recommended pattern for shared services.",
+      "tags": [
+        "decorators",
+        "fastify-plugin"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-011",
+      "difficulty": "Intermediate",
+      "question": "Why should request decorators avoid shared mutable defaults?",
+      "answer": "If you decorate request with a shared object, all requests would mutate the same instance, causing cross-request data leaks. Instead, decorate with null and assign a fresh value per request in a hook, or use a getter. This keeps request state isolated. It is a common and serious pitfall.",
+      "tags": [
+        "decorators",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-012",
+      "difficulty": "Intermediate",
+      "question": "How do you expose a database client through a decorator?",
+      "answer": "You connect once in a plugin and decorate the instance with the client, wrapping the plugin with fastify-plugin to share it. Register an onClose hook to disconnect cleanly. Routes then use fastify.db. This centralises connection management.",
+      "tags": [
+        "decorators",
+        "database"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ],
+      "code": "module.exports = fp(async (fastify) => {\n  const db = await createPool()\n  fastify.decorate('db', db)\n  fastify.addHook('onClose', () => db.end())\n})"
+    },
+    {
+      "id": "decorators-013",
+      "difficulty": "Intermediate",
+      "question": "How do decorators interact with TypeScript?",
+      "answer": "You must augment the Fastify interfaces to declare decorator types, or the compiler will not know they exist. For instance decorators you augment FastifyInstance, and for request decorators you augment FastifyRequest. This pairs runtime decoration with compile-time types. It keeps handlers type-safe.",
+      "tags": [
+        "decorators",
+        "typescript"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/TypeScript/"
+      ]
+    },
+    {
+      "id": "decorators-014",
+      "difficulty": "Intermediate",
+      "question": "What is decorateRequest's getter form used for?",
+      "answer": "You can pass a getter object to decorateRequest so the property is computed on access rather than stored. This avoids sharing a single object across requests while still providing a default. It is handy for derived values. Use it when the value depends on other request fields.",
+      "tags": [
+        "decorators",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-015",
+      "difficulty": "Intermediate",
+      "question": "How do you version or namespace your decorators?",
+      "answer": "You prefix decorator names with a domain, such as authUser or dbPool, to avoid collisions with framework and plugin properties. Fastify throws on duplicates, so clear names prevent conflicts. Document decorators in your plugin README. Good naming makes intent obvious.",
+      "tags": [
+        "decorators",
+        "naming"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-016",
+      "difficulty": "Intermediate",
+      "question": "How do you add a custom reply method for pagination?",
+      "answer": "You decorate reply with a function that reads a collection and sets headers plus a body. The helper can compute next and previous links from the request. This keeps pagination consistent across routes. Keep the logic in one tested helper.",
+      "tags": [
+        "decorators",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that relies on decorators?",
+      "answer": "You build the app with your plugin registered and use fastify.inject, then assert behaviour that depends on the decorator. Because decorators are set up at boot, the test exercises the real wiring. This catches missing registrations. It avoids mocking the decorator.",
+      "tags": [
+        "decorators",
+        "testing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "decorators-018",
+      "difficulty": "Intermediate",
+      "question": "How do decorators help with dependency injection?",
+      "answer": "They let you register services once and consume them anywhere in scope, acting as a lightweight container. Swapping implementations in tests means registering a different plugin. This keeps dependencies explicit and replaceable. It avoids global singletons.",
+      "tags": [
+        "decorators",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "decorators-019",
+      "difficulty": "Intermediate",
+      "question": "What is the risk of overusing decorators?",
+      "answer": "Too many decorators blur where functionality lives and can create hidden coupling between plugins. Prefer passing dependencies through options or importing plain modules for pure logic. Reserve decorators for cross-cutting services and request state. This keeps the instance surface small.",
+      "tags": [
+        "decorators",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "decorators-020",
+      "difficulty": "Intermediate",
+      "question": "How do you decorate the request with a typed user object?",
+      "answer": "You decorate request with null and augment FastifyRequest with the user shape, then assign it in an auth hook. Handlers then read request.user with full type safety. The hook guarantees it is set before handlers run. This pattern is standard for authentication.",
+      "tags": [
+        "decorators",
+        "authentication"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-021",
+      "difficulty": "Advanced",
+      "question": "How does Fastify implement decorators internally to keep them fast?",
+      "answer": "Decorators are applied to the prototype chain of the instance, request, and reply at boot, so lookups avoid per-request copying. Duplicate detection happens during registration using an internal registry. This design keeps property access cheap while enforcing uniqueness. Understanding it explains why decoration must occur before routes are used.",
+      "tags": [
+        "decorators",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-022",
+      "difficulty": "Advanced",
+      "question": "How do you override a decorator intentionally?",
+      "answer": "You can only override a decorator added by an ancestor scope if you use the dependencies option with fastify-plugin, or by decorating in a child scope with a new name. Fastify blocks silent overrides to protect correctness. Prefer composition over overriding. When necessary, document the override clearly.",
+      "tags": [
+        "decorators",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-023",
+      "difficulty": "Advanced",
+      "question": "How do decorators and hooks combine for request-scoped resources?",
+      "answer": "A plugin can decorate request with a placeholder and open the resource in a hook, then close it in another hook such as onResponse. This ties the resource lifetime to the request. It is ideal for transactions or per-request clients. Centralising it avoids leaks.",
+      "tags": [
+        "decorators",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Decorators/"
+      ]
+    },
+    {
+      "id": "decorators-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of instance decorators versus module imports for shared logic?",
+      "answer": "Decorators make dependencies injectable and testable, and they respect encapsulation, but they add indirection and require type augmentation. Plain imports are simpler and tree-shakeable but harder to swap in tests and can hide global state. Use decorators for stateful services and imports for pure utilities. The choice affects testability and coupling.",
+      "tags": [
+        "decorators",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "decorators-025",
+      "difficulty": "Advanced",
+      "question": "How do you ensure decorators are available to routes in nested plugins?",
+      "answer": "Register the provider plugin before the consumer and share it with fastify-plugin so the decorator lands on the parent scope. Nested children then inherit it. Declaring dependencies turns ordering mistakes into boot errors. This guarantees availability at request time.",
+      "tags": [
+        "decorators",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    }
+  ]
+}

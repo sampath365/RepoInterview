@@ -1,0 +1,214 @@
+{
+  "category": "Constraints, Keys & Normalization",
+  "slug": "constraints",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "constraints-001",
+      "difficulty": "Beginner",
+      "question": "What is a constraint?",
+      "answer": "A constraint is a rule enforced by the database engine on the data in a table, rejecting changes that would violate it. Constraints guarantee integrity at the lowest level so applications cannot corrupt the data. Common types are PRIMARY KEY, UNIQUE, FOREIGN KEY, CHECK, DEFAULT, and NOT NULL.",
+      "tags": ["constraints", "integrity"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/unique-constraints-and-check-constraints"]
+    },
+    {
+      "id": "constraints-002",
+      "difficulty": "Beginner",
+      "question": "What is a primary key?",
+      "answer": "A primary key uniquely identifies each row in a table and cannot contain NULLs. It creates a unique index, and by default that index is clustered if no clustered index exists. A table can have only one primary key, though it may consist of several columns.",
+      "code": "ALTER TABLE dbo.Customers\nADD CONSTRAINT PK_Customers PRIMARY KEY (CustomerId);",
+      "tags": ["primary-key", "constraint"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-primary-keys"]
+    },
+    {
+      "id": "constraints-003",
+      "difficulty": "Beginner",
+      "question": "What is a foreign key?",
+      "answer": "A foreign key enforces that values in one table exist in another, linking a child table to a parent table. It prevents orphaned rows and can optionally cascade updates or deletes. The referenced column must be a primary key or unique key.",
+      "code": "ALTER TABLE dbo.Orders\nADD CONSTRAINT FK_Orders_Customers\nFOREIGN KEY (CustomerId) REFERENCES dbo.Customers (CustomerId);",
+      "tags": ["foreign-key", "referential-integrity"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "constraints-004",
+      "difficulty": "Beginner",
+      "question": "What is a UNIQUE constraint?",
+      "answer": "A UNIQUE constraint ensures that no two rows share the same value in the constrained columns, and it creates a unique index. Unlike a primary key, a table can have several unique constraints and they allow one NULL. It is used for natural keys such as email or username.",
+      "tags": ["unique", "constraint"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/unique-constraints-and-check-constraints"]
+    },
+    {
+      "id": "constraints-005",
+      "difficulty": "Beginner",
+      "question": "What is a CHECK constraint?",
+      "answer": "A CHECK constraint validates that each row satisfies a boolean expression, such as a value being positive or a status being in an allowed set. The engine rejects rows that violate it. CHECK constraints are a lightweight way to enforce domain rules close to the data.",
+      "code": "ALTER TABLE dbo.Products\nADD CONSTRAINT CK_Products_Price CHECK (Price >= 0);",
+      "tags": ["check", "constraint"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/unique-constraints-and-check-constraints"]
+    },
+    {
+      "id": "constraints-006",
+      "difficulty": "Beginner",
+      "question": "What is a DEFAULT constraint?",
+      "answer": "A DEFAULT constraint supplies a value for a column when an INSERT does not specify one. It does not prevent NULLs by itself, so combine it with NOT NULL if a value is required. Defaults can be a constant, a function such as GETDATE(), or an expression.",
+      "code": "ALTER TABLE dbo.Orders\nADD CONSTRAINT DF_Orders_Status DEFAULT ('New') FOR Status;",
+      "tags": ["default", "constraint"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/specify-default-values-for-columns"]
+    },
+    {
+      "id": "constraints-007",
+      "difficulty": "Beginner",
+      "question": "What does NOT NULL mean?",
+      "answer": "NOT NULL requires that every row have a value in the column, rejecting inserts or updates that try to leave it NULL. It is the simplest and most effective constraint for data quality. Columns should be NOT NULL unless NULL genuinely represents unknown information.",
+      "tags": ["not-null", "constraint"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-check-constraints"]
+    },
+    {
+      "id": "constraints-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a primary key and a unique constraint?",
+      "answer": "A primary key uniquely identifies rows, disallows NULLs, and is one per table. A unique constraint also enforces uniqueness but allows a single NULL and you can have many per table. Both create indexes and can serve as the target of a foreign key.",
+      "tags": ["primary-key", "unique"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-unique-constraints"]
+    },
+    {
+      "id": "constraints-009",
+      "difficulty": "Beginner",
+      "question": "What is referential integrity?",
+      "answer": "Referential integrity is the guarantee that foreign key values always point to existing parent rows, so there are no orphans. It is enforced by foreign keys and prevents both dangling references and invalid deletions. This protects the consistency of relationships between tables.",
+      "tags": ["referential-integrity", "foreign-key"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"]
+    },
+    {
+      "id": "constraints-010",
+      "difficulty": "Beginner",
+      "question": "What are the ON DELETE and ON UPDATE actions for foreign keys?",
+      "answer": "CASCADE automatically deletes or updates child rows when the parent is changed, NO ACTION rejects the change if children exist, and SET NULL sets the child value to NULL. SET DEFAULT sets it to the column default. The right choice depends on whether children should follow, block, or be detached.",
+      "code": "FOREIGN KEY (CustomerId) REFERENCES dbo.Customers (CustomerId)\n  ON DELETE CASCADE ON UPDATE NO ACTION",
+      "tags": ["foreign-key", "cascade"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "constraints-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a clustered and a nonclustered primary key?",
+      "answer": "A clustered primary key makes the table itself ordered by the key, so the key is the row locator and must be unique and narrow. A nonclustered primary key keeps the table as a heap or under another clustered index and stores the key in a separate structure. Choosing a clustered primary key affects every nonclustered index on the table.",
+      "tags": ["primary-key", "clustered"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-primary-keys"]
+    },
+    {
+      "id": "constraints-012",
+      "difficulty": "Intermediate",
+      "question": "How do you disable and re-enable a constraint?",
+      "answer": "You use NOCHECK CONSTRAINT to disable a constraint and CHECK CONSTRAINT to re-enable it, without dropping it. Disabling is used during bulk loads to improve speed, but the constraint is not validated afterward unless you re-enable WITH CHECK. Always validate after the load to guarantee integrity.",
+      "code": "ALTER TABLE dbo.Orders NOCHECK CONSTRAINT FK_Orders_Customers;\nALTER TABLE dbo.Orders WITH CHECK CHECK CONSTRAINT FK_Orders_Customers;",
+      "tags": ["disable-constraint", "bulk"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/alter-table-transact-sql"]
+    },
+    {
+      "id": "constraints-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between CHECK and NOT NULL for enforcing required values?",
+      "answer": "NOT NULL simply requires any value and is the most efficient way to require a column. CHECK enforces a condition on the value and can also exclude NULL depending on how the expression is written, but it is more flexible for domain rules. Use NOT NULL for presence and CHECK for validity.",
+      "tags": ["check", "not-null"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/unique-constraints-and-check-constraints"]
+    },
+    {
+      "id": "constraints-014",
+      "difficulty": "Intermediate",
+      "question": "How do foreign keys affect delete and update performance?",
+      "answer": "A foreign key requires the engine to check the parent table whenever a child row is inserted or updated, which needs an index on the parent key. Deleting or updating a parent may also require scanning the child table to enforce the relationship. Missing indexes on the foreign key column in the child table make deletes slow.",
+      "tags": ["foreign-key", "performance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "constraints-015",
+      "difficulty": "Intermediate",
+      "question": "Why should you index foreign key columns?",
+      "answer": "The parent side is indexed automatically by the primary or unique key, but the child side is not, so deletes and updates on the parent must scan the child table without an index. Adding an index on the foreign key column speeds up those operations and joins. This is a frequent missing index in real schemas.",
+      "tags": ["foreign-key", "index"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "constraints-016",
+      "difficulty": "Intermediate",
+      "question": "What is a composite primary key and when is it appropriate?",
+      "answer": "A composite primary key uses two or more columns to uniquely identify a row, which is natural for junction tables that model many-to-many relationships. It reflects the true key of the entity but can be wide, which bloats nonclustered indexes. For wide natural keys, a surrogate key plus a unique constraint on the natural columns is often better.",
+      "tags": ["composite-key", "primary-key"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-primary-keys"]
+    },
+    {
+      "id": "constraints-017",
+      "difficulty": "Intermediate",
+      "question": "How do you find all constraints on a table?",
+      "answer": "Query sys.check_constraints, sys.default_constraints, sys.key_constraints, and sys.foreign_keys, or use sp_help for a summary. In SSMS, expanding the table shows the constraints. Knowing exactly what is enforced prevents surprise failures during data loads.",
+      "code": "SELECT name, type_desc FROM sys.key_constraints\nWHERE parent_object_id = OBJECT_ID('dbo.Orders');",
+      "tags": ["metadata", "constraints"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-key-constraints-transact-sql"]
+    },
+    {
+      "id": "constraints-018",
+      "difficulty": "Intermediate",
+      "question": "What is the first normal form (1NF)?",
+      "answer": "First normal form requires that every column hold a single atomic value and that there be no repeating groups. Storing a comma-separated list in a column violates 1NF. Normalizing to 1NF makes the data easier to query and enforce.",
+      "tags": ["normalization", "1nf"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"]
+    },
+    {
+      "id": "constraints-019",
+      "difficulty": "Intermediate",
+      "question": "What is the second normal form (2NF)?",
+      "answer": "Second normal form requires the table to be in 1NF and that every non-key column depend on the whole primary key, not part of it. This eliminates partial dependencies in tables with composite keys. Violations cause redundant data and update anomalies.",
+      "tags": ["normalization", "2nf"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"]
+    },
+    {
+      "id": "constraints-020",
+      "difficulty": "Intermediate",
+      "question": "What is the third normal form (3NF)?",
+      "answer": "Third normal form requires 2NF plus that no non-key column depend on another non-key column, eliminating transitive dependencies. This removes redundancy where a column determines another column that is not part of the key. Most transactional schemas aim for 3NF.",
+      "tags": ["normalization", "3nf"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"]
+    },
+    {
+      "id": "constraints-021",
+      "difficulty": "Advanced",
+      "question": "When would you deliberately denormalize a schema?",
+      "answer": "Denormalization is justified when read performance outweighs the cost of redundancy, such as precomputing totals or duplicating a frequently joined lookup column. It trades storage and update complexity for fewer joins and faster reads. Always keep the source of truth clear and maintain the duplicated data carefully.",
+      "tags": ["denormalization", "design"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"]
+    },
+    {
+      "id": "constraints-022",
+      "difficulty": "Advanced",
+      "question": "How do foreign key constraints interact with bulk loading and partition switching?",
+      "answer": "Bulk loading is faster when foreign keys are disabled or not present, but integrity must be validated afterward. Partition switching requires that the incoming data already satisfy constraints or that constraints are trusted on the target. Untrusted or disabled constraints block partition switching and can produce incorrect estimates.",
+      "tags": ["bulk-load", "partition-switching"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/partitions/partitioned-tables-and-indexes"]
+    },
+    {
+      "id": "constraints-023",
+      "difficulty": "Advanced",
+      "question": "What is a trusted versus untrusted constraint and why does it matter?",
+      "answer": "A constraint is trusted when it is enabled and validated, so the optimizer can rely on it to make better plans. Disabling or creating a constraint WITH NOCHECK leaves it untrusted, meaning the engine cannot assume the data satisfies it. Untrusted constraints cause worse plans and can prevent partition switching.",
+      "tags": ["trusted-constraint", "optimizer"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/query-processing-architecture-guide"]
+    },
+    {
+      "id": "constraints-024",
+      "difficulty": "Advanced",
+      "question": "How does a surrogate key compare to a natural key?",
+      "answer": "A surrogate key is a system-generated identifier such as an identity or sequence value, which is narrow, stable, and ideal for indexing. A natural key comes from the business domain and is meaningful but can change or be wide. The common approach is a surrogate primary key plus a unique constraint on the natural key.",
+      "tags": ["surrogate-key", "natural-key"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-primary-keys"]
+    },
+    {
+      "id": "constraints-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of CHECK constraints on large tables?",
+      "answer": "CHECK constraints are evaluated on every insert and update, adding a small CPU cost, and they cannot be disabled for a single statement without also disabling them for the table. Their bigger value is enabling the optimizer to reason about data ranges. Adding a CHECK constraint WITH CHECK to a large table requires validating every existing row.",
+      "tags": ["check", "performance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/unique-constraints-and-check-constraints"]
+    }
+  ]
+}

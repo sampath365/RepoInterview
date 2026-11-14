@@ -1,0 +1,340 @@
+{
+  "category": "Styling (CSS, Tailwind, CSS Modules)",
+  "slug": "styling",
+  "icon": "palette",
+  "questions": [
+    {
+      "id": "styling-001",
+      "difficulty": "Beginner",
+      "question": "What styling options does Next.js support?",
+      "answer": "Next.js supports global CSS, CSS Modules, Tailwind CSS, Sass, CSS-in-JS, and styled-jsx. Global CSS is imported in the root layout; CSS Modules are scoped per component. Tailwind is a popular utility-first choice. You can mix approaches, though consistency helps.",
+      "tags": [
+        "styling",
+        "css"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-002",
+      "difficulty": "Beginner",
+      "question": "How do you add global CSS in the App Router?",
+      "answer": "Create a styles/globals.css file and import it in the root layout.tsx. Global styles apply to the whole app. This is the only place global CSS should be imported. It is commonly used for resets and base typography.",
+      "code": "// app/layout.tsx\nimport './globals.css';",
+      "tags": [
+        "global-css",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css"
+      ]
+    },
+    {
+      "id": "styling-003",
+      "difficulty": "Beginner",
+      "question": "What are CSS Modules and why use them?",
+      "answer": "CSS Modules are CSS files with a .module.css extension whose class names are locally scoped. Import the module and reference classes as properties. This prevents name collisions across components. They work in both Server and Client Components.",
+      "code": "import styles from './Button.module.css';\n<button className={styles.primary}>Go</button>",
+      "tags": [
+        "css-modules",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css-modules"
+      ]
+    },
+    {
+      "id": "styling-004",
+      "difficulty": "Beginner",
+      "question": "How do you set up Tailwind CSS in Next.js?",
+      "answer": "create-next-app can add Tailwind during scaffolding, or you install it and create a config. You import the Tailwind directives in globals.css. Then use utility classes in your markup. Tailwind v4 uses a CSS-first configuration.",
+      "code": "// app/globals.css\n@import 'tailwindcss';",
+      "tags": [
+        "tailwind",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-005",
+      "difficulty": "Beginner",
+      "question": "Can you use CSS-in-JS libraries with the App Router?",
+      "answer": "Yes, but many CSS-in-JS libraries need a client-side runtime, so you use them in Client Components. Some libraries support React Server Components with a registry. Next.js documentation lists supported patterns per library. Prefer zero-runtime options for performance.",
+      "tags": [
+        "css-in-js",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css-in-js"
+      ]
+    },
+    {
+      "id": "styling-006",
+      "difficulty": "Beginner",
+      "question": "How do you apply conditional classes in React?",
+      "answer": "Use template strings or a class utility like clsx to join conditional class names. This keeps JSX readable when classes depend on props or state. Avoid long ternary chains inline. It works the same as in plain React.",
+      "code": "import clsx from 'clsx';\n<div className={clsx('btn', { active })} />",
+      "tags": [
+        "styling",
+        "classes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-007",
+      "difficulty": "Beginner",
+      "question": "What is the benefit of colocated styles?",
+      "answer": "Placing a component's CSS Module next to it keeps related code together. It improves discoverability and makes deletion safe. Colocation is a convention in the App Router. It reduces the risk of orphaned styles.",
+      "tags": [
+        "colocation",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css-modules"
+      ]
+    },
+    {
+      "id": "styling-008",
+      "difficulty": "Beginner",
+      "question": "How do you add Sass to a Next.js project?",
+      "answer": "Install the sass package, then import .scss or .sass files. CSS Modules also work with the .module.scss extension. Next.js compiles Sass automatically. No extra configuration is usually needed.",
+      "code": "npm install --save-dev sass",
+      "tags": [
+        "sass",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/sass"
+      ]
+    },
+    {
+      "id": "styling-009",
+      "difficulty": "Beginner",
+      "question": "How do you style a Server Component?",
+      "answer": "Server Components can use CSS Modules, global CSS, or Tailwind classes just like any component. There is no runtime difference for static styles. Avoid CSS-in-JS that needs the browser runtime. Static CSS approaches work everywhere.",
+      "tags": [
+        "server-components",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-010",
+      "difficulty": "Beginner",
+      "question": "What is styled-jsx?",
+      "answer": "styled-jsx is a built-in CSS-in-JS solution for scoped styles in components. It works in both Server and Client Components and requires no setup. You write a style jsx block inside the component. It scopes styles automatically.",
+      "code": "<style jsx>{`p { color: red; }`}</style>",
+      "tags": [
+        "styled-jsx",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css-in-js"
+      ]
+    },
+    {
+      "id": "styling-011",
+      "difficulty": "Intermediate",
+      "question": "How do CSS Modules scope class names?",
+      "answer": "The build hashes each class name to a unique value per module. The generated mapping is exposed through the imported object. This guarantees isolation between components. It works without runtime cost for static CSS.",
+      "tags": [
+        "css-modules",
+        "scoping"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css-modules"
+      ]
+    },
+    {
+      "id": "styling-012",
+      "difficulty": "Intermediate",
+      "question": "How do you share theme values across Tailwind and CSS?",
+      "answer": "Define design tokens once, either in the Tailwind theme or as CSS custom properties, and reference them from both. Tailwind v4 lets you declare tokens in CSS with @theme. This keeps colors and spacing consistent. Avoid duplicating values in multiple places.",
+      "tags": [
+        "tailwind",
+        "theming"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle dark mode with Tailwind?",
+      "answer": "Configure Tailwind's dark mode strategy, such as class or media, then apply dark: variants. With a class strategy you toggle a class on the html element. Persist the choice in a cookie or localStorage. Server rendering needs to avoid a flash of the wrong theme.",
+      "code": "<div className=\"bg-white dark:bg-gray-900\" />",
+      "tags": [
+        "dark-mode",
+        "tailwind"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-014",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid a flash of unstyled content with theming?",
+      "answer": "Read the theme before paint using a small inline script or a server-read cookie, and set the class on the html element during SSR. This avoids a visible switch after hydration. Keep the logic minimal. It is a common dark mode pitfall.",
+      "tags": [
+        "dark-mode",
+        "ssr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-015",
+      "difficulty": "Intermediate",
+      "question": "How do you organize global styles in a large app?",
+      "answer": "Keep a single global stylesheet for resets, variables, and base element styles, and use CSS Modules or utilities for components. Avoid overusing global selectors that leak. Document tokens and conventions. This keeps styles maintainable.",
+      "tags": [
+        "architecture",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-016",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of utility-first CSS?",
+      "answer": "Utility classes keep styles close to markup and reduce unused CSS with purging. They can make JSX verbose and require learning the scale. Consistency improves because the design tokens are fixed. Many teams find the trade-off worthwhile for large apps.",
+      "tags": [
+        "tailwind",
+        "trade-offs"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use CSS variables with Tailwind?",
+      "answer": "Define custom properties in a base layer and reference them in Tailwind config or arbitrary values. Tailwind v4 lets you declare them with @theme. This bridges runtime theming and utilities. It is useful for brand colors and spacing.",
+      "tags": [
+        "css-variables",
+        "tailwind"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-018",
+      "difficulty": "Intermediate",
+      "question": "How do you style third-party components?",
+      "answer": "Wrap them and apply your own classes, or use CSS variables they expose. If they use CSS-in-JS you may need a client boundary. Prefer libraries that accept className. This keeps your design system in control.",
+      "tags": [
+        "third-party",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle responsive design in Next.js?",
+      "answer": "Use CSS media queries, container queries, or Tailwind's responsive prefixes. Styles are static and work with Server Components. Test at multiple breakpoints. Mobile-first ordering is a common convention.",
+      "code": "<div className=\"text-sm md:text-base lg:text-lg\" />",
+      "tags": [
+        "responsive",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-020",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent layout shift when images and fonts load?",
+      "answer": "Set explicit width and height or aspect ratios on images so space is reserved. Use next/font to avoid font swap layout shifts. Reserve space for dynamic content. These steps improve Core Web Vitals.",
+      "tags": [
+        "layout-shift",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/fonts"
+      ]
+    },
+    {
+      "id": "styling-021",
+      "difficulty": "Advanced",
+      "question": "How do zero-runtime CSS solutions improve performance?",
+      "answer": "Zero-runtime solutions like Tailwind, CSS Modules, and vanilla-extract generate static CSS at build time, so the browser does no style computation. This avoids the runtime cost and hydration issues of CSS-in-JS. It also enables better caching. They are preferred in the App Router.",
+      "tags": [
+        "performance",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling"
+      ]
+    },
+    {
+      "id": "styling-022",
+      "difficulty": "Advanced",
+      "question": "How do you integrate a CSS-in-JS library that needs a registry with RSC?",
+      "answer": "You create a client-side registry provider and insert the collected styles into the server-rendered head. The library documents a specific setup for the App Router. Without it, styles may flash or be missing on first paint. Some libraries have moved to a zero-runtime model instead.",
+      "tags": [
+        "css-in-js",
+        "rsc"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css-in-js"
+      ]
+    },
+    {
+      "id": "styling-023",
+      "difficulty": "Advanced",
+      "question": "How do you scope styles across route groups?",
+      "answer": "Use route-specific layouts to import a stylesheet for that group, or CSS Modules for isolation. Global CSS imported in a layout applies to that segment and below. This lets different sections have distinct design systems. Avoid conflicting global selectors.",
+      "tags": [
+        "route-groups",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/css"
+      ]
+    },
+    {
+      "id": "styling-024",
+      "difficulty": "Advanced",
+      "question": "How do you set up design tokens that work in SSR and client?",
+      "answer": "Define tokens as CSS custom properties on a root element so both server-rendered and client-rendered markup share them. Generate Tailwind theme values from the same source. This avoids duplication and keeps theming consistent. Runtime theme switching updates the variables.",
+      "tags": [
+        "design-tokens",
+        "theming"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/styling/tailwind-css"
+      ]
+    },
+    {
+      "id": "styling-025",
+      "difficulty": "Advanced",
+      "question": "How do you audit and reduce unused CSS in a Next.js app?",
+      "answer": "Use build tooling like Tailwind's content detection and bundle analyzers to find unused styles. Avoid importing large global libraries; import components instead. Prefer per-component CSS Modules or utilities. Regular audits keep CSS payloads small.",
+      "tags": [
+        "performance",
+        "styling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing"
+      ]
+    }
+  ]
+}

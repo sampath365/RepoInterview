@@ -1,0 +1,340 @@
+{
+  "category": "Routing with React Router",
+  "slug": "routing",
+  "icon": "route",
+  "questions": [
+    {
+      "id": "routing-001",
+      "difficulty": "Beginner",
+      "question": "What is React Router?",
+      "answer": "React Router is the most widely used routing library for React. It maps URL paths to components so a single-page app can show different views without full page reloads. It supports nested routes, dynamic segments, navigation and data APIs. It works in the browser and on the server.",
+      "tags": [
+        "routing",
+        "react-router"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-002",
+      "difficulty": "Beginner",
+      "question": "How do you set up basic routing?",
+      "answer": "You wrap the app in a router such as BrowserRouter and declare routes with the Routes and Route components, each mapping a path to an element. The router reads the current URL and renders the matching route. Links use the Link component instead of anchor tags to navigate without a reload. A wildcard route handles unknown paths.",
+      "code": "<BrowserRouter>\n  <Routes>\n    <Route path='/' element={<Home />} />\n    <Route path='*' element={<NotFound />} />\n  </Routes>\n</BrowserRouter>",
+      "tags": [
+        "routing",
+        "setup"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Link and an anchor tag?",
+      "answer": "An anchor tag triggers a full page load from the server, which discards the React app state. The Link component intercepts the click and updates the URL using the history API, so only the matching route re-renders. This keeps navigation fast and preserves application state. Use anchors for external sites and Link for internal routes.",
+      "tags": [
+        "routing",
+        "links"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/navigating"
+      ]
+    },
+    {
+      "id": "routing-004",
+      "difficulty": "Beginner",
+      "question": "How do you read URL parameters?",
+      "answer": "You define a dynamic segment in the route path, such as /users/:id, and read it with the useParams hook inside the route component. The parameter is available as a string and usually needs parsing. This lets one route render many resources. Validate the parameter before using it.",
+      "code": "const { id } = useParams();",
+      "tags": [
+        "routing",
+        "params"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/url-values"
+      ]
+    },
+    {
+      "id": "routing-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between useNavigate and Link?",
+      "answer": "Link renders an accessible anchor that users click to navigate. useNavigate returns a function for programmatic navigation, such as redirecting after a form submission or a login. Use Link for user-initiated navigation in markup and useNavigate for logic-driven navigation. Both update the URL without a full reload.",
+      "code": "const navigate = useNavigate();\nnavigate('/dashboard', { replace: true });",
+      "tags": [
+        "routing",
+        "navigation"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/navigating"
+      ]
+    },
+    {
+      "id": "routing-006",
+      "difficulty": "Beginner",
+      "question": "What are nested routes?",
+      "answer": "Nested routes let a parent route render shared layout and an Outlet where child routes appear. This avoids repeating common UI such as headers or sidebars. The parent defines child routes in its route configuration. The Outlet component marks where the matched child renders.",
+      "code": "<Route path='/settings' element={<SettingsLayout />}>\n  <Route path='profile' element={<Profile />} />\n</Route>",
+      "tags": [
+        "routing",
+        "nested-routes"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-007",
+      "difficulty": "Beginner",
+      "question": "How do you handle a 404 page?",
+      "answer": "You add a route with a wildcard path, such as path='*', that renders a not-found component. The router matches it when no other route fits. Placing it last makes the intent clear. You can also render it inside nested layouts so the 404 appears within the app shell.",
+      "tags": [
+        "routing",
+        "404"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-008",
+      "difficulty": "Beginner",
+      "question": "What is client-side routing?",
+      "answer": "Client-side routing handles navigation in the browser with JavaScript instead of requesting a new document from the server. The URL still changes, but React swaps the rendered view. This makes transitions fast and preserves state. The server must still serve the app shell for deep links.",
+      "tags": [
+        "routing",
+        "spa"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-009",
+      "difficulty": "Beginner",
+      "question": "How do you navigate programmatically?",
+      "answer": "Call the function returned by useNavigate with a path, optionally passing options such as replace or state. Using replace avoids adding an entry to the history stack, which is useful after login redirects. You can also pass state to carry data to the next route. Programmatic navigation is for logic, not user clicks.",
+      "tags": [
+        "routing",
+        "navigation"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/navigating"
+      ]
+    },
+    {
+      "id": "routing-010",
+      "difficulty": "Beginner",
+      "question": "What is the Outlet component?",
+      "answer": "Outlet is a placeholder rendered by a parent route where its matched child route should appear. It enables layouts that wrap child pages. If no child matches, you can render a default via an index route. Outlet makes nested route composition simple and declarative.",
+      "tags": [
+        "routing",
+        "outlet"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-011",
+      "difficulty": "Intermediate",
+      "question": "What are search params and how do you use them?",
+      "answer": "Search params are the query string values after the question mark, and React Router exposes them through useSearchParams. The hook returns the current params and a setter to update them. Storing filter or pagination state in the URL makes views shareable and bookmarkable. Always parse and validate values from the URL.",
+      "code": "const [params, setParams] = useSearchParams();\nsetParams({ q: 'react', page: '2' });",
+      "tags": [
+        "routing",
+        "search-params"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/url-values"
+      ]
+    },
+    {
+      "id": "routing-012",
+      "difficulty": "Intermediate",
+      "question": "What is an index route?",
+      "answer": "An index route is the default child rendered at the parent path when no deeper segment matches. It is declared with the index prop instead of a path. It is useful for a landing view inside a layout. It prevents an empty Outlet when the user visits the parent URL directly.",
+      "tags": [
+        "routing",
+        "index-route"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you protect routes that require authentication?",
+      "answer": "You wrap protected routes in a component that checks authentication and redirects to the login page with the Navigate component or useNavigate when the user is not allowed. Preserve the attempted location so you can return after login. This gate is a client-side convenience; the server must also enforce authorization. Keeping the check in one wrapper avoids repeating it on every route.",
+      "code": "if (!user) return <Navigate to='/login' replace />;\nreturn <Outlet />;",
+      "tags": [
+        "routing",
+        "auth"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle route-level code splitting?",
+      "answer": "You use React.lazy to load a route component on demand and wrap the routes in Suspense with a fallback. This reduces the initial bundle by loading code only when the user visits that route. Combine it with a bundler that supports dynamic imports. Provide a meaningful loading state so navigation still feels responsive.",
+      "code": "const Settings = lazy(() => import('./Settings'));",
+      "tags": [
+        "routing",
+        "code-splitting"
+      ],
+      "references": [
+        "https://react.dev/reference/react/lazy"
+      ]
+    },
+    {
+      "id": "routing-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between BrowserRouter and HashRouter?",
+      "answer": "BrowserRouter uses the history API and clean paths like /users/1, which requires server configuration to serve the app shell for deep links. HashRouter puts the route after a hash, so the server always sees the same path and no configuration is needed. BrowserRouter is preferred for modern apps with proper server setup. HashRouter is useful for static hosting without rewrite rules.",
+      "tags": [
+        "routing",
+        "history"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data between routes?",
+      "answer": "You can pass data through URL parameters, search params or the state option of navigation, which is read with useLocation. URL state is shareable and survives reloads, while navigation state is ephemeral. For larger shared data, fetch it in the destination from an id in the URL. Prefer URL state when the data should be linkable.",
+      "tags": [
+        "routing",
+        "state"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/navigating"
+      ]
+    },
+    {
+      "id": "routing-017",
+      "difficulty": "Intermediate",
+      "question": "How do data loaders work in React Router?",
+      "answer": "Data routers let you define a loader function per route that fetches data before the route renders. Components read the result with useLoaderData, and errors are handled by errorElement. This co-locates data fetching with routing and avoids request waterfalls. It is part of the framework mode of React Router.",
+      "code": "export async function loader({ params }) {\n  return getUser(params.id);\n}",
+      "tags": [
+        "routing",
+        "data-loaders"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/data-loading"
+      ]
+    },
+    {
+      "id": "routing-018",
+      "difficulty": "Intermediate",
+      "question": "What is a relative link?",
+      "answer": "A relative link is resolved against the current route location rather than the site root. React Router supports relative paths such as '..' or 'edit' in Link and navigation. This keeps links robust when routes are nested or moved. Understanding relative resolution prevents links that point to the wrong place.",
+      "tags": [
+        "routing",
+        "links"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/navigating"
+      ]
+    },
+    {
+      "id": "routing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle scroll restoration on navigation?",
+      "answer": "You can use the ScrollRestoration component in a data router to reset scroll to the top on navigation and restore it on back and forward. Without it, single-page apps keep the previous scroll position. For custom behavior you can read the location and scroll in an effect. Good scroll handling makes client-side routing feel like normal browsing.",
+      "tags": [
+        "routing",
+        "ux"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/navigating"
+      ]
+    },
+    {
+      "id": "routing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test components that use routing?",
+      "answer": "Render the component inside a memory router configured with the routes you need, then assert on the rendered output and navigation. MemoryRouter avoids touching the real URL. You can set the initial entries to simulate a specific location. This keeps routing tests fast and deterministic.",
+      "tags": [
+        "routing",
+        "testing"
+      ],
+      "references": [
+        "https://reactrouter.com/start/library/routing"
+      ]
+    },
+    {
+      "id": "routing-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of client-side versus server-side routing?",
+      "answer": "Client-side routing gives fast transitions and preserves app state but requires the server to serve the shell for deep links and can hurt initial SEO without server rendering. Server-side routing returns fully rendered HTML per request, which is better for SEO and first paint but adds a round trip per navigation. Many apps combine server rendering for the first load with client routing afterward. The right balance depends on SEO needs and interactivity.",
+      "tags": [
+        "routing",
+        "ssr"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/rendering"
+      ]
+    },
+    {
+      "id": "routing-022",
+      "difficulty": "Advanced",
+      "question": "How do React Router data APIs prevent request waterfalls?",
+      "answer": "Loaders run in parallel for matched routes, so nested data is fetched together instead of one request waiting for the parent to render. The router also knows the route tree ahead of time, so it can start fetching before components mount. This reduces the sequential delays common with effect-based fetching. The result is a faster first meaningful render for each route.",
+      "tags": [
+        "routing",
+        "data-loaders"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/data-loading"
+      ]
+    },
+    {
+      "id": "routing-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement route transitions or pending states?",
+      "answer": "With a data router you can read the navigation state to show a pending indicator while loaders run. In library mode you can combine Suspense and lazy routes with a fallback, or use the isPending flag from transitions for in-app updates. Keeping the previous view visible during the load avoids layout jumps. A small progress indicator is usually enough feedback.",
+      "tags": [
+        "routing",
+        "ux"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/data-loading"
+      ]
+    },
+    {
+      "id": "routing-024",
+      "difficulty": "Advanced",
+      "question": "How does React Router integrate with server rendering?",
+      "answer": "In framework mode React Router provides a server runtime that renders the matched route tree to HTML, runs loaders on the server, and hydrates on the client. It supports streaming and error boundaries per route. This gives fast first paint and SEO while keeping client navigation. The same route definitions drive both server and client.",
+      "tags": [
+        "routing",
+        "ssr"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/rendering"
+      ]
+    },
+    {
+      "id": "routing-025",
+      "difficulty": "Advanced",
+      "question": "What are the security considerations for client-side routing guards?",
+      "answer": "Client-side guards improve user experience but can be bypassed, so the server must authorize every request for protected data. Never rely on hiding a route to protect sensitive resources. Validate and sanitize any values taken from the URL before using them. Treat the URL as untrusted input in both client and server code.",
+      "tags": [
+        "routing",
+        "security"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/route-module"
+      ]
+    }
+  ]
+}

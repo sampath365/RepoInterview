@@ -1,0 +1,344 @@
+{
+  "category": "Authentication",
+  "slug": "authentication",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "authentication-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between authentication and authorization?",
+      "answer": "Authentication verifies who a user is, producing a ClaimsPrincipal, while authorization decides what that user is allowed to do. Authentication happens first and populates HttpContext.User, and authorization then evaluates policies against that principal. Keeping the two concerns separate makes security rules easier to reason about.",
+      "tags": [
+        "authentication",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/",
+        "https://learn.microsoft.com/aspnet/core/security/authorization/introduction"
+      ]
+    },
+    {
+      "id": "authentication-002",
+      "difficulty": "Beginner",
+      "question": "How do you enable authentication in ASP.NET Core?",
+      "answer": "You register the authentication services with builder.Services.AddAuthentication and configure schemes and handlers, then add app.UseAuthentication and app.UseAuthorization in the pipeline. Authentication middleware runs before authorization so HttpContext.User is set. Endpoints opt in with [Authorize] or RequireAuthorization.",
+      "code": "builder.Services.AddAuthentication()\n    .AddJwtBearer();\n...\napp.UseAuthentication();\napp.UseAuthorization();",
+      "tags": [
+        "setup",
+        "authentication"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-003",
+      "difficulty": "Beginner",
+      "question": "What is a claims principal and a claim?",
+      "answer": "A ClaimsPrincipal represents the authenticated user and contains one or more ClaimsIdentity objects, each holding claims. A claim is a name-value pair such as a user id, email, or role that describes the user. Authorization policies read claims to make decisions.",
+      "tags": [
+        "claims",
+        "claimsprincipal"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authorization/claims"
+      ]
+    },
+    {
+      "id": "authentication-004",
+      "difficulty": "Beginner",
+      "question": "What is cookie authentication?",
+      "answer": "Cookie authentication stores the user's identity in an encrypted ticket inside a cookie and reads it on each request to build the principal. It is well suited to traditional server-rendered web apps that need session persistence. You configure it with AddCookie or AddIdentity and set options like expiration and sliding renewal.",
+      "code": "builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)\n    .AddCookie(o => o.LoginPath = \"/account/login\");",
+      "tags": [
+        "cookies",
+        "authentication"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/cookie"
+      ]
+    },
+    {
+      "id": "authentication-005",
+      "difficulty": "Beginner",
+      "question": "What is JWT bearer authentication?",
+      "answer": "JWT bearer authentication validates a JSON Web Token sent in the Authorization header and builds the principal from its claims. The token is signed and optionally encrypted, and the server validates the signature, issuer, audience, and lifetime. It is the common choice for stateless APIs and single-page apps.",
+      "tags": [
+        "jwt",
+        "bearer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-006",
+      "difficulty": "Beginner",
+      "question": "What is an authentication scheme?",
+      "answer": "A scheme is a named configuration that pairs an authentication handler with its options, such as Cookies, Bearer, or a custom scheme. AddAuthentication sets the default scheme, and you can register several schemes and select one per endpoint. The scheme determines how the handler authenticates and challenges requests.",
+      "tags": [
+        "schemes",
+        "authentication"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the challenge and forbid operations?",
+      "answer": "Challenge asks the user to authenticate, typically returning a 401 and possibly a redirect to a login page, while forbid indicates the user is authenticated but not allowed, returning 403. Handlers implement HandleChallengeAsync and HandleForbiddenAsync. The right response tells the client whether to log in or request access.",
+      "tags": [
+        "challenge",
+        "forbid"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-008",
+      "difficulty": "Beginner",
+      "question": "What is ASP.NET Core Identity?",
+      "answer": "Identity is a membership system that manages users, passwords, roles, claims, and tokens on top of a data store such as EF Core. It provides login, registration, password hashing, two-factor authentication, and external provider integration. It is the recommended foundation for apps that need full user management.",
+      "tags": [
+        "identity",
+        "membership"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/identity"
+      ]
+    },
+    {
+      "id": "authentication-009",
+      "difficulty": "Beginner",
+      "question": "How do you sign in a user with SignInManager?",
+      "answer": "You call SignInManager.PasswordSignInAsync with the username and password, which verifies credentials and issues the authentication cookie or ticket. The result indicates success, failure, lockout, or two-factor requirement. After signing in you redirect to a safe local URL.",
+      "code": "var result = await _signInManager.PasswordSignInAsync(\n    model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);\nif (result.Succeeded) return RedirectToAction(\"Index\", \"Home\");",
+      "tags": [
+        "identity",
+        "signin"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/identity"
+      ]
+    },
+    {
+      "id": "authentication-010",
+      "difficulty": "Beginner",
+      "question": "What are external login providers?",
+      "answer": "External providers such as Google, Microsoft, Facebook, and GitHub use OAuth or OpenID Connect so users can authenticate without a local password. You register the provider with AddGoogle, AddMicrosoftAccount, or AddOpenIdConnect and handle the callback to create or link a local account. Identity stores the association between the external login and the local user.",
+      "tags": [
+        "oauth",
+        "external-login"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/social/"
+      ]
+    },
+    {
+      "id": "authentication-011",
+      "difficulty": "Intermediate",
+      "question": "What is OpenID Connect and how does it relate to OAuth 2.0?",
+      "answer": "OAuth 2.0 is an authorization framework for delegated access to resources, while OpenID Connect is an identity layer on top of OAuth 2.0 that adds an ID token and a UserInfo endpoint to authenticate users. OIDC is what you use for federated login, and OAuth alone is for API access. ASP.NET Core supports OIDC through AddOpenIdConnect.",
+      "tags": [
+        "openid-connect",
+        "oauth"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure JWT bearer authentication?",
+      "answer": "You call AddJwtBearer and set TokenValidationParameters for the authority, audience, issuer, and signing key, either from metadata or explicit values. The handler validates incoming tokens and builds the principal from claims. For APIs you should require HTTPS and validate issuer and audience to prevent token misuse.",
+      "code": "builder.Services.AddAuthentication().AddJwtBearer(o =>\n{\n    o.Authority = \"https://login.example.com\";\n    o.Audience = \"api\";\n    o.TokenValidationParameters.ValidateIssuer = true;\n});",
+      "tags": [
+        "jwt",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between access tokens and refresh tokens?",
+      "answer": "An access token is short-lived and grants access to resources, while a refresh token is longer-lived and used to obtain new access tokens without re-authenticating. Refresh tokens must be stored securely and can be revoked. This split limits the damage of a stolen access token.",
+      "tags": [
+        "tokens",
+        "oauth"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a custom authentication handler?",
+      "answer": "You derive from AuthenticationHandler<TOptions> and override HandleAuthenticateAsync to validate the credential, returning AuthenticateResult.Success or Fail. You may also override HandleChallengeAsync and HandleForbiddenAsync for custom responses. The handler is registered as a scheme with AddScheme or an AddXxx extension.",
+      "code": "public class ApiKeyHandler : AuthenticationHandler<ApiKeyOptions>\n{\n    protected override Task<AuthenticateResult> HandleAuthenticateAsync()\n        => Task.FromResult(AuthenticateResult.NoResult());\n}",
+      "tags": [
+        "custom-handler",
+        "extensibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-015",
+      "difficulty": "Intermediate",
+      "question": "How do you implement API key authentication?",
+      "answer": "You create a custom authentication handler that reads the key from a header or query string, validates it against a store, and returns a principal. Register the scheme and mark endpoints to use it. Keys should be hashed at rest, rotated, and never placed in URLs or logs.",
+      "code": "var key = Request.Headers[\"X-Api-Key\"].FirstOrDefault();\nvar valid = await _store.ValidateAsync(key);",
+      "tags": [
+        "api-key",
+        "custom-handler"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-016",
+      "difficulty": "Intermediate",
+      "question": "How do you support multiple authentication schemes in one app?",
+      "answer": "You register multiple schemes and set a default scheme, then select a scheme per endpoint with [Authorize(AuthenticationSchemes = \"SchemeName\")] or RequireAuthorization with a policy that specifies the schemes. Policies can combine schemes so any or all must succeed. This lets an app accept cookies for browsers and bearer tokens for APIs.",
+      "code": "[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]\n[ApiController] public class DataController : ControllerBase { }",
+      "tags": [
+        "schemes",
+        "multiple"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-017",
+      "difficulty": "Intermediate",
+      "question": "How does Identity hash and store passwords?",
+      "answer": "Identity uses a password hasher (PBKDF2 by default) with a per-user salt and many iterations, storing only the hash and parameters, never the plaintext. You can configure iteration count and upgrade hashes on sign-in when algorithms improve. This protects passwords even if the database is compromised.",
+      "tags": [
+        "identity",
+        "passwords"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/identity"
+      ]
+    },
+    {
+      "id": "authentication-018",
+      "difficulty": "Intermediate",
+      "question": "How do you implement two-factor authentication with Identity?",
+      "answer": "Identity supports two-factor via an authenticator app, email, or SMS, storing a shared key per user and requiring a second code after password validation. You enable it with AddDefaultTokenProviders and prompt for the second factor when the sign-in result requires it. Recovery codes let users regain access.",
+      "tags": [
+        "2fa",
+        "identity"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/identity"
+      ]
+    },
+    {
+      "id": "authentication-019",
+      "difficulty": "Intermediate",
+      "question": "How do you protect a SPA using cookies versus bearer tokens?",
+      "answer": "Cookie-based auth keeps tokens out of JavaScript but requires antiforgery protection and careful SameSite settings, and it works well when the SPA is served from the same origin. Bearer tokens stored in memory avoid CSRF but are exposed to XSS if persisted in local storage. Backend-for-frontend with cookies and an antiforgery token is a common secure pattern.",
+      "tags": [
+        "spa",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/",
+        "https://learn.microsoft.com/aspnet/core/security/anti-request-forgery"
+      ]
+    },
+    {
+      "id": "authentication-020",
+      "difficulty": "Intermediate",
+      "question": "What is token validation and which parameters matter most?",
+      "answer": "Token validation checks the signature, issuer, audience, lifetime, and not-before claims against the configured authority and keys. ValidateIssuer, ValidateAudience, ValidateLifetime, and ValidateIssuerSigningKey should all be enabled in production. Disabling them opens the door to forged or reused tokens.",
+      "tags": [
+        "jwt",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/configure-jwt-bearer-authentication"
+      ]
+    },
+    {
+      "id": "authentication-021",
+      "difficulty": "Advanced",
+      "question": "How does the authentication middleware integrate with endpoint routing?",
+      "answer": "UseAuthentication runs the default scheme's handler to authenticate the request and set HttpContext.User, then UseAuthorization evaluates the endpoint's authorization metadata. Because endpoints are matched before authorization, policies can be attached per endpoint. Multiple schemes are resolved per policy or per endpoint metadata.",
+      "tags": [
+        "middleware",
+        "integration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement token revocation for JWTs?",
+      "answer": "Because JWTs are stateless, revocation requires a server-side denylist, a short access-token lifetime with refresh-token rotation, or a reference token scheme checked against a store. You can also use token versioning where the user's security stamp is embedded and validated. Combining short lifetimes with refresh rotation is the most common practical approach.",
+      "tags": [
+        "revocation",
+        "jwt"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-023",
+      "difficulty": "Advanced",
+      "question": "How do you integrate an external identity provider such as Azure AD or Entra ID with an API?",
+      "answer": "You use the Microsoft.Identity.Web library, which configures JWT bearer validation against Microsoft Entra ID, handles multi-tenant and on-behalf-of flows, and integrates with app roles and scopes. The API validates tokens and can call downstream APIs with token acquisition helpers. This avoids hand-rolling authority and key management.",
+      "code": "builder.Services.AddMicrosoftIdentityWebApi(\n    builder.Configuration.GetSection(\"AzureAd\"));",
+      "tags": [
+        "entra-id",
+        "identity"
+      ],
+      "references": [
+        "https://learn.microsoft.com/entra/identity-platform/",
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    },
+    {
+      "id": "authentication-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement sliding expiration and session revocation for cookie auth?",
+      "answer": "Cookie options such as SlidingExpiration and ExpireTimeSpan control renewal, and the authentication ticket can be validated per request through the CookieAuthenticationEvents. To revoke sessions you bump a user security stamp stored in the cookie and validated on each request. This gives immediate logout while keeping the cookie stateless.",
+      "code": "builder.Services.AddAuthentication().AddCookie(o =>\n{\n    o.SlidingExpiration = true;\n    o.ExpireTimeSpan = TimeSpan.FromHours(8);\n});",
+      "tags": [
+        "cookies",
+        "session"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/cookie"
+      ]
+    },
+    {
+      "id": "authentication-025",
+      "difficulty": "Advanced",
+      "question": "What are the security trade-offs between cookie, JWT, and reference tokens?",
+      "answer": "Cookies are simple and revocable but need CSRF protection and are browser-oriented; JWTs are stateless and scalable but hard to revoke and risky if stored insecurely; reference tokens are opaque and revocable but require an introspection store on each request. The right choice depends on client type, revocation needs, and whether you can tolerate a lookup per call. Many systems combine short-lived JWTs with refresh tokens or a backend-for-frontend.",
+      "tags": [
+        "security",
+        "trade-offs"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/authentication/"
+      ]
+    }
+  ]
+}

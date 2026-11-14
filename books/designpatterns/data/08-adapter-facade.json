@@ -1,0 +1,212 @@
+{
+  "category": "Adapter & Facade",
+  "slug": "adapter-facade",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "adapter-facade-001",
+      "difficulty": "Beginner",
+      "question": "What is the Adapter pattern?",
+      "answer": "Adapter converts the interface of an existing class into another interface that clients expect, so classes with incompatible interfaces can work together. It wraps the adaptee and translates calls between the two interfaces. It is the go-to pattern for integrating third-party or legacy code you cannot modify.",
+      "tags": ["adapter", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "adapter-facade-002",
+      "difficulty": "Beginner",
+      "question": "What is the Facade pattern?",
+      "answer": "Facade provides a unified, simplified interface to a set of interfaces in a subsystem. It makes the subsystem easier to use by exposing the common operations and hiding the details. Clients that need finer control can still reach the subsystem directly.",
+      "tags": ["facade", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "adapter-facade-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Adapter and Facade?",
+      "answer": "Adapter makes an existing interface match the one a client expects, resolving incompatibility for a single component. Facade simplifies access to a whole subsystem by providing a higher-level interface. Adapter is about interface translation, while Facade is about reducing complexity.",
+      "tags": ["adapter", "facade"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "adapter-facade-004",
+      "difficulty": "Beginner",
+      "question": "What are the two common ways to implement an Adapter?",
+      "answer": "An object adapter holds a reference to the adaptee and delegates calls to it, which is flexible and preferred in C#. A class adapter inherits from the adaptee and implements the target interface, but C# single inheritance limits this approach. Object adapters also make testing easier because the adaptee can be substituted.",
+      "tags": ["adapter", "implementation"],
+      "code": "public sealed class StripeAdapter(IStripeApi api) : IPaymentGateway\n{\n    public Task ChargeAsync(decimal amount) => api.PayAsync(amount);\n}",
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "adapter-facade-005",
+      "difficulty": "Beginner",
+      "question": "When is the Adapter pattern appropriate?",
+      "answer": "Use Adapter when you need to use an existing class whose interface does not match what your code expects and you cannot change the class. It is also useful when wrapping third-party libraries behind your own abstraction. This isolates your code from external API changes.",
+      "tags": ["adapter", "design"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "adapter-facade-006",
+      "difficulty": "Beginner",
+      "question": "How does a facade improve usability of a subsystem?",
+      "answer": "The facade offers a small set of methods that perform common tasks, so clients do not need to learn many classes and call them in the right order. This reduces the chance of misuse and lowers coupling. It also gives a stable surface you can keep while internals change.",
+      "tags": ["facade", "usability"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "adapter-facade-007",
+      "difficulty": "Beginner",
+      "question": "What is an example of a facade in the .NET base class library?",
+      "answer": "The HttpClient class is often used as a facade over lower-level HTTP handling, hiding sockets, handlers, and message construction. Similarly, the File class offers simple static methods over file system operations. These provide convenient entry points without exposing the underlying complexity.",
+      "tags": ["facade", "dotnet"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.net.http.httpclient"]
+    },
+    {
+      "id": "adapter-facade-008",
+      "difficulty": "Beginner",
+      "question": "Why wrap a third-party library in an adapter?",
+      "answer": "Wrapping isolates your code from the vendor's API so you can swap or upgrade the library with minimal changes. It also lets you expose only the features you use and adapt the vendor's types to your domain. This improves testability because you can fake the adapter.",
+      "tags": ["adapter", "third-party"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "adapter-facade-009",
+      "difficulty": "Beginner",
+      "question": "Does a facade prevent direct access to the subsystem?",
+      "answer": "No, a facade is a convenience, not a wall. Clients that need advanced or uncommon operations can still use the subsystem classes directly. The facade simply offers a simpler path for the common cases.",
+      "tags": ["facade", "design"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "adapter-facade-010",
+      "difficulty": "Beginner",
+      "question": "How does an adapter help with testing?",
+      "answer": "By defining your own interface and adapting the external dependency to it, tests can substitute a fake implementation. This removes the need to hit the real external service during tests. It also centralizes any translation logic where it can be verified.",
+      "tags": ["adapter", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "adapter-facade-011",
+      "difficulty": "Intermediate",
+      "question": "How do you adapt an asynchronous API to a synchronous interface?",
+      "answer": "You can block with GetAwaiter().GetResult() but that risks deadlocks and thread starvation in UI or request contexts. A better approach is to make the target interface async so the caller can await. If you must stay synchronous, use Task.Run cautiously or a dedicated thread.",
+      "tags": ["adapter", "async"],
+      "code": "public decimal GetTotal() => _api.GetTotalAsync().GetAwaiter().GetResult();",
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "adapter-facade-012",
+      "difficulty": "Intermediate",
+      "question": "How do you register an adapter with dependency injection?",
+      "answer": "Register the adapter as the implementation of your interface, and have the adapter depend on the vendor client which is also registered. The container wires them together. Consumers see only your interface, keeping the vendor type out of application code.",
+      "tags": ["adapter", "dependency-injection"],
+      "code": "builder.Services.AddHttpClient<IStripeApi, StripeApiClient>();\nbuilder.Services.AddScoped<IPaymentGateway, StripeAdapter>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "adapter-facade-013",
+      "difficulty": "Intermediate",
+      "question": "How does the facade pattern support layering in an application?",
+      "answer": "A facade can be the public API of a layer, exposing only what upper layers need and hiding internal types. This enforces a clean boundary and prevents callers from reaching into layer internals. It makes refactoring the layer safer because the surface is small.",
+      "tags": ["facade", "layering"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "adapter-facade-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a facade and a mediator?",
+      "answer": "A facade simplifies access to a subsystem but the subsystem does not know about the facade, and it is a one-way dependency. A mediator centralizes communication among colleagues that do know the mediator and talk through it. Facade is about simplifying, mediator is about decoupling peers.",
+      "tags": ["facade", "mediator"],
+      "references": ["https://refactoring.guru/design-patterns/mediator"]
+    },
+    {
+      "id": "adapter-facade-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid a leaky adapter that exposes vendor types?",
+      "answer": "Keep the adapter's interface in your own domain types and translate to vendor types internally. Never return vendor DTOs or exceptions to callers; map them to your own. This keeps the vendor boundary contained and swappable.",
+      "tags": ["adapter", "encapsulation"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/architect-microservice-container-applications/"]
+    },
+    {
+      "id": "adapter-facade-016",
+      "difficulty": "Intermediate",
+      "question": "How does a facade handle exceptions from a subsystem?",
+      "answer": "The facade can catch subsystem-specific exceptions and translate them into a consistent set that callers understand. This shields clients from low-level details and gives a uniform error contract. Logging the original exception preserves diagnostic detail.",
+      "tags": ["facade", "exceptions"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions"]
+    },
+    {
+      "id": "adapter-facade-017",
+      "difficulty": "Intermediate",
+      "question": "When should you not create an adapter?",
+      "answer": "Skip the adapter when the external interface already matches your needs or when you only use one type in one place. Adding an adapter layer with no translation or isolation value is unnecessary indirection. Let a real need, like swapping implementations or testing, justify it.",
+      "tags": ["adapter", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "adapter-facade-018",
+      "difficulty": "Intermediate",
+      "question": "How do you version an adapter when the vendor API changes?",
+      "answer": "Keep the adapter's public interface stable and update only its internals to match the new vendor API. If behavior changes, add a new adapter implementation behind a feature flag or configuration. This limits the blast radius of vendor changes to one class.",
+      "tags": ["adapter", "versioning"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "adapter-facade-019",
+      "difficulty": "Intermediate",
+      "question": "How can a facade reduce the number of dependencies a class needs?",
+      "answer": "Instead of injecting many subsystem services, a class can depend on one facade that exposes the needed operations. This lowers constructor noise and coupling. The facade itself depends on the subsystem and is registered in the container.",
+      "tags": ["facade", "dependency-injection"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "adapter-facade-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test a facade?",
+      "answer": "Test the facade through its public interface with the subsystem's dependencies faked or provided as in-memory implementations. Verify that it orchestrates calls correctly and translates errors as expected. Because the facade is thin, tests focus on coordination rather than deep logic.",
+      "tags": ["facade", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "adapter-facade-021",
+      "difficulty": "Advanced",
+      "question": "How do you adapt a callback-based API to async and await in C#?",
+      "answer": "Use TaskCompletionSource to bridge the callback, completing the task when the callback fires. Handle error and cancellation paths by setting the appropriate result or exception. This turns an event-based API into an awaitable one without blocking.",
+      "tags": ["adapter", "async"],
+      "code": "var tcs = new TaskCompletionSource<string>();\nlegacy.Begin(op, result => tcs.SetResult(result));\nreturn await tcs.Task;",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.taskcompletionsource-1"]
+    },
+    {
+      "id": "adapter-facade-022",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of adapters in hot paths?",
+      "answer": "An extra virtual call and object layer add small overhead, which is usually negligible but can matter in tight loops or high-throughput pipelines. You can reduce cost by avoiding unnecessary allocation and caching translated values. Measure before optimizing, since clarity often outweighs micro-gains.",
+      "tags": ["adapter", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "adapter-facade-023",
+      "difficulty": "Advanced",
+      "question": "How would you design adapters for a pluggable provider model?",
+      "answer": "Define a provider interface in your domain and implement one adapter per external provider, registering them with keys or by capability. A resolver selects the provider based on configuration or tenant. This keeps provider-specific code isolated and lets you add providers without touching callers.",
+      "tags": ["adapter", "plugins"],
+      "code": "builder.Services.AddKeyedScoped<IPaymentGateway, StripeAdapter>(\"stripe\");\nbuilder.Services.AddKeyedScoped<IPaymentGateway, PaypalAdapter>(\"paypal\");",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "adapter-facade-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep a facade from becoming a God object?",
+      "answer": "Split the facade by cohesive capability so each exposes a focused set of operations. If it grows, extract a new facade rather than adding unrelated methods. Keep facades thin and delegate real work to the subsystem.",
+      "tags": ["facade", "srp"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "adapter-facade-025",
+      "difficulty": "Advanced",
+      "question": "How do Adapter and Facade combine with Decorator and Proxy in integration layers?",
+      "answer": "An adapter translates a third-party API, a facade groups related subsystem calls, a decorator adds caching or retries around the adapter, and a proxy controls access or lazy initialization. Layering these gives a clean integration boundary with cross-cutting concerns handled outside domain code. The key is that each wrapper has one clear purpose.",
+      "tags": ["adapter", "facade", "decorator"],
+      "references": ["https://refactoring.guru/design-patterns/structural-patterns"]
+    }
+  ]
+}

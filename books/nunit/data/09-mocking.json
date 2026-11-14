@@ -1,0 +1,369 @@
+{
+  "category": "Mocking & Test Doubles",
+  "slug": "mocking",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "mocking-001",
+      "difficulty": "Beginner",
+      "question": "What is a test double and why do you use one?",
+      "answer": "A test double is a stand-in for a real dependency that a test would otherwise have to construct, such as a database, web service or clock. Doubles make tests fast, deterministic and focused on the unit under test. They also let you simulate states and failures that are hard to produce with the real dependency.",
+      "tags": [
+        "mocking",
+        "testdoubles"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a stub and a mock?",
+      "answer": "A stub returns canned answers so the test can proceed, and you assert on the result. A mock additionally records interactions so you can assert that a particular call happened with particular arguments. Stubs verify state and mocks verify behaviour.",
+      "tags": [
+        "mocking",
+        "stub"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-003",
+      "difficulty": "Beginner",
+      "question": "Which mocking libraries are commonly used with NUnit?",
+      "answer": "Moq and NSubstitute are the most popular; both create doubles for interfaces and virtual members and integrate with any test framework including NUnit. They differ mainly in syntax, with Moq using a fluent Setup and Verify style and NSubstitute using a return-and-received style. Either works well, so pick one per solution for consistency.",
+      "tags": [
+        "mocking",
+        "libraries"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://nsubstitute.github.io/"
+      ]
+    },
+    {
+      "id": "mocking-004",
+      "difficulty": "Beginner",
+      "question": "How do you create a simple stub with Moq?",
+      "answer": "Call new Mock<IDependency>() and use Setup to configure a method to return a value, then pass mock.Object to the code under test. Moq builds the proxy that implements the interface. You assert on the code's behaviour using the stubbed result.",
+      "code": "var repo = new Mock<IOrderRepository>();\nrepo.Setup(r => r.Find(42)).Returns(new Order { Id = 42 });\nvar service = new OrderService(repo.Object);",
+      "tags": [
+        "moq",
+        "stub"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-005",
+      "difficulty": "Beginner",
+      "question": "How do you create a substitute with NSubstitute?",
+      "answer": "Call Substitute.For<IInterface>() to create the substitute, configure calls by simply setting a return value on them, and pass the substitute to the code under test. You verify calls with Received(). NSubstitute aims for a more natural reading style than explicit Setup.",
+      "code": "var repo = Substitute.For<IOrderRepository>();\nrepo.Find(42).Returns(new Order { Id = 42 });\nvar service = new OrderService(repo);",
+      "tags": [
+        "nsubstitute",
+        "stub"
+      ],
+      "references": [
+        "https://nsubstitute.github.io/",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-006",
+      "difficulty": "Beginner",
+      "question": "How do you verify that a method was called on a mock in Moq?",
+      "answer": "Use mock.Verify with a lambda describing the expected call, optionally including Times.Once or Times.Never to state how many times it should happen. A failed verify throws and fails the test. Verification is how you assert behaviour rather than return values.",
+      "code": "repo.Verify(r => r.Save(It.IsAny<Order>()), Times.Once);",
+      "tags": [
+        "moq",
+        "verify"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-007",
+      "difficulty": "Beginner",
+      "question": "How do you match any argument in a Moq setup or verify?",
+      "answer": "Use It.IsAny<T>() to match any value of a type, or It.Is<T>(predicate) to match a condition, for example It.Is<Order>(o => o.Total > 0). These argument matchers let you verify calls without knowing the exact argument. Mixing matchers and literal values in one call requires all arguments to be matchers.",
+      "code": "repo.Verify(r => r.Save(It.Is<Order>(o => o.Total > 0)), Times.Once);",
+      "tags": [
+        "moq",
+        "matchers"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-008",
+      "difficulty": "Beginner",
+      "question": "What kinds of types can be mocked?",
+      "answer": "You can mock interfaces and classes whose members are virtual or abstract; a mock cannot intercept non-virtual members on a concrete class. Because of that, code under test should depend on interfaces or abstract types to stay testable. Sealed classes and static methods cannot be mocked by the mainstream libraries without extra tooling.",
+      "tags": [
+        "mocking",
+        "limitations"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "mocking-009",
+      "difficulty": "Beginner",
+      "question": "What does it mean to say a mock is strict?",
+      "answer": "A strict mock fails the test when it receives a call that was not configured, which catches unexpected interactions. A loose mock, the default in Moq, returns default values for unconfigured calls. Strict behaviour is useful for protocols where unexpected calls are genuine bugs, but it can make tests brittle.",
+      "tags": [
+        "moq",
+        "strict"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-010",
+      "difficulty": "Beginner",
+      "question": "Why is it usually better to depend on interfaces in testable code?",
+      "answer": "Depending on an interface decouples the code from a concrete implementation and lets a test substitute a double without touching real infrastructure. This also supports dependency injection and makes the code easier to reason about. Testability is a side benefit of good design rather than a separate concern.",
+      "tags": [
+        "design",
+        "interfaces"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-011",
+      "difficulty": "Intermediate",
+      "question": "How do you mock an async method with Moq?",
+      "answer": "Return a completed Task from the setup, for example Setup(x => x.GetAsync()).ReturnsAsync(value) for a Task<T>, and use Returns(Task.CompletedTask) for a non-generic Task. The code under test awaits the mock just as it would the real dependency. This keeps async paths fully testable.",
+      "code": "client.Setup(c => c.GetAsync(\"url\")).ReturnsAsync(\"body\");\nvar result = await sut.FetchAsync();",
+      "tags": [
+        "moq",
+        "async"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "mocking-012",
+      "difficulty": "Intermediate",
+      "question": "How do you make a mocked method throw an exception?",
+      "answer": "Use Throws on the setup, for example Setup(x => x.Save(null)).Throws<ArgumentNullException>(), or the equivalent in your library. This lets you test error handling and retry logic without a real failure. You can also throw a specific exception instance to inspect it later.",
+      "code": "repo.Setup(r => r.Save(null)).Throws<ArgumentNullException>();\nAssert.Throws<ArgumentNullException>(() => service.Save(null));",
+      "tags": [
+        "moq",
+        "exceptions"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-013",
+      "difficulty": "Intermediate",
+      "question": "How do you verify that a method was never called?",
+      "answer": "Use Verify with Times.Never, or AssertWasNotCalled-style APIs in other libraries, to assert that an interaction did not happen. This is valuable for guarding side effects such as sending an email. A passing Times.Never check confirms the code avoided an unwanted action.",
+      "code": "emailSender.Verify(e => e.Send(It.IsAny<string>()), Times.Never);",
+      "tags": [
+        "moq",
+        "verify"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use callbacks on a mock to capture arguments?",
+      "answer": "Configure the setup with a Callback that stores the argument in a local variable, then assert on that variable after the act. This lets you inspect values that the method under test passed to its dependency. It is a lightweight alternative to a capturing matcher.",
+      "code": "Order saved = null;\nrepo.Setup(r => r.Save(It.IsAny<Order>()))\n    .Callback<Order>(o => saved = o);\nsut.Checkout(cart);\nAssert.That(saved.Total, Is.EqualTo(90));",
+      "tags": [
+        "moq",
+        "callback"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a fake and a mock?",
+      "answer": "A fake is a working but simplified implementation, such as an in-memory repository, that behaves like the real thing without the infrastructure. A mock is a generated double whose behaviour and interactions you configure per test. Fakes are reused and hand-written, mocks are usually created by a library.",
+      "tags": [
+        "mocking",
+        "fake"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database"
+      ]
+    },
+    {
+      "id": "mocking-016",
+      "difficulty": "Intermediate",
+      "question": "How do you mock a property getter and setter?",
+      "answer": "Configure the getter with SetupGet and the setter with SetupSet, or use SetupProperty to back the property with a stored value. Property setups let the code read or write state on the dependency. For auto-implemented behaviour, SetupProperty is the concise option.",
+      "code": "config.SetupGet(c => c.RetryCount).Returns(3);",
+      "tags": [
+        "moq",
+        "properties"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-017",
+      "difficulty": "Intermediate",
+      "question": "Why can over-mocking make tests brittle?",
+      "answer": "If a test verifies many interactions that are implementation details, refactoring the code breaks the test even though behaviour is unchanged. The test then documents how the code works rather than what it should do. Prefer asserting on observable outcomes and verify only interactions that are part of the contract.",
+      "tags": [
+        "mocking",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "mocking-018",
+      "difficulty": "Intermediate",
+      "question": "How do you mock an IDisposable dependency?",
+      "answer": "The mock implements IDisposable because it implements the interface, so Dispose is a callable member you can verify if needed. If the code uses a using block, the mock's Dispose is invoked at the end. You rarely need to configure it unless disposal itself is part of the behaviour under test.",
+      "tags": [
+        "mocking",
+        "idisposable"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-019",
+      "difficulty": "Intermediate",
+      "question": "How do you create a mock that returns different values on successive calls?",
+      "answer": "Chain Returns calls or use a sequence such as SetupSequence in Moq so the first call returns one value and the next returns another. This models stateful dependencies like a queue or a first-failure-then-success scenario. It is useful for testing retry logic.",
+      "code": "queue.SetupSequence(q => q.Dequeue())\n    .Returns(1)\n    .Returns(2);",
+      "tags": [
+        "moq",
+        "sequence"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-020",
+      "difficulty": "Intermediate",
+      "question": "How do you mock HttpClient in a test?",
+      "answer": "Inject an HttpMessageHandler double into the HttpClient constructor and configure its SendAsync to return a canned response. This avoids network access and lets you simulate status codes and failures. Alternatively inject an abstraction such as an HttpClient factory or a typed client that you can substitute.",
+      "code": "var handler = new Mock<HttpMessageHandler>();\nhandler.Protected()\n    .Setup<Task<HttpResponseMessage>>(\"SendAsync\", ItExpr.IsAny<HttpRequestMessage>(),\n        ItExpr.IsAny<CancellationToken>())\n    .ReturnsAsync(new HttpResponseMessage(HttpStatusCode.OK));",
+      "tags": [
+        "httpclient",
+        "mocking"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.net.http.httpclient",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/httpclient-factory"
+      ]
+    },
+    {
+      "id": "mocking-021",
+      "difficulty": "Advanced",
+      "question": "When should you use a real implementation instead of a mock?",
+      "answer": "Use the real implementation when it is fast, deterministic and part of what you want to verify, such as a value object, a pure function or an in-memory collection. Mocks are for boundaries you cannot or should not cross in a unit test. Overusing mocks replaces real behaviour with your assumptions about it.",
+      "tags": [
+        "mocking",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database"
+      ]
+    },
+    {
+      "id": "mocking-022",
+      "difficulty": "Advanced",
+      "question": "How do you mock static or sealed dependencies in .NET?",
+      "answer": "The mainstream libraries cannot intercept static or sealed members because they rely on virtual dispatch. Options include wrapping the static call behind an interface you can inject, using a source generator based library, or restructuring the code so the dependency is instance-based. Refactoring to an abstraction is usually the cleanest fix.",
+      "tags": [
+        "mocking",
+        "limitations"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between mocks and in-memory fakes for repositories?",
+      "answer": "Mocks let you assert exactly which repository calls happen but couple tests to the repository's interface and can be brittle. In-memory fakes exercise more of the real interaction and support richer scenarios, but you must keep the fake faithful to the real store. Many teams use mocks for command-style dependencies and fakes for query-style data access.",
+      "tags": [
+        "mocking",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-without-the-database",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-024",
+      "difficulty": "Advanced",
+      "question": "How do partial mocks work and when are they useful?",
+      "answer": "A partial mock, created with CallBase in Moq, uses the real implementation for members you do not configure and the mock behaviour for those you do. It is useful for testing a class with a few virtual seams without mocking the whole type. Use it sparingly because it blurs the boundary between the unit and its collaborators.",
+      "code": "var mock = new Mock<Calculator> { CallBase = true };\nmock.Setup(c => c.LoadFactor()).Returns(2);",
+      "tags": [
+        "moq",
+        "partialmock"
+      ],
+      "references": [
+        "https://github.com/devlooped/moq",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "mocking-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide the right level of mocking in a test suite?",
+      "answer": "Mock only the boundaries that are slow, nondeterministic or external, and assert on the behaviour you actually care about. Prefer fakes or real implementations for cheap, deterministic collaborators so the test exercises real logic. Reviewing tests that break on every refactor usually reveals mocking that is too fine-grained.",
+      "tags": [
+        "mocking",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,385 @@
+{
+  "category": "Routing & Navigation",
+  "slug": "routing",
+  "icon": "compass",
+  "questions": [
+    {
+      "id": "routing-001",
+      "difficulty": "Beginner",
+      "question": "What is the Angular Router and what does it do?",
+      "answer": "The Angular Router maps URLs to component trees, letting you build multi-view single-page applications. It handles navigation, route parameters, guards, resolvers, and lazy loading of feature areas. Routes are declared as configuration objects and activated through the router-outlet.",
+      "tags": [
+        "routing",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "routing-002",
+      "difficulty": "Beginner",
+      "question": "How do you define a route?",
+      "answer": "Define an array of route objects, each with a path and either a component or loadComponent, then provide the array with provideRouter during bootstrap. A path can contain static segments, parameters such as :id, or wildcards. The router matches the URL against these routes in order.",
+      "code": "export const routes: Routes = [\n  { path: '', component: HomeComponent },\n  { path: 'users/:id', component: UserComponent },\n  { path: '**', component: NotFoundComponent },\n];",
+      "tags": [
+        "routing",
+        "configuration"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/api/router/provideRouter"
+      ]
+    },
+    {
+      "id": "routing-003",
+      "difficulty": "Beginner",
+      "question": "What is router-outlet?",
+      "answer": "router-outlet is a directive that marks where the router renders the component for the active route. Each outlet corresponds to a level in the route hierarchy, and child routes render into the outlet of their parent's component. Named outlets allow several independent views to be displayed at once.",
+      "tags": [
+        "router-outlet",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/show-routes-with-outlets",
+        "https://angular.dev/api/router/RouterOutlet"
+      ]
+    },
+    {
+      "id": "routing-004",
+      "difficulty": "Beginner",
+      "question": "How do you navigate between routes in a template and in code?",
+      "answer": "In templates use the routerLink directive, for example [routerLink]=\"['/users', user.id]\", and in code inject Router and call navigate or navigateByUrl. routerLink builds the URL and respects the base href, which is safer than writing raw href values. Programmatic navigation is useful after an action such as a successful save.",
+      "code": "<a [routerLink]=\"['/users', user.id]\">Profile</a>\n// component\nthis.router.navigate(['/users', user.id]);",
+      "tags": [
+        "navigation",
+        "routerlink"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/navigate-to-routes",
+        "https://angular.dev/api/router/RouterLink"
+      ]
+    },
+    {
+      "id": "routing-005",
+      "difficulty": "Beginner",
+      "question": "What is routerLinkActive?",
+      "answer": "routerLinkActive adds a CSS class to an element when its associated route is active, which is how navigation menus highlight the current page. It can also be configured to match exactly or to consider descendants. This keeps active-state styling declarative.",
+      "code": "<a routerLink=\"/users\" routerLinkActive=\"active\">Users</a>",
+      "tags": [
+        "routerlinkactive",
+        "navigation"
+      ],
+      "references": [
+        "https://angular.dev/api/router/RouterLinkActive",
+        "https://angular.dev/guide/routing/navigate-to-routes"
+      ]
+    },
+    {
+      "id": "routing-006",
+      "difficulty": "Beginner",
+      "question": "How do you read route parameters?",
+      "answer": "Inject ActivatedRoute and read the params or paramMap Observable, which emits the parameters for the current route. Use the snapshot form when the component is recreated per navigation and the Observable form when the same component is reused with different parameters. Always read from paramMap to handle optional parameters safely.",
+      "code": "private route = inject(ActivatedRoute);\nreadonly id = toSignal(\n  this.route.paramMap.pipe(map((p) => p.get('id'))),\n);",
+      "tags": [
+        "route-params",
+        "activatedroute"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/read-route-state",
+        "https://angular.dev/api/router/ActivatedRoute"
+      ]
+    },
+    {
+      "id": "routing-007",
+      "difficulty": "Beginner",
+      "question": "What is a wildcard route and why is it useful?",
+      "answer": "A wildcard route with the path '**' matches any URL that no earlier route matched, so it is commonly used to show a not-found page. Because routes are matched in order, the wildcard must be the last entry. Without it, unmatched URLs produce navigation errors.",
+      "code": "{ path: '**', component: NotFoundComponent }",
+      "tags": [
+        "wildcard",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/guide/routing/common-router-tasks"
+      ]
+    },
+    {
+      "id": "routing-008",
+      "difficulty": "Beginner",
+      "question": "What is a redirect route?",
+      "answer": "A redirect route sends a matched path to another path using the redirectTo property, optionally with a pathMatch strategy. pathMatch: 'full' ensures the whole URL must match, which is required for empty-path redirects. Redirects are useful for default routes and for renamed sections.",
+      "code": "{ path: '', redirectTo: '/home', pathMatch: 'full' }",
+      "tags": [
+        "redirect",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/redirecting-routes",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "routing-009",
+      "difficulty": "Beginner",
+      "question": "How do you pass data to a route?",
+      "answer": "You can pass static data with the route's data property, dynamic values through path or query parameters, or resolved data from a resolver. The router exposes all of these through ActivatedRoute. Component input binding can also map route data directly to component inputs.",
+      "tags": [
+        "route-data",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/read-route-state",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "routing-010",
+      "difficulty": "Beginner",
+      "question": "What are query parameters and how do you read them?",
+      "answer": "Query parameters appear after the question mark in a URL, such as /search?q=angular, and carry optional state like filters or pagination. Read them through ActivatedRoute.queryParamMap, which returns strings. Preserve or merge them during navigation with queryParamsHandling.",
+      "code": "this.router.navigate(['/search'], { queryParams: { q: term } });",
+      "tags": [
+        "query-params",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/read-route-state",
+        "https://angular.dev/guide/routing/navigate-to-routes"
+      ]
+    },
+    {
+      "id": "routing-011",
+      "difficulty": "Intermediate",
+      "question": "What is a route guard and what types are available?",
+      "answer": "A guard is a function that decides whether navigation should proceed, return a redirect, or be blocked. The main types are canActivate, canActivateChild, canDeactivate, canMatch, and resolve. Modern guards are plain functions that use inject() instead of classes implementing an interface.",
+      "code": "export const authGuard: CanActivateFn = () => {\n  const auth = inject(AuthService);\n  const router = inject(Router);\n  return auth.isLoggedIn() || router.createUrlTree(['/login']);\n};",
+      "tags": [
+        "guards",
+        "routing",
+        "security"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/route-guards",
+        "https://angular.dev/api/router/CanActivateFn"
+      ]
+    },
+    {
+      "id": "routing-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between canActivate and canMatch?",
+      "answer": "canActivate runs after the router has matched a route and decides whether to allow activation, while canMatch runs before matching and decides whether a route configuration is even a candidate. canMatch is useful when two routes share the same path but should be selected based on runtime state. Both can return a boolean or a UrlTree for a redirect.",
+      "tags": [
+        "guards",
+        "canmatch",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/route-guards",
+        "https://angular.dev/api/router/CanMatchFn"
+      ]
+    },
+    {
+      "id": "routing-013",
+      "difficulty": "Intermediate",
+      "question": "What is a resolver and when should you use one?",
+      "answer": "A resolver fetches data before a route is activated so the component receives it ready to render, avoiding an empty state during navigation. It returns an Observable or Promise, and the router waits for it. Use resolvers when the route cannot meaningfully render without the data, but prefer in-component loading when you want to show progressive UI.",
+      "code": "export const userResolver: ResolveFn<User> = (route) =>\n  inject(UserService).getById(route.paramMap.get('id')!);",
+      "tags": [
+        "resolver",
+        "routing",
+        "data"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/data-resolvers",
+        "https://angular.dev/guide/routing/route-guards"
+      ]
+    },
+    {
+      "id": "routing-014",
+      "difficulty": "Intermediate",
+      "question": "How does lazy loading work with routes?",
+      "answer": "A route uses loadComponent or loadChildren to fetch a component or a set of routes on demand, so that code is not included in the initial bundle. The router only downloads the chunk when the user navigates to that route. This keeps startup fast while still allowing a large feature set.",
+      "code": "{\n  path: 'admin',\n  loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),\n}",
+      "tags": [
+        "lazy-loading",
+        "routing",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "routing-015",
+      "difficulty": "Intermediate",
+      "question": "What is component input binding in the router?",
+      "answer": "With withComponentInputBinding enabled, the router sets route parameters, query parameters, and data directly as component inputs, so a component can declare an input named id instead of reading ActivatedRoute. This removes boilerplate and works well with signal inputs. The mapping uses the parameter names as input names.",
+      "code": "provideRouter(routes, withComponentInputBinding())\n// component\nreadonly id = input.required<string>();",
+      "tags": [
+        "component-input-binding",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/api/router/withComponentInputBinding",
+        "https://angular.dev/guide/routing/read-route-state"
+      ]
+    },
+    {
+      "id": "routing-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between child routes and auxiliary routes?",
+      "answer": "Child routes are nested under a parent path and render into the parent component's outlet, forming a hierarchy. Auxiliary routes use a named outlet, such as outlet:\"sidebar\", and render independently alongside the primary outlet. Child routes model containment, while auxiliary routes model parallel views.",
+      "tags": [
+        "child-routes",
+        "auxiliary",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/guide/routing/show-routes-with-outlets"
+      ]
+    },
+    {
+      "id": "routing-017",
+      "difficulty": "Intermediate",
+      "question": "What are router events used for?",
+      "answer": "The router exposes an Observable of events such as NavigationStart, NavigationEnd, and NavigationError. Subscribing lets you show progress indicators, log analytics, or react to failures. Filter the stream to the events you care about rather than handling every emission.",
+      "code": "router.events.pipe(\n  filter((e): e is NavigationEnd => e instanceof NavigationEnd),\n).subscribe((e) => track(e.urlAfterRedirects));",
+      "tags": [
+        "router-events",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/lifecycle-and-events",
+        "https://angular.dev/api/router/Router"
+      ]
+    },
+    {
+      "id": "routing-018",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of withInMemoryScrolling?",
+      "answer": "withInMemoryScrolling configures how the router handles scroll position, including restoring the previous position on back navigation and scrolling to the top on new navigations. It also supports anchor scrolling to fragments. This makes route changes feel natural without manual window scrolling.",
+      "code": "provideRouter(routes, withInMemoryScrolling({\n  scrollPositionRestoration: 'enabled',\n  anchorScrolling: 'enabled',\n}))",
+      "tags": [
+        "scrolling",
+        "routing",
+        "ux"
+      ],
+      "references": [
+        "https://angular.dev/api/router/withInMemoryScrolling",
+        "https://angular.dev/guide/routing/router-reference"
+      ]
+    },
+    {
+      "id": "routing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a navigation error?",
+      "answer": "Enable withNavigationErrorHandler or catch errors on the router events stream to react when navigation fails, for example to redirect to an error page. Errors can come from guards throwing or from lazy chunks failing to load. Logging these errors helps detect deployment problems where old chunk files are missing.",
+      "tags": [
+        "errors",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/api/router/withNavigationErrorHandler",
+        "https://angular.dev/guide/routing/lifecycle-and-events"
+      ]
+    },
+    {
+      "id": "routing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you create nested routes?",
+      "answer": "A parent route can define a children array, and its component must include a router-outlet where the child component renders. Each level of nesting corresponds to a level in the URL and to an outlet. This keeps layouts shared and feature routes encapsulated.",
+      "code": "{\n  path: 'settings',\n  component: SettingsComponent,\n  children: [\n    { path: 'profile', component: ProfileComponent },\n    { path: 'billing', component: BillingComponent },\n  ],\n}",
+      "tags": [
+        "child-routes",
+        "nesting",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/guide/routing/show-routes-with-outlets"
+      ]
+    },
+    {
+      "id": "routing-021",
+      "difficulty": "Advanced",
+      "question": "How does the router's matching strategy affect route configuration?",
+      "answer": "The router matches routes in the order they are declared and selects the first whose path matches the URL, so more specific routes must come before wildcards. pathMatch controls whether a prefix or the full URL must match, and canMatch filters candidates before activation. Understanding this order prevents subtle routing bugs.",
+      "tags": [
+        "matching",
+        "routing",
+        "pathmatch"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/guide/routing/customizing-route-behavior"
+      ]
+    },
+    {
+      "id": "routing-022",
+      "difficulty": "Advanced",
+      "question": "How do you preload lazy-loaded routes?",
+      "answer": "The withPreloading option enables a preloading strategy such as PreloadAllModules, which loads lazy routes in the background after the initial render. You can also write a custom strategy that preloads only selected routes. Preloading improves subsequent navigation speed without delaying first paint.",
+      "code": "provideRouter(routes, withPreloading(PreloadAllModules))",
+      "tags": [
+        "preloading",
+        "lazy-loading",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/loading-strategies",
+        "https://angular.dev/api/router/withPreloading"
+      ]
+    },
+    {
+      "id": "routing-023",
+      "difficulty": "Advanced",
+      "question": "What is a UrlTree and why is it useful in guards?",
+      "answer": "A UrlTree is a structured representation of a URL that the router can navigate to. Returning a UrlTree from a guard redirects navigation declaratively instead of calling router.navigate as a side effect. It also lets you preserve or modify query parameters precisely.",
+      "code": "return this.auth.isLoggedIn()\n  ? true\n  : this.router.createUrlTree(['/login'], { queryParams: { next: state.url } });",
+      "tags": [
+        "urltree",
+        "guards",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/api/router/UrlTree",
+        "https://angular.dev/guide/routing/route-guards"
+      ]
+    },
+    {
+      "id": "routing-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement role-based route protection?",
+      "answer": "Combine canActivate or canMatch guards with a service that exposes the current user's roles, and return a redirect UrlTree when access is denied. Enforce the same rules on the server, because client-side guards only improve user experience and are not a security boundary. Testing guards with different roles keeps the policy reliable.",
+      "tags": [
+        "guards",
+        "security",
+        "roles"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/route-guards",
+        "https://angular.dev/best-practices/security"
+      ]
+    },
+    {
+      "id": "routing-025",
+      "difficulty": "Advanced",
+      "question": "What are view transitions and how does the router support them?",
+      "answer": "View transitions animate between two states of the DOM using the browser's View Transitions API. The router enables them with withViewTransitions, which wraps navigation in a transition so enter and leave animations play automatically. They are a progressive enhancement that degrades gracefully in browsers without support.",
+      "tags": [
+        "view-transitions",
+        "routing",
+        "animation"
+      ],
+      "references": [
+        "https://angular.dev/api/router/withViewTransitions",
+        "https://developer.mozilla.org/en-US/docs/Web/API/View_Transition_API"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,336 @@
+{
+  "category": "Deployment & Production",
+  "slug": "deployment",
+  "icon": "rocket",
+  "questions": [
+    {
+      "id": "deployment-001",
+      "difficulty": "Beginner",
+      "question": "What does next build produce?",
+      "answer": "next build compiles and optimizes the app, prerendering static routes and producing a route manifest. It outputs optimized client bundles and server code. The build output shows which routes are static, dynamic, or prerendered. This artifact is what production serves.",
+      "tags": [
+        "build",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/cli/next"
+      ]
+    },
+    {
+      "id": "deployment-002",
+      "difficulty": "Beginner",
+      "question": "How do you run a Next.js app in production?",
+      "answer": "Run next build then next start on a Node.js server, or deploy to a platform that supports Next.js. The server handles dynamic routes, route handlers, and middleware. Static assets are served from the CDN. Choose based on your hosting model.",
+      "code": "next build && next start",
+      "tags": [
+        "deployment",
+        "production"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-003",
+      "difficulty": "Beginner",
+      "question": "What are common Next.js hosting options?",
+      "answer": "You can deploy to Vercel, which is optimized for Next.js, or to Node.js hosts like AWS, Render, and Railway, or self-host in containers. Static exports go to any static host. Managed platforms handle caching and edge functions for you. Pick based on control and cost.",
+      "tags": [
+        "deployment",
+        "hosting"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-004",
+      "difficulty": "Beginner",
+      "question": "What is a static export?",
+      "answer": "A static export with output: 'export' generates plain HTML, CSS, and JS that any static host can serve. It cannot use server features like Server Actions, Route Handlers, or middleware. It is ideal for fully static sites. You lose dynamic server rendering.",
+      "code": "module.exports = { output: 'export' };",
+      "tags": [
+        "static-export",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/static-exports"
+      ]
+    },
+    {
+      "id": "deployment-005",
+      "difficulty": "Beginner",
+      "question": "Why set up a CDN for a Next.js app?",
+      "answer": "A CDN caches static assets and prerendered pages close to users, reducing latency and server load. Next.js serves immutable fingerprinted assets that cache well. This improves global performance. It also absorbs traffic spikes.",
+      "tags": [
+        "cdn",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "deployment-006",
+      "difficulty": "Beginner",
+      "question": "How do you handle environment variables in production?",
+      "answer": "Set them in your hosting platform's dashboard or secret store, not in the repo. Server-only variables are read at runtime; NEXT_PUBLIC_ variables are inlined at build time. Keep secrets out of client-exposed variables. Document required variables.",
+      "tags": [
+        "environment",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/environment-variables"
+      ]
+    },
+    {
+      "id": "deployment-007",
+      "difficulty": "Beginner",
+      "question": "What is a health check endpoint?",
+      "answer": "A health check is a small route that reports whether the app is running and ready to serve traffic. Load balancers and orchestrators poll it to restart unhealthy instances. Keep it fast and dependency-light. It improves reliability during deploys.",
+      "code": "// app/api/health/route.ts\nexport function GET() { return Response.json({ ok: true }); }",
+      "tags": [
+        "health-check",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "deployment-008",
+      "difficulty": "Beginner",
+      "question": "How do you deploy a Next.js app with Docker?",
+      "answer": "Use output: 'standalone' to get a minimal server, copy the standalone output and static files into a small Node image, and run node server.js. This reduces image size and startup time. Set environment variables at runtime. It is a portable deployment.",
+      "code": "CMD [\"node\", \"server.js\"]",
+      "tags": [
+        "docker",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a preview and a production deployment?",
+      "answer": "A preview deployment is a temporary build for a branch or pull request, useful for testing changes. A production deployment serves real users on the main domain. Previews let reviewers test before merging. They should not use production data or secrets.",
+      "tags": [
+        "deployment",
+        "preview"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-010",
+      "difficulty": "Beginner",
+      "question": "How do you roll back a deployment?",
+      "answer": "Most platforms let you promote a previous successful build instantly. With containers keep the prior image tagged and redeploy it. Rolling back restores the old code without rebuilding. Keep releases small so rollbacks are low risk.",
+      "tags": [
+        "deployment",
+        "rollback"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-011",
+      "difficulty": "Intermediate",
+      "question": "What is the production checklist for Next.js?",
+      "answer": "The official checklist covers caching strategy, image and font optimization, bundle analysis, error handling, and monitoring. Review rendering modes per route and set security headers. Enable compression and a CDN. Following it catches common production issues.",
+      "tags": [
+        "deployment",
+        "checklist"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "deployment-012",
+      "difficulty": "Intermediate",
+      "question": "How do you monitor a production Next.js app?",
+      "answer": "Collect logs, metrics, and traces from your host, and use error tracking like Sentry for exceptions. Track Core Web Vitals with real user monitoring. Alert on error rates and latency. Observability helps you catch regressions quickly.",
+      "tags": [
+        "monitoring",
+        "production"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "deployment-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors in production?",
+      "answer": "Use error.tsx and global-error.tsx boundaries for UI errors, and catch server errors in handlers and actions. Send errors to a tracking service with context. Avoid leaking stack traces to users. Log enough to debug without exposing secrets.",
+      "tags": [
+        "errors",
+        "production"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/error"
+      ]
+    },
+    {
+      "id": "deployment-014",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize a Docker image for Next.js?",
+      "answer": "Use the standalone output, a slim base image, and multi-stage builds to exclude dev dependencies. Cache the npm install layer. Run as a non-root user. This produces a small, secure image.",
+      "tags": [
+        "docker",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-015",
+      "difficulty": "Intermediate",
+      "question": "How do you set up CI/CD for a Next.js app?",
+      "answer": "In CI run install, lint, type check, tests, and next build, then deploy the artifact in a separate step. Cache dependencies and build output for speed. Gate deploys on passing checks. Keep the pipeline reproducible.",
+      "tags": [
+        "ci-cd",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-016",
+      "difficulty": "Intermediate",
+      "question": "How do you scale a Next.js app horizontally?",
+      "answer": "Run multiple stateless instances behind a load balancer, share the cache and session store, and serve static assets from a CDN. Avoid in-memory state that does not share across instances. Statelessness makes scaling straightforward.",
+      "tags": [
+        "scaling",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle database migrations on deploy?",
+      "answer": "Run migrations as a separate step before or during release, and keep them backward compatible so old and new code coexist briefly. Avoid destructive changes in the same release. Have a rollback plan. This keeps deploys safe.",
+      "tags": [
+        "database",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-018",
+      "difficulty": "Intermediate",
+      "question": "How do you add security headers in production?",
+      "answer": "Set headers like Content-Security-Policy, Strict-Transport-Security, X-Content-Type-Options, and Referrer-Policy in next.config.js or middleware. Test that they do not break functionality. Start with report-only CSP if unsure. Headers harden the app against common attacks.",
+      "tags": [
+        "security",
+        "headers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "deployment-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle caching headers for static assets?",
+      "answer": "Next.js fingerprints built assets so they can be cached immutably for a long time. Serve them through a CDN with long max-age. For dynamic responses set appropriate Cache-Control. This balances performance and freshness.",
+      "tags": [
+        "caching",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "deployment-020",
+      "difficulty": "Intermediate",
+      "question": "How do you configure a custom domain and HTTPS?",
+      "answer": "Point your DNS to the host and let the platform provision a TLS certificate, typically via Let's Encrypt or a managed service. Enforce HTTPS with HSTS. Redirect www or non-www consistently. This ensures secure, canonical URLs.",
+      "tags": [
+        "domain",
+        "https"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-021",
+      "difficulty": "Advanced",
+      "question": "How do you choose between managed and self-hosted Next.js?",
+      "answer": "Managed platforms like Vercel handle caching, edge functions, and scaling automatically but may cost more and constrain customization. Self-hosting on Node or containers gives control and can be cheaper at scale but requires you to run infrastructure. Choose based on team capacity and requirements. Many teams start managed and move later.",
+      "tags": [
+        "deployment",
+        "architecture"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement zero-downtime deployments?",
+      "answer": "Run new instances alongside old ones, wait for health checks, then shift traffic and drain the old instances. Use rolling or blue-green strategies. Keep database changes backward compatible. This avoids dropped requests during releases.",
+      "tags": [
+        "deployment",
+        "availability"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying"
+      ]
+    },
+    {
+      "id": "deployment-023",
+      "difficulty": "Advanced",
+      "question": "How do you deploy to the Edge versus a Node server?",
+      "answer": "Edge deployments run close to users with low latency but limited APIs, suitable for middleware, streaming, and light routes. Node servers support full Node APIs and long-running work. You can mix runtimes per route. Choose based on latency needs and dependency support.",
+      "tags": [
+        "edge",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes"
+      ]
+    },
+    {
+      "id": "deployment-024",
+      "difficulty": "Advanced",
+      "question": "How do you manage cache invalidation across a multi-instance deployment?",
+      "answer": "Use a shared cache and tag-based invalidation so revalidateTag affects all instances, not just the one handling the request. For CDNs, purge by path or tag after deploys and mutations. Keep a clear invalidation strategy. Inconsistent caches cause stale content.",
+      "tags": [
+        "caching",
+        "deployment"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "deployment-025",
+      "difficulty": "Advanced",
+      "question": "How do you prepare a Next.js app for a large traffic launch?",
+      "answer": "Load test realistic routes, ensure static content is cached at the CDN, and make instances stateless and horizontally scalable. Tune database connection pooling and rate limits. Have monitoring and a rollback plan ready. Practice the deploy beforehand.",
+      "tags": [
+        "scaling",
+        "launch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    }
+  ]
+}

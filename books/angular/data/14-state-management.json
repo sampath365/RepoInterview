@@ -1,0 +1,385 @@
+{
+  "category": "State Management (NgRx)",
+  "slug": "state-management",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "state-management-001",
+      "difficulty": "Beginner",
+      "question": "What is state management and why does an Angular application need it?",
+      "answer": "State management is how an application stores, updates, and shares data across components. Without a clear strategy, components end up duplicating state and drifting out of sync. A deliberate approach keeps a single source of truth and makes updates predictable.",
+      "tags": [
+        "state-management",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    },
+    {
+      "id": "state-management-002",
+      "difficulty": "Beginner",
+      "question": "What is NgRx?",
+      "answer": "NgRx is a reactive state management library for Angular that follows the Redux pattern with a store, actions, reducers, selectors, and effects. It centralizes state and makes changes traceable through a single flow. It is a good fit for complex, shared state but adds ceremony for simple cases.",
+      "tags": [
+        "ngrx",
+        "store",
+        "overview"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store",
+        "https://ngrx.io/guide/store/actions"
+      ]
+    },
+    {
+      "id": "state-management-003",
+      "difficulty": "Beginner",
+      "question": "What is an action in NgRx?",
+      "answer": "An action is a plain object describing an event that may change state, identified by a type and an optional payload. Actions are created with createAction and dispatched to the store. They express intent rather than the mechanics of the change.",
+      "code": "export const loadUsers = createAction('[Users] Load');\nexport const loadUsersSuccess = createAction(\n  '[Users] Load Success',\n  props<{ users: User[] }>(),\n);",
+      "tags": [
+        "ngrx",
+        "actions"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/actions",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-004",
+      "difficulty": "Beginner",
+      "question": "What is a reducer in NgRx?",
+      "answer": "A reducer is a pure function that takes the current state and an action and returns a new state, never mutating the old one. Reducers are combined with createReducer and on to handle specific actions. Because they are pure, they are easy to test and reason about.",
+      "code": "export const usersReducer = createReducer(\n  initialState,\n  on(loadUsersSuccess, (state, { users }) => ({ ...state, users })),\n);",
+      "tags": [
+        "ngrx",
+        "reducers",
+        "immutability"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/reducers",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-005",
+      "difficulty": "Beginner",
+      "question": "What is a selector in NgRx?",
+      "answer": "A selector is a pure function that derives a slice of state, often with memoization so it only recomputes when its inputs change. Selectors are created with createSelector and composed to build higher-level views of state. They decouple components from the store's shape.",
+      "code": "export const selectUsers = (state: AppState) => state.users;\nexport const selectActiveUsers = createSelector(\n  selectUsers,\n  (users) => users.filter((u) => u.active),\n);",
+      "tags": [
+        "ngrx",
+        "selectors"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/selectors",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-006",
+      "difficulty": "Beginner",
+      "question": "What is the NgRx store?",
+      "answer": "The store holds the application state and is the single source of truth for the slices it manages. Components read from it through selectors and change it by dispatching actions. This unidirectional flow makes state changes predictable and inspectable.",
+      "tags": [
+        "ngrx",
+        "store"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store",
+        "https://ngrx.io/guide/store/architecture"
+      ]
+    },
+    {
+      "id": "state-management-007",
+      "difficulty": "Beginner",
+      "question": "What is an effect in NgRx?",
+      "answer": "An effect listens for dispatched actions and performs side effects such as HTTP calls or navigation, then dispatches new actions with the results. Effects are created with createEffect and keep async work out of reducers. They are registered in the application or feature configuration.",
+      "code": "loadUsers$ = createEffect(() =>\n  this.actions$.pipe(\n    ofType(loadUsers),\n    switchMap(() => this.api.getUsers().pipe(\n      map((users) => loadUsersSuccess({ users })),\n    )),\n  ),\n);",
+      "tags": [
+        "ngrx",
+        "effects",
+        "side-effects"
+      ],
+      "references": [
+        "https://ngrx.io/guide/effects",
+        "https://ngrx.io/guide/store/effects"
+      ]
+    },
+    {
+      "id": "state-management-008",
+      "difficulty": "Beginner",
+      "question": "What are the core principles of the Redux pattern?",
+      "answer": "Redux uses a single source of truth, state that is read-only and only replaced through pure reducers, and changes described by plain action objects. This unidirectional flow makes state changes deterministic and easy to trace. NgRx applies these principles with Angular idioms.",
+      "tags": [
+        "redux",
+        "principles",
+        "ngrx"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/architecture",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-009",
+      "difficulty": "Beginner",
+      "question": "When should you use a store instead of a service with signals?",
+      "answer": "A store is worth its overhead when many features share complex state, when you need time-travel debugging or a strict unidirectional flow, or when state transitions must be auditable. For local or moderately shared state, a service exposing signals is simpler and sufficient. Start simple and adopt a store when the complexity justifies it.",
+      "tags": [
+        "state-management",
+        "signals",
+        "trade-offs"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-010",
+      "difficulty": "Beginner",
+      "question": "How do you install and register NgRx in a standalone application?",
+      "answer": "Install the @ngrx/store package, call provideStore with your reducers, and provideStoreFeatures for lazy features. Effects are registered with provideEffects, and dev tools with provideStoreDevtools. This setup wires the store into the application's dependency injection.",
+      "code": "bootstrapApplication(AppComponent, {\n  providers: [provideStore({ users: usersReducer })],\n});",
+      "tags": [
+        "ngrx",
+        "setup"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/install",
+        "https://ngrx.io/guide/store/configuration"
+      ]
+    },
+    {
+      "id": "state-management-011",
+      "difficulty": "Intermediate",
+      "question": "How do selectors use memoization?",
+      "answer": "createSelector memoizes results based on its input selectors, so the projection only reruns when an input value changes. This avoids recomputing derived data on every store update. Composing selectors keeps expensive derivations efficient and reusable.",
+      "tags": [
+        "ngrx",
+        "selectors",
+        "memoization"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/selectors",
+        "https://ngrx.io/guide/store/architecture"
+      ]
+    },
+    {
+      "id": "state-management-012",
+      "difficulty": "Intermediate",
+      "question": "How do you handle asynchronous work with NgRx effects?",
+      "answer": "An effect uses ofType to react to an action, calls the async operation, and maps the result to a success or failure action. Error handling with catchError keeps the effect stream alive after a failed request. This centralizes side effects and keeps reducers pure.",
+      "tags": [
+        "ngrx",
+        "effects",
+        "async"
+      ],
+      "references": [
+        "https://ngrx.io/guide/effects",
+        "https://ngrx.io/guide/effects/lifecycle"
+      ]
+    },
+    {
+      "id": "state-management-013",
+      "difficulty": "Intermediate",
+      "question": "What is a feature slice in NgRx?",
+      "answer": "A feature slice is a named portion of the store owned by a feature, created with createFeature and registered with provideState. Feature slices keep reducers, selectors, and effects colocated and lazily loaded. They scale better than a single global reducer.",
+      "tags": [
+        "ngrx",
+        "feature",
+        "modularity"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/feature-creators",
+        "https://ngrx.io/guide/store/configuration"
+      ]
+    },
+    {
+      "id": "state-management-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between createAction props and plain payloads?",
+      "answer": "createAction with props produces a strongly typed action creator whose payload is validated at compile time, whereas a hand-written action object relies on convention and casting. Typed creators integrate with reducers and effects for type narrowing. They also support the union type used by ofType.",
+      "tags": [
+        "ngrx",
+        "actions",
+        "typescript"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/actions",
+        "https://ngrx.io/guide/store/reducers"
+      ]
+    },
+    {
+      "id": "state-management-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a reducer?",
+      "answer": "A reducer is a pure function, so a test calls it with a known state and action and asserts the returned state. No TestBed or store setup is required. This simplicity is one of the strongest arguments for keeping logic in reducers.",
+      "code": "const state = reducer(initialState, loadUsersSuccess({ users }));\nexpect(state.users).toEqual(users);",
+      "tags": [
+        "testing",
+        "reducers",
+        "ngrx"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/reducers",
+        "https://ngrx.io/guide/store/testing"
+      ]
+    },
+    {
+      "id": "state-management-016",
+      "difficulty": "Intermediate",
+      "question": "What is ComponentStore and how does it differ from the global store?",
+      "answer": "ComponentStore is a lightweight, local state container scoped to a component or a service, with its own updater and selector methods. It is simpler than the global store and well suited to feature-local state. The global store is better for state shared across many parts of the application.",
+      "tags": [
+        "component-store",
+        "ngrx",
+        "local-state"
+      ],
+      "references": [
+        "https://ngrx.io/guide/component-store",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-017",
+      "difficulty": "Intermediate",
+      "question": "How does NgRx Entity help manage collections?",
+      "answer": "NgRx Entity provides adapters that store collections in a normalized form with entities and ids, plus generated reducers and selectors for common operations. This avoids hand-writing lookup and update logic for lists. It improves performance for large collections by avoiding array scans.",
+      "code": "export const adapter = createEntityAdapter<User>();\nexport const { selectAll } = adapter.getSelectors();",
+      "tags": [
+        "ngrx",
+        "entity",
+        "collections"
+      ],
+      "references": [
+        "https://ngrx.io/guide/entity",
+        "https://ngrx.io/guide/entity/adapter"
+      ]
+    },
+    {
+      "id": "state-management-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the actions stream in effects?",
+      "answer": "Effects receive a stream of every dispatched action and filter it with ofType to react to specific ones. This stream is the connection between the store and side-effect logic. It also lets effects observe sequences of actions for coordination.",
+      "tags": [
+        "ngrx",
+        "effects",
+        "actions"
+      ],
+      "references": [
+        "https://ngrx.io/guide/effects",
+        "https://ngrx.io/guide/store/actions"
+      ]
+    },
+    {
+      "id": "state-management-019",
+      "difficulty": "Intermediate",
+      "question": "How do you connect a component to the NgRx store?",
+      "answer": "Inject the store, select state with a selector through store.select or the select signal, and dispatch actions in response to user events. Reading state through selectors keeps the component independent of the store's internal shape. The signal-based select integrates with signal inputs and computed.",
+      "code": "readonly users = this.store.selectSignal(selectActiveUsers);\nsave(u: User) { this.store.dispatch(saveUser({ user: u })); }",
+      "tags": [
+        "ngrx",
+        "store",
+        "components"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store",
+        "https://ngrx.io/guide/store/selectors"
+      ]
+    },
+    {
+      "id": "state-management-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle loading and error state in a store?",
+      "answer": "Model it explicitly in the feature state, for example with status and error fields updated by success and failure actions. Selectors then expose flags the UI can bind to. This keeps asynchronous UI state consistent and testable instead of scattered across components.",
+      "tags": [
+        "ngrx",
+        "state-shape",
+        "async"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store/reducers",
+        "https://ngrx.io/guide/effects"
+      ]
+    },
+    {
+      "id": "state-management-021",
+      "difficulty": "Advanced",
+      "question": "How do effects manage their lifecycle and long-lived streams?",
+      "answer": "Effects are long-lived streams registered with the store, so each must keep emitting after errors and avoid completing prematurely. Use catchError inside the inner Observable so the outer stream survives, and scope feature effects so they are created and destroyed with the feature. Managing this carefully prevents effects that stop working after one failure.",
+      "tags": [
+        "ngrx",
+        "effects",
+        "lifecycle"
+      ],
+      "references": [
+        "https://ngrx.io/guide/effects/lifecycle",
+        "https://ngrx.io/guide/effects"
+      ]
+    },
+    {
+      "id": "state-management-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of a global store versus signals and services?",
+      "answer": "A global store provides a strict, auditable flow and powerful tooling, but it introduces actions, reducers, and selectors that add boilerplate and a learning curve. Signals with services are far simpler and now cover most shared-state needs with fine-grained updates. Teams increasingly reserve a full store for genuinely complex, cross-cutting state.",
+      "tags": [
+        "state-management",
+        "signals",
+        "architecture"
+      ],
+      "references": [
+        "https://ngrx.io/guide/store",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "state-management-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep the store performant with large collections?",
+      "answer": "Normalize collections with NgRx Entity so lookups and updates avoid scanning arrays, and keep selectors memoized so components only recompute when the relevant slice changes. Avoid dispatching high-frequency actions from every keystroke; debounce or batch them. These practices keep store updates cheap even as data grows.",
+      "tags": [
+        "ngrx",
+        "performance",
+        "entity"
+      ],
+      "references": [
+        "https://ngrx.io/guide/entity",
+        "https://ngrx.io/guide/store/selectors"
+      ]
+    },
+    {
+      "id": "state-management-024",
+      "difficulty": "Advanced",
+      "question": "How does NgRx Signals compare with the classic store?",
+      "answer": "NgRx Signals is a signal-based store that uses signals for state and computed values, which reduces boilerplate and integrates directly with Angular's reactivity. The classic store uses actions, reducers, and RxJS and remains valuable where a strict, event-sourced flow is required. The choice depends on how much process and tooling the application needs.",
+      "tags": [
+        "ngrx",
+        "signals",
+        "comparison"
+      ],
+      "references": [
+        "https://ngrx.io/guide/signals",
+        "https://ngrx.io/guide/store"
+      ]
+    },
+    {
+      "id": "state-management-025",
+      "difficulty": "Advanced",
+      "question": "How would you decide on a state management strategy for a new application?",
+      "answer": "Start with local component state and signals, lift shared state into services, and introduce a store only when cross-cutting complexity, auditability, or tooling needs justify it. Keep a single source of truth for each piece of state and define clear boundaries between features. Reassessing the choice as the application grows avoids both premature and missing structure.",
+      "tags": [
+        "architecture",
+        "state-management",
+        "strategy"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://ngrx.io/guide/store"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "category": "Indexes & Execution Plans",
+  "slug": "indexes",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "indexes-001",
+      "difficulty": "Beginner",
+      "question": "What is an index and why does it speed up queries?",
+      "answer": "An index is a separate structure, usually a B-tree, that maps key values to the rows containing them, so the engine can find data without scanning the whole table. Just as a book index lets you jump to a page, a SQL Server index lets the optimizer seek directly to matching rows. The trade-off is extra storage and slower writes, because every insert, update, and delete must maintain the indexes.",
+      "tags": ["index", "performance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/indexes"]
+    },
+    {
+      "id": "indexes-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a clustered and a nonclustered index?",
+      "answer": "A clustered index defines the physical order of the table rows and there can be only one per table. A nonclustered index is a separate structure with its own key order that stores the clustering key as a pointer back to the row. Both are B-trees, but only the clustered index is the table itself.",
+      "tags": ["clustered", "nonclustered"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/clustered-and-nonclustered-indexes-described"]
+    },
+    {
+      "id": "indexes-003",
+      "difficulty": "Beginner",
+      "question": "What is a heap?",
+      "answer": "A heap is a table with no clustered index, so its rows are stored in no particular order and are located through a row identifier. Without a clustered index, range queries and ordering are less efficient and forwarded records can appear after updates. Many workloads benefit from a well-chosen clustered index instead of a heap.",
+      "tags": ["heap", "storage"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/heaps-tables-without-clustered-indexes"]
+    },
+    {
+      "id": "indexes-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an index seek and an index scan?",
+      "answer": "A seek navigates the B-tree directly to the matching key range, reading only the pages it needs, and is fast for selective predicates. A scan reads the entire index or table, which is expensive on large tables but reasonable when you need most rows. The optimizer chooses based on selectivity, and you can see which it picked in the execution plan.",
+      "tags": ["seek", "scan"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-index-design-guide"]
+    },
+    {
+      "id": "indexes-005",
+      "difficulty": "Beginner",
+      "question": "What is a key lookup and why is it sometimes slow?",
+      "answer": "A key lookup occurs when a nonclustered index provides some but not all of the columns a query needs, so the engine performs a seek on the index and then looks up the remaining columns from the clustered index or heap. Each lookup is a random read, and on many rows these add up quickly. Covering the query with INCLUDE columns eliminates key lookups.",
+      "tags": ["key-lookup", "covering"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/create-indexes-with-included-columns"]
+    },
+    {
+      "id": "indexes-006",
+      "difficulty": "Beginner",
+      "question": "What is a covering index?",
+      "answer": "A covering index contains all the columns a query needs, either as key columns or as non-key INCLUDE columns, so the query can be satisfied without touching the base table. This avoids key lookups and reduces I/O. INCLUDE columns are not part of the sort order, so they add no cost to seek navigation but do increase index size.",
+      "code": "CREATE NONCLUSTERED INDEX IX_Orders_Customer\nON dbo.Orders (CustomerId)\nINCLUDE (OrderDate, Total);",
+      "tags": ["covering-index", "include"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/create-indexes-with-included-columns"]
+    },
+    {
+      "id": "indexes-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a unique index and a primary key?",
+      "answer": "A primary key enforces uniqueness and creates a unique index, and by default it becomes the clustered index if none exists. A unique index enforces uniqueness but does not have to be the primary key, and a table can have many unique indexes. Both allow only one NULL per key unless you filter the index.",
+      "tags": ["unique", "primary-key"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/create-unique-indexes"]
+    },
+    {
+      "id": "indexes-008",
+      "difficulty": "Beginner",
+      "question": "What is a composite index and how does column order matter?",
+      "answer": "A composite index is built on more than one column, and the order of columns in the key determines which queries can seek it. A query can use the index if it filters on a leading prefix of the key, so an index on (A, B) supports predicates on A and on A and B, but not on B alone. Put the most selective and most frequently filtered column first.",
+      "code": "CREATE INDEX IX_Orders_Cust_Date ON dbo.Orders (CustomerId, OrderDate);",
+      "tags": ["composite", "key-order"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-index-design-guide"]
+    },
+    {
+      "id": "indexes-009",
+      "difficulty": "Beginner",
+      "question": "How do you view the indexes on a table?",
+      "answer": "You can query the sys.indexes catalog view joined to sys.index_columns and sys.columns, or use sp_helpindex for a quick summary. In SSMS, expanding the table in Object Explorer shows its indexes. Knowing the exact key and included columns is essential when troubleshooting a query.",
+      "code": "EXEC sp_helpindex 'dbo.Orders';",
+      "tags": ["metadata", "indexes"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-catalog-views/sys-indexes-transact-sql"]
+    },
+    {
+      "id": "indexes-010",
+      "difficulty": "Beginner",
+      "question": "What is an execution plan?",
+      "answer": "An execution plan is the set of operators the optimizer chose to satisfy a query, shown as a tree read from right to left. It reveals whether each step is a seek or a scan, where sorts and lookups happen, and the estimated cost of each operator. Reading plans is the core skill for tuning T-SQL.",
+      "tags": ["execution-plan", "tuning"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/execution-plans"]
+    },
+    {
+      "id": "indexes-011",
+      "difficulty": "Intermediate",
+      "question": "What is a filtered index and when is it useful?",
+      "answer": "A filtered index includes only the rows that satisfy a WHERE predicate, making it smaller and cheaper to maintain than a full index. It is ideal for columns that are mostly NULL or for queries that always target a subset, such as active or unprocessed rows. The optimizer uses it only when the query predicate logically implies the filter.",
+      "code": "CREATE INDEX IX_Orders_Open\nON dbo.Orders (CustomerId)\nWHERE Status = 'Open';",
+      "tags": ["filtered-index", "selectivity"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/create-filtered-indexes"]
+    },
+    {
+      "id": "indexes-012",
+      "difficulty": "Intermediate",
+      "question": "What is fragmentation and how do you deal with it?",
+      "answer": "Fragmentation is the out-of-order state of index pages caused by inserts, updates, and deletes, measured as logical fragmentation and page density. It can increase I/O because reads span more pages. Reorganize lightly fragmented indexes and rebuild heavily fragmented ones, but avoid doing this too often because rebuilds are expensive.",
+      "code": "ALTER INDEX IX_Orders_Customer ON dbo.Orders REBUILD;",
+      "tags": ["fragmentation", "maintenance"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/reorganize-and-rebuild-indexes"]
+    },
+    {
+      "id": "indexes-013",
+      "difficulty": "Intermediate",
+      "question": "What is fill factor and why does it matter?",
+      "answer": "Fill factor sets the percentage of each index page that is filled when the index is built or rebuilt, leaving free space for future inserts. A lower fill factor reduces page splits for insert-heavy workloads at the cost of larger indexes and more pages to read. The default is 100 for the clustered index, meaning pages are filled completely.",
+      "tags": ["fill-factor", "page-splits"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/specify-fill-factor-for-an-index"]
+    },
+    {
+      "id": "indexes-014",
+      "difficulty": "Intermediate",
+      "question": "How does the clustered key affect nonclustered indexes?",
+      "answer": "The clustering key is appended to every nonclustered index as the row locator, so a wide or non-unique clustered key bloats every nonclustered index. A wide key also makes the clustered index deeper and increases I/O. Keep the clustered key narrow, static, and ever-increasing, such as an identity or sequential key.",
+      "tags": ["clustered-key", "nonclustered"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/clustered-and-nonclustered-indexes-described"]
+    },
+    {
+      "id": "indexes-015",
+      "difficulty": "Intermediate",
+      "question": "What are included columns and how do they differ from key columns?",
+      "answer": "Key columns define the sort order and are used for seeking and range scans, while included columns are stored only at the leaf level to cover the query. Included columns are not sorted and do not count toward the 900-byte key limit, though they do add to index size. Use INCLUDE to add output columns without changing the seek order.",
+      "tags": ["include", "covering"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/create-indexes-with-included-columns"]
+    },
+    {
+      "id": "indexes-016",
+      "difficulty": "Intermediate",
+      "question": "How do you find missing indexes?",
+      "answer": "SQL Server records suggestions in the missing index dynamic management views, and SSMS shows them as a green hint in execution plans. Treat them as hints, not orders, because they are based on a single query and can lead to too many overlapping indexes. Validate each suggestion against the whole workload before creating it.",
+      "code": "SELECT * FROM sys.dm_db_missing_index_details;",
+      "tags": ["missing-index", "dmv"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-missing-index-details-transact-sql"]
+    },
+    {
+      "id": "indexes-017",
+      "difficulty": "Intermediate",
+      "question": "How do you find unused indexes?",
+      "answer": "Query the index usage statistics dynamic management views, which track seeks, scans, and lookups since the last restart or index rebuild. An index with zero reads over a long period is a candidate for removal. Be careful with indexes that support uniqueness or foreign keys, because they may be needed even if not read.",
+      "code": "SELECT OBJECT_NAME(i.object_id) AS Tbl, i.name, s.user_seeks, s.user_scans\nFROM sys.indexes i\nJOIN sys.dm_db_index_usage_stats s\n  ON s.object_id = i.object_id AND s.index_id = i.index_id;",
+      "tags": ["unused-index", "dmv"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-index-usage-stats-transact-sql"]
+    },
+    {
+      "id": "indexes-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between estimated and actual execution plans?",
+      "answer": "An estimated plan is produced by compiling the query without running it and shows the optimizer's expectations. An actual plan is captured while the query runs and adds runtime details such as actual row counts, warnings, and operator times. Comparing estimated and actual rows is the fastest way to spot cardinality estimation problems.",
+      "tags": ["execution-plan", "cardinality"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/display-an-actual-execution-plan"]
+    },
+    {
+      "id": "indexes-019",
+      "difficulty": "Intermediate",
+      "question": "How do statistics help the optimizer use indexes?",
+      "answer": "Statistics describe the distribution of values in one or more columns, including a histogram, and the optimizer uses them to estimate row counts for each operator. Accurate statistics lead to correct seek versus scan and join choices. Out-of-date statistics are a leading cause of bad plans, so keep auto-update on and update manually after large loads.",
+      "tags": ["statistics", "optimizer"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/statistics/statistics"]
+    },
+    {
+      "id": "indexes-020",
+      "difficulty": "Intermediate",
+      "question": "What is an index intersection and when does SQL Server use one?",
+      "answer": "Index intersection combines two or more nonclustered indexes on the same table to satisfy a query that no single index covers, joining them on the row locator. It can avoid creating a wide composite index. It is usually chosen only when it is cheaper than a scan, and it may not survive parameter changes.",
+      "tags": ["index-intersection", "optimizer"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-index-design-guide"]
+    },
+    {
+      "id": "indexes-021",
+      "difficulty": "Advanced",
+      "question": "What is a page split and how does it affect performance?",
+      "answer": "A page split occurs when a new row does not fit on its target page, so the engine splits the page into two and moves roughly half the rows, allocating a new page. This fragments the index and costs I/O. A monotonic clustered key such as an identity avoids mid-page splits because new rows always go to the end.",
+      "tags": ["page-split", "fragmentation"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/specify-fill-factor-for-an-index"]
+    },
+    {
+      "id": "indexes-022",
+      "difficulty": "Advanced",
+      "question": "How does the optimizer decide between a seek and a scan?",
+      "answer": "It compares the estimated cost of reading a small fraction of rows via a seek plus lookups against reading the whole structure in a scan. When the predicate is not selective, a scan is cheaper because lookups would be too numerous. This is why a query returning most of a table correctly uses a scan even when an index exists.",
+      "tags": ["seek-scan", "optimizer"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-index-design-guide"]
+    },
+    {
+      "id": "indexes-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a nonclustered columnstore index and a B-tree index?",
+      "answer": "A columnstore index stores data column by column, compresses it heavily, and processes it in batches, giving large gains on analytical scans and aggregations over big tables. A B-tree index is optimized for seeks and small row lookups in transactional workloads. Columnstore indexes are ideal for data warehousing and reporting, often as a clustered columnstore for fact tables.",
+      "tags": ["columnstore", "analytics"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/columnstore-indexes-overview"]
+    },
+    {
+      "id": "indexes-024",
+      "difficulty": "Advanced",
+      "question": "How does partition alignment interact with indexes?",
+      "answer": "A partitioned table's clustered index can be aligned to the same partitioning scheme so each index partition maps to a table partition, enabling partition elimination and efficient switching. A non-aligned index is built over all partitions as one unit, which hurts maintenance and partition switching. Align indexes on the partitioning column for the best manageability.",
+      "tags": ["partitioning", "index-alignment"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/partitions/partitioned-tables-and-indexes"]
+    },
+    {
+      "id": "indexes-025",
+      "difficulty": "Advanced",
+      "question": "What are the key design guidelines for choosing a clustered index key?",
+      "answer": "Choose a key that is unique, narrow, static, and ever-increasing to avoid page splits and keep nonclustered indexes small. Avoid wide keys such as a long string or a random GUID, which bloat every nonclustered index and fragment the clustered index. An identity column or a sequential integer is usually the best choice.",
+      "tags": ["clustered-index", "design"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-index-design-guide"]
+    }
+  ]
+}

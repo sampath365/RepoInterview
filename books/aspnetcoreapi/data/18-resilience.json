@@ -1,0 +1,339 @@
+{
+  "category": "HttpClientFactory & Resilience",
+  "slug": "resilience",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "resilience-001",
+      "difficulty": "Beginner",
+      "question": "Why should you not create a new HttpClient per request?",
+      "answer": "A new HttpClient per request creates a new socket connection pool each time, and sockets in TIME_WAIT accumulate until ports are exhausted, causing SocketException under load. Reusing a single static HttpClient fixes that but ignores DNS changes. IHttpClientFactory solves both problems by pooling handlers and rotating them.",
+      "tags": [
+        "http-client",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ]
+    },
+    {
+      "id": "resilience-002",
+      "difficulty": "Beginner",
+      "question": "What is IHttpClientFactory?",
+      "answer": "IHttpClientFactory creates HttpClient instances configured by name or type, managing and pooling the underlying handlers so sockets are reused efficiently. It integrates with dependency injection and supports delegating handlers for cross-cutting concerns. It is the recommended way to make outbound HTTP calls in ASP.NET Core.",
+      "tags": [
+        "http-client",
+        "factory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ],
+      "code": "builder.Services.AddHttpClient(\"github\", c =>\n    c.BaseAddress = new Uri(\"https://api.github.com\"));"
+    },
+    {
+      "id": "resilience-003",
+      "difficulty": "Beginner",
+      "question": "What is a typed client?",
+      "answer": "A typed client is a class that takes an HttpClient in its constructor and exposes strongly typed methods for a specific API. Registering it with AddHttpClient<T> wires the client and its configuration through DI. Typed clients centralize endpoint paths and are easy to mock in tests.",
+      "tags": [
+        "http-client",
+        "typed-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ],
+      "code": "public class GitHubClient(HttpClient http)\n{\n    public Task<Repo?> GetRepoAsync(string name) =>\n        http.GetFromJsonAsync<Repo>($\"/repos/{name}\");\n}"
+    },
+    {
+      "id": "resilience-004",
+      "difficulty": "Beginner",
+      "question": "What is a named client?",
+      "answer": "A named client registers a configuration under a string name and resolves it with CreateClient(name), which is useful when the configuration varies per call site and you do not need a wrapper class. It is simpler than a typed client but relies on string names. Choose named clients for occasional calls and typed clients for reused ones.",
+      "tags": [
+        "http-client",
+        "named-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ],
+      "code": "var client = factory.CreateClient(\"github\");"
+    },
+    {
+      "id": "resilience-005",
+      "difficulty": "Beginner",
+      "question": "What is a DelegatingHandler used for?",
+      "answer": "A DelegatingHandler sits in the HTTP message pipeline and can inspect or modify outgoing requests and incoming responses, similar to middleware for outbound calls. It is used for adding authentication headers, logging, or resilience policies. Handlers are chained in the order they are added.",
+      "tags": [
+        "http-client",
+        "handlers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ],
+      "code": "class AuthHandler : DelegatingHandler\n{\n    protected override Task<HttpResponseMessage> SendAsync(\n        HttpRequestMessage r, CancellationToken ct) => base.SendAsync(r, ct);\n}"
+    },
+    {
+      "id": "resilience-006",
+      "difficulty": "Beginner",
+      "question": "What is a transient fault?",
+      "answer": "A transient fault is a temporary failure such as a network blip, a timeout, or a 503 that is likely to succeed if retried. Retrying with backoff handles these gracefully. Permanent faults such as 400 or 404 should not be retried.",
+      "tags": [
+        "resilience",
+        "transient"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-007",
+      "difficulty": "Beginner",
+      "question": "What is a retry policy?",
+      "answer": "A retry policy re-executes a failed operation a limited number of times with a delay between attempts, ideally with exponential backoff and jitter. It improves success rates for transient failures. Retry only idempotent operations and cap the total attempts.",
+      "tags": [
+        "resilience",
+        "retry"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-008",
+      "difficulty": "Beginner",
+      "question": "What is a circuit breaker?",
+      "answer": "A circuit breaker stops calling a failing dependency after a threshold of failures, failing fast until a trial period elapses. This prevents cascading failures and gives the dependency time to recover. It complements retries by avoiding pointless calls during an outage.",
+      "tags": [
+        "resilience",
+        "circuit-breaker"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-009",
+      "difficulty": "Beginner",
+      "question": "What is a timeout policy?",
+      "answer": "A timeout policy cancels an operation that takes too long, freeing resources and returning a prompt error instead of hanging. Timeouts should be shorter than the caller's timeout so the failure surfaces meaningfully. Combine them with cancellation tokens for cooperative cancellation.",
+      "tags": [
+        "resilience",
+        "timeout"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-010",
+      "difficulty": "Beginner",
+      "question": "Why is exponential backoff with jitter important?",
+      "answer": "Exponential backoff increases the delay between retries so a struggling service is not hammered, and jitter randomizes delays so many clients do not retry in lockstep. Without jitter, synchronized retries can create a thundering herd. This combination greatly improves recovery behavior.",
+      "tags": [
+        "resilience",
+        "retry"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-011",
+      "difficulty": "Intermediate",
+      "question": "How do you add resilience to an HttpClient?",
+      "answer": "In .NET 8 and later use AddStandardResilienceHandler or AddResilienceHandler with Microsoft.Extensions.Http.Resilience to attach a pipeline of retry, timeout, circuit breaker, and rate limiter strategies. This wires the policies into the client's handler chain. It replaces manual Polly configuration in most cases.",
+      "tags": [
+        "resilience",
+        "http-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ],
+      "code": "builder.Services.AddHttpClient(\"api\")\n    .AddStandardResilienceHandler();"
+    },
+    {
+      "id": "resilience-012",
+      "difficulty": "Intermediate",
+      "question": "What does the standard resilience handler include?",
+      "answer": "The standard handler composes a rate limiter, a total request timeout, retries with exponential backoff and jitter, a circuit breaker, and an attempt timeout, in a recommended order. This gives a sensible default that handles most transient failures. You can tune the individual options or build a custom pipeline.",
+      "tags": [
+        "resilience",
+        "http-client"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/http-resilience"
+      ]
+    },
+    {
+      "id": "resilience-013",
+      "difficulty": "Intermediate",
+      "question": "How do you configure retry options for a typed client?",
+      "answer": "Use AddStandardResilienceHandler and adjust the Retry options such as MaxRetryAttempts, Delay, and BackoffType, or provide a custom options callback. Keep attempts small so latency stays acceptable. Consider the total timeout when setting delays.",
+      "tags": [
+        "resilience",
+        "retry"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/http-resilience"
+      ],
+      "code": ".AddStandardResilienceHandler(o =>\n{\n    o.Retry.MaxRetryAttempts = 3;\n});"
+    },
+    {
+      "id": "resilience-014",
+      "difficulty": "Intermediate",
+      "question": "Which HTTP status codes should trigger a retry?",
+      "answer": "Retry on transient server errors such as 500, 502, 503, and 504, and on request timeouts and connection failures, but not on 400, 401, 403, 404, or other client errors. The standard handler encodes these rules by default. Retrying non-idempotent requests is risky unless the server supports idempotency keys.",
+      "tags": [
+        "resilience",
+        "retry"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid retrying non-idempotent operations?",
+      "answer": "Only enable retries for GET and other idempotent methods, or require an idempotency key so a repeated POST has no additional effect. The default retry strategy already restricts to safe methods unless configured otherwise. Always verify the downstream contract supports idempotency.",
+      "tags": [
+        "resilience",
+        "idempotency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-016",
+      "difficulty": "Intermediate",
+      "question": "How do you propagate a correlation identifier to downstream calls?",
+      "answer": "Add a DelegatingHandler or a resilience handler that reads the current Activity or a correlation header from the incoming request and sets it on the outgoing request. This keeps traces connected across services. OpenTelemetry propagates W3C trace context automatically when instrumented.",
+      "tags": [
+        "http-client",
+        "tracing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ],
+      "code": "req.Headers.TryAddWithoutValidation(\"X-Correlation-Id\", id);"
+    },
+    {
+      "id": "resilience-017",
+      "difficulty": "Intermediate",
+      "question": "What is hedging and when is it appropriate?",
+      "answer": "Hedging issues the same request to multiple endpoints and uses the fastest successful response, trading extra load for lower tail latency. It is appropriate only for idempotent reads against redundant replicas. The standard hedging strategy in the resilience library supports this pattern.",
+      "tags": [
+        "resilience",
+        "hedging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test resilience policies?",
+      "answer": "Use the library's test utilities to simulate failures and assert that retries, circuit breaking, and timeouts behave as configured. You can also run integration tests against a stub service that returns failures on demand. Verify that a permanent error is not retried and that the circuit opens as expected.",
+      "tags": [
+        "testing",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-019",
+      "difficulty": "Intermediate",
+      "question": "How do you log and meter outbound HTTP calls?",
+      "answer": "Add logging and metrics to a DelegatingHandler or rely on the resilience library's telemetry, which emits retry and circuit breaker events. Track latency, failure rates, and retry counts per dependency. This data is essential for tuning policies.",
+      "tags": [
+        "resilience",
+        "observability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-requests"
+      ]
+    },
+    {
+      "id": "resilience-020",
+      "difficulty": "Intermediate",
+      "question": "What is bulkhead isolation?",
+      "answer": "Bulkhead isolation limits concurrent calls to a dependency so a slow dependency cannot consume all threads or connections and take down unrelated features. The rate limiter and concurrency limiter strategies in the resilience library implement this. It contains the blast radius of a failing dependency.",
+      "tags": [
+        "resilience",
+        "bulkhead"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-021",
+      "difficulty": "Advanced",
+      "question": "How do you combine resilience policies in the correct order?",
+      "answer": "Order matters: place an outer timeout around the whole operation, then retries, then a circuit breaker, then per-attempt timeout and rate limiting, so the breaker sees individual attempts while the outer timeout bounds total time. The standard handler encodes a proven order. Deviating requires understanding the interaction of each strategy.",
+      "tags": [
+        "resilience",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/http-resilience"
+      ]
+    },
+    {
+      "id": "resilience-022",
+      "difficulty": "Advanced",
+      "question": "How do you avoid retry storms across a fleet?",
+      "answer": "Use exponential backoff with jitter, cap attempts, add a circuit breaker, and centralize the policy in a shared library so all services behave alike. Consider server-side rate limiting and load shedding. Coordinated backoff prevents a fleet from amplifying an outage.",
+      "tags": [
+        "resilience",
+        "distributed"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle partial failures when calling several dependencies?",
+      "answer": "Call independent dependencies concurrently with a timeout each, aggregate results, and degrade gracefully by returning partial data with a clear indicator rather than failing the whole request. Isolate each dependency's failure with its own breaker. This keeps one slow dependency from breaking the endpoint.",
+      "tags": [
+        "resilience",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-024",
+      "difficulty": "Advanced",
+      "question": "How do you tune circuit breaker thresholds?",
+      "answer": "Base the failure ratio and minimum throughput on observed traffic, and set the break duration so the dependency has time to recover. Too sensitive and the breaker trips on normal noise, too lenient and it provides no protection. Tune with real metrics rather than defaults.",
+      "tags": [
+        "resilience",
+        "circuit-breaker"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "resilience-025",
+      "difficulty": "Advanced",
+      "question": "How do you implement load shedding when the API is overloaded?",
+      "answer": "Return 503 with Retry-After when queues or concurrency limits are exceeded, reject low-priority work first, and combine rate limiting with bounded queues. Load shedding protects the system's ability to serve accepted requests. It is preferable to letting everything time out.",
+      "tags": [
+        "resilience",
+        "availability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/rate-limit"
+      ]
+    }
+  ]
+}

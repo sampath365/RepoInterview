@@ -1,0 +1,218 @@
+{
+  "category": "Factory Method & Abstract Factory",
+  "slug": "factory",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "factory-001",
+      "difficulty": "Beginner",
+      "question": "What is the Factory Method pattern?",
+      "answer": "Factory Method defines an interface for creating an object but lets subclasses or an overridable method decide which concrete type to instantiate. The client depends on the product abstraction and does not name concrete classes. This defers the creation decision and makes adding new product types a matter of adding a new factory.",
+      "tags": ["factory-method", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "factory-002",
+      "difficulty": "Beginner",
+      "question": "What is the Abstract Factory pattern?",
+      "answer": "Abstract Factory provides an interface for creating families of related or dependent objects without specifying their concrete classes. Each concrete factory produces a consistent family, such as Windows or macOS widgets. Clients use only the factory interface, so swapping a family is a single change.",
+      "tags": ["abstract-factory", "creational"],
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "factory-003",
+      "difficulty": "Beginner",
+      "question": "What is a simple factory and how does it differ from Factory Method?",
+      "answer": "A simple factory is a single class with a method that returns a product based on input, and it is not one of the GoF patterns. Factory Method is a GoF pattern that uses inheritance or an overridable hook to defer creation. The simple factory centralizes creation but must be edited when a new product is added.",
+      "tags": ["factory-method", "simple-factory"],
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "factory-004",
+      "difficulty": "Beginner",
+      "question": "Why use a factory instead of calling new directly?",
+      "answer": "A factory decouples the caller from concrete types, so implementations can change or vary without touching call sites. It centralizes construction logic such as validation, caching, and configuration. This also makes the code easier to test because a fake factory can be substituted.",
+      "tags": ["factory", "decoupling"],
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "factory-005",
+      "difficulty": "Beginner",
+      "question": "What does the product interface represent in a factory pattern?",
+      "answer": "The product interface is the abstraction that all created objects implement and that clients depend on. It exposes the behavior clients need without revealing concrete details. Keeping the interface narrow makes it easy to add new implementations behind the factory.",
+      "tags": ["factory", "interfaces"],
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "factory-006",
+      "difficulty": "Beginner",
+      "question": "How does the .NET DI container act as a factory?",
+      "answer": "You register an abstraction with an implementation, and the container resolves instances on demand, which is a configurable factory. Lifetimes control whether the factory returns a new or shared instance. This removes manual new calls from application code.",
+      "tags": ["factory", "dependency-injection"],
+      "code": "builder.Services.AddSingleton<INotifier, EmailNotifier>();\nbuilder.Services.AddSingleton<INotifier, SmsNotifier>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "factory-007",
+      "difficulty": "Beginner",
+      "question": "What is a factory delegate in .NET DI?",
+      "answer": "A factory delegate is a lambda registered with the container that produces the service instance. It lets you run custom logic, choose a concrete type at runtime, or inject values not available to the container. This is the most direct way to implement Factory Method with DI.",
+      "tags": ["factory", "dependency-injection"],
+      "code": "builder.Services.AddSingleton<IClock>(_ => new SystemClock(TimeProvider.System));",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "factory-008",
+      "difficulty": "Beginner",
+      "question": "What is a keyed service and how does it relate to factories?",
+      "answer": "Keyed services let you register and resolve multiple implementations of the same interface distinguished by a key. It is a built-in way to select a concrete variant without writing your own factory. You resolve a specific implementation with GetRequiredKeyedService using the key.",
+      "tags": ["factory", "keyed-services"],
+      "code": "builder.Services.AddKeyedSingleton<INotifier, EmailNotifier>(\"email\");\nvar n = provider.GetRequiredKeyedService<INotifier>(\"email\");",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "factory-009",
+      "difficulty": "Beginner",
+      "question": "How does a factory help with unit testing?",
+      "answer": "Because callers depend on an abstraction produced by the factory, a test can inject a fake factory that returns a stub product. This isolates the code under test from real construction and external resources. It also lets tests force edge-case products without complex setup.",
+      "tags": ["factory", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "factory-010",
+      "difficulty": "Beginner",
+      "question": "What is a static factory method and what are its benefits?",
+      "answer": "A static factory method is a public static method such as Create or From that returns an instance of the class. It can validate inputs, cache instances, or return a subtype, and it reads clearly with a descriptive name. It cannot be overridden, so it is not a substitute for an injectable factory when polymorphism is needed.",
+      "tags": ["factory", "static"],
+      "code": "public sealed class Money\n{\n    private Money(decimal amount) => Amount = amount;\n    public decimal Amount { get; }\n    public static Money FromDecimal(decimal value) => new(value);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/factory"]
+    },
+    {
+      "id": "factory-011",
+      "difficulty": "Intermediate",
+      "question": "When would you choose Abstract Factory over Factory Method?",
+      "answer": "Choose Abstract Factory when you must create families of related products that should be used together, such as a themed UI toolkit. Factory Method creates a single product and leaves the family relationship unmanaged. If the products must stay consistent, the abstract factory guarantees that.",
+      "tags": ["abstract-factory", "factory-method"],
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "factory-012",
+      "difficulty": "Intermediate",
+      "question": "How do you add a new product family to an Abstract Factory design?",
+      "answer": "Adding a new family means writing a new concrete factory that implements every creation method for that family. Existing clients do not change because they use the factory interface. The trade-off is that adding a new product type to the interface requires updating all factories.",
+      "tags": ["abstract-factory", "extensibility"],
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "factory-013",
+      "difficulty": "Intermediate",
+      "question": "What is the main drawback of the Abstract Factory pattern?",
+      "answer": "Because the factory interface lists every product, adding a new product type forces changes in the interface and all concrete factories. This is the opposite of the Open/Closed ideal for that dimension. It is worth it only when families must stay consistent and product types are relatively stable.",
+      "tags": ["abstract-factory", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "factory-014",
+      "difficulty": "Intermediate",
+      "question": "How do you select a factory implementation at runtime in ASP.NET Core?",
+      "answer": "Register the concrete factories with the container and inject them into a selector, or use keyed services and resolve by a key derived from configuration. The selector returns the right factory based on a runtime value such as a tenant or a feature flag. This keeps selection logic in one place.",
+      "tags": ["abstract-factory", "aspnet"],
+      "code": "public sealed class ExporterFactory(IEnumerable<IExporter> exporters)\n{\n    public IExporter For(string format) =>\n        exporters.First(e => e.Format == format);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "factory-015",
+      "difficulty": "Intermediate",
+      "question": "How does IHttpClientFactory apply the factory pattern?",
+      "answer": "IHttpClientFactory is an abstract factory that creates configured HttpClient instances while managing the underlying handler pool. It solves socket exhaustion and lets you define named or typed clients with shared configuration. Application code asks the factory for a client instead of constructing one.",
+      "tags": ["factory", "httpclient"],
+      "code": "builder.Services.AddHttpClient(\"github\", c =>\n    c.BaseAddress = new Uri(\"https://api.github.com/\"));",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/httpclient-factory"]
+    },
+    {
+      "id": "factory-016",
+      "difficulty": "Intermediate",
+      "question": "How does ILoggerFactory relate to the Abstract Factory pattern?",
+      "answer": "ILoggerFactory creates ILogger instances, often parameterized by category, and manages the set of logging providers. It is a factory that returns loggers sharing the same provider configuration. This lets components obtain a logger without knowing how providers are wired.",
+      "tags": ["factory", "logging"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/logging"]
+    },
+    {
+      "id": "factory-017",
+      "difficulty": "Intermediate",
+      "question": "What is a typed factory interface and when do you define one?",
+      "answer": "A typed factory interface is a small interface like IOrderFactory with methods that return specific abstractions. You define one when the container cannot easily supply a runtime parameter, such as an id needed at creation time. The factory is registered with DI and injected where the parameter is known.",
+      "tags": ["factory", "dependency-injection"],
+      "code": "public interface IOrderFactory\n{\n    Order Create(CustomerId customer, IReadOnlyList<Line> lines);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "factory-018",
+      "difficulty": "Intermediate",
+      "question": "How does ActivatorUtilities help create objects with DI-injected dependencies?",
+      "answer": "ActivatorUtilities.CreateInstance builds an object using the container for registered dependencies while allowing you to pass additional constructor arguments. This is useful for factories that need runtime values plus injected services. It avoids manually resolving each dependency.",
+      "tags": ["factory", "dependency-injection"],
+      "code": "var handler = ActivatorUtilities.CreateInstance<Handler>(provider, orderId);",
+      "references": ["https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.activatorutilities"]
+    },
+    {
+      "id": "factory-019",
+      "difficulty": "Intermediate",
+      "question": "How do you implement Factory Method with a generic base class?",
+      "answer": "You declare an abstract method that returns the product and let each subclass return its own implementation. Shared logic lives in the base class and calls the abstract creation hook. This keeps the algorithm in one place while varying the product.",
+      "tags": ["factory-method", "generics"],
+      "code": "public abstract class Exporter\n{\n    public void Export(Report r) => Write(CreateWriter(), r);\n    protected abstract IWriter CreateWriter();\n}",
+      "references": ["https://refactoring.guru/design-patterns/factory-method"]
+    },
+    {
+      "id": "factory-020",
+      "difficulty": "Intermediate",
+      "question": "How do factories interact with object lifetimes and disposal?",
+      "answer": "A factory decides whether it returns a new instance each call or a shared one, which maps to transient versus singleton behavior. If it returns IDisposable objects, ownership must be clear so they are disposed exactly once. With DI, the container disposes instances it created but not those you construct yourself.",
+      "tags": ["factory", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "factory-021",
+      "difficulty": "Advanced",
+      "question": "How would you implement a plugin factory that discovers implementations at runtime?",
+      "answer": "Scan assemblies for types implementing the product interface, then build a registry keyed by a name or attribute. Use dependency injection to construct the discovered types so their own dependencies resolve. Cache the registry at startup to avoid repeated reflection on each request.",
+      "tags": ["factory", "reflection", "plugins"],
+      "code": "var types = Assembly.Load(\"Plugins\").GetTypes()\n    .Where(t => typeof(IExporter).IsAssignableFrom(t) && !t.IsAbstract);",
+      "references": ["https://learn.microsoft.com/dotnet/fundamentals/reflection/reflection"]
+    },
+    {
+      "id": "factory-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of returning null from a factory method?",
+      "answer": "Returning null forces every caller to null-check and often causes NullReferenceException at a distance. It also hides the reason for failure and makes the method's contract ambiguous. Prefer throwing a specific exception, returning a default implementation, or using a TryCreate pattern.",
+      "tags": ["factory", "nullability"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/nullable-references"]
+    },
+    {
+      "id": "factory-023",
+      "difficulty": "Advanced",
+      "question": "How does a factory support multi-tenant applications?",
+      "answer": "The factory selects a tenant-specific implementation or configuration based on the resolved tenant, often from a header or token. Each tenant's products can differ in connection strings, branding, or feature set while sharing the same abstraction. This keeps tenant logic out of the domain code.",
+      "tags": ["factory", "multi-tenant"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/multitenant-identity/"]
+    },
+    {
+      "id": "factory-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid the Abstract Factory's rigidity when product types grow?",
+      "answer": "You can replace the fixed interface with a registry of creation delegates keyed by product type, so new products are registered without editing an interface. Alternatively, use a generic factory method constrained to the product base type. The trade-off is losing compile-time guarantees that every family supplies every product.",
+      "tags": ["abstract-factory", "extensibility"],
+      "code": "private readonly Dictionary<Type, Func<object>> _creators = new();\npublic void Register<T>(Func<T> creator) where T : class =>\n    _creators[typeof(T)] = creator;",
+      "references": ["https://refactoring.guru/design-patterns/abstract-factory"]
+    },
+    {
+      "id": "factory-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide between a factory, a builder, and the DI container for creation?",
+      "answer": "Use the DI container for wiring long-lived services and their dependencies. Use a factory when the created type must be chosen at runtime or needs parameters unavailable to the container. Use a builder when construction is a multi-step process producing a complex object, often combined with a factory that returns the configured result.",
+      "tags": ["factory", "builder", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    }
+  ]
+}

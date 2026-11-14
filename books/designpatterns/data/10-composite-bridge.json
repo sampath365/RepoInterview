@@ -1,0 +1,212 @@
+{
+  "category": "Composite & Bridge",
+  "slug": "composite-bridge",
+  "icon": "grid",
+  "questions": [
+    {
+      "id": "composite-bridge-001",
+      "difficulty": "Beginner",
+      "question": "How does the Composite pattern represent part-whole hierarchies?",
+      "answer": "Composite composes objects into tree structures to represent part-whole hierarchies. It lets clients treat a single object and a group of objects uniformly through a common interface. Leaves perform the work and containers delegate to their children.",
+      "tags": ["composite", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-002",
+      "difficulty": "Beginner",
+      "question": "What does the Bridge pattern decouple?",
+      "answer": "Bridge decouples an abstraction from its implementation so both can vary independently. The abstraction holds a reference to an implementation object and delegates work to it. This avoids a class for every combination of abstraction and implementation.",
+      "tags": ["bridge", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-003",
+      "difficulty": "Beginner",
+      "question": "What are the two key roles in the Composite pattern?",
+      "answer": "The leaf represents an end object with no children and performs the actual work. The composite represents a container that holds children and forwards operations to them. Both implement the same component interface so clients can treat them alike.",
+      "tags": ["composite", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-004",
+      "difficulty": "Beginner",
+      "question": "What is the abstraction and what is the implementor in the Bridge pattern?",
+      "answer": "The abstraction is the high-level control layer that defines operations and holds a reference to an implementor. The implementor is the lower-level interface that provides the platform-specific implementation. The abstraction delegates the actual work to the implementor.",
+      "tags": ["bridge", "roles"],
+      "code": "public abstract class Remote(ITv tv)\n{\n    protected ITv Tv { get; } = tv;\n    public abstract void Toggle();\n}",
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-005",
+      "difficulty": "Beginner",
+      "question": "How does Composite make client code simpler?",
+      "answer": "Clients call the same operation on any node, whether it is a leaf or a container, because both share an interface. Recursion inside containers handles the tree, so clients need no type checks or manual traversal. This uniform treatment removes special-case logic.",
+      "tags": ["composite", "simplicity"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-006",
+      "difficulty": "Beginner",
+      "question": "Can you give a real-world example of the Composite pattern?",
+      "answer": "A file system is a natural composite: files are leaves and directories are containers, and both support operations like size or delete. A UI control tree is another example, where panels contain controls and controls. Menus with submenus follow the same shape.",
+      "tags": ["composite", "examples"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-007",
+      "difficulty": "Beginner",
+      "question": "Why is Bridge useful when both abstraction and implementation vary?",
+      "answer": "Without Bridge, m abstractions and n implementations require m times n classes. Bridge splits them into two hierarchies linked by composition, needing only m plus n classes. Each side can grow without affecting the other.",
+      "tags": ["bridge", "extensibility"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-008",
+      "difficulty": "Beginner",
+      "question": "How does the Composite pattern relate to recursion?",
+      "answer": "Containers implement operations by iterating over children and calling the same operation on each, which naturally recurses down the tree. The recursion stops at leaves, which perform the work directly. This makes traversal elegant and avoids manual stack management.",
+      "tags": ["composite", "recursion"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-009",
+      "difficulty": "Beginner",
+      "question": "What is the client role in the Bridge pattern?",
+      "answer": "The client works with the abstraction and configures it with a concrete implementor. It never touches the implementor's interface directly. This keeps the client independent of platform details.",
+      "tags": ["bridge", "client"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-010",
+      "difficulty": "Beginner",
+      "question": "When should you avoid the Composite pattern?",
+      "answer": "Avoid it when the structure is flat or when the component interface would be forced to include child-management methods that leaves cannot sensibly implement. If uniformity does not help clients, a plain collection is simpler. Composite pays off when trees and uniform operations are genuine needs.",
+      "tags": ["composite", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-011",
+      "difficulty": "Intermediate",
+      "question": "How do you design the component interface so leaves and composites both fit?",
+      "answer": "Put operations that apply to all nodes in the component interface, and keep child-management methods either in the component or only in the composite. If you put Add and Remove in the component, leaves must implement them, often by throwing. A common compromise is a safe interface with default no-op behavior.",
+      "tags": ["composite", "interfaces"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-012",
+      "difficulty": "Intermediate",
+      "question": "How do you implement Composite in C# with an abstract base class?",
+      "answer": "Define an abstract component with the common operation, then a leaf that implements it and a composite that holds a list of components and iterates them. The composite's operation calls the operation on each child. This keeps shared behavior in the base and traversal in the composite.",
+      "tags": ["composite", "csharp"],
+      "code": "public abstract class Node\n{\n    public abstract int Size();\n}\npublic sealed class Folder : Node\n{\n    private readonly List<Node> _children = new();\n    public override int Size() => _children.Sum(c => c.Size());\n}",
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-013",
+      "difficulty": "Intermediate",
+      "question": "How does the Bridge pattern support multiple platforms cleanly?",
+      "answer": "Define the implementor interface for platform operations and provide one implementation per platform. The abstraction calls only the interface, so adding a platform means adding an implementor, not editing the abstraction. This keeps platform-specific code isolated.",
+      "tags": ["bridge", "cross-platform"],
+      "code": "public interface IRenderer { void RenderCircle(float radius); }\npublic sealed class OpenGlRenderer : IRenderer { /* OpenGL calls */ }",
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-014",
+      "difficulty": "Intermediate",
+      "question": "How do you traverse a Composite tree without recursion?",
+      "answer": "Use an explicit stack and push children as you visit nodes, popping until empty. This avoids stack overflow on very deep trees. Breadth-first traversal uses a queue instead of a stack.",
+      "tags": ["composite", "traversal"],
+      "code": "var stack = new Stack<Node>(new[] { root });\nwhile (stack.Count > 0)\n{\n    var n = stack.Pop();\n    foreach (var c in n.Children) stack.Push(c);\n}",
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-015",
+      "difficulty": "Intermediate",
+      "question": "How does the Bridge pattern differ from the Strategy pattern?",
+      "answer": "Both use composition to delegate behavior, but Bridge separates an abstraction hierarchy from an implementation hierarchy so both can vary. Strategy swaps a single algorithm inside a context and does not imply two independent hierarchies. Bridge is structural and long-lived; Strategy is behavioral and often simpler.",
+      "tags": ["bridge", "strategy"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors during Composite traversal?",
+      "answer": "Decide whether one failing child aborts the whole operation or is recorded and skipped. For robust aggregation, collect failures and continue, then report them together. This is common in build or validation trees where partial results are useful.",
+      "tags": ["composite", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions"]
+    },
+    {
+      "id": "composite-bridge-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test a Composite implementation?",
+      "answer": "Build small trees of known leaves and composites, then assert the aggregate result matches expectations. Test empty containers, single leaves, and deep nesting to cover edge cases. Verify that container operations delegate to all children.",
+      "tags": ["composite", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "composite-bridge-018",
+      "difficulty": "Intermediate",
+      "question": "What is the refined abstraction in the Bridge pattern?",
+      "answer": "A refined abstraction extends the base abstraction with additional operations while still delegating to the implementor. It adds capability at the abstraction level without touching the implementor. Multiple refined abstractions can share the same implementors.",
+      "tags": ["bridge", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-019",
+      "difficulty": "Intermediate",
+      "question": "How do you add operations to a Composite hierarchy without modifying classes?",
+      "answer": "Use the Visitor pattern to add new operations over the tree without changing the node classes. Visitor separates the algorithm from the structure, which complements Composite well. The trade-off is that adding a new node type requires updating visitors.",
+      "tags": ["composite", "visitor"],
+      "references": ["https://refactoring.guru/design-patterns/visitor"]
+    },
+    {
+      "id": "composite-bridge-020",
+      "difficulty": "Intermediate",
+      "question": "How does the Bridge pattern interact with dependency injection?",
+      "answer": "The implementor is injected into the abstraction, so the container chooses the platform-specific implementation. This lets configuration decide which implementation is used. The abstraction stays unaware of concrete implementor types.",
+      "tags": ["bridge", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "composite-bridge-021",
+      "difficulty": "Advanced",
+      "question": "How do you keep Composite tree operations efficient on large trees?",
+      "answer": "Cache computed results per node and invalidate upward when a subtree changes, or compute incrementally during mutation. Avoid recomputing the whole tree on every query. For very large trees, consider lazy enumeration and avoiding materialization of intermediate lists.",
+      "tags": ["composite", "performance"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-022",
+      "difficulty": "Advanced",
+      "question": "How do you model parent references in a Composite tree and what are the risks?",
+      "answer": "Each node can hold a reference to its parent to support upward navigation, but this creates cycles that complicate cloning and serialization. Keep parent links consistent when adding or removing children. Mark parent references as non-serialized or handle them explicitly.",
+      "tags": ["composite", "references"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-023",
+      "difficulty": "Advanced",
+      "question": "How does Bridge reduce the need for conditional platform code?",
+      "answer": "Instead of branching on the platform inside methods, the abstraction delegates to an implementor that encapsulates the platform. The choice is made once at composition time rather than at each call site. This removes scattered conditionals and centralizes platform logic.",
+      "tags": ["bridge", "platform"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "composite-bridge-024",
+      "difficulty": "Advanced",
+      "question": "How would you implement an expression tree using Composite for a rules engine?",
+      "answer": "Model operands as leaves and operators as composites with child expressions, all sharing an Evaluate interface. Each operator evaluates its children and combines the results. This makes rules composable and easy to extend with new operators.",
+      "tags": ["composite", "rules"],
+      "code": "public interface IExpr { bool Eval(Context ctx); }\npublic sealed class And(IExpr l, IExpr r) : IExpr\n{\n    public bool Eval(Context c) => l.Eval(c) && r.Eval(c);\n}",
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "composite-bridge-025",
+      "difficulty": "Advanced",
+      "question": "How do Composite and Bridge combine in a reporting or rendering system?",
+      "answer": "Composite models the report structure of sections and elements, while Bridge separates report rendering from output formats such as PDF or HTML. The report tree is independent of the renderer, and each renderer implements the same interface. This lets new report structures and new formats evolve independently.",
+      "tags": ["composite", "bridge"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    }
+  ]
+}

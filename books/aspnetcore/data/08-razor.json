@@ -1,0 +1,221 @@
+{
+  "category": "Razor Pages & Views",
+  "slug": "razor",
+  "icon": "text",
+  "questions": [
+    {
+      "id": "razor-001",
+      "difficulty": "Beginner",
+      "question": "What is Razor?",
+      "answer": "Razor is the templating syntax that mixes HTML markup with C# code to produce dynamic web pages. It uses the @ symbol to transition from HTML to C# and supports expressions, control flow, and directives. Razor is used by both Razor Pages and MVC views and is compiled into C# classes for performance.",
+      "tags": ["razor", "views"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/razor"]
+    },
+    {
+      "id": "razor-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Razor Pages and MVC?",
+      "answer": "Razor Pages organizes code around pages with a paired PageModel class and an OnGet/OnPost handler, making page-focused scenarios simpler and more cohesive. MVC separates controllers from views and is better for complex routing and large applications with many shared views. Both share Razor syntax, tag helpers, and filters.",
+      "tags": ["razor-pages", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/razor-pages/"]
+    },
+    {
+      "id": "razor-003",
+      "difficulty": "Beginner",
+      "question": "What is a Razor Page handler?",
+      "answer": "A handler is a method on the PageModel such as OnGet, OnPost, or a named handler like OnPostDelete, selected by the HTTP method and a handler query parameter. Handlers receive bound parameters and set properties that the page view renders. This keeps page logic close to the view.",
+      "code": "public class IndexModel : PageModel\n{\n    public List<Order> Orders { get; set; } = new();\n    public async Task OnGetAsync() => Orders = await _svc.GetAsync();\n}",
+      "tags": ["handlers", "razor-pages"],
+      "references": ["https://learn.microsoft.com/aspnet/core/razor-pages/#handlers"]
+    },
+    {
+      "id": "razor-004",
+      "difficulty": "Beginner",
+      "question": "What is the _ViewImports.cshtml file?",
+      "answer": "_ViewImports.cshtml declares using directives and tag helper registrations that apply to all pages and views in a folder and its subfolders. This avoids repeating the same usings and AddTagHelper directives in every view. It is processed in the order from the root to the most specific folder.",
+      "tags": ["viewimports", "razor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/layout#importing-shared-directives"]
+    },
+    {
+      "id": "razor-005",
+      "difficulty": "Beginner",
+      "question": "What is the _ViewStart.cshtml file?",
+      "answer": "_ViewStart.cshtml runs before each page or view and is typically used to set the Layout property. It applies to the folder and subfolders, and a view can override the layout it sets. This centralizes default layout selection across an app.",
+      "code": "@{\n    Layout = \"_Layout\";\n}",
+      "tags": ["viewstart", "layout"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/layout"]
+    },
+    {
+      "id": "razor-006",
+      "difficulty": "Beginner",
+      "question": "What is a layout page?",
+      "answer": "A layout is a shared template containing the common HTML structure such as the header, navigation, and footer, with @RenderBody() marking where the page content is inserted. Layouts use @RenderSection to define optional or required sections. They eliminate duplication and keep pages consistent.",
+      "code": "<html><body>\n  <partial name=\"_Nav\" />\n  <main>@RenderBody()</main>\n  @await RenderSectionAsync(\"Scripts\", required: false)\n</body></html>",
+      "tags": ["layout", "views"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/layout"]
+    },
+    {
+      "id": "razor-007",
+      "difficulty": "Beginner",
+      "question": "What are tag helpers?",
+      "answer": "Tag helpers are server-side components that let you write C# logic using HTML-like attributes, such as asp-for, asp-action, and asp-controller, which generate appropriate HTML. They improve readability compared to HTML helpers and are registered through _ViewImports. Built-in tag helpers cover forms, links, scripts, and caching.",
+      "code": "<form asp-action=\"Create\" method=\"post\">\n  <input asp-for=\"Name\" class=\"form-control\" />\n  <span asp-validation-for=\"Name\"></span>\n</form>",
+      "tags": ["tag-helpers", "razor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/tag-helpers/intro"]
+    },
+    {
+      "id": "razor-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a partial view and a view component?",
+      "answer": "A partial view is a Razor fragment rendered with its own model and no controller logic, while a view component has a class with its own logic and an Invoke method, making it reusable and testable. View components are better for self-contained widgets that need data, and partials are better for simple markup reuse. Both can be rendered from a page or view.",
+      "tags": ["partial-views", "view-components"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/view-components"]
+    },
+    {
+      "id": "razor-009",
+      "difficulty": "Beginner",
+      "question": "What is the @model directive?",
+      "answer": "The @model directive declares the strongly typed model for a view or page, so members are accessed with compile-time checking. In Razor Pages it is typically set to the PageModel type, while in MVC views it is the view model. Strong typing catches errors at build time and enables IntelliSense.",
+      "code": "@model OrderViewModel\n<h1>@Model.Title</h1>",
+      "tags": ["model-directive", "razor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/razor"]
+    },
+    {
+      "id": "razor-010",
+      "difficulty": "Beginner",
+      "question": "How do you render a partial view?",
+      "answer": "You use the partial tag helper <partial name=\"_MyPartial\" model=\"Model.Item\" /> or the HTML helper @Html.PartialAsync. The partial receives the model you pass and renders inline. Named partials are resolved from the current folder, Shared, or the pages and views roots.",
+      "code": "<partial name=\"_OrderRow\" model=\"order\" />",
+      "tags": ["partial-views", "rendering"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/partial"]
+    },
+    {
+      "id": "razor-011",
+      "difficulty": "Intermediate",
+      "question": "How do named handlers work in Razor Pages?",
+      "answer": "A handler named OnPostDeleteAsync is invoked when the request includes a handler route value such as ?handler=Delete, allowing multiple post actions on one page. Handlers follow the pattern On[Method][Name][Async] and can take bound parameters. This avoids creating separate pages for related actions.",
+      "code": "<form method=\"post\" asp-page-handler=\"Delete\" asp-route-id=\"@Model.Id\">\n  <button type=\"submit\">Delete</button>\n</form>",
+      "tags": ["handlers", "razor-pages"],
+      "references": ["https://learn.microsoft.com/aspnet/core/razor-pages/#handlers"]
+    },
+    {
+      "id": "razor-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ViewData, ViewBag, and a strongly typed model?",
+      "answer": "ViewData is a dictionary of objects, ViewBag is a dynamic wrapper over ViewData, and both are weakly typed and prone to runtime errors. A strongly typed model passed to the view provides compile-time safety and clarity. Prefer view models for anything non-trivial and use ViewData only for small, incidental values.",
+      "tags": ["viewdata", "viewbag"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/overview"]
+    },
+    {
+      "id": "razor-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom tag helper?",
+      "answer": "You derive from TagHelper, override Process or ProcessAsync, and register the assembly in _ViewImports with AddTagHelper. The context gives you the element and its attributes, and you can modify the output or suppress it. Custom tag helpers keep markup declarative and reusable.",
+      "code": "[HtmlTargetElement(\"email\")]\npublic class EmailTagHelper : TagHelper\n{\n    public string Address { get; set; }\n    public override void Process(TagHelperContext c, TagHelperOutput o)\n    {\n        o.TagName = \"a\";\n        o.Attributes.SetAttribute(\"href\", $\"mailto:{Address}\");\n    }\n}",
+      "tags": ["custom-tag-helper", "extensibility"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/tag-helpers/authoring"]
+    },
+    {
+      "id": "razor-014",
+      "difficulty": "Intermediate",
+      "question": "How do you build a view component?",
+      "answer": "You create a class deriving from ViewComponent with an InvokeAsync method returning IViewComponentResult, add a view under Views/Shared/Components/{Name}/Default.cshtml, and render it with @await Component.InvokeAsync(\"Name\", args) or the vc tag helper. View components support dependency injection and are independently testable. They are ideal for widgets with their own logic.",
+      "code": "public class CartSummaryViewComponent : ViewComponent\n{\n    public IViewComponentResult Invoke(int count)\n        => View(count);\n}",
+      "tags": ["view-components", "razor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/view-components"]
+    },
+    {
+      "id": "razor-015",
+      "difficulty": "Intermediate",
+      "question": "How does Razor compilation work and what is runtime compilation?",
+      "answer": "Razor views are compiled to C# classes at build time by the Razor SDK, which makes rendering fast and errors visible early. Runtime compilation, added via the Razor.RuntimeCompilation package, allows views to be compiled on demand so edits are visible without rebuilding. Runtime compilation is convenient in development but adds startup and per-view overhead, so it is disabled in production by default.",
+      "tags": ["razor-compilation", "runtime-compilation"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/view-compilation"]
+    },
+    {
+      "id": "razor-016",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data to a layout?",
+      "answer": "You can set ViewData values in the page or view, use a base view model with a layout-friendly property, or render sections that the layout outputs with RenderSection. Sections are the cleanest way to pass markup, while ViewData works for simple values. Avoiding global state keeps layouts predictable.",
+      "code": "@section Scripts {\n  <script src=\"~/js/orders.js\"></script>\n}",
+      "tags": ["layout", "sections"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/layout#sections"]
+    },
+    {
+      "id": "razor-017",
+      "difficulty": "Intermediate",
+      "question": "What are the built-in tag helpers for forms and validation?",
+      "answer": "The form tag helper generates an antiforgery token and posts to the specified action or page, and the input, label, select, and validation tag helpers bind to model properties and emit client validation attributes. The validation summary tag helper shows all errors. Together they produce consistent, validated forms with minimal markup.",
+      "code": "<form method=\"post\">\n  <label asp-for=\"Email\"></label>\n  <input asp-for=\"Email\" />\n  <span asp-validation-for=\"Email\" class=\"text-danger\"></span>\n</form>",
+      "tags": ["form-tag-helper", "validation"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/working-with-forms"]
+    },
+    {
+      "id": "razor-018",
+      "difficulty": "Intermediate",
+      "question": "How do you render sections conditionally?",
+      "answer": "You use RenderSectionAsync with required set to false, which skips the section when it is not defined, and check IsSectionDefined to conditionally output wrapper markup. Sections let a page inject scripts or styles into the layout without layout changes. Marking a section required throws if a page omits it.",
+      "code": "@if (IsSectionDefined(\"Scripts\"))\n{\n    @await RenderSectionAsync(\"Scripts\")\n}",
+      "tags": ["sections", "layout"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/layout#sections"]
+    },
+    {
+      "id": "razor-019",
+      "difficulty": "Intermediate",
+      "question": "How do you organize views and pages for a large application?",
+      "answer": "You organize by feature folder or by area, share common views under Views/Shared or Pages/Shared, and use _ViewImports and _ViewStart to centralize directives. View models live near the feature rather than the views. This structure keeps related files together and reduces cross-folder coupling.",
+      "tags": ["organization", "views"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/overview"]
+    },
+    {
+      "id": "razor-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle the antiforgery token in Razor forms?",
+      "answer": "The form tag helper automatically adds an antiforgery token as a hidden field, and validation runs by default for POST requests in Razor Pages and for MVC actions marked with [ValidateAntiForgeryToken] or via the AutoValidateAntiforgeryToken filter. For AJAX calls you send the token in a header, often read from a cookie or hidden field. This protects against cross-site request forgery.",
+      "tags": ["antiforgery", "security"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/anti-request-forgery"]
+    },
+    {
+      "id": "razor-021",
+      "difficulty": "Advanced",
+      "question": "How does the Razor view engine resolve which view to render?",
+      "answer": "The view engine searches configured view locations, first for the exact view name and then for shared folders, and in MVC it also tries the controller and area conventions. Razor Pages resolve by the page path and the Pages root. You can customize locations through RazorViewEngineOptions.ViewLocationFormats and page conventions.",
+      "tags": ["view-engine", "internals"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/overview"]
+    },
+    {
+      "id": "razor-022",
+      "difficulty": "Advanced",
+      "question": "How do you customize Razor Pages conventions?",
+      "answer": "You use RazorPagesOptions and PageConvention collections to add route and application model conventions, such as requiring authorization on all pages or adding a route prefix. Conventions run at startup and shape how pages are modeled. They are a powerful way to enforce cross-cutting rules declaratively.",
+      "code": "builder.Services.AddRazorPages(o =>\n    o.Conventions.AuthorizeFolder(\"/Admin\"));",
+      "tags": ["conventions", "razor-pages"],
+      "references": ["https://learn.microsoft.com/aspnet/core/razor-pages/razor-pages-conventions"]
+    },
+    {
+      "id": "razor-023",
+      "difficulty": "Advanced",
+      "question": "How do you optimize Razor view rendering performance?",
+      "answer": "Compile views ahead of time in production, avoid heavy logic in views, cache expensive fragments with the cache tag helper, and use partials and view components judiciously. Reducing allocations in loops and avoiding repeated service calls also helps. Profiling with Application Insights or the built-in diagnostics identifies slow views.",
+      "code": "<cache expires-after=\"@TimeSpan.FromMinutes(10)\">\n  @await Component.InvokeAsync(\"Stats\")\n</cache>",
+      "tags": ["performance", "caching"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/memory"]
+    },
+    {
+      "id": "razor-024",
+      "difficulty": "Advanced",
+      "question": "How do you integrate Razor Pages with Web APIs and SPA frameworks?",
+      "answer": "You can host APIs and Razor Pages in the same app by mapping controllers or minimal API endpoints alongside Razor Pages, and serve a SPA's static files with a fallback route. Razor Pages handle server-rendered pages while the API serves the SPA's data. Keeping concerns separate and using antiforgery tokens for API calls from pages maintains security.",
+      "tags": ["spa", "integration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/razor-pages/", "https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "razor-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of server-rendered Razor versus Blazor and client-side SPAs?",
+      "answer": "Server-rendered Razor delivers fast first paint, good SEO, and minimal client complexity but requires a full round trip per interaction. Blazor keeps C# on the client or server with rich interactivity but has different hosting and latency trade-offs. SPAs offer app-like interactivity and offline support but add build tooling, payload, and state-management complexity.",
+      "tags": ["architecture", "trade-offs"],
+      "references": ["https://learn.microsoft.com/aspnet/core/razor-pages/", "https://learn.microsoft.com/aspnet/core/blazor/"]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "category": "Schemas & Validation",
+  "slug": "schemas",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "schemas-001",
+      "difficulty": "Beginner",
+      "question": "What is schema-based validation in Fastify?",
+      "answer": "Fastify lets you attach a JSON Schema to each route to validate the body, querystring, params, and headers. It uses Ajv under the hood and compiles the schema into a fast validation function at boot. Invalid input is rejected automatically with a 400 before your handler runs. This removes the need for hand-written validation code.",
+      "tags": [
+        "validation",
+        "schemas"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "fastify.post('/users', {\n  schema: {\n    body: {\n      type: 'object',\n      required: ['name'],\n      properties: { name: { type: 'string' } }\n    }\n  }\n}, createUser)"
+    },
+    {
+      "id": "schemas-002",
+      "difficulty": "Beginner",
+      "question": "Which parts of a request can a schema validate?",
+      "answer": "A route schema can define body, querystring, params, headers, and response. Each is validated against its own JSON Schema. body, querystring, params, and headers are checked on input, while response is used for serialization. You can include any subset of them.",
+      "tags": [
+        "validation",
+        "schemas"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-003",
+      "difficulty": "Beginner",
+      "question": "What error does Fastify return for invalid input?",
+      "answer": "Fastify returns a 400 Bad Request with an error object describing the failure. The message comes from Ajv and identifies the failing path and rule. You can customise this response with setErrorHandler or a schemaErrorFormatter. The error is available before the handler executes.",
+      "tags": [
+        "validation",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-004",
+      "difficulty": "Beginner",
+      "question": "Why is validating query strings important?",
+      "answer": "Query values arrive as strings, so numbers and booleans need coercion and range checks. A schema can declare types and constraints, and Fastify coerces values accordingly. Without validation you risk type bugs and injection issues. Validation also documents the expected parameters.",
+      "tags": [
+        "validation",
+        "query"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "schema: {\n  querystring: {\n    type: 'object',\n    properties: { limit: { type: 'integer', minimum: 1 } }\n  }\n}"
+    },
+    {
+      "id": "schemas-005",
+      "difficulty": "Beginner",
+      "question": "How do you mark a field as required in a schema?",
+      "answer": "You list the property name in the schema's required array. Ajv then rejects requests where that field is missing. Required only checks presence, so combine it with type and format for full validation. Document required fields in your API docs too.",
+      "tags": [
+        "validation",
+        "required"
+      ],
+      "references": [
+        "https://json-schema.org/understanding-json-schema/reference/object#required"
+      ]
+    },
+    {
+      "id": "schemas-006",
+      "difficulty": "Beginner",
+      "question": "What is the role of Ajv in Fastify?",
+      "answer": "Ajv is the JSON Schema validator Fastify uses by default to compile and run validation. Fastify creates an Ajv instance per app and caches compiled schemas. You can pass custom Ajv options, such as enabling coercion or removing additional properties. It is what turns your schema into fast, predictable checks.",
+      "tags": [
+        "ajv",
+        "validation"
+      ],
+      "references": [
+        "https://ajv.js.org/",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-007",
+      "difficulty": "Beginner",
+      "question": "How do you add a custom error message for a field?",
+      "answer": "You can set the errorMessage keyword using ajv-errors, or format the default error in setErrorHandler. Fastify's schemaErrorFormatter option also lets you build a consistent error shape. Both approaches give clients clearer feedback. Choose one and apply it consistently.",
+      "tags": [
+        "validation",
+        "errors"
+      ],
+      "references": [
+        "https://ajv.js.org/packages/ajv-errors.html",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-008",
+      "difficulty": "Beginner",
+      "question": "What does additionalProperties false do?",
+      "answer": "Setting additionalProperties to false rejects any property not listed in the schema. This prevents clients from sending unexpected fields that might be persisted or trusted later. It also documents the exact accepted shape. Use it on write endpoints for stricter contracts.",
+      "tags": [
+        "validation",
+        "json-schema"
+      ],
+      "references": [
+        "https://json-schema.org/understanding-json-schema/reference/object#additionalproperties"
+      ]
+    },
+    {
+      "id": "schemas-009",
+      "difficulty": "Beginner",
+      "question": "Can the same schema be reused across routes?",
+      "answer": "Yes, you can store schemas in variables or a shared module and reference them in multiple routes. Fastify also supports shared schemas with addSchema and $ref. Reuse reduces duplication and keeps contracts consistent. It also improves serialization caching.",
+      "tags": [
+        "schemas",
+        "reuse"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "fastify.addSchema({ $id: 'user', type: 'object', /* ... */ })\n// then reference with { $ref: 'user#' }"
+    },
+    {
+      "id": "schemas-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between input validation and output serialization schemas?",
+      "answer": "Input schemas validate and coerce incoming data, rejecting invalid requests. Response schemas describe and serialise outgoing data, and by default they do not validate but they do filter fields. The response schema drives fast-json-stringify for speed. Using both gives a clear contract in each direction.",
+      "tags": [
+        "validation",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-011",
+      "difficulty": "Intermediate",
+      "question": "How do you configure Ajv options in Fastify?",
+      "answer": "You pass an ajv option to the Fastify factory with custom settings, such as coerceTypes, removeAdditional, or useDefaults. Fastify merges these into its Ajv instance. You can also supply a fully custom Ajv instance via the ajv option's customOptions. This lets you tune validation behaviour globally.",
+      "tags": [
+        "ajv",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/#ajv-configuration"
+      ],
+      "code": "const fastify = require('fastify')({\n  ajv: { customOptions: { coerceTypes: 'array', allErrors: true } }\n})"
+    },
+    {
+      "id": "schemas-012",
+      "difficulty": "Intermediate",
+      "question": "How do shared schemas with addSchema and $ref work?",
+      "answer": "You register a schema once with addSchema and give it an $id, then reference it from routes using $ref. Fastify resolves the reference during compilation, so the shared definition is reused. This keeps large contracts DRY and consistent. Shared schemas are scoped to the instance that added them.",
+      "tags": [
+        "schemas",
+        "ref"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/#adding-shared-schemas"
+      ]
+    },
+    {
+      "id": "schemas-013",
+      "difficulty": "Intermediate",
+      "question": "How do you validate request headers with a schema?",
+      "answer": "You add a headers schema to the route, declaring required headers and their formats. Fastify validates them like any other input, returning 400 on failure. This is useful for API keys or content type expectations. Header names are matched case-insensitively by the underlying validation.",
+      "tags": [
+        "validation",
+        "headers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "schema: {\n  headers: {\n    type: 'object',\n    required: ['x-api-key'],\n    properties: { 'x-api-key': { type: 'string' } }\n  }\n}"
+    },
+    {
+      "id": "schemas-014",
+      "difficulty": "Intermediate",
+      "question": "How does response serialization differ when a response schema is present?",
+      "answer": "With a response schema, Fastify uses fast-json-stringify to build the output from the schema, which is faster and drops properties not in the schema. Without one, it falls back to JSON.stringify. The schema therefore acts as an allow-list of fields. This both speeds up and secures responses.",
+      "tags": [
+        "serialization",
+        "schemas"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-015",
+      "difficulty": "Intermediate",
+      "question": "How do you define response schemas per status code?",
+      "answer": "The response schema is an object keyed by status code, for example 200 and 404, each with its own schema. Fastify selects the schema matching the reply status. If no schema matches the status, it falls back to a default or stringifies normally. This lets you shape success and error payloads separately.",
+      "tags": [
+        "serialization",
+        "status"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "schema: {\n  response: {\n    200: { type: 'object', properties: { id: { type: 'string' } } },\n    404: { type: 'object', properties: { error: { type: 'string' } } }\n  }\n}"
+    },
+    {
+      "id": "schemas-016",
+      "difficulty": "Intermediate",
+      "question": "How do you transform incoming data before validation?",
+      "answer": "You use the preValidation hook to modify request.body or query before the validator runs. This is useful for normalising casing or parsing nested strings. The schema then validates the transformed shape. Keep transformations deterministic so validation stays predictable.",
+      "tags": [
+        "hooks",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#prevalidation"
+      ]
+    },
+    {
+      "id": "schemas-017",
+      "difficulty": "Intermediate",
+      "question": "What is the schemaErrorFormatter option?",
+      "answer": "schemaErrorFormatter is a function that turns Ajv validation errors into an Error Fastify will send. It lets you produce a consistent, client-friendly error structure instead of the default. You set it on the Fastify factory. Combined with setErrorHandler it gives full control over validation responses.",
+      "tags": [
+        "validation",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#schemaerrorformatter"
+      ]
+    },
+    {
+      "id": "schemas-018",
+      "difficulty": "Intermediate",
+      "question": "How do you validate a body that can be one of several shapes?",
+      "answer": "You use JSON Schema composition keywords like anyOf or oneOf to describe the alternatives. Ajv validates against the branches and reports which failed. Combine with discriminator-like required fields for clarity. This models polymorphic payloads cleanly.",
+      "tags": [
+        "validation",
+        "json-schema"
+      ],
+      "references": [
+        "https://json-schema.org/understanding-json-schema/reference/combining"
+      ]
+    },
+    {
+      "id": "schemas-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between removeAdditional and additionalProperties?",
+      "answer": "additionalProperties is a schema keyword that rejects or ignores extra fields depending on its value. removeAdditional is an Ajv option that strips extra properties instead of failing validation. Using removeAdditional with additionalProperties false lets you sanitise input silently. Choose based on whether extra fields should error or be dropped.",
+      "tags": [
+        "ajv",
+        "validation"
+      ],
+      "references": [
+        "https://ajv.js.org/options.html",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-020",
+      "difficulty": "Intermediate",
+      "question": "How do you validate route parameters as integers?",
+      "answer": "You declare the params schema with the property as an integer, and enable type coercion so the string parameter is converted. Fastify then validates the coerced value. Without coercion the string would fail the integer check. This is a common source of confusion for newcomers.",
+      "tags": [
+        "validation",
+        "params"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "schema: {\n  params: {\n    type: 'object',\n    properties: { id: { type: 'integer' } }\n  }\n}"
+    },
+    {
+      "id": "schemas-021",
+      "difficulty": "Advanced",
+      "question": "How does Fastify compile and cache schemas for performance?",
+      "answer": "At boot Fastify compiles each unique schema into a validator with Ajv and a serializer with fast-json-stringify, then caches them by reference. Reused schemas compile once and are shared, so adding $ref and shared schemas reduces startup work. The compiled functions run with minimal overhead per request. This is why schema reuse matters for large route tables.",
+      "tags": [
+        "performance",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-022",
+      "difficulty": "Advanced",
+      "question": "What are the security implications of response schemas as allow-lists?",
+      "answer": "Because a response schema filters output to declared properties, it prevents accidentally leaking internal fields like password hashes. It acts as a contract that only intended data leaves the server. This defence-in-depth complements careful query design. Always define response schemas on sensitive endpoints.",
+      "tags": [
+        "security",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-023",
+      "difficulty": "Advanced",
+      "question": "How do you use async or custom validation logic beyond JSON Schema?",
+      "answer": "For rules JSON Schema cannot express, you use a preValidation or preHandler hook to run custom checks and throw an error on failure. You can also use Ajv custom keywords or the ajv-formats package for extra formats. Keep business-rule validation in hooks and structural validation in schemas. This separation keeps schemas declarative and testable.",
+      "tags": [
+        "validation",
+        "hooks"
+      ],
+      "references": [
+        "https://ajv.js.org/",
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "schemas-024",
+      "difficulty": "Advanced",
+      "question": "How do shared schema $ids interact with encapsulation?",
+      "answer": "Shared schemas added in a scope are visible to that scope and its children, but not to parents or siblings. Referencing an $id that is not in scope causes a compile-time error at boot. Register shared schemas at the level where they are needed, or wrap the plugin with fastify-plugin to widen visibility. Planning schema scope prevents confusing boot failures.",
+      "tags": [
+        "schemas",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "schemas-025",
+      "difficulty": "Advanced",
+      "question": "How would you design a versioned validation strategy as an API evolves?",
+      "answer": "Keep each version's schemas in its own prefixed plugin and add new optional fields rather than changing types. Use response schemas per version to control what each client sees. Deprecate fields gradually and monitor usage. This keeps validation contracts stable across releases.",
+      "tags": [
+        "validation",
+        "versioning"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    }
+  ]
+}

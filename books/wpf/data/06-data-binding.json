@@ -1,0 +1,222 @@
+{
+  "category": "Data Binding Fundamentals",
+  "slug": "data-binding",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "data-binding-001",
+      "difficulty": "Beginner",
+      "question": "What is data binding in WPF?",
+      "answer": "Data binding links a target property on a UI element to a source value such as a property on an object, another element, or a collection. It keeps the two synchronized and removes manual UI update code. Binding is declared with the {Binding} markup extension or the Binding class in code.",
+      "tags": ["binding", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "data-binding-002",
+      "difficulty": "Beginner",
+      "question": "What are the four components of a binding?",
+      "answer": "A binding has a target object and target property on the UI side, and a source object and source property on the data side. The BindingExpression manages the relationship between them. Binding also has a mode that determines the direction of updates.",
+      "tags": ["binding", "concepts"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "data-binding-003",
+      "difficulty": "Beginner",
+      "question": "How do you bind a control to a property of an object?",
+      "answer": "Set the element's DataContext to the object and use the {Binding PropertyName} syntax, or specify the source explicitly with the Source or ElementName property. The binding reads the property and updates the target. WPF resolves the path against the source object.",
+      "code": "<TextBlock Text=\"{Binding FirstName}\"/>\n\n// in code\nDataContext = new Person { FirstName = \"Ada\" };",
+      "tags": ["binding", "datacontext"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-create-a-simple-binding"]
+    },
+    {
+      "id": "data-binding-004",
+      "difficulty": "Beginner",
+      "question": "What is DataContext?",
+      "answer": "DataContext is the default source object for bindings in an element and its children. It flows down the element tree by property inheritance, so setting it once on a window makes it available everywhere below. A binding uses the nearest DataContext unless it specifies another source.",
+      "tags": ["datacontext", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-sources-overview"]
+    },
+    {
+      "id": "data-binding-005",
+      "difficulty": "Beginner",
+      "question": "What are the binding modes in WPF?",
+      "answer": "OneWay updates the target from the source, TwoWay updates both, OneTime sets the target once, OneWayToSource updates the source from the target, and Default uses the target property's default mode. TextBox.Text defaults to TwoWay while most properties default to OneWay.",
+      "code": "<TextBox Text=\"{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}\"/>",
+      "tags": ["binding", "mode"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-declarations-overview"]
+    },
+    {
+      "id": "data-binding-006",
+      "difficulty": "Beginner",
+      "question": "What is INotifyPropertyChanged and why is it needed?",
+      "answer": "INotifyPropertyChanged is an interface that lets a source object raise the PropertyChanged event when a property value changes. WPF listens for this event and updates any bound targets. Without it, the UI does not refresh when the source changes in one-way or two-way bindings.",
+      "code": "public class Person : INotifyPropertyChanged\n{\n    private string _name;\n    public string Name\n    {\n        get => _name;\n        set { _name = value; OnPropertyChanged(nameof(Name)); }\n    }\n    public event PropertyChangedEventHandler PropertyChanged;\n    void OnPropertyChanged(string n) =>\n        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(n));\n}",
+      "tags": ["inotifypropertychanged", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-property-change-notification"]
+    },
+    {
+      "id": "data-binding-007",
+      "difficulty": "Beginner",
+      "question": "What is an ObservableCollection and when should you use it?",
+      "answer": "ObservableCollection is a collection that raises a CollectionChanged event when items are added, removed, or replaced. Items controls bound to it update automatically as the collection changes. Use it for lists whose contents change at runtime.",
+      "tags": ["observablecollection", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-create-and-bind-to-an-observablecollection"]
+    },
+    {
+      "id": "data-binding-008",
+      "difficulty": "Beginner",
+      "question": "How do you bind an ItemsControl to a collection?",
+      "answer": "Set the ItemsControl.ItemsSource to the collection using a binding. The control creates a container per item and can render each with a DataTemplate. By default it uses the item's ToString unless you provide a template.",
+      "code": "<ListBox ItemsSource=\"{Binding People}\">\n  <ListBox.ItemTemplate>\n    <DataTemplate>\n      <TextBlock Text=\"{Binding Name}\"/>\n    </DataTemplate>\n  </ListBox.ItemTemplate>\n</ListBox>",
+      "tags": ["itemscontrol", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-bind-to-a-collection-and-display-information-based-on-selection"]
+    },
+    {
+      "id": "data-binding-009",
+      "difficulty": "Beginner",
+      "question": "What is ElementName binding?",
+      "answer": "ElementName binding sets the source to another named element in the same namescope. It lets one control's property drive another, such as a slider controlling text size. It is a common alternative to RelativeSource for element-to-element bindings.",
+      "code": "<Slider Name=\"SizeSlider\" Minimum=\"8\" Maximum=\"48\" Value=\"16\"/>\n<TextBlock Text=\"Hello\" FontSize=\"{Binding ElementName=SizeSlider, Path=Value}\"/>",
+      "tags": ["elementname", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-specify-the-binding-source"]
+    },
+    {
+      "id": "data-binding-010",
+      "difficulty": "Beginner",
+      "question": "What is the default binding mode for most properties?",
+      "answer": "Most dependency properties default to OneWay, meaning the source updates the target but not the reverse. Properties that are commonly edited, such as TextBox.Text and ToggleButton.IsChecked, default to TwoWay. The default is declared in the property's framework metadata with BindsTwoWayByDefault.",
+      "tags": ["binding", "mode"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-declarations-overview"]
+    },
+    {
+      "id": "data-binding-011",
+      "difficulty": "Intermediate",
+      "question": "What is the UpdateSourceTrigger property?",
+      "answer": "UpdateSourceTrigger controls when a two-way binding pushes changes back to the source. Default uses the target property's default behavior, PropertyChanged updates on every keystroke, LostFocus updates when the control loses focus, and Explicit requires a manual UpdateSource call. TextBox.Text defaults to LostFocus.",
+      "code": "<TextBox Text=\"{Binding Name, UpdateSourceTrigger=PropertyChanged}\"/>",
+      "tags": ["updatesourcetrigger", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-control-when-the-textbox-text-updates-the-source"]
+    },
+    {
+      "id": "data-binding-012",
+      "difficulty": "Intermediate",
+      "question": "How does binding validation work with exceptions and IDataErrorInfo?",
+      "answer": "A binding can validate through exceptions thrown by the source setter, through the IDataErrorInfo interface, or through INotifyDataErrorInfo. When validation fails, the Validation.HasError attached property becomes true and errors appear in Validation.Errors. You can style the failure with a validation error template.",
+      "tags": ["validation", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-binding-validation"]
+    },
+    {
+      "id": "data-binding-013",
+      "difficulty": "Intermediate",
+      "question": "What is a BindingExpression and when do you use one?",
+      "answer": "A BindingExpression is the runtime object that connects a binding to a specific target and source instance. You obtain it with BindingOperations.GetBindingExpression to read status or call UpdateSource and UpdateTarget manually. It exposes properties such as HasError and Status.",
+      "code": "var expr = BindingOperations.GetBindingExpression(\n    myTextBox, TextBox.TextProperty);\nexpr?.UpdateSource();",
+      "tags": ["bindingexpression", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-get-the-binding-object-from-a-bound-target-property"]
+    },
+    {
+      "id": "data-binding-014",
+      "difficulty": "Intermediate",
+      "question": "What are the binding Source options available?",
+      "answer": "You can set Source to an object instance, ElementName to another element, RelativeSource to navigate the tree, or leave them unset to use the inherited DataContext. Each option determines how WPF resolves the source object for the path. Only one source mechanism is used per binding.",
+      "tags": ["binding", "sources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-specify-the-binding-source"]
+    },
+    {
+      "id": "data-binding-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use RelativeSource in a binding?",
+      "answer": "RelativeSource locates the source relative to the bound element using modes such as Self, FindAncestor, TemplatedParent, and PreviousData. FindAncestor with AncestorType is common for binding a control to a property of a containing control. It is essential inside control templates.",
+      "code": "<TextBlock Text=\"{Binding RelativeSource={RelativeSource AncestorType=Window},\n                         Path=Title}\"/>",
+      "tags": ["relativesource", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/relativesource-markupextension"]
+    },
+    {
+      "id": "data-binding-016",
+      "difficulty": "Intermediate",
+      "question": "How do you bind to a nested property?",
+      "answer": "Use a dotted path in the binding, such as {Binding Address.City}, and WPF walks each segment. Each object along the path must expose the next property, and change notifications should be raised for the segments you expect to update. If a segment is null the binding produces no value unless a fallback is set.",
+      "code": "<TextBlock Text=\"{Binding Customer.Address.City}\"/>",
+      "tags": ["binding", "path"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/propertypath-xaml-syntax"]
+    },
+    {
+      "id": "data-binding-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between binding to a property and binding to the DataContext itself?",
+      "answer": "Binding to a property uses a path such as {Binding Name} and resolves against the DataContext. Binding to the DataContext itself uses an empty path, {Binding}, and treats the whole object as the value. The empty path is useful when the item is displayed directly, for example in a ListBox.",
+      "tags": ["datacontext", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-sources-overview"]
+    },
+    {
+      "id": "data-binding-018",
+      "difficulty": "Intermediate",
+      "question": "How do you clear or detach a binding at runtime?",
+      "answer": "Call BindingOperations.ClearBinding to remove a binding from a target property, or ClearAllBindings to remove them all from an object. Alternatively set the target property to a local value, which replaces the binding. Clearing a binding restores the property's default value.",
+      "code": "BindingOperations.ClearBinding(myTextBox, TextBox.TextProperty);",
+      "tags": ["binding", "runtime"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-clear-bindings"]
+    },
+    {
+      "id": "data-binding-019",
+      "difficulty": "Intermediate",
+      "question": "What are FallbackValue and TargetNullValue?",
+      "answer": "FallbackValue is used when the binding cannot produce a value, such as a failed path. TargetNullValue is used when the source value is null. Both let you show a meaningful placeholder instead of an empty or broken display.",
+      "code": "<TextBlock Text=\"{Binding Nickname, TargetNullValue='(none)',\n                        FallbackValue='n/a'}\"/>",
+      "tags": ["binding", "fallback"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-declarations-overview"]
+    },
+    {
+      "id": "data-binding-020",
+      "difficulty": "Intermediate",
+      "question": "How do you bind to a property that is not a dependency property?",
+      "answer": "The target of a binding must be a dependency property, but the source can be any CLR property. The source property should raise INotifyPropertyChanged so the binding updates when it changes. The source can also be a plain object if the value never changes.",
+      "tags": ["binding", "properties"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "data-binding-021",
+      "difficulty": "Advanced",
+      "question": "How does WPF resolve a binding path with collections and indexes?",
+      "answer": "A binding path can index into a collection using square brackets, such as {Binding Items[0]}, and can use the slash syntax to reach the current item of a collection view. When a collection is the source, the path applies to each item through the item container. Indexers work on properties that expose an indexer.",
+      "code": "<TextBlock Text=\"{Binding Employees[0].Name}\"/>",
+      "tags": ["binding", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/propertypath-xaml-syntax"]
+    },
+    {
+      "id": "data-binding-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a DataTemplate and a DataTemplateSelector?",
+      "answer": "A DataTemplate defines how a single data item is rendered. A DataTemplateSelector is a class that chooses which DataTemplate to use per item based on logic, such as the item's type. Selectors enable different visuals for different item kinds in one collection.",
+      "tags": ["datatemplate", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-templating-overview"]
+    },
+    {
+      "id": "data-binding-023",
+      "difficulty": "Advanced",
+      "question": "How does binding to an asynchronous source work?",
+      "answer": "If a property getter performs slow work, the binding can appear to hang the UI. To avoid this, load data asynchronously and update an observable property, or use IsAsync on the binding to fetch the value on a background thread. IsAsync can introduce timing and ordering issues, so raising PropertyChanged is often preferred.",
+      "code": "<TextBlock Text=\"{Binding SlowProperty, IsAsync=True}\"/>",
+      "tags": ["binding", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-data-binding"]
+    },
+    {
+      "id": "data-binding-024",
+      "difficulty": "Advanced",
+      "question": "How do you debug a binding that is not working?",
+      "answer": "Enable WPF binding trace output in Visual Studio's Output window, which reports path errors and value conversion failures. You can also inspect the BindingExpression status and HasError, or set PresentationTraceSources.TraceLevel on the binding. Common causes are a wrong DataContext, a misspelled path, or a missing notification.",
+      "code": "<TextBlock Text=\"{Binding Name,\n    PresentationTraceSources.TraceLevel=High}\"/>",
+      "tags": ["debugging", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "data-binding-025",
+      "difficulty": "Advanced",
+      "question": "What is binding to a static or application-level resource as a source?",
+      "answer": "You can bind a source to a static property using {x:Static}, to another resource with a ResourceKey, or to application settings. For example {Binding Source={x:Static SystemFonts.IconFontFamily}}. This is useful for system values and constants that do not live on a DataContext.",
+      "code": "<TextBlock FontFamily=\"{Binding Source={x:Static SystemFonts.IconFontFamily}}\"/>",
+      "tags": ["binding", "xstatic"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-sources-overview"]
+    }
+  ]
+}

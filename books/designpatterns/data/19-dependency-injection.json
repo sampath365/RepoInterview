@@ -1,0 +1,218 @@
+{
+  "category": "Dependency Injection & IoC",
+  "slug": "dependency-injection",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "dependency-injection-001",
+      "difficulty": "Beginner",
+      "question": "What is Inversion of Control?",
+      "answer": "Inversion of Control is a design principle where the framework or container calls your code rather than your code controlling the flow. Instead of a class creating its dependencies, control over creation is inverted to an external component. Dependency injection is the most common way to achieve IoC.",
+      "tags": ["ioc", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-002",
+      "difficulty": "Beginner",
+      "question": "What is dependency injection?",
+      "answer": "Dependency injection is a technique where an object receives its dependencies from outside rather than creating them itself. The dependencies are typically passed through the constructor. This decouples the class from concrete implementations and makes it testable.",
+      "tags": ["dependency-injection", "design"],
+      "code": "public sealed class OrderService(IOrderRepository repo)\n{\n    public Task<Order?> GetAsync(Guid id) => repo.GetByIdAsync(id);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-003",
+      "difficulty": "Beginner",
+      "question": "What are the three common types of dependency injection?",
+      "answer": "Constructor injection passes dependencies through the constructor and is preferred because it makes them required and immutable. Property or setter injection sets dependencies after construction and is optional. Method injection passes a dependency to a specific method that needs it.",
+      "tags": ["dependency-injection", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-004",
+      "difficulty": "Beginner",
+      "question": "What is a service lifetime in .NET dependency injection?",
+      "answer": "A lifetime controls how long a resolved instance lives. Transient creates a new instance each time, scoped creates one per scope such as a request, and singleton creates one for the application. Choosing the right lifetime prevents bugs like captive dependencies.",
+      "tags": ["dependency-injection", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-005",
+      "difficulty": "Beginner",
+      "question": "How do you register services in ASP.NET Core?",
+      "answer": "You register services on the IServiceCollection in the composition root, usually in Program.cs. Each registration maps a service type to an implementation and a lifetime. The container then resolves them for controllers, middleware, and other services.",
+      "tags": ["dependency-injection", "aspnet"],
+      "code": "var builder = WebApplication.CreateBuilder(args);\nbuilder.Services.AddScoped<IOrderRepository, OrderRepository>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-006",
+      "difficulty": "Beginner",
+      "question": "What is constructor injection and why is it preferred?",
+      "answer": "Constructor injection supplies dependencies when the object is created, so they are available for the whole lifetime of the object. It makes required dependencies explicit and supports immutability with readonly fields. It also fails fast if a dependency cannot be resolved.",
+      "tags": ["dependency-injection", "constructor"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-007",
+      "difficulty": "Beginner",
+      "question": "What is a composition root?",
+      "answer": "The composition root is the single place in an application where the object graph is configured and built, usually at startup. All registrations and wiring happen there. Keeping composition in one place makes the dependency graph easy to understand and change.",
+      "tags": ["dependency-injection", "composition-root"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-008",
+      "difficulty": "Beginner",
+      "question": "How does dependency injection improve testability?",
+      "answer": "Because dependencies are supplied from outside, tests can pass fakes or stubs instead of real implementations. This isolates the unit under test and avoids slow or external resources. It also makes the dependencies of a class explicit and easy to inspect.",
+      "tags": ["dependency-injection", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "dependency-injection-009",
+      "difficulty": "Beginner",
+      "question": "What is the built-in DI container in .NET?",
+      "answer": "Microsoft.Extensions.DependencyInjection provides a lightweight container built into the .NET host. It supports constructor injection, lifetimes, factory registrations, and keyed services. It is intentionally minimal, and you can use a third-party container for advanced features.",
+      "tags": ["dependency-injection", "container"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-010",
+      "difficulty": "Beginner",
+      "question": "What is a service locator and why is it discouraged?",
+      "answer": "A service locator is an object that resolves dependencies on demand, so classes pull what they need from it. It hides dependencies, making them invisible in constructors and harder to test. Prefer injecting dependencies directly so the requirements are explicit.",
+      "tags": ["service-locator", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-011",
+      "difficulty": "Intermediate",
+      "question": "What is a captive dependency and how do you avoid it?",
+      "answer": "A captive dependency occurs when a longer-lived service holds a reference to a shorter-lived one, keeping it alive beyond its intended scope. A singleton capturing a scoped service is the classic case. The built-in container throws on this misconfiguration during development, and the fix is to inject a factory or scope factory instead.",
+      "tags": ["dependency-injection", "captive-dependency"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-012",
+      "difficulty": "Intermediate",
+      "question": "How do you register multiple implementations of the same interface?",
+      "answer": "Register each implementation, then resolve IEnumerable<T> to get all of them. You can also use keyed services to select a specific one by key. This is useful for plug-in style lists of handlers or validators.",
+      "tags": ["dependency-injection", "multiple"],
+      "code": "builder.Services.AddScoped<IValidator, NameValidator>();\nbuilder.Services.AddScoped<IValidator, EmailValidator>();\n// Resolve IEnumerable<IValidator> to run all.",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-013",
+      "difficulty": "Intermediate",
+      "question": "What are keyed services and when do you use them?",
+      "answer": "Keyed services let you register multiple implementations under the same type but different keys, and resolve the one you want by key. They are useful when a factory would otherwise be needed to select a variant. You resolve with GetRequiredKeyedService or the [FromKeyedServices] attribute.",
+      "tags": ["dependency-injection", "keyed-services"],
+      "code": "builder.Services.AddKeyedSingleton<IPayment, Stripe>(\"stripe\");",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use factory delegates in DI registration?",
+      "answer": "Pass a lambda to AddScoped or AddSingleton that receives the IServiceProvider and returns the instance. This lets you compute dependencies, choose implementations, or configure objects. It is a clean way to handle cases the container cannot infer.",
+      "tags": ["dependency-injection", "factory"],
+      "code": "builder.Services.AddSingleton<IClock>(_ => new SystemClock(TimeProvider.System));",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-015",
+      "difficulty": "Intermediate",
+      "question": "How do you validate the DI container configuration?",
+      "answer": "Enable ValidateOnBuild and ValidateScopes so the container checks that all services can be constructed at startup. This surfaces missing or mismatched lifetimes early instead of at first request. It is enabled by default in the development environment.",
+      "tags": ["dependency-injection", "validation"],
+      "code": "builder.Host.UseDefaultServiceProvider(o =>\n{\n    o.ValidateOnBuild = true;\n    o.ValidateScopes = true;\n});",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-016",
+      "difficulty": "Intermediate",
+      "question": "How do you create a scope manually to resolve scoped services?",
+      "answer": "Inject IServiceScopeFactory and call CreateScope to get an IServiceScope, then resolve scoped services from its ServiceProvider. Dispose the scope when done. This is common in background services that need a per-unit-of-work scope.",
+      "tags": ["dependency-injection", "scopes"],
+      "code": "using var scope = _scopeFactory.CreateScope();\nvar repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between AddTransient, AddScoped, and AddSingleton?",
+      "answer": "AddTransient creates a new instance every time it is requested. AddScoped creates one instance per scope, typically per HTTP request. AddSingleton creates one instance for the lifetime of the application. Pick based on the state and cost of the service.",
+      "tags": ["dependency-injection", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-018",
+      "difficulty": "Intermediate",
+      "question": "How do you inject dependencies into a background service?",
+      "answer": "Background services are singletons, so they cannot directly depend on scoped services. Inject IServiceScopeFactory and create a scope for each unit of work inside ExecuteAsync. This gives access to scoped dependencies without captive lifetimes.",
+      "tags": ["dependency-injection", "background-services"],
+      "code": "protected override async Task ExecuteAsync(CancellationToken ct)\n{\n    using var scope = _scopes.CreateScope();\n    // resolve scoped services here\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/scoped-service"]
+    },
+    {
+      "id": "dependency-injection-019",
+      "difficulty": "Intermediate",
+      "question": "How do you decorate a registered service in .NET DI?",
+      "answer": "With the built-in container, register the concrete service and then register the decorator with a factory that resolves the inner service. Third-party containers offer a Decorate method for convenience. The decorator implements the same interface and wraps the inner instance.",
+      "tags": ["dependency-injection", "decorator"],
+      "code": "builder.Services.AddScoped<IReport, ReportService>();\nbuilder.Services.AddScoped<IReport>(sp =>\n    new CachedReport(sp.GetRequiredService<IReport>()));",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-020",
+      "difficulty": "Intermediate",
+      "question": "How does the container decide which constructor to use?",
+      "answer": "The default container picks the constructor with the most parameters it can resolve. If multiple constructors are equally resolvable, it throws an ambiguity error. Keep one clear public constructor to avoid confusion.",
+      "tags": ["dependency-injection", "constructors"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement conditional registration based on configuration?",
+      "answer": "Read configuration in the composition root and register the appropriate implementation or use a factory that checks a flag at resolution time. Keeping the decision in the composition root avoids scattering conditionals. Keyed services also help select variants.",
+      "tags": ["dependency-injection", "configuration"],
+      "code": "if (config.GetValue<bool>(\"UseFakePayments\"))\n    builder.Services.AddScoped<IPayment, FakePayment>();\nelse\n    builder.Services.AddScoped<IPayment, StripePayment>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-022",
+      "difficulty": "Advanced",
+      "question": "How do you resolve a service at runtime without using a service locator everywhere?",
+      "answer": "Inject the specific abstraction you need where possible. When a runtime choice is unavoidable, inject IServiceProvider or a purpose-built factory only into the component that makes the decision. This confines the locator usage to one place rather than spreading it across the codebase.",
+      "tags": ["dependency-injection", "service-locator"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-023",
+      "difficulty": "Advanced",
+      "question": "How do you manage disposal of services resolved from the container?",
+      "answer": "The container disposes instances it created when their scope ends, as long as they implement IDisposable or IAsyncDisposable. Instances you register as pre-built singletons are not disposed by the container. Avoid capturing scoped services in long-lived objects to ensure disposal happens at the right time.",
+      "tags": ["dependency-injection", "disposal"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-024",
+      "difficulty": "Advanced",
+      "question": "How do you organize registrations as an application grows?",
+      "answer": "Group registrations into extension methods per feature or layer, such as AddOrdering or AddInfrastructure, and call them from the composition root. This keeps Program.cs small and localizes related wiring. Assembly scanning can automate registration when conventions are consistent.",
+      "tags": ["dependency-injection", "modularity"],
+      "code": "builder.Services\n    .AddInfrastructure(config)\n    .AddApplication()\n    .AddApi();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    },
+    {
+      "id": "dependency-injection-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a third-party DI container?",
+      "answer": "Third-party containers add features like convention-based registration, interception, and automatic decoration that the built-in container lacks. They also add a dependency, a learning curve, and sometimes less transparent resolution. Many applications do fine with the built-in container plus manual wiring.",
+      "tags": ["dependency-injection", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"]
+    }
+  ]
+}

@@ -1,0 +1,220 @@
+{
+  "category": "Static Files & Bundling",
+  "slug": "static-files",
+  "icon": "file",
+  "questions": [
+    {
+      "id": "static-files-001",
+      "difficulty": "Beginner",
+      "question": "How do you serve static files in ASP.NET Core?",
+      "answer": "You place files under the wwwroot folder and add the static files middleware with app.UseStaticFiles(), which serves them by relative path. The middleware is terminal for matched files, so requests for existing assets skip the rest of the pipeline. Content types are inferred from file extensions.",
+      "code": "var app = builder.Build();\napp.UseStaticFiles();\n// wwwroot/css/site.css is served at /css/site.css",
+      "tags": ["static-files", "wwwroot"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-002",
+      "difficulty": "Beginner",
+      "question": "What is the wwwroot folder?",
+      "answer": "wwwroot is the web root directory whose contents are publicly served by default, and it is configurable through the WebRootPath or WebApplicationOptions. Only files under the web root are exposed, which keeps source and configuration files private. Build tooling copies client assets into wwwroot during publish.",
+      "tags": ["wwwroot", "web-root"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-003",
+      "difficulty": "Beginner",
+      "question": "How do you serve files from a directory outside wwwroot?",
+      "answer": "You call UseStaticFiles with a StaticFileOptions whose FileProvider points to a PhysicalFileProvider rooted at the other directory, and optionally set RequestPath to expose it under a URL prefix. This is common for shared assets or uploaded files. Access should be restricted if the content is not public.",
+      "code": "app.UseStaticFiles(new StaticFileOptions\n{\n    FileProvider = new PhysicalFileProvider(Path.Combine(env.ContentRootPath, \"Files\")),\n    RequestPath = \"/files\"\n});",
+      "tags": ["file-provider", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-004",
+      "difficulty": "Beginner",
+      "question": "What are default document and directory browsing?",
+      "answer": "Default files middleware maps a request for a directory to a default file such as index.html, and directory browsing middleware lists the contents of a directory. Directory browsing is disabled by default because it can expose files. Enable it only when intentional and controlled.",
+      "code": "app.UseDefaultFiles();\napp.UseStaticFiles();\n// app.UseDirectoryBrowser(); // enable with caution",
+      "tags": ["default-files", "directory-browsing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-005",
+      "difficulty": "Beginner",
+      "question": "What is the order of static file middleware?",
+      "answer": "Default files must be registered before static files, and both should come after exception handling and before routing so assets are served early without hitting endpoint logic. Ordering matters because the pipeline is sequential. Serving static files before routing also avoids unnecessary authorization work for public assets.",
+      "code": "app.UseDefaultFiles();\napp.UseStaticFiles();\napp.UseRouting();",
+      "tags": ["ordering", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-006",
+      "difficulty": "Beginner",
+      "question": "What is client-side bundling and minification?",
+      "answer": "Bundling combines many CSS or JavaScript files into fewer files, and minification removes whitespace and shortens names to reduce size. This lowers request count and payload, improving load time. In modern ASP.NET Core this is done with build tools rather than the old BundlerMinifier, and many teams use Vite or webpack.",
+      "tags": ["bundling", "minification"],
+      "references": ["https://learn.microsoft.com/aspnet/core/client-side/"]
+    },
+    {
+      "id": "static-files-007",
+      "difficulty": "Beginner",
+      "question": "What is a CDN and why use one for static files?",
+      "answer": "A content delivery network caches static assets at edge locations close to users, reducing latency and offloading traffic from your servers. You reference assets through the CDN URL, often with a cache-busting version. This improves performance for globally distributed users.",
+      "tags": ["cdn", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between static files and Razor-rendered content?",
+      "answer": "Static files are served as-is from disk with no processing, while Razor content is rendered per request by the view engine using server data. Static files are faster and cacheable, and Razor content is dynamic and personalized. Most apps combine both, serving assets statically and pages dynamically.",
+      "tags": ["static-files", "razor"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-009",
+      "difficulty": "Beginner",
+      "question": "How do you reference static files in Razor views?",
+      "answer": "You use the ~ root-relative operator, for example <link href=\"~/css/site.css\" /> or asp-append-version for cache busting. The tilde is resolved to the app base path so links work regardless of deployment subpath. The asp-append-version tag helper appends a hash query string.",
+      "code": "<link rel=\"stylesheet\" href=\"~/css/site.css\" asp-append-version=\"true\" />",
+      "tags": ["razor", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-010",
+      "difficulty": "Beginner",
+      "question": "How do you add cache headers for static files?",
+      "answer": "You set OnPrepareResponse in StaticFileOptions to add Cache-Control or Expires headers, usually with a long max-age for versioned assets and a short one for others. This lets browsers and CDNs cache assets. The asp-append-version helper complements this by changing the URL when content changes.",
+      "code": "app.UseStaticFiles(new StaticFileOptions\n{\n    OnPrepareResponse = ctx => ctx.Context.Response.Headers.CacheControl\n        = \"public,max-age=604800\"\n});",
+      "tags": ["caching", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-011",
+      "difficulty": "Intermediate",
+      "question": "How do you serve files that require authorization?",
+      "answer": "Static file middleware does not run authorization, so files under wwwroot are public. To protect files you store them outside wwwroot and serve them through an action that performs authorization and returns a FileResult or PhysicalFile. This lets you check policies before streaming the content.",
+      "code": "[Authorize]\npublic IActionResult Download(int id)\n    => PhysicalFile(_files.PathFor(id), \"application/pdf\", \"doc.pdf\");",
+      "tags": ["authorization", "files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-012",
+      "difficulty": "Intermediate",
+      "question": "How do you configure MIME types for static files?",
+      "answer": "You add entries to ContentTypeProvider in StaticFileOptions, such as a FileExtensionContentTypeProvider with extra mappings, so the middleware returns the correct content type. Unknown extensions are not served by default. This is needed for formats the provider does not recognize.",
+      "code": "var provider = new FileExtensionContentTypeProvider();\nprovider.Mappings[\".webmanifest\"] = \"application/manifest+json\";\napp.UseStaticFiles(new StaticFileOptions { ContentTypeProvider = provider });",
+      "tags": ["mime-types", "configuration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-013",
+      "difficulty": "Intermediate",
+      "question": "What is the asp-append-version tag helper?",
+      "answer": "It appends a query string containing a hash of the file's contents to the generated URL, so the URL changes whenever the file changes. This enables aggressive caching without stale assets. It works with link and script tag helpers and requires the file to be accessible through the file provider.",
+      "code": "<script src=\"~/js/app.js\" asp-append-version=\"true\"></script>",
+      "tags": ["cache-busting", "tag-helpers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/tag-helpers/built-in/"]
+    },
+    {
+      "id": "static-files-014",
+      "difficulty": "Intermediate",
+      "question": "How do you host a SPA with ASP.NET Core?",
+      "answer": "You build the SPA into wwwroot or serve it from a proxy, add UseDefaultFiles and UseStaticFiles, and map a fallback to index.html so client-side routes work. The API endpoints are mapped alongside the static assets. Some templates proxy to the dev server during development for hot reload.",
+      "code": "app.UseDefaultFiles();\napp.UseStaticFiles();\napp.MapControllers();\napp.MapFallbackToFile(\"index.html\");",
+      "tags": ["spa", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-015",
+      "difficulty": "Intermediate",
+      "question": "How does response compression apply to static files?",
+      "answer": "Response compression middleware compresses text-based responses including static assets if the client sends Accept-Encoding, reducing transfer size at the cost of CPU. The Vary: Accept-Encoding header is added so caches store both variants. Precompressing assets to .br or .gz at build time is even more efficient.",
+      "code": "builder.Services.AddResponseCompression(o =>\n{\n    o.EnableForHttps = true;\n    o.MimeTypes = ResponseCompressionDefaults.MimeTypes\n        .Concat(new[] { \"image/svg+xml\" });\n});",
+      "tags": ["compression", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/response-compression"]
+    },
+    {
+      "id": "static-files-016",
+      "difficulty": "Intermediate",
+      "question": "How do you serve files from embedded resources or a database?",
+      "answer": "You implement a custom IFileProvider or serve the content through an action that returns a FileStreamResult, which is common when files live in a database or blob storage. For blob storage you can redirect to a time-limited SAS URL or stream through the app for authorization. A custom file provider integrates with static file middleware when appropriate.",
+      "tags": ["file-provider", "extensibility"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle cache busting for versioned assets?",
+      "answer": "You generate file names containing a content hash during build and reference them from a manifest, or use asp-append-version to add a hash query string. Either approach makes the URL change when content changes so you can set a long cache lifetime. CDNs then serve new content as soon as the URL changes.",
+      "tags": ["cache-busting", "assets"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-018",
+      "difficulty": "Intermediate",
+      "question": "How do you configure the web root to a different folder?",
+      "answer": "You pass WebApplicationOptions with WebRootPath or set it through the host configuration, and the static files middleware uses the configured web root. You can also keep the default and add extra providers with UseStaticFiles. Changing the web root is useful when assets are produced by an external build.",
+      "code": "var builder = WebApplication.CreateBuilder(new WebApplicationOptions\n{\n    WebRootPath = \"client/dist\"\n});",
+      "tags": ["web-root", "configuration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between StaticFileOptions and DefaultFilesOptions?",
+      "answer": "StaticFileOptions configures how files are served, including the file provider, request path, content types, and response callbacks, while DefaultFilesOptions configures which file names are treated as default documents for a directory. They are used with their respective middleware. Both accept a file provider and request path.",
+      "tags": ["options", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-020",
+      "difficulty": "Intermediate",
+      "question": "How do you secure static file serving against path traversal?",
+      "answer": "The middleware normalizes and validates paths against the file provider root, so attempts to escape the root with ../ are rejected. You should still avoid building file paths from raw user input and validate identifiers. Serving user-uploaded files from a separate, non-executable location adds defense in depth.",
+      "tags": ["security", "static-files"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files", "https://learn.microsoft.com/aspnet/core/security/"]
+    },
+    {
+      "id": "static-files-021",
+      "difficulty": "Advanced",
+      "question": "How does the static file middleware resolve and validate paths internally?",
+      "answer": "It uses the configured IFileProvider to map the request path to a file, checking for existence and directory behavior, then streams the file with a content type and optional range support. Paths are normalized and combined with the provider root so traversal outside the root is blocked. Response headers and callbacks let you customize caching and security headers.",
+      "tags": ["internals", "file-provider"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement a custom IFileProvider for a virtual file system?",
+      "answer": "You implement IFileProvider with GetFileInfo, GetDirectoryContents, and Watch, returning IFileInfo and IDirectoryContents for your storage. Register it in StaticFileOptions or use it through IWebHostEnvironment. Watch is optional and lets the system react to changes. This enables serving files from databases, blobs, or embedded assemblies.",
+      "code": "public class BlobFileProvider : IFileProvider\n{\n    public IFileInfo GetFileInfo(string subpath) => ...;\n    public IDirectoryContents GetDirectoryContents(string subpath) => ...;\n    public IChangeToken Watch(string filter) => NullChangeToken.Singleton;\n}",
+      "tags": ["file-provider", "extensibility"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-023",
+      "difficulty": "Advanced",
+      "question": "How do you optimize delivery of large static assets?",
+      "answer": "You enable range requests for partial downloads, compress text assets ahead of time, use a CDN with long cache lifetimes and content-hashed URLs, and serve over HTTP/2 or HTTP/3 to multiplex requests. Precompressed .br and .gz files avoid per-request compression cost. Monitoring real-user metrics confirms the improvements.",
+      "tags": ["performance", "cdn"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files", "https://learn.microsoft.com/aspnet/core/performance/response-compression"]
+    },
+    {
+      "id": "static-files-024",
+      "difficulty": "Advanced",
+      "question": "How do you configure static files to work behind a reverse proxy or CDN?",
+      "answer": "You use forwarded headers so the app sees the original scheme and host, configure the CDN to forward or strip cache headers appropriately, and set correct Vary and Cache-Control values. Content-hashed URLs ensure the CDN serves new versions promptly. You also ensure the proxy passes range requests if partial content matters.",
+      "tags": ["reverse-proxy", "cdn"],
+      "references": ["https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer", "https://learn.microsoft.com/aspnet/core/fundamentals/static-files"]
+    },
+    {
+      "id": "static-files-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of serving static files from the app versus object storage?",
+      "answer": "Serving from the app is simple and keeps everything in one deployment but consumes app bandwidth and CPU and scales with your instances. Object storage or a CDN offloads traffic, scales independently, and supports global caching, but adds another system, credentials, and eventual consistency considerations. Many production apps serve assets from storage or a CDN and keep only small assets in the app.",
+      "tags": ["architecture", "trade-offs"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/static-files", "https://learn.microsoft.com/aspnet/core/host-and-deploy/"]
+    }
+  ]
+}

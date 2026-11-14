@@ -1,0 +1,371 @@
+{
+  "category": "Modern C# Features",
+  "slug": "modern",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "modern-001",
+      "difficulty": "Beginner",
+      "question": "What is a record in C#?",
+      "answer": "A record is a reference type that the compiler gives value-based equality, a readable ToString, and support for non-destructive mutation via with-expressions. You can declare one with positional parameters, which also generates public init-only properties and a primary constructor. Records are ideal for immutable data and DTOs, while a record struct, added in C# 10, provides the same value semantics as a value type.",
+      "code": "public record Person(string FirstName, string LastName);\nvar a = new Person(\"Ada\", \"Lovelace\");\nvar b = a with { LastName = \"Byron\" };",
+      "tags": [
+        "records",
+        "equality",
+        "immutability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"
+      ]
+    },
+    {
+      "id": "modern-002",
+      "difficulty": "Beginner",
+      "question": "What are init-only setters?",
+      "answer": "An init accessor allows a property to be assigned only during object initialization, such as in an object initializer or constructor, after which it becomes read-only. This lets you build immutable objects without writing a constructor for every property combination. init replaces the older pattern of get-only properties set through constructors and works with records and with-expressions.",
+      "code": "public class Point\n{\n    public int X { get; init; }\n    public int Y { get; init; }\n}",
+      "tags": [
+        "init",
+        "immutability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/init"
+      ]
+    },
+    {
+      "id": "modern-003",
+      "difficulty": "Beginner",
+      "question": "How do you use a with-expression to perform non-destructive mutation?",
+      "answer": "A with-expression performs non-destructive mutation by copying an existing record or struct and overriding selected properties, leaving the original unchanged. It uses the compiler-generated copy constructor and object initializer syntax. This is the idiomatic way to produce modified copies of immutable data.",
+      "code": "var p1 = new Person(\"Ada\", \"Lovelace\");\nvar p2 = p1 with { LastName = \"Byron\" };",
+      "tags": [
+        "with-expression",
+        "records"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/with-expression"
+      ]
+    },
+    {
+      "id": "modern-004",
+      "difficulty": "Beginner",
+      "question": "What are top-level statements?",
+      "answer": "Top-level statements let you write executable code directly at the start of a file without an explicit Main method or Program class. The compiler synthesizes the entry point, and any using directives or type declarations can still follow. It reduces boilerplate for small programs, console apps, and samples while remaining fully compatible with the rest of the language.",
+      "code": "Console.WriteLine(\"Hello, world!\");\nint x = 42;\nConsole.WriteLine(x);",
+      "tags": [
+        "top-level-statements",
+        "entry-point"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/fundamentals/program-structure/top-level-statements"
+      ]
+    },
+    {
+      "id": "modern-005",
+      "difficulty": "Beginner",
+      "question": "What are file-scoped namespaces?",
+      "answer": "A file-scoped namespace declares a namespace for the entire file with a single statement ending in a semicolon, removing the need to indent everything inside a block. It reduces nesting and is the default style in modern templates. Only one file-scoped namespace may appear per file.",
+      "code": "namespace MyApp.Services;\n\npublic class Foo { }",
+      "tags": [
+        "namespaces",
+        "file-scoped"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/namespace"
+      ]
+    },
+    {
+      "id": "modern-006",
+      "difficulty": "Beginner",
+      "question": "What are global usings and implicit usings?",
+      "answer": "A global using directive, written as global using, makes a namespace available to every file in the project so you do not repeat the same using in each file. Implicit usings are a project setting, enabled by default in modern templates, that adds a curated set of common namespaces such as System and System.Linq automatically. Both reduce boilerplate while keeping the imports visible and controllable.",
+      "code": "global using System.Text.Json;\n// ImplicitUsings enabled via <ImplicitUsings>enable</ImplicitUsings>",
+      "tags": [
+        "global-usings",
+        "implicit-usings"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/using-directive"
+      ]
+    },
+    {
+      "id": "modern-007",
+      "difficulty": "Beginner",
+      "question": "What is target-typed new?",
+      "answer": "Target-typed new lets you write new() without repeating the type name when the target type is known from the context, such as a variable declaration, assignment, field, or argument. It reduces verbosity without changing behavior. It cannot be used when the target type is ambiguous, such as with var. C# 9 also added target-typed conditional expressions, where a conditional such as flag ? 1 : 0 infers its type from the assignment target, and C# 12 added using alias directives that can alias any type, not just a named type.",
+      "code": "List<int> numbers = new();\nDictionary<string, int> map = new();",
+      "tags": [
+        "target-typed-new",
+        "syntax"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/new-operator"
+      ]
+    },
+    {
+      "id": "modern-008",
+      "difficulty": "Beginner",
+      "question": "What is pattern matching in C#?",
+      "answer": "Pattern matching tests a value against a shape and can bind parts of it to new variables. It appears in is expressions, switch statements, and switch expressions, and supports type patterns, constant patterns, property patterns, positional patterns, relational patterns, and logical combinators. It makes type checks and conditional logic more expressive and less error-prone than chained casts.",
+      "code": "if (obj is string { Length: > 5 } s)\n    Console.WriteLine(s);",
+      "tags": [
+        "pattern-matching",
+        "is",
+        "switch"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/fundamentals/functional/pattern-matching"
+      ]
+    },
+    {
+      "id": "modern-009",
+      "difficulty": "Beginner",
+      "question": "What is a switch expression?",
+      "answer": "A switch expression returns a value from the first matching arm, using the expression form of switch with => arms and no fall-through. Arms can combine patterns, and the compiler warns if the arms do not cover all cases, which is useful with exhaustive matching. It is more concise and safer than a switch statement when you simply map an input to an output.",
+      "code": "string Describe(int n) => n switch\n{\n    0 => \"zero\",\n    < 0 => \"negative\",\n    _ => \"positive\"\n};",
+      "tags": [
+        "switch-expression",
+        "pattern-matching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/switch-expression"
+      ]
+    },
+    {
+      "id": "modern-010",
+      "difficulty": "Beginner",
+      "question": "What are ranges and indices in C#?",
+      "answer": "Index, written with the ^ operator, counts from the end, so ^1 is the last element. Range, written with .., selects a sub-sequence and can be open-ended, such as 1..^1 or ..3. Both work on arrays, strings, and spans through compiler support and the Index and Range types, making slicing concise.",
+      "code": "int[] a = { 1, 2, 3, 4, 5 };\nvar last = a[^1];\nvar middle = a[1..^1];",
+      "tags": [
+        "ranges",
+        "indices",
+        "slicing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/member-access-operators"
+      ]
+    },
+    {
+      "id": "modern-011",
+      "difficulty": "Intermediate",
+      "question": "How do property patterns and relational patterns work?",
+      "answer": "Property patterns match on the values of a value's properties, such as Person { Age: >= 18 }, and can nest to arbitrary depth. Relational patterns use the operators <, >, <=, and >= to compare an input to a constant, and logical patterns combine them with and, or, and not. Together they express rich conditions directly in switch arms or is expressions without intermediate variables.",
+      "code": "string Category(Person p) => p switch\n{\n    { Age: < 13 } => \"child\",\n    { Age: >= 13 and < 20 } => \"teen\",\n    _ => \"adult\"\n};",
+      "tags": [
+        "property-patterns",
+        "relational-patterns",
+        "logical-patterns"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/patterns"
+      ]
+    },
+    {
+      "id": "modern-012",
+      "difficulty": "Intermediate",
+      "question": "What are list patterns and when were they introduced?",
+      "answer": "List patterns, added in C# 11, match sequences such as arrays and spans by position and length. A discard matches one element, a slice pattern with .. matches zero or more elements, and the pattern requires an exact length unless a slice is present. They are useful for matching on the start or end of a sequence without manual index checks.",
+      "code": "int[] data = { 1, 2, 3 };\nif (data is [1, .., 3]) { }",
+      "tags": [
+        "list-patterns",
+        "csharp-11"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/patterns"
+      ]
+    },
+    {
+      "id": "modern-013",
+      "difficulty": "Intermediate",
+      "question": "What are raw string literals?",
+      "answer": "Raw string literals, added in C# 11, use three or more double quotes to define a string where backslashes and quotes are taken literally and no escaping is needed. The closing delimiter's indentation is stripped from every line, which keeps multi-line JSON, SQL, or regex readable and correctly indented. More opening quotes allow embedded sequences of quotes in the content.",
+      "code": "var json = \"\"\"\n    {\n        \"name\": \"Ada\"\n    }\n    \"\"\";",
+      "tags": [
+        "raw-string-literals",
+        "csharp-11"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/reference-types"
+      ]
+    },
+    {
+      "id": "modern-014",
+      "difficulty": "Intermediate",
+      "question": "What are required members?",
+      "answer": "The required modifier, introduced in C# 11, marks a property or field that callers must set during object creation. The compiler enforces this by requiring an object initializer or a constructor annotated with SetsRequiredMembers, otherwise it produces an error. Required members let you enforce initialization of essential state without forcing every value through a constructor.",
+      "code": "public class Config\n{\n    public required string Name { get; init; }\n}\nvar c = new Config { Name = \"app\" };",
+      "tags": [
+        "required",
+        "csharp-11"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/required"
+      ]
+    },
+    {
+      "id": "modern-015",
+      "difficulty": "Intermediate",
+      "question": "What are primary constructors for classes and structs?",
+      "answer": "Introduced in C# 12, primary constructors let a class or struct declare constructor parameters in its declaration, such as class Person(string name). The parameters are in scope throughout the type's body and can initialize fields or properties, but unlike records they do not automatically become properties. They reduce boilerplate for capturing values used by the type without exposing them publicly.",
+      "code": "public class Logger(string category)\n{\n    public void Log(string msg) =>\n        Console.WriteLine($\"[{category}] {msg}\");\n}",
+      "tags": [
+        "primary-constructors",
+        "csharp-12"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/whats-new/csharp-12"
+      ]
+    },
+    {
+      "id": "modern-016",
+      "difficulty": "Intermediate",
+      "question": "What are collection expressions?",
+      "answer": "Collection expressions, added in C# 12, use square brackets to initialize collections, arrays, and spans uniformly, for example int[] a = [1, 2, 3]. The spread element .. inserts the contents of another collection, and the compiler chooses an efficient construction path for the target type. They unify syntax across arrays, List<T>, spans, and types with a collection builder.",
+      "code": "int[] a = [1, 2, 3];\nint[] b = [0, .. a, 4];\nList<string> names = [\"a\", \"b\"];",
+      "tags": [
+        "collection-expressions",
+        "csharp-12"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/collection-expressions"
+      ]
+    },
+    {
+      "id": "modern-017",
+      "difficulty": "Intermediate",
+      "question": "What is the null-forgiving operator and how does it relate to nullable reference types?",
+      "answer": "Nullable reference types, enabled with <Nullable>enable</Nullable>, make the compiler track null-state and emit warnings for possible null dereferences and unnecessary null checks. The null-forgiving operator ! suppresses a warning when you know a value is not null but the compiler cannot prove it. These warnings are compile-time only and do not add runtime checks or change behavior.",
+      "code": "string? maybe = GetValue();\nint len = maybe!.Length; // suppress warning",
+      "tags": [
+        "nullable-reference-types",
+        "null-forgiving"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/nullable-references",
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/operators/null-forgiving"
+      ]
+    },
+    {
+      "id": "modern-018",
+      "difficulty": "Intermediate",
+      "question": "What are tuples and deconstruction in modern C#?",
+      "answer": "Tuples group several values into a lightweight value type, and named tuple elements like (int Id, string Name) make the code self-documenting. Deconstruction assigns the elements to separate variables in one statement, and types can support it by providing a Deconstruct method. Tuples are convenient for returning multiple values without defining a type, though they should not replace a named type when the data has broader meaning.",
+      "code": "(int Id, string Name) Get() => (1, \"Ada\");\nvar (id, name) = Get();",
+      "tags": [
+        "tuples",
+        "deconstruction"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/value-tuples",
+        "https://learn.microsoft.com/dotnet/csharp/fundamentals/functional/deconstruct"
+      ]
+    },
+    {
+      "id": "modern-019",
+      "difficulty": "Intermediate",
+      "question": "What are local functions and how do they compare to lambdas?",
+      "answer": "A local function is a named function declared inside another method, capturing variables from the enclosing scope like a lambda but without allocating a delegate unless it is converted to one. Local functions support recursion, iterator and async modifiers, and generic parameters, and they are ideal for private helpers that belong to one method. Lambdas are anonymous expressions better suited to passing as arguments. Lambdas themselves gained natural types, so you can write var f = (int x) => x * 2, and default parameter values, and both lambdas and local functions pair well with nameof to avoid magic strings.",
+      "code": "int Factorial(int n)\n{\n    int Fact(int x) => x <= 1 ? 1 : x * Fact(x - 1);\n    return Fact(n);\n}",
+      "tags": [
+        "local-functions",
+        "lambdas"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/local-functions"
+      ]
+    },
+    {
+      "id": "modern-020",
+      "difficulty": "Intermediate",
+      "question": "What is a using declaration and how does it differ from a using statement?",
+      "answer": "A using declaration, introduced in C# 8, declares a disposable variable whose Dispose is called automatically at the end of the enclosing scope, without an extra indentation block. It is equivalent to a using statement but reads more linearly, especially with several resources. Both are preferred over manual try/finally, and await using does the same for IAsyncDisposable.",
+      "code": "using var stream = File.OpenRead(\"data.txt\");\n// disposed at end of method",
+      "tags": [
+        "using-declaration",
+        "disposable"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/statements/using"
+      ]
+    },
+    {
+      "id": "modern-021",
+      "difficulty": "Advanced",
+      "question": "What are static abstract interface members and how do they enable generic math?",
+      "answer": "Introduced in C# 11, interfaces can declare static abstract members that implementing types must provide, enabling polymorphism over static operations. Combined with .NET 7 generic math interfaces such as INumber<T>, this allows generic algorithms that use operators, for example T Add<T>(T a, T b) where T : INumber<T> => a + b. It also underlies features like generic parsing and lets you constrain to interfaces that expose operators and constants.",
+      "code": "static T Sum<T>(IEnumerable<T> values) where T : INumber<T>\n{\n    T total = T.Zero;\n    foreach (var v in values) total += v;\n    return total;\n}",
+      "tags": [
+        "static-abstract",
+        "generic-math",
+        "csharp-11"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/static-abstract-interface-methods",
+        "https://learn.microsoft.com/dotnet/standard/generics/math"
+      ]
+    },
+    {
+      "id": "modern-022",
+      "difficulty": "Advanced",
+      "question": "What are ref structs and ref fields?",
+      "answer": "A ref struct is a stack-only type that cannot be boxed, stored on the heap, or used as a type argument, which lets it hold refs into other memory safely, as Span<T> does. C# 11 added ref fields so a ref struct can contain references to other storage, and the scoped and ref-safety rules ensure those references never outlive their target. These rules are why you cannot use a Span<T> in an async method or a field of an ordinary class. C# 12 also added ref readonly parameters, which pass a reference for efficiency while preventing the callee from modifying the value.",
+      "code": "ref struct Span2<T>\n{\n    private ref T _first;\n}",
+      "tags": [
+        "ref-struct",
+        "ref-fields",
+        "csharp-11"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/ref-struct",
+        "https://learn.microsoft.com/dotnet/csharp/whats-new/csharp-11"
+      ]
+    },
+    {
+      "id": "modern-023",
+      "difficulty": "Advanced",
+      "question": "What are inline arrays in C# 12?",
+      "answer": "Inline arrays let a struct declare a fixed-size array of a known length using the System.Runtime.CompilerServices.InlineArray attribute on a single field. The compiler generates an indexer and length, so the array is embedded directly in the struct without a separate heap allocation, which is valuable for high-performance buffer scenarios and interop. You access elements by index just like a normal array.",
+      "code": "[InlineArray(10)]\npublic struct Buffer10<T>\n{\n    private T _element0;\n}\nvar b = new Buffer10<int>();\nb[0] = 42;",
+      "tags": [
+        "inline-arrays",
+        "csharp-12",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/struct"
+      ]
+    },
+    {
+      "id": "modern-024",
+      "difficulty": "Advanced",
+      "question": "What are default interface methods and how do they differ from abstract members?",
+      "answer": "Default interface methods, added in C# 8, let an interface provide a method body that implementing types inherit unless they override it, enabling interface evolution without breaking existing implementers. They are not virtual members on a class hierarchy in the usual sense and are only reachable through the interface, not through a class reference. Use them to add behavior or helper members to a published interface, while remembering they can introduce ambiguity with multiple inheritance of interfaces. On structs, a member marked readonly guarantees it does not mutate the instance, which lets the compiler skip defensive copies when calling it.",
+      "code": "public interface ILogger\n{\n    void Log(string msg);\n    void LogInfo(string msg) => Log($\"INFO: {msg}\");\n}",
+      "tags": [
+        "default-interface-methods",
+        "interfaces",
+        "csharp-8"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/whats-new/csharp-8"
+      ]
+    },
+    {
+      "id": "modern-025",
+      "difficulty": "Advanced",
+      "question": "What are interpolated string handlers and how do they improve performance?",
+      "answer": "Interpolated string handlers, added in C# 10, let an interpolated string be processed without first allocating a string when the target type provides a handler, as the compiler rewrites the interpolation into calls the handler can optimize. This enables APIs that build the final text into a destination such as a StringBuilder or a Span<char>, avoiding intermediate allocations. In .NET 6+ string interpolation to a string uses the default handler for efficiency, and custom handlers follow the pattern of AppendLiteral and AppendFormatted methods. For UTF-8 text, C# 11 also added UTF-8 string literals, where a string suffixed with u8 is encoded as a ReadOnlySpan<byte> with no allocation.",
+      "code": "var sb = new StringBuilder();\nsb.Append($\"Value: {42}\");",
+      "tags": [
+        "interpolated-string-handlers",
+        "performance",
+        "csharp-10"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/interpolated-string-handler",
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/tokens/interpolated"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,370 @@
+{
+  "category": "Testing & Best Practices",
+  "slug": "testing",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit, integration, and end-to-end tests?",
+      "answer": "A unit test exercises a single unit of code, usually one class or method, in isolation with its dependencies replaced by test doubles, and it runs fast and deterministically. An integration test verifies that several real components work together, such as your code plus a database or an HTTP endpoint, so it is slower and exercises more of the stack. An end-to-end test drives the whole system through its public surface, for example a browser against a running app, which gives the highest confidence but is the slowest and most brittle. A healthy test suite is dominated by unit tests, supported by fewer integration tests, and a thin layer of end-to-end tests.",
+      "tags": [
+        "test-levels",
+        "unit-testing",
+        "integration-testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/",
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/test-asp-net-core-mvc-apps"
+      ]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "What is xUnit and how do you write a basic test with Fact and Theory?",
+      "answer": "xUnit.net is a free, open-source unit testing framework for .NET that is the default choice in modern templates. A method marked with [Fact] is a single test with no parameters, while [Theory] marks a data-driven test whose parameters come from attributes such as [InlineData]. The test runner discovers these attributes and executes each theory once per data row, reporting them as separate test cases.",
+      "code": "public class CalculatorTests\n{\n    [Fact]\n    public void Add_ReturnsSum() =>\n        Assert.Equal(4, Calculator.Add(2, 2));\n\n    [Theory]\n    [InlineData(1, 2, 3)]\n    [InlineData(-1, 1, 0)]\n    public void Add_IsCorrect(int a, int b, int expected) =>\n        Assert.Equal(expected, Calculator.Add(a, b));\n}",
+      "tags": [
+        "xunit",
+        "fact",
+        "theory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"
+      ]
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "What is the Arrange-Act-Assert pattern?",
+      "answer": "Arrange-Act-Assert is a convention for structuring a test into three clearly separated phases: arrange the objects and inputs, act by invoking the behavior under test, and assert that the outcome matches expectations. It makes tests readable and keeps the intent obvious, and a well-structured test has a single Act with a focused set of assertions. Splitting the phases with blank lines or comments is a common style that reviewers and tools rely on.",
+      "code": "var account = new Account(100);      // Arrange\naccount.Withdraw(40);                 // Act\nAssert.Equal(60, account.Balance);    // Assert",
+      "tags": [
+        "arrange-act-assert",
+        "test-structure"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "What are test doubles, and what is the difference between mocks, stubs, fakes, and spies?",
+      "answer": "A test double is any object that stands in for a real dependency during a test. A stub returns canned answers, a fake has a working but simplified implementation such as an in-memory repository, a spy records how it was called so the test can inspect it, and a mock is pre-programmed with expectations about which calls must occur. The practical distinction is whether the double mainly provides values, provides behavior, or verifies interactions.",
+      "tags": [
+        "test-doubles",
+        "mocks",
+        "fakes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "What assertion methods does the built-in Assert class provide?",
+      "answer": "The Assert class offers methods such as Equal, NotEqual, True, False, Null, NotNull, Same, Contains, and InRange for verifying outcomes, each with overloads for expected messages. Modern frameworks add Throws and ThrowsAsync to assert that a delegate throws a specific exception. Using the most specific assertion available produces clearer failure messages than a generic Assert.True comparison.",
+      "code": "Assert.Equal(3, list.Count);\nAssert.NotNull(result);\nAssert.Contains(\"key\", dictionary.Keys);",
+      "tags": [
+        "assertions",
+        "xunit"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/microsoft.visualstudio.testtools.unittesting.assert"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "How do xUnit, NUnit, and MSTest differ?",
+      "answer": "xUnit.net uses constructor-based setup and IDisposable for teardown instead of attributes, and creates a new instance of the test class for every test, which enforces isolation by default. NUnit is attribute-heavy with [SetUp], [TearDown], and rich parameterization, and MSTest is the Microsoft-native framework with [TestClass] and [TestMethod] that integrates tightly with Visual Studio and the Microsoft.Testing.Platform. All three run on .NET and are supported by dotnet test, so the choice is mostly about team preference, ecosystem, and available tooling.",
+      "tags": [
+        "xunit",
+        "nunit",
+        "mstest"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-nunit",
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-mstest"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "What is test isolation and why does it matter?",
+      "answer": "Test isolation means each test runs independently and its result does not depend on other tests or on the order in which they execute. Tests that share mutable static state, files, or a database can pass alone but fail together, which makes failures hard to reproduce. xUnit helps by instantiating the test class per test and by running test collections in parallel, so shared resources must be made thread-safe or confined to fixtures.",
+      "tags": [
+        "test-isolation",
+        "parallelism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "What makes a test deterministic, and how do you avoid flaky tests?",
+      "answer": "A deterministic test always produces the same result given the same code, with no dependence on the current time, random values, machine culture, network, or execution order. To avoid flakiness, inject abstractions for clocks and randomness such as TimeProvider or an IClock interface, avoid real network calls, seed any random generators, and never rely on Thread.Sleep for synchronization. Retrying a flaky test hides the underlying nondeterminism, so the fix should remove the source of the instability rather than mask it.",
+      "code": "public class Service(TimeProvider clock)\n{\n    public bool IsOpen => clock.GetUtcNow().Hour is >= 9 and < 17;\n}",
+      "tags": [
+        "determinism",
+        "flaky-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/dotnet/api/system.timeprovider"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "What is TDD and how does it relate to BDD?",
+      "answer": "Test-driven development is a cycle of writing a failing test first (red), making it pass with the simplest code (green), and then refactoring while the tests stay green. It drives design toward testable, loosely coupled code and provides a regression suite as a byproduct. Behavior-driven development extends the idea by describing behavior in business-readable language such as Given/When/Then, which tools like SpecFlow or Reqnroll map to executable tests.",
+      "tags": [
+        "tdd",
+        "bdd",
+        "red-green-refactor"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "What is code coverage and how should it be used?",
+      "answer": "Code coverage measures how much of your code is exercised by the tests, commonly reported as line and branch coverage. On .NET you can collect it with dotnet test --collect:\"Code Coverage\" or with Coverlet, and the output can be consumed by tools such as ReportGenerator. Coverage is a useful signal for finding untested code, but a high percentage does not prove correctness because a test can execute a line without asserting anything meaningful.",
+      "code": "dotnet test --collect:\"XPlat Code Coverage\"",
+      "tags": [
+        "code-coverage",
+        "coverlet"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "What are IClassFixture and ICollectionFixture in xUnit?",
+      "answer": "IClassFixture<T> shares a single instance of a fixture across all tests in one test class, which is ideal for expensive setup such as starting an in-memory host once per class. ICollectionFixture<T> shares a fixture across every test class in a collection, so several classes can reuse one resource such as a database container. Both are implemented by having the test class or collection definition request the fixture through the constructor or a CollectionDefinition attribute.",
+      "code": "[CollectionDefinition(\"db\")]\npublic class DbCollection : ICollectionFixture<DbFixture> { }\n\n[Collection(\"db\")]\npublic class RepoTests(DbFixture fx) { }",
+      "tags": [
+        "xunit-fixtures",
+        "shared-context"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"
+      ]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write parameterized tests beyond InlineData?",
+      "answer": "InlineData only supports compile-time constants, so xUnit provides MemberData to source arguments from a static property or method and ClassData to source them from a type implementing IEnumerable<object[]>. This lets you build cases from computed values, share a data set across tests, or generate many combinations. Each generated case runs and reports independently, and grouping with TheoryData<T> gives compile-time type checking of the data.",
+      "code": "public static TheoryData<int, int> Cases => new()\n{\n    { 1, 2 }, { 3, 4 }\n};\n\n[Theory]\n[MemberData(nameof(Cases))]\npublic void Test(int a, int b) => Assert.True(a < b);",
+      "tags": [
+        "parameterized-tests",
+        "memberdata",
+        "theorydata"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test asynchronous code correctly?",
+      "answer": "Test methods should be declared async Task rather than async void so the runner can await them and observe exceptions. Return the task instead of using .Result or .Wait(), which can deadlock or wrap exceptions in AggregateException, and await the assertion or use the framework's async assertion helpers. For timeouts, use a CancellationToken with a bounded delay so a hung test fails fast rather than blocking the run.",
+      "code": "[Fact]\npublic async Task Fetch_ReturnsData()\n{\n    var result = await client.GetAsync(\"/data\");\n    result.EnsureSuccessStatusCode();\n    Assert.Equal(HttpStatusCode.OK, result.StatusCode);\n}",
+      "tags": [
+        "async-testing",
+        "await"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/asynchronous-programming-patterns/consuming-the-task-based-asynchronous-pattern"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test that code throws an exception?",
+      "answer": "xUnit provides Assert.Throws<T> and its async counterpart Assert.ThrowsAsync<T>, which take a delegate and return the caught exception so you can assert on its message or properties. Asserting the exact exception type is important because Assert.Throws also fails if a different or derived type is thrown, unlike a looser check. Avoid try/catch with a manual Assert.Fail, since it is verbose and easy to write incorrectly.",
+      "code": "var ex = Assert.Throws<ArgumentNullException>(() =>\n    service.Get(null!));\nAssert.Equal(\"id\", ex.ParamName);",
+      "tags": [
+        "exceptions",
+        "assert-throws"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do Moq and NSubstitute differ when creating mocks?",
+      "answer": "Moq builds a mock from an interface or virtual members and configures it with a fluent Setup and Returns API, then verifies calls with Verify, which reads as an explicit mock-first style. NSubstitute aims for a more natural syntax where you call methods on a substitute to configure them, for example repo.Get(1).Returns(item), and check interactions with Received(). Both generate dynamic proxies and support argument matchers, callbacks, and strict behavior. The choice is largely stylistic; Moq requires the mocked members to be virtual on classes, and neither can mock non-virtual, static, or sealed members without an alternative such as a hand-written fake.",
+      "code": "var repo = Substitute.For<IOrderRepository>();\nrepo.Get(1).Returns(new Order());\nvar svc = new OrderService(repo);\nsvc.Place(new Order());\nrepo.Received().Add(Arg.Any<Order>());",
+      "tags": [
+        "moq",
+        "nsubstitute",
+        "mocking"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "When is mocking considered a code smell?",
+      "answer": "Heavy mocking is a smell when a test must set up many unrelated expectations just to reach the behavior under test, which usually signals that the class has too many responsibilities or depends on concrete types instead of abstractions. Verifying every interaction also couples tests to implementation details, so refactoring breaks tests even though behavior is unchanged. Prefer testing observable outcomes, use fakes or in-memory implementations for collaborators, and reserve strict interaction verification for cases where the interaction itself is the contract.",
+      "tags": [
+        "mocking",
+        "test-smells",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "What is FluentAssertions and why use it?",
+      "answer": "FluentAssertions is a third-party library that replaces Assert calls with a readable fluent syntax such as result.Should().Be(3) and collection.Should().ContainSingle(). It produces detailed failure messages that show the actual and expected values and, for collections and objects, the specific difference. Its extensibility allows custom assertions for domain types, which keeps tests expressive, though some teams avoid the extra dependency in favor of built-in asserts.",
+      "code": "result.Should().Be(3);\norders.Should().HaveCount(2)\n    .And.OnlyContain(o => o.Total > 0);",
+      "tags": [
+        "fluentassertions",
+        "assertions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "What is a test data builder and why is it useful?",
+      "answer": "A test data builder is a helper that constructs valid domain objects with sensible defaults and lets a test override only the properties relevant to that test. It removes the noise of repeating large object initializers and makes the intent of each test obvious, because you can see exactly which field matters. Builders reduce the cost of adding a new required property, since only the default changes and existing tests keep compiling.",
+      "code": "var order = new OrderBuilder()\n    .WithTotal(100m)\n    .WithStatus(OrderStatus.Paid)\n    .Build();",
+      "tags": [
+        "test-data-builders",
+        "maintainability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you write integration tests for an ASP.NET Core app with WebApplicationFactory?",
+      "answer": "WebApplicationFactory<TEntryPoint> boots your application in memory using the real hosting pipeline and exposes an HttpClient that sends requests to it without a network listener. You typically subclass it to override the host configuration, such as replacing a database registration with a test double or in-memory provider, and then assert on real HTTP responses. This approach exercises routing, model binding, filters, and middleware, giving much higher confidence than unit tests while staying fast and self-contained.",
+      "code": "public class ApiTests(WebApplicationFactory<Program> factory)\n    : IClassFixture<WebApplicationFactory<Program>>\n{\n    [Fact]\n    public async Task Get_ReturnsOk()\n    {\n        var client = factory.CreateClient();\n        var res = await client.GetAsync(\"/health\");\n        res.EnsureSuccessStatusCode();\n    }\n}",
+      "tags": [
+        "integration-testing",
+        "webapplicationfactory",
+        "aspnetcore"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1",
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/test-asp-net-core-mvc-apps"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you run tests in CI, and how can you make that efficient?",
+      "answer": "In continuous integration you run dotnet test as part of the build pipeline, publish the results in TRX or JUnit format for the CI dashboard, and collect coverage for trend analysis. You can speed up large suites with dotnet test --filter to run a subset, or by splitting projects and running them in parallel across agents. Failing the pipeline on any failed test, and treating coverage and test duration as tracked metrics, keeps the suite trustworthy over time.",
+      "code": "dotnet test --logger \"trx;LogFileName=results.trx\" \\\n  --collect:\"XPlat Code Coverage\"",
+      "tags": [
+        "ci",
+        "dotnet-test"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/tools/dotnet-test",
+        "https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "What are Testcontainers and when should you use them?",
+      "answer": "Testcontainers is a library that starts real dependencies such as SQL Server, PostgreSQL, or Redis in disposable Docker containers for the duration of a test or fixture. It lets integration tests run against the actual database engine rather than an in-memory substitute, which catches behavior that providers like the EF Core InMemory provider do not reproduce, such as constraints and SQL translation. Containers add startup cost and require Docker on the build agent, so they are best shared through a collection fixture and used for a focused set of integration tests.",
+      "code": "await new MsSqlContainer(\"mcr.microsoft.com/mssql/server:2022-latest\")\n    .StartAsync();",
+      "tags": [
+        "testcontainers",
+        "integration-testing",
+        "docker"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/test-asp-net-core-mvc-apps"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "What is mutation testing and what does it add over code coverage?",
+      "answer": "Mutation testing tools such as Stryker.NET introduce small deliberate faults, called mutants, into the source and then run the test suite to see whether the tests fail; a surviving mutant means the tests executed that code without verifying its behavior. This directly measures the quality of assertions rather than just which lines were reached, exposing tests that cover code but assert nothing. It is more expensive to run than normal tests, so it is often applied to critical projects or run on a schedule rather than on every commit.",
+      "tags": [
+        "mutation-testing",
+        "stryker",
+        "test-quality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you write performance tests with BenchmarkDotNet?",
+      "answer": "BenchmarkDotNet is the standard .NET library for microbenchmarks; you mark methods with [Benchmark] in a class and run it, and the tool handles warmup, iteration counts, and statistical analysis so the numbers are meaningful. It reports metrics such as mean, median, and allocations, and supports comparing variants with [BenchmarkBaseline] or by parameterizing with [Params]. Benchmarks must always be run in Release configuration outside a debugger, because JIT optimizations and the debugger change results dramatically. For application-level load testing, tools such as k6 or NBomber are more appropriate than microbenchmarks.",
+      "code": "[MemoryDiagnoser]\npublic class Parsing\n{\n    [Benchmark]\n    public int Parse() => int.Parse(\"12345\");\n}",
+      "tags": [
+        "benchmarkdotnet",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/diagnostics/"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "How do code analyzers and coding standards improve code quality?",
+      "answer": "The .NET SDK ships Roslyn analyzers and code style rules that flag potential bugs, API misuse, and style deviations at build time, and their severity can be configured through .editorconfig or the AnalysisMode and EnforceCodeStyleInBuild properties. Enforcing a consistent standard, often captured in an .editorconfig shared across the repo, reduces review noise and lets the compiler catch issues that would otherwise be caught by humans. Treating warnings as errors with TreatWarningsAsErrors in CI ensures the rules are actually honored.",
+      "code": "<PropertyGroup>\n  <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>\n  <AnalysisMode>Recommended</AnalysisMode>\n</PropertyGroup>",
+      "tags": [
+        "analyzers",
+        "code-style",
+        "editorconfig"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/overview",
+        "https://learn.microsoft.com/dotnet/fundamentals/code-analysis/style-rules/"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "How should you document and version a public API, and what breaks compatibility?",
+      "answer": "Public APIs should be documented with XML documentation comments so tooling can generate IntelliSense and reference docs, and changes should follow semantic versioning where a major bump signals a breaking change. Binary compatibility means existing compiled callers keep working, which is broken by removing or renaming public members, changing signatures, or making a previously optional member required, while source compatibility can break even when binary compatibility holds. Tools such as the API compatibility analyzer and package validation detect these breaks during a build so they can be caught before release.",
+      "code": "/// <summary>Adds two integers.</summary>\n/// <param name=\"a\">First addend.</param>\npublic static int Add(int a, int b) => a + b;",
+      "tags": [
+        "api-versioning",
+        "documentation",
+        "semver"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/library-guidance/versioning",
+        "https://learn.microsoft.com/dotnet/fundamentals/apicompat/package-validation/overview"
+      ]
+    }
+  ]
+}

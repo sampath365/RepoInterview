@@ -1,0 +1,335 @@
+{
+  "category": "Performance & Benchmarking",
+  "slug": "performance",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "Why is Fastify considered fast?",
+      "answer": "Fastify uses a compiled radix-tree router, schema-based serialization with fast-json-stringify, and pre-compiled validators, reducing per-request work. It also reuses request and reply objects to limit allocations. These choices lower CPU and memory per request. Benchmarks consistently place it among the fastest Node.js frameworks.",
+      "tags": [
+        "performance",
+        "overview"
+      ],
+      "references": [
+        "https://fastify.dev/benchmarks/",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "How do response schemas improve performance?",
+      "answer": "A response schema lets Fastify compile a specialised serializer that avoids generic reflection and drops undeclared fields. This speeds up serialization and shrinks payloads. The gain grows with traffic. It is one of the easiest performance wins.",
+      "tags": [
+        "performance",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "What is the event loop and why does blocking it hurt?",
+      "answer": "Node.js runs JavaScript on a single-threaded event loop that must stay free to handle other requests. Long synchronous work blocks all requests and inflates latency. Move heavy CPU work to worker threads or separate services. Keeping handlers non-blocking is fundamental.",
+      "tags": [
+        "performance",
+        "event-loop"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick"
+      ]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "How do you run benchmarks against a Fastify server?",
+      "answer": "You use a load tool like autocannon to send many requests and measure throughput and latency percentiles. Run against a built server on representative hardware. Compare changes under the same conditions. Benchmarking guides optimisation decisions.",
+      "tags": [
+        "performance",
+        "benchmarking"
+      ],
+      "references": [
+        "https://github.com/fastify/autocannon"
+      ]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "Why avoid synchronous file or CPU operations in handlers?",
+      "answer": "Synchronous calls block the event loop, so every other request waits. Use asynchronous APIs or offload CPU-heavy tasks. This keeps latency low under load. Blocking is a common cause of performance complaints.",
+      "tags": [
+        "performance",
+        "blocking"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick"
+      ]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "How does gzip or brotli compression affect performance?",
+      "answer": "Compression reduces payload size, cutting network time, at the cost of CPU. Enable it for large text responses via @fastify/compress. For small payloads the overhead may not pay off. Balance CPU and bandwidth for your workload.",
+      "tags": [
+        "performance",
+        "compression"
+      ],
+      "references": [
+        "https://github.com/fastify/fastify-compress"
+      ]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "What is caching and how does it improve performance?",
+      "answer": "Caching stores computed or fetched data so repeated requests avoid expensive work. You can cache in memory, in Redis, or via HTTP headers. Set appropriate TTLs and invalidation. Caching is often the biggest latency win.",
+      "tags": [
+        "performance",
+        "caching"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching"
+      ]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "How do you measure latency percentiles?",
+      "answer": "You record request durations and compute p50, p95, and p99 rather than only the average. Percentiles reveal tail latency that users feel. Log or export these metrics. Tail latency often matters more than the mean.",
+      "tags": [
+        "performance",
+        "metrics"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "Why is keeping handlers async helpful for performance?",
+      "answer": "Async handlers let Node interleave other requests while awaiting I/O, maximising throughput. Blocking equivalents would stall the loop. Return promises and await I/O rather than mixing callbacks. This keeps concurrency high.",
+      "tags": [
+        "performance",
+        "async"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/asynchronous-work/event-loop-timers-and-nexttick"
+      ]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "How can connection keep-alive improve performance?",
+      "answer": "Keep-alive reuses TCP connections across requests, avoiding repeated handshakes and TLS negotiation. HTTP/1.1 enables it by default, and Node keeps sockets open. Tune keep-alive timeouts to match your proxy. It reduces latency for chatty clients.",
+      "tags": [
+        "performance",
+        "networking"
+      ],
+      "references": [
+        "https://nodejs.org/api/http.html"
+      ]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you profile a Fastify application?",
+      "answer": "You use Node's built-in profiler or the --inspect flag with Chrome DevTools to capture CPU profiles, and clinic.js for higher-level analysis. Identify hot functions before optimising. Profile under realistic load. Guessing at bottlenecks wastes effort.",
+      "tags": [
+        "performance",
+        "profiling"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/diagnostics/memory",
+        "https://clinicjs.org/"
+      ]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "How do you optimise database access for throughput?",
+      "answer": "You add indexes for common queries, avoid N+1 patterns with joins or batching, and size the connection pool to the database. Cache hot reads. Keep transactions short. Database round trips often dominate latency.",
+      "tags": [
+        "performance",
+        "database"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Glossary/ACID"
+      ]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How does the router design affect request throughput?",
+      "answer": "Fastify's radix tree matches routes without per-request regex construction, keeping lookup cost low regardless of route count. Reusing the compiled matcher avoids allocation. Understanding this explains why route organisation rarely becomes the bottleneck. The overhead is dominated by I/O and serialization.",
+      "tags": [
+        "performance",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce payload size?",
+      "answer": "You enable compression, use response schemas to drop unneeded fields, and paginate large collections. Smaller payloads mean less CPU for serialization and less network time. Avoid over-fetching from the database. Measure the effect on real responses.",
+      "tags": [
+        "performance",
+        "payloads"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Compression"
+      ]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "What is the role of worker threads in Node.js performance?",
+      "answer": "Worker threads run JavaScript in parallel, so CPU-heavy tasks like image processing or cryptography do not block the main event loop. You offload work and receive results asynchronously. They add complexity and memory cost. Use them only for genuinely CPU-bound work.",
+      "tags": [
+        "performance",
+        "workers"
+      ],
+      "references": [
+        "https://nodejs.org/api/worker_threads.html"
+      ]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you scale a Fastify app horizontally?",
+      "answer": "You run multiple instances behind a load balancer and let the OS or a process manager use all CPU cores, or use the cluster module. Horizontal scaling works because Fastify instances are stateless when sessions are external. Sticky sessions are needed only for certain patterns. This is the standard way to use multi-core machines.",
+      "tags": [
+        "performance",
+        "scaling"
+      ],
+      "references": [
+        "https://nodejs.org/api/cluster.html"
+      ]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How do you cache expensive computed responses?",
+      "answer": "You compute once, store the result with a TTL, and serve it until it expires or is invalidated. Use an in-memory cache for single instances or Redis for shared caches. Set cache headers for clients where appropriate. Always plan invalidation.",
+      "tags": [
+        "performance",
+        "caching"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Caching"
+      ]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "How does logging affect performance?",
+      "answer": "Logging costs CPU for serialization and I/O for writing, and synchronous destinations can block the loop. Pino is fast and transports run off-thread. Log at info or above in production and redact carefully. Sample verbose logs under high load.",
+      "tags": [
+        "performance",
+        "logging"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/benchmarks"
+      ]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you tune server timeouts for performance?",
+      "answer": "You set keepAliveTimeout, connectionTimeout, and requestTimeout so slow or idle connections do not hold resources. Values should align with your proxy and expected client behaviour. Too aggressive and you drop valid requests. Monitor connection metrics to tune.",
+      "tags": [
+        "performance",
+        "timeouts"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#requesttimeout"
+      ]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "How do you benchmark fairly against other frameworks?",
+      "answer": "You use the same hardware, workload, and payload sizes, and run the official benchmark suite if possible. Warm up before measuring and report percentiles, not just averages. Isolate the framework overhead from database and network. Fair benchmarking avoids misleading conclusions.",
+      "tags": [
+        "performance",
+        "benchmarking"
+      ],
+      "references": [
+        "https://fastify.dev/benchmarks/"
+      ]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How do you find and fix memory leaks in a Fastify service?",
+      "answer": "You take heap snapshots over time and compare retained objects, and monitor RSS growth under load. Common causes are unbounded caches, lingering event listeners, and unclosed connections. Use clinic heapprofiler to pinpoint growth. Fix leaks before scaling up.",
+      "tags": [
+        "performance",
+        "memory"
+      ],
+      "references": [
+        "https://nodejs.org/en/learn/diagnostics/memory",
+        "https://clinicjs.org/"
+      ]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "How do you optimise JSON serialization for very hot endpoints?",
+      "answer": "You define a precise response schema so fast-json-stringify generates minimal code, keep the shape flat, and avoid large nested structures. Reuse schemas to compile once. Measure with realistic payloads. Serialization is often a top CPU consumer.",
+      "tags": [
+        "performance",
+        "serialization"
+      ],
+      "references": [
+        "https://github.com/fastify/fast-json-stringify"
+      ]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "What is backpressure and how do you handle it in streams?",
+      "answer": "Backpressure occurs when a producer outpaces a consumer, and ignoring it buffers data until memory runs out. Node streams signal it via the return value of write and the drain event. You should pause the source when the destination is full. Fastify streams respect this if you pipe correctly.",
+      "tags": [
+        "performance",
+        "streams"
+      ],
+      "references": [
+        "https://nodejs.org/api/stream.html"
+      ]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you reduce cold-start and boot time?",
+      "answer": "You keep plugin registration lean, avoid heavy work in onReady, and lazy-load rarely used modules. Compiling many schemas at boot adds time, so reuse schemas. Measure boot duration and treat it as a budget. Faster boot improves scaling and deploys.",
+      "tags": [
+        "performance",
+        "startup"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide between scaling vertically and horizontally?",
+      "answer": "Vertical scaling adds CPU and memory to one instance and is simple but bounded; horizontal scaling adds instances and improves resilience and fault tolerance. Node.js benefits from horizontal scaling across cores. Most production systems combine both, with a load balancer and external state. Decide based on cost, availability needs, and bottlenecks.",
+      "tags": [
+        "performance",
+        "scaling"
+      ],
+      "references": [
+        "https://nodejs.org/api/cluster.html"
+      ]
+    }
+  ]
+}

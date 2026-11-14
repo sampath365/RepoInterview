@@ -1,0 +1,221 @@
+{
+  "category": "Database Testing & EF Core",
+  "slug": "database",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "database-001",
+      "difficulty": "Beginner",
+      "question": "How do you test EF Core code without a database?",
+      "answer": "Use the EF Core in-memory provider, which stores data in a lightweight in-memory store and lets you exercise your DbContext and LINQ queries without a server. It is fast and requires no setup, but it is not a relational database, so it does not enforce constraints, transactions, or raw SQL. Use it for logic tests and switch to a relational provider when query translation matters.",
+      "tags": ["efcore", "in-memory"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-without-the-database"]
+    },
+    {
+      "id": "database-002",
+      "difficulty": "Beginner",
+      "question": "What are the limitations of the EF Core in-memory provider?",
+      "answer": "It is not a relational database: it does not enforce foreign keys, unique constraints, or relational integrity, and it does not translate SQL, so queries that work in memory can fail against a real provider. It also cannot test migrations or provider-specific behaviour. Because of this, many teams prefer SQLite in-memory for a closer approximation.",
+      "tags": ["limitations", "in-memory"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-without-the-database"]
+    },
+    {
+      "id": "database-003",
+      "difficulty": "Beginner",
+      "question": "How do you use SQLite in-memory with EF Core tests?",
+      "answer": "Open a SqliteConnection with the data source set to :memory:, keep the connection open for the lifetime of the test, and configure the DbContext to use SQLite with that connection. SQLite is a real relational engine, so it enforces constraints and translates most LINQ to SQL. Remember to close the connection to discard the database.",
+      "code": "var conn = new SqliteConnection(\"Filename=:memory:\");\nconn.Open();\nvar options = new DbContextOptionsBuilder<AppDb>()\n    .UseSqlite(conn).Options;",
+      "tags": ["sqlite", "relational"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-without-the-database"]
+    },
+    {
+      "id": "database-004",
+      "difficulty": "Beginner",
+      "question": "How do you create the schema for a test database?",
+      "answer": "Call dbContext.Database.EnsureCreatedAsync to build the schema from the model, or MigrateAsync to apply migrations when you want to test the migrations themselves. EnsureCreated is faster but ignores migrations, while Migrate gives you the same schema production uses. Choose based on whether migration correctness is part of what you are testing.",
+      "code": "await using var db = new AppDb(options);\nawait db.Database.MigrateAsync();",
+      "tags": ["schema", "migrations"],
+      "references": ["https://learn.microsoft.com/ef/core/managing-schemas/migrations/"]
+    },
+    {
+      "id": "database-005",
+      "difficulty": "Beginner",
+      "question": "How do you seed test data?",
+      "answer": "Create the entities you need, add them to the context, and call SaveChangesAsync inside the test or a helper, keeping the data minimal and specific to the scenario. Avoid a large shared seed because it obscures which data the test actually depends on. Explicit per-test data makes failures easier to understand.",
+      "code": "db.Orders.Add(new Order { Id = 1, Total = 10m });\nawait db.SaveChangesAsync();",
+      "tags": ["seeding", "data"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-with-the-database"]
+    },
+    {
+      "id": "database-006",
+      "difficulty": "Beginner",
+      "question": "How do you isolate tests that share a database?",
+      "answer": "Wrap each test in a transaction and roll it back, create a unique database or schema per test class, or reset the data between tests. Transaction rollback is fast but fails when the code under test commits or manages its own transactions. Unique databases give the strongest isolation at a small cost in setup time.",
+      "tags": ["isolation", "transactions"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-with-the-database"]
+    },
+    {
+      "id": "database-007",
+      "difficulty": "Beginner",
+      "question": "How do you test a repository class?",
+      "answer": "Construct the repository with a real DbContext backed by SQLite or a container database and exercise its methods against that context, asserting on the returned entities and the persisted state. Using a real context verifies the LINQ translation, which a mocked DbSet would not. Reset the data between tests so each test starts clean.",
+      "tags": ["repository", "efcore"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-with-the-database"]
+    },
+    {
+      "id": "database-008",
+      "difficulty": "Beginner",
+      "question": "How do you test raw SQL queries in EF Core?",
+      "answer": "Run the query against a relational provider such as SQLite or SQL Server, because an in-memory provider cannot execute raw SQL. Assert on the returned rows and, where relevant, on the parameters being passed. Keep raw SQL queries covered by integration tests since they bypass the model's type safety.",
+      "code": "var orders = await db.Orders\n    .FromSql($\"SELECT * FROM Orders WHERE Total > {min}\")\n    .ToListAsync();",
+      "tags": ["raw-sql", "efcore"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/sql-queries"]
+    },
+    {
+      "id": "database-009",
+      "difficulty": "Beginner",
+      "question": "How do you dispose a DbContext in a test?",
+      "answer": "Use await using or a using block so the context is disposed promptly, which releases the connection and any tracked state. If the context is provided by a fixture, let the fixture dispose it. Never share a single context across parallel tests because DbContext is not thread-safe.",
+      "code": "await using var db = new AppDb(options);",
+      "tags": ["disposal", "dbcontext"],
+      "references": ["https://learn.microsoft.com/ef/core/dbcontext-configuration/"]
+    },
+    {
+      "id": "database-010",
+      "difficulty": "Beginner",
+      "question": "How do you test that an entity is persisted correctly?",
+      "answer": "Save the entity through the context, then query it back using a fresh context to confirm that the values round-trip and that generated keys are set. Reading with a new context proves the data reached the store rather than staying in the change tracker. Assert on the fields that matter to the scenario.",
+      "code": "await db.SaveChangesAsync();\nawait using var verify = new AppDb(options);\nvar saved = await verify.Orders.FindAsync(order.Id);\nAssert.Equal(10m, saved!.Total);",
+      "tags": ["persistence", "round-trip"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-with-the-database"]
+    },
+    {
+      "id": "database-011",
+      "difficulty": "Intermediate",
+      "question": "How do you test EF Core migrations?",
+      "answer": "Apply migrations to a fresh database in the test and assert that the schema is created and that data survives an upgrade from the previous version. This catches broken or missing migrations that model-only tests would miss. Run it against the same provider as production because migration SQL is provider-specific.",
+      "tags": ["migrations", "schema"],
+      "references": ["https://learn.microsoft.com/ef/core/managing-schemas/migrations/"]
+    },
+    {
+      "id": "database-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test a query's SQL translation?",
+      "answer": "Capture the generated SQL with options.LogTo or ToQueryString and assert that it contains the expected clause, or simply run the query against a relational provider and check the results. Asserting on generated SQL is brittle across EF Core versions, so prefer behavioural assertions unless you are guarding against a specific performance problem. For those cases, asserting that the query is not client-evaluated is a valid check.",
+      "code": "var sql = query.ToQueryString();\nAssert.Contains(\"WHERE\", sql);",
+      "tags": ["sql", "translation"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/sql-queries"]
+    },
+    {
+      "id": "database-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test optimistic concurrency in EF Core?",
+      "answer": "Load the same entity in two contexts, modify and save it in one, then modify and save it in the other and assert that a DbUpdateConcurrencyException is thrown. This verifies that the concurrency token is configured and that the conflict is detected. Assert on the exception so the test documents the conflict behaviour.",
+      "code": "var ex = await Assert.ThrowsAsync<DbUpdateConcurrencyException>(\n    () => secondCtx.SaveChangesAsync());",
+      "tags": ["concurrency", "optimistic"],
+      "references": ["https://learn.microsoft.com/ef/core/saving/concurrency"]
+    },
+    {
+      "id": "database-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test transactions and rollback?",
+      "answer": "Begin a transaction, perform the operation, roll it back, and then verify with a separate context that no data was persisted. This confirms that the unit of work is correctly scoped. Use a relational provider because in-memory providers may not implement transactions faithfully.",
+      "code": "await using var tx = await db.Database.BeginTransactionAsync();\nawait db.SaveChangesAsync();\nawait tx.RollbackAsync();",
+      "tags": ["transactions", "rollback"],
+      "references": ["https://learn.microsoft.com/ef/core/saving/transactions"]
+    },
+    {
+      "id": "database-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test with a real SQL Server using Testcontainers?",
+      "answer": "Start an MsSqlContainer, wait for it to be ready, build the connection string from the mapped port, and configure the DbContext to use SQL Server with that string. Then apply migrations or EnsureCreated and run the tests. This gives the highest fidelity because you are testing against the production database engine.",
+      "code": "var sql = new MsSqlBuilder().Build();\nawait sql.StartAsync();\nvar cs = sql.GetConnectionString();",
+      "tags": ["sqlserver", "testcontainers"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "database-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test a DbContext factory pattern?",
+      "answer": "Register IDbContextFactory<T> or use a factory delegate that creates a new context per call, then exercise the code that uses it and assert that each operation gets an independent context. This verifies that long-lived objects do not accidentally hold a context across requests. A factory is the recommended approach for Blazor and background services.",
+      "code": "services.AddDbContextFactory<AppDb>(o =>\n    o.UseSqlite(conn));",
+      "tags": ["dbcontext-factory", "lifetimes"],
+      "references": ["https://learn.microsoft.com/ef/core/dbcontext-configuration/"]
+    },
+    {
+      "id": "database-017",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that a delete cascades correctly?",
+      "answer": "Create the parent and its children, delete the parent, save, and then query the children to confirm they were removed according to the configured cascade behaviour. Use a relational provider so the foreign key and cascade rules are actually enforced. Asserting on the persisted state after the delete verifies the model configuration.",
+      "tags": ["cascade", "relationships"],
+      "references": ["https://learn.microsoft.com/ef/core/saving/cascade-delete"]
+    },
+    {
+      "id": "database-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test projections and DTOs?",
+      "answer": "Run the projection query and assert on the resulting DTO values, which verifies that the select is correct and that no unexpected data is loaded. Because projections often use only part of the entity, testing them guards against broken mapping. Use a relational provider to confirm the projection translates to SQL.",
+      "code": "var dtos = await db.Orders\n    .Select(o => new OrderDto(o.Id, o.Total)).ToListAsync();\nAssert.All(dtos, d => Assert.True(d.Total > 0));",
+      "tags": ["projections", "dtos"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/"]
+    },
+    {
+      "id": "database-019",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid the change tracker polluting assertions?",
+      "answer": "Use AsNoTracking for read-only queries, or create a fresh context for verification so the change tracker does not return a cached entity instead of the persisted state. Tracking can mask persistence bugs because the context may serve a modified in-memory object. Reading with a new context is the most reliable check.",
+      "code": "var loaded = await db.Orders.AsNoTracking()\n    .FirstAsync(o => o.Id == 1);",
+      "tags": ["change-tracker", "assertions"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/tracking"]
+    },
+    {
+      "id": "database-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test a stored procedure call?",
+      "answer": "Execute the procedure through EF Core or the underlying connection against a relational database that has the procedure installed, and assert on the returned rows or the resulting state. Stored procedures cannot be tested with an in-memory provider. Keep the procedure definition versioned alongside the tests so they run against the same code.",
+      "tags": ["stored-procedures", "integration"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/sql-queries"]
+    },
+    {
+      "id": "database-021",
+      "difficulty": "Advanced",
+      "question": "How do you test interceptors and query filters?",
+      "answer": "Register the interceptor or global query filter in the context options and assert on its observable effect, such as a soft-deleted row being excluded or an audit field being populated on save. Testing through the context verifies that the configuration is applied. Assert on both the included and excluded cases to prove the filter works as intended.",
+      "code": "modelBuilder.Entity<Order>()\n    .HasQueryFilter(o => !o.IsDeleted);\n\nvar visible = await db.Orders.ToListAsync();\nAssert.DoesNotContain(visible, o => o.IsDeleted);",
+      "tags": ["query-filters", "interceptors"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/filters"]
+    },
+    {
+      "id": "database-022",
+      "difficulty": "Advanced",
+      "question": "How do you benchmark and test query performance?",
+      "answer": "Capture the generated SQL and the number of round trips, and assert that a query does not cause N+1 executions by counting commands through logging. For performance thresholds, use BenchmarkDotNet against a realistic dataset rather than asserting wall-clock times in a unit test, which would be flaky. Assert on structural properties such as a single round trip instead.",
+      "tags": ["performance", "n-plus-one"],
+      "references": ["https://learn.microsoft.com/ef/core/logging-events-diagnostics/"]
+    },
+    {
+      "id": "database-023",
+      "difficulty": "Advanced",
+      "question": "How do you test that a database connection string is validated at startup?",
+      "answer": "Build the host with a deliberately invalid connection string and assert that startup fails or that a health check reports unhealthy, depending on the configured behaviour. This verifies that configuration errors surface early rather than at the first request. Use the same validation path production uses so the test is meaningful.",
+      "tags": ["configuration", "startup"],
+      "references": ["https://learn.microsoft.com/ef/core/miscellaneous/connection-strings"]
+    },
+    {
+      "id": "database-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between in-memory, SQLite, and containerised databases for tests?",
+      "answer": "The in-memory provider is fastest but does not behave like a relational database, so it can give false confidence. SQLite in memory is relational, fast, and enforces constraints, but its SQL dialect and type behaviour differ from SQL Server or PostgreSQL. A containerised production engine gives the highest fidelity at the cost of startup time, so use it for the tests where provider-specific behaviour matters.",
+      "tags": ["trade-offs", "providers"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-without-the-database"]
+    },
+    {
+      "id": "database-025",
+      "difficulty": "Advanced",
+      "question": "How do you seed data efficiently for a large integration suite?",
+      "answer": "Keep a small, reusable set of reference data that the schema truly requires and create scenario-specific rows inside each test, so the data a test depends on is visible in that test. Bulk-insert reference data once in the fixture and reset only the mutable tables between tests. Avoid a single giant seed script because it couples tests together and slows failures down.",
+      "tags": ["seeding", "performance"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-with-the-database"]
+    }
+  ]
+}

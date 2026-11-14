@@ -1,0 +1,215 @@
+{
+  "category": "Setup, Teardown & Lifecycle",
+  "slug": "lifecycle",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "lifecycle-001",
+      "difficulty": "Beginner",
+      "question": "How do you perform setup in xUnit without a [SetUp] attribute?",
+      "answer": "xUnit uses the test class constructor for per-test setup because it creates a new instance of the class before every test. Put initialisation code in the constructor and store the results in readonly fields for the test methods to use. This makes setup explicit, ordered, and free of the hidden state that a SetUp attribute can introduce.",
+      "code": "public class CalculatorTests\n{\n    private readonly Calculator _calc;\n\n    public CalculatorTests() => _calc = new Calculator();\n\n    [Fact]\n    public void Adds() => Assert.Equal(2, _calc.Add(1, 1));\n}",
+      "tags": ["constructor", "setup"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-002",
+      "difficulty": "Beginner",
+      "question": "How do you perform teardown in xUnit?",
+      "answer": "Implement IDisposable on the test class and put cleanup in Dispose, which xUnit calls after each test whether it passed or failed. For asynchronous cleanup implement IAsyncLifetime and put the code in DisposeAsync. Because a new instance is created per test, Dispose runs once per test rather than once per class.",
+      "code": "public class FileTests : IDisposable\n{\n    private readonly string _path = Path.GetTempFileName();\n\n    public void Dispose() => File.Delete(_path);\n}",
+      "tags": ["idisposable", "teardown"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-003",
+      "difficulty": "Beginner",
+      "question": "What is the order of setup and teardown in a single test?",
+      "answer": "xUnit creates the test class instance, running the constructor as setup, then invokes the test method, then calls Dispose or DisposeAsync as teardown. If the test class consumes fixtures, those fixtures are created before the test class instance and disposed after it. Understanding this order helps when cleanup depends on resources created in the constructor.",
+      "tags": ["ordering", "lifecycle"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-004",
+      "difficulty": "Beginner",
+      "question": "What happens to teardown if a test fails or throws?",
+      "answer": "xUnit still calls Dispose or DisposeAsync after the test completes, even when the test throws, so cleanup always runs. This is why resource management belongs in Dispose rather than at the end of the test method. If Dispose itself throws, xUnit reports that as an additional failure.",
+      "tags": ["teardown", "failures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-005",
+      "difficulty": "Beginner",
+      "question": "How do you run code once per test class rather than per test?",
+      "answer": "Use a class fixture: a separate class that implements IClassFixture<T> on the test class and holds the shared setup in its constructor and cleanup in Dispose. xUnit creates the fixture once for the class and injects it into every test instance. This avoids repeating expensive setup such as building a container for each test.",
+      "tags": ["class-fixture", "setup"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-006",
+      "difficulty": "Beginner",
+      "question": "What does IAsyncLifetime provide?",
+      "answer": "IAsyncLifetime adds InitializeAsync, called before the first test, and DisposeAsync, called after the last test, and lets you await asynchronous setup and cleanup. It is available on test classes, class fixtures, collection fixtures, and assembly fixtures. In xUnit v3 both methods return ValueTask rather than Task.",
+      "code": "public class ApiTests : IAsyncLifetime\n{\n    public async ValueTask InitializeAsync()\n        => _client = await CreateClientAsync();\n    public async ValueTask DisposeAsync()\n        => await _client.DisposeAsync();\n}",
+      "tags": ["iasynclifetime", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "lifecycle-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between constructor setup and IAsyncLifetime setup?",
+      "answer": "Constructor setup is synchronous and runs first, so use it for cheap, non-async initialisation. InitializeAsync runs after the constructor and can await, making it the place for asynchronous work such as opening a connection. When both are present the constructor always runs before InitializeAsync.",
+      "tags": ["constructor", "iasynclifetime"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-008",
+      "difficulty": "Beginner",
+      "question": "Why does xUnit run the constructor for every test?",
+      "answer": "Running the constructor per test resets all instance fields, which guarantees isolation and allows tests to run in any order or in parallel. It also means a test cannot accidentally depend on state left by another test. The cost is that any expensive setup in the constructor is repeated, which is the reason class fixtures exist.",
+      "tags": ["isolation", "constructor"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-009",
+      "difficulty": "Beginner",
+      "question": "Can you use [Fact] methods on a class that does not have a public parameterless constructor?",
+      "answer": "Yes, as long as xUnit can supply the constructor arguments, which it does for fixtures declared through IClassFixture, ICollectionFixture, and assembly fixtures. If the constructor requires a type that is not a registered fixture, discovery fails with an error explaining that no suitable constructor was found. Plain unit test classes normally just have a parameterless constructor.",
+      "tags": ["constructor", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-010",
+      "difficulty": "Beginner",
+      "question": "How do you add output to a test result?",
+      "answer": "Inject ITestOutputHelper through the constructor and call WriteLine on it to attach diagnostic text to the test's result. This output is shown by the runner only when the test fails or when diagnostics are enabled, keeping successful runs quiet. In v3 the output helper is also available via the ambient TestContext.Current.TestOutputHelper.",
+      "code": "public class LogTests\n{\n    private readonly ITestOutputHelper _out;\n    public LogTests(ITestOutputHelper output) => _out = output;\n\n    [Fact]\n    public void Logs() => _out.WriteLine(\"starting\");\n}",
+      "tags": ["output", "itestoutputhelper"],
+      "references": ["https://xunit.net/docs/capturing-output"]
+    },
+    {
+      "id": "lifecycle-011",
+      "difficulty": "Intermediate",
+      "question": "How does xUnit order test execution within a class?",
+      "answer": "xUnit does not guarantee any particular order for tests within a class, and historically it randomised the order to discourage dependencies. In v3 the ordering is stable and deterministic for a given assembly, derived from the assembly's unique identifier, rather than pseudo-random. If order matters for correctness, your tests are coupled and should be redesigned.",
+      "tags": ["ordering", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "lifecycle-012",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a custom test case orderer?",
+      "answer": "Implement ITestCaseOrderer, which receives the test cases for a class and returns them in your desired order, and register it with [assembly: TestCaseOrderer(typeof(MyOrderer))] or on a single class. The orderer affects reporting and execution order but should not be used to encode dependencies between tests. Its main legitimate use is deterministic reporting or running fast tests first.",
+      "code": "[assembly: TestCaseOrderer(typeof(AlphabeticalOrderer))]\npublic class AlphabeticalOrderer : ITestCaseOrderer\n{\n    public IEnumerable<T> OrderTestCases<T>(IEnumerable<T> cases)\n        where T : ITestCase\n        => cases.OrderBy(c => c.TestMethod.Method.Name);\n}",
+      "tags": ["orderer", "extensibility"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "lifecycle-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between per-test, per-class, and per-assembly lifetime in xUnit?",
+      "answer": "Per-test lifetime is the default: the test class instance is created and disposed for each test, giving maximum isolation. Per-class lifetime is achieved with a class fixture, created once per test class. Per-assembly lifetime is achieved with an assembly fixture, created once for the whole assembly, which minimises startup cost at the price of coupling every test to one shared instance.",
+      "tags": ["lifetime", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-014",
+      "difficulty": "Intermediate",
+      "question": "How do you share state between the constructor and a test method?",
+      "answer": "Assign the state to a private readonly field in the constructor and read that field in the test method, since both run on the same instance. Because the instance is new for each test, the field is effectively per-test state. Avoid static fields for this purpose because they would leak across tests and break parallel execution.",
+      "tags": ["fields", "state"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-015",
+      "difficulty": "Intermediate",
+      "question": "How do you skip initialization when a test does not need it?",
+      "answer": "xUnit does not support conditional setup inside a single class, so the idiomatic solution is to move tests that need different setup into their own class with the appropriate fixture. A class fixture is created lazily when the first test in the class runs, so classes that do not need a heavy fixture do not pay for it. Avoid guarding setup with conditionals, which makes the test suite harder to reason about.",
+      "tags": ["fixtures", "design"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a fixture's Dispose and a test class's Dispose?",
+      "answer": "A test class's Dispose runs after every test, so it cleans up per-test resources such as temporary files. A class fixture's Dispose runs once, after the last test in the class, and cleans up the shared resource such as a database connection or a web host. Collection and assembly fixtures dispose even later, after their whole scope ends.",
+      "tags": ["dispose", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use ITestOutputHelper from a fixture?",
+      "answer": "A fixture can take ITestOutputHelper in its own constructor in v3, because xUnit resolves it for fixtures as well as test classes. Before v3 the common workaround was a custom logger that forwards messages to the currently running test's output helper. With the v3 approach the fixture can log directly during setup and teardown.",
+      "code": "public class DbFixture : IDisposable\n{\n    private readonly ITestOutputHelper _out;\n    public DbFixture(ITestOutputHelper output)\n    {\n        _out = output;\n        _out.WriteLine(\"connecting\");\n    }\n    public void Dispose() { }\n}",
+      "tags": ["output", "fixtures"],
+      "references": ["https://xunit.net/docs/capturing-output"]
+    },
+    {
+      "id": "lifecycle-018",
+      "difficulty": "Intermediate",
+      "question": "How do you dispose resources created by a WebApplicationFactory?",
+      "answer": "WebApplicationFactory<TEntryPoint> implements IAsyncDisposable and IDisposable, so call Dispose or DisposeAsync in your test class or fixture teardown to stop the in-memory host. When the factory is a class fixture, implementing Dispose in the fixture disposes it once for the class. Disposing correctly releases the test server and its hosted services.",
+      "code": "public class ApiFixture : IDisposable\n{\n    public WebApplicationFactory<Program> Factory { get; }\n        = new WebApplicationFactory<Program>();\n    public void Dispose() => Factory.Dispose();\n}",
+      "tags": ["webapplicationfactory", "dispose"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "lifecycle-019",
+      "difficulty": "Intermediate",
+      "question": "What happens if the constructor throws?",
+      "answer": "xUnit reports the test as failed with the constructor exception, because the test method never ran. This is desirable for fail-fast fixtures, but it means a single broken setup fails every test in the class. Keep constructor logic minimal and free of assumptions about external systems where possible.",
+      "tags": ["constructor", "failures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-020",
+      "difficulty": "Intermediate",
+      "question": "How do you reset a static resource between tests?",
+      "answer": "Ideally avoid static mutable resources entirely, since they are shared across the whole process and break isolation. If you must use one, reset it in the test class constructor or in a fixture that owns the resource, and prevent parallel access by placing the tests in a collection. Static state is the most common cause of flaky and order-dependent tests.",
+      "tags": ["static", "isolation"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "lifecycle-021",
+      "difficulty": "Advanced",
+      "question": "How does xUnit guarantee teardown even when a test hangs or is cancelled?",
+      "answer": "Each test has a timeout, and when it expires xUnit cancels the test and still runs the teardown chain for the scope that completed construction. Teardown for resources that were never created is skipped, so a failure mid-construction does not trigger cleanup of objects that do not exist. Well-behaved teardown should be idempotent and fast so cancellation does not leave processes behind.",
+      "tags": ["timeout", "teardown"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "lifecycle-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of putting heavy setup in a class fixture versus the constructor?",
+      "answer": "A class fixture runs once and is fast for the whole class, but the shared instance creates coupling and any mutation can leak between tests. Constructor setup runs per test, guaranteeing isolation at the cost of repeating the work, which becomes expensive when the setup involves I/O. The usual compromise is to make the fixture provide cheap per-test handles such as a transaction or a scoped container.",
+      "tags": ["trade-offs", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-023",
+      "difficulty": "Advanced",
+      "question": "How does xUnit handle disposal when both the test class and its fixtures are disposable?",
+      "answer": "xUnit disposes in reverse order of construction: the test class instance first, then its class fixtures, then collection fixtures, and finally assembly fixtures. This ensures that objects created later are torn down before the resources they depend on. If a class fixture was never created because no test in the class ran, it is not disposed.",
+      "tags": ["disposal", "ordering"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement a test that must always run first or last?",
+      "answer": "xUnit deliberately provides no ordering guarantee, so a test that must run first should instead own the setup as a fixture or be merged into the tests that depend on it. If you truly need a one-off sequence, model it as a fixture whose constructor performs the shared step, which runs before any test in the scope. Trying to enforce order with attributes such as an orderer is fragile and discouraged.",
+      "tags": ["ordering", "anti-patterns"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "lifecycle-025",
+      "difficulty": "Advanced",
+      "question": "How does the test pipeline startup hook differ from an assembly fixture?",
+      "answer": "A test pipeline startup runs very early in both discovery and execution, before tests are enumerated, and is registered with [assembly: TestPipelineStartup(typeof(T))]; it is the only hook guaranteed to run at discovery time. An assembly fixture runs only during execution and is created lazily for the test classes that request it. Use the pipeline hook for global configuration that discovery depends on, such as registering a serializer or configuring a resource provider.",
+      "code": "[assembly: TestPipelineStartup(typeof(ConfigStartup))]\npublic class ConfigStartup : ITestPipelineStartup\n{\n    public ValueTask StartAsync(IMessageSink sink) => default;\n    public ValueTask StopAsync() => default;\n}",
+      "tags": ["pipeline", "assembly-fixture"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    }
+  ]
+}

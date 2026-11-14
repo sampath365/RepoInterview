@@ -1,0 +1,224 @@
+{
+  "category": "Testing Exceptions",
+  "slug": "exceptions",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "exceptions-001",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a method throws an exception in xUnit?",
+      "answer": "Use Assert.Throws<TException> with a delegate that performs the action; the assertion passes only when the delegate throws exactly that exception type. It returns the exception instance so you can make further assertions on it. The delegate must be the action under test, not an assertion itself.",
+      "code": "var ex = Assert.Throws<ArgumentNullException>(\n    () => service.Save(null!));\nAssert.Equal(\"order\", ex.ParamName);",
+      "tags": ["throws", "assert"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "exceptions-002",
+      "difficulty": "Beginner",
+      "question": "Why is Assert.Throws better than wrapping code in a try/catch?",
+      "answer": "Assert.Throws is concise, fails with a clear message when no exception is thrown, and returns the exception for further inspection. A hand-written try/catch requires an explicit Assert.Fail when no exception occurs and is easy to get wrong, for example by catching a broader type than intended. The built-in assertion also rejects derived types unless you use the ThrowsAny variant.",
+      "tags": ["throws", "best-practices"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "exceptions-003",
+      "difficulty": "Beginner",
+      "question": "When would you use Assert.ThrowsAny instead of Assert.Throws?",
+      "answer": "Assert.Throws matches the exception type exactly, so a subclass does not satisfy the assertion. Assert.ThrowsAny matches the specified type or any type derived from it, which is useful when the contract allows a family of exceptions, such as any IOException. Prefer the exact overload unless you deliberately want to accept subclasses.",
+      "tags": ["throws", "throwsany"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "exceptions-004",
+      "difficulty": "Beginner",
+      "question": "How do you test that an argument is validated?",
+      "answer": "Call the method with an invalid argument inside Assert.Throws<ArgumentException> or the specific exception type your contract specifies. Assert on the ParamName property to confirm which argument was rejected. Testing guard clauses documents the public contract and prevents silent behaviour changes.",
+      "code": "[Fact]\npublic void Throws_for_empty_name()\n{\n    var ex = Assert.Throws<ArgumentException>(\n        () => new Customer(\"\"));\n    Assert.Equal(\"name\", ex.ParamName);\n}",
+      "tags": ["validation", "arguments"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-005",
+      "difficulty": "Beginner",
+      "question": "How do you assert on the exception message?",
+      "answer": "Capture the exception from Assert.Throws and assert on its Message property, usually with Assert.Contains for a stable substring. Asserting the full message is brittle because wording can change or be localised. If your API exposes an error code or a custom exception type, assert on that instead of the text.",
+      "code": "var ex = Assert.Throws<InvalidOperationException>(() => Act());\nAssert.Contains(\"closed\", ex.Message);",
+      "tags": ["message", "exceptions"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-006",
+      "difficulty": "Beginner",
+      "question": "What happens if no exception is thrown in Assert.Throws?",
+      "answer": "The assertion fails with a message stating that the expected exception was not thrown. This is the correct behaviour because the test is verifying that the guard is in place. The failure is reported as an assertion failure rather than an error, which makes it easy to distinguish from an unexpected crash.",
+      "tags": ["throws", "failures"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "exceptions-007",
+      "difficulty": "Beginner",
+      "question": "How do you test that an async method throws?",
+      "answer": "Use Assert.ThrowsAsync<TException> and pass an async lambda, which awaits the returned task and inspects its fault. This is essential because an async method returns a faulted task rather than throwing synchronously. The method returns the exception so you can assert on it as usual.",
+      "code": "var ex = await Assert.ThrowsAsync<ArgumentException>(\n    () => service.SaveAsync(null!));",
+      "tags": ["throwsasync", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "exceptions-008",
+      "difficulty": "Beginner",
+      "question": "How do you test a custom exception type?",
+      "answer": "Reference your custom exception in the generic argument of Assert.Throws and assert on its custom properties as well as its type. This confirms that the correct, domain-specific exception is thrown rather than a generic one. Testing custom properties ties the test to the useful contract of the exception.",
+      "code": "var ex = Assert.Throws<OrderNotFoundException>(\n    () => repo.Get(99));\nAssert.Equal(99, ex.OrderId);",
+      "tags": ["custom-exceptions", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-009",
+      "difficulty": "Beginner",
+      "question": "How do you verify that a method does not throw an unexpected exception?",
+      "answer": "Simply call the method; any unhandled exception fails the test automatically. If you want an explicit check you can use Record.Exception and assert that the result is null. Being explicit can improve readability when the intent is to document that no exception is expected.",
+      "code": "var ex = Record.Exception(() => service.Validate(input));\nAssert.Null(ex);",
+      "tags": ["record-exception", "assert"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "exceptions-010",
+      "difficulty": "Beginner",
+      "question": "What does Record.Exception do?",
+      "answer": "Record.Exception runs a delegate and returns the exception it threw, or null if it did not throw. It is useful when you want to inspect an exception without asserting a specific type, or when you want to assert that nothing was thrown. Record.ExceptionAsync is the asynchronous counterpart.",
+      "code": "var ex = Record.Exception(() => Risky());\nAssert.IsType<TimeoutException>(ex);",
+      "tags": ["record-exception", "assert"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "exceptions-011",
+      "difficulty": "Intermediate",
+      "question": "How do you test the inner exception of a wrapped exception?",
+      "answer": "Capture the outer exception with Assert.Throws and then assert on its InnerException property, checking both the type and the message. This verifies that the original cause was preserved rather than swallowed. Prefer asserting the innermost meaningful exception type instead of the exact wrapping text.",
+      "code": "var ex = Assert.Throws<ApplicationException>(() => Act());\nAssert.IsType<SqlException>(ex.InnerException);",
+      "tags": ["inner-exception", "wrapping"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-012",
+      "difficulty": "Intermediate",
+      "question": "How do you verify that an exception's Data collection contains a value?",
+      "answer": "Capture the exception and read its Data dictionary, asserting that the expected key exists and holds the expected value. The Data collection is a standard way to attach structured context such as an entity id. Asserting on Data is more robust than parsing the message text.",
+      "code": "var ex = Assert.Throws<DomainException>(() => Act());\nAssert.Equal(42, ex.Data[\"OrderId\"]);",
+      "tags": ["exception-data", "assert"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between an assertion failure and a test error?",
+      "answer": "An assertion failure means the code ran but produced the wrong result, and the message shows expected versus actual. An error is an unexpected exception, such as a NullReferenceException, which usually indicates a bug in the test or its setup. Runners often display them differently so you can triage quickly.",
+      "tags": ["failures", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test exception filters or catch blocks?",
+      "answer": "Drive the code into the branch by triggering the specific exception it handles and assert on the resulting behaviour, such as a fallback value or a logged message. To verify the filter condition itself, construct a case where the filter is false and confirm the exception propagates. Avoid asserting on log output alone when observable behaviour can prove the branch was taken.",
+      "code": "[Fact]\npublic async Task Falls_back_on_transient_error()\n{\n    _client.NextThrows(new TimeoutException());\n    var result = await _svc.GetAsync();\n    Assert.Equal(0, result);\n}",
+      "tags": ["filters", "branches"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-015",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that a specific exception is not thrown?",
+      "answer": "Use Assert.Throws with the exception you do not expect to be thrown and invert the logic, or better, simply run the code and let any unexpected exception fail the test. For a targeted negative assertion you can capture with Record.Exception and assert the type is not the forbidden one. In most cases a plain call with no assertion is clearer.",
+      "tags": ["negative", "exceptions"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test that an OperationCanceledException is thrown?",
+      "answer": "Create a CancellationTokenSource, cancel it, and pass the token to the method under test inside Assert.ThrowsAsync<OperationCanceledException>. Note that TaskCanceledException derives from OperationCanceledException, so use the exact type if your contract distinguishes them. Asserting the exception confirms that the method honours cancellation.",
+      "code": "using var cts = new CancellationTokenSource();\ncts.Cancel();\nawait Assert.ThrowsAsync<OperationCanceledException>(\n    () => _svc.RunAsync(cts.Token));",
+      "tags": ["cancellation", "exceptions"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken"]
+    },
+    {
+      "id": "exceptions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test AggregateException from parallel or async work?",
+      "answer": "When you await a task that aggregates faults, .NET unwraps and rethrows the first inner exception, so you usually assert on that specific type. If you deliberately inspect the AggregateException, for example from Task.WhenAll when you do not await, assert on its InnerExceptions collection. Prefer awaiting so you test the exception a consumer would actually observe.",
+      "tags": ["aggregateexception", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"]
+    },
+    {
+      "id": "exceptions-018",
+      "difficulty": "Intermediate",
+      "question": "How do you verify that exceptions are logged?",
+      "answer": "Inject a fake ILogger and assert that a log entry with the expected level and message was recorded, or use a capturing logger that stores entries in memory. Asserting that the operation also produced the right observable outcome is usually more valuable than the log entry alone. Log assertions tie tests to log text, so keep them to stable, important messages.",
+      "code": "var logger = new CapturingLogger<OrderService>();\nvar svc = new OrderService(logger);\nawait svc.SaveAsync(bad);\nAssert.Contains(logger.Entries, e => e.Level == LogLevel.Error);",
+      "tags": ["logging", "verification"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/logging"]
+    },
+    {
+      "id": "exceptions-019",
+      "difficulty": "Intermediate",
+      "question": "Why should tests avoid catching exceptions broadly?",
+      "answer": "A broad catch such as catch (Exception) swallows unexpected failures, which can turn a genuine bug into a passing test or hide the real cause. It also makes the test harder to read because the control flow is unclear. Let unexpected exceptions propagate so the runner reports them as errors, and only catch what you intend to assert.",
+      "tags": ["anti-patterns", "exceptions"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test a method that should throw for multiple invalid inputs?",
+      "answer": "Use a [Theory] with data rows containing each invalid input and an [Assert.Throws] call inside the method, so every case is reported independently. If different inputs throw different exception types, make the expected type a parameter or split into separate theories. This keeps the guard-clause coverage concise and readable.",
+      "code": "[Theory]\n[InlineData(null)]\n[InlineData(\"\")]\n[InlineData(\"   \")]\npublic void Throws_for_invalid(string? input)\n    => Assert.Throws<ArgumentException>(() => Validate(input!));",
+      "tags": ["theory", "validation"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "exceptions-021",
+      "difficulty": "Advanced",
+      "question": "How do you test that an exception is not wrapped unnecessarily?",
+      "answer": "Assert the exact exception type with Assert.Throws so that a wrapping exception would fail the test, and optionally assert that InnerException is null when no cause exists. If wrapping is part of the contract, assert on both the outer and inner types. This pins down the exception contract precisely.",
+      "code": "var ex = Assert.Throws<OrderNotFoundException>(() => Get(1));\nAssert.Null(ex.InnerException);",
+      "tags": ["exception-contract", "wrapping"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-022",
+      "difficulty": "Advanced",
+      "question": "How do you test a global exception handler or middleware?",
+      "answer": "Use a test host with WebApplicationFactory, configure the middleware under test, and send a request that triggers the failure, then assert on the response status code and body rather than on the exception. This verifies the full pipeline behaviour including status code mapping and problem details. Asserting on the HTTP contract is more valuable than asserting on internal exception types.",
+      "code": "var response = await _client.GetAsync(\"/orders/999\");\nAssert.Equal(HttpStatusCode.NotFound, response.StatusCode);",
+      "tags": ["middleware", "integration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/middleware"]
+    },
+    {
+      "id": "exceptions-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of asserting on exception messages versus error codes?",
+      "answer": "Error codes or dedicated exception types are stable, machine-readable, and safe to assert on because they are part of the contract. Messages are human-readable and may change with wording, localisation, or refactoring, so exact assertions on them are brittle. Use messages only for stable substrings and prefer codes or types whenever the API exposes them.",
+      "tags": ["error-codes", "messages"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-024",
+      "difficulty": "Advanced",
+      "question": "How do you verify that resources are released when an exception occurs?",
+      "answer": "Use a using statement or try/finally in the production code and assert the released state after the exception, for example by checking that a connection is closed or a file handle is unlocked. Wrap the failing call in Assert.Throws and then assert the resource state. This validates that cleanup paths are correct even on the failure branch.",
+      "code": "Assert.Throws<IOException>(() => service.Run());\nAssert.False(service.IsOpen);",
+      "tags": ["resources", "cleanup"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "exceptions-025",
+      "difficulty": "Advanced",
+      "question": "How do you write a custom assertion for an exception contract?",
+      "answer": "Create an extension method that takes the exception and asserts type, message, and custom properties in one place, using Assert.Multiple to report all mismatches at once. This keeps tests readable and centralises the contract so a change is applied everywhere. Return the exception or the extracted data so tests can chain further assertions.",
+      "code": "public static void IsValidationError(this Exception ex, string field)\n{\n    var bad = Assert.IsType<ValidationException>(ex);\n    Assert.Equal(field, bad.Field);\n}",
+      "tags": ["custom-assertions", "contracts"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

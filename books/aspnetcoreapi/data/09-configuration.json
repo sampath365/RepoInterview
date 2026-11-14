@@ -1,0 +1,337 @@
+{
+  "category": "Configuration & Options",
+  "slug": "configuration",
+  "icon": "file",
+  "questions": [
+    {
+      "id": "configuration-001",
+      "difficulty": "Beginner",
+      "question": "How does configuration work in ASP.NET Core?",
+      "answer": "Configuration reads key-value pairs from multiple providers, such as appsettings.json, environment variables, command-line arguments, and user secrets, and merges them into a single view. Later providers override earlier ones, so environment variables win over JSON files. The result is exposed through IConfiguration.",
+      "tags": [
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ]
+    },
+    {
+      "id": "configuration-002",
+      "difficulty": "Beginner",
+      "question": "What is appsettings.json?",
+      "answer": "appsettings.json is a JSON configuration file loaded by the default host, with appsettings.Development.json layered on top in the Development environment. It holds settings such as connection strings, logging levels, and feature flags. It is not the place for secrets, which should come from a secret store.",
+      "tags": [
+        "configuration",
+        "json"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/#default-configuration"
+      ]
+    },
+    {
+      "id": "configuration-003",
+      "difficulty": "Beginner",
+      "question": "How do environment variables override JSON settings?",
+      "answer": "Environment variables are added after JSON providers, so they override matching keys, with double underscores representing the hierarchy separator, for example Logging__LogLevel__Default. This lets the same build be configured differently per environment. It is the standard way to inject settings in containers.",
+      "tags": [
+        "configuration",
+        "environments"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/#environment-variables"
+      ]
+    },
+    {
+      "id": "configuration-004",
+      "difficulty": "Beginner",
+      "question": "How do you read a configuration value?",
+      "answer": "Inject IConfiguration and call indexers or GetValue<T>, for example configuration[\"MyKey\"] or configuration.GetValue<int>(\"MySection:MyValue\"). For structured settings prefer the options pattern. Direct reads are fine for one-off values.",
+      "tags": [
+        "configuration",
+        "reading"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ],
+      "code": "var timeout = config.GetValue<int>(\"Http:TimeoutSeconds\", 30);"
+    },
+    {
+      "id": "configuration-005",
+      "difficulty": "Beginner",
+      "question": "What is the options pattern?",
+      "answer": "The options pattern binds a configuration section to a strongly typed class and injects it as IOptions<T>, IOptionsSnapshot<T>, or IOptionsMonitor<T>. This gives compile-time access to settings and centralizes validation. It avoids scattering string keys through the code.",
+      "tags": [
+        "options",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options"
+      ],
+      "code": "builder.Services.Configure<SmtpOptions>(\n    builder.Configuration.GetSection(\"Smtp\"));"
+    },
+    {
+      "id": "configuration-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between IOptions, IOptionsSnapshot, and IOptionsMonitor?",
+      "answer": "IOptions<T> is a singleton computed once, IOptionsSnapshot<T> is scoped and re-reads per request, and IOptionsMonitor<T> is a singleton that raises change notifications. Use snapshot for per-request settings that may change, and monitor for long-lived services that must react to changes. All are built on the options infrastructure.",
+      "tags": [
+        "options",
+        "lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options#options-interfaces"
+      ]
+    },
+    {
+      "id": "configuration-007",
+      "difficulty": "Beginner",
+      "question": "What are user secrets?",
+      "answer": "User secrets store development-only configuration outside the project tree so secrets are not committed, enabled with dotnet user-secrets init and accessed through the Secret Manager provider in Development. They are not a production secret store. Production secrets belong in a vault such as Azure Key Vault.",
+      "tags": [
+        "secrets",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/app-secrets"
+      ]
+    },
+    {
+      "id": "configuration-008",
+      "difficulty": "Beginner",
+      "question": "How do you access configuration in Program.cs?",
+      "answer": "The WebApplicationBuilder exposes a Configuration property that you can read directly, and services can be configured from sections using Configure<T>. This is common for binding options and setting up authentication. Avoid hard-coding values that belong in configuration.",
+      "tags": [
+        "configuration",
+        "startup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ],
+      "code": "builder.Services.Configure<JwtOptions>(\n    builder.Configuration.GetSection(\"Jwt\"));"
+    },
+    {
+      "id": "configuration-009",
+      "difficulty": "Beginner",
+      "question": "What is the IConfiguration abstraction?",
+      "answer": "IConfiguration is the merged, read-only view of all providers, exposing keys as a hierarchy with a colon separator. It also supports reload tokens so consumers can react to changes. Higher-level patterns such as options build on it.",
+      "tags": [
+        "configuration",
+        "abstractions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/configuration"
+      ]
+    },
+    {
+      "id": "configuration-010",
+      "difficulty": "Beginner",
+      "question": "Why should secrets not be stored in appsettings.json?",
+      "answer": "appsettings.json is typically committed to source control, so any secret in it is exposed to everyone with repository access and in build artifacts. Use user secrets for local development and a managed secret store for deployed environments. This keeps credentials out of code and history.",
+      "tags": [
+        "security",
+        "secrets"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/app-secrets"
+      ]
+    },
+    {
+      "id": "configuration-011",
+      "difficulty": "Intermediate",
+      "question": "How do you bind a configuration section to a class?",
+      "answer": "Call GetSection(\"Name\").Bind(instance) or use services.Configure<T>(section), which maps keys to properties by name. Binding is case-insensitive and supports nested objects and collections. Prefer Configure<T> so the bound object is available through DI.",
+      "tags": [
+        "options",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options"
+      ],
+      "code": "builder.Services.Configure<CatalogOptions>(\n    builder.Configuration.GetSection(\"Catalog\"));"
+    },
+    {
+      "id": "configuration-012",
+      "difficulty": "Intermediate",
+      "question": "How do you validate options at startup?",
+      "answer": "Use ValidateDataAnnotations or Validate with a predicate when registering options, and add ValidateOnStart so validation runs during startup rather than on first use. This fails fast when configuration is invalid. It prevents obscure runtime errors from bad settings.",
+      "tags": [
+        "options",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options#options-validation"
+      ],
+      "code": "builder.Services.AddOptions<SmtpOptions>()\n    .Bind(cfg.GetSection(\"Smtp\"))\n    .ValidateDataAnnotations()\n    .ValidateOnStart();"
+    },
+    {
+      "id": "configuration-013",
+      "difficulty": "Intermediate",
+      "question": "What are named options?",
+      "answer": "Named options let you configure several instances of the same options type under different names, resolved with IOptionsMonitor<T>.Get(name). They are useful when a service must connect to multiple endpoints with different settings. Configure each name with a separate Configure call.",
+      "tags": [
+        "options",
+        "named"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options#named-options-support-using-iconfigurenamedoptions"
+      ],
+      "code": "services.Configure<ApiOptions>(\"billing\", cfg.GetSection(\"Billing\"));"
+    },
+    {
+      "id": "configuration-014",
+      "difficulty": "Intermediate",
+      "question": "How do you add a custom configuration provider?",
+      "answer": "Implement ConfigurationProvider to read from a custom source such as a database or a remote service, and register it with the configuration builder through an IConfigurationSource. The provider populates the Data dictionary and can call OnReload when values change. This integrates any source into the standard configuration pipeline.",
+      "tags": [
+        "configuration",
+        "providers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/custom-configuration-provider"
+      ]
+    },
+    {
+      "id": "configuration-015",
+      "difficulty": "Intermediate",
+      "question": "How do you reload configuration at runtime?",
+      "answer": "JSON and some other providers support reloadOnChange, which raises the change token that IOptionsMonitor and IConfiguration consumers observe. IOptionsSnapshot picks up new values on the next request scope. Long-lived code should use IOptionsMonitor to react to changes.",
+      "tags": [
+        "configuration",
+        "reload"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ]
+    },
+    {
+      "id": "configuration-016",
+      "difficulty": "Intermediate",
+      "question": "How do you configure logging levels per environment?",
+      "answer": "Set the Logging:LogLevel hierarchy in appsettings.json and override it in appsettings.Development.json or through environment variables. Filters can target specific providers or categories. This keeps noisy development logs out of production.",
+      "tags": [
+        "logging",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/logging/"
+      ]
+    },
+    {
+      "id": "configuration-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between GetValue and GetSection?",
+      "answer": "GetValue<T> converts a single key to a scalar value with an optional default, while GetSection returns a subsection you can bind to a class or enumerate. Use GetValue for scalars and GetSection with binding for structured settings. Binding handles nested keys automatically.",
+      "tags": [
+        "configuration",
+        "reading"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ]
+    },
+    {
+      "id": "configuration-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use Azure Key Vault or another secret store?",
+      "answer": "Add the provider in the host builder, for example with AddAzureKeyVault and a managed identity credential, so secrets load into the configuration at startup and override file values. No code changes are needed to consume them. This centralizes secrets and supports rotation.",
+      "tags": [
+        "secrets",
+        "key-vault"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/key-vault-configuration"
+      ]
+    },
+    {
+      "id": "configuration-019",
+      "difficulty": "Intermediate",
+      "question": "How do you keep environment-specific settings organized?",
+      "answer": "Use layered files such as appsettings.json, appsettings.{Environment}.json, and environment variables, with later sources overriding earlier ones. Keep non-secret defaults in the base file and vary only what differs per environment. This keeps deployments reproducible.",
+      "tags": [
+        "configuration",
+        "environments"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/environments"
+      ]
+    },
+    {
+      "id": "configuration-020",
+      "difficulty": "Intermediate",
+      "question": "How do you inject IConfiguration into a service without coupling to it?",
+      "answer": "Prefer binding the relevant section to a strongly typed options class and injecting that instead, so the service depends on a small interface-like contract. This improves testability and documents which settings the service uses. Inject IConfiguration directly only when the keys are dynamic.",
+      "tags": [
+        "configuration",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options"
+      ]
+    },
+    {
+      "id": "configuration-021",
+      "difficulty": "Advanced",
+      "question": "How do configuration providers combine and how are conflicts resolved?",
+      "answer": "Providers are registered in order and the configuration is built by loading each provider into a shared key set, so the last provider to set a key wins. Command-line arguments and environment variables are typically added last to allow deployment-time overrides. Understanding this order is essential for predictable behavior.",
+      "tags": [
+        "configuration",
+        "providers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/configuration-providers"
+      ]
+    },
+    {
+      "id": "configuration-022",
+      "difficulty": "Advanced",
+      "question": "How do you secure configuration in containers and orchestrators?",
+      "answer": "Inject secrets as environment variables or mounted files from the orchestrator's secret store, or fetch them from a vault at startup using workload identity. Never bake secrets into images or source. Rotate credentials and limit the identity's access to only the needed secrets.",
+      "tags": [
+        "security",
+        "containers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/security/key-vault-configuration"
+      ]
+    },
+    {
+      "id": "configuration-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of IOptionsSnapshot versus IOptionsMonitor?",
+      "answer": "IOptionsSnapshot is scoped, so it recomputes per request and cannot be injected into singletons, while IOptionsMonitor is a singleton that caches the current value and notifies on change. Use snapshot for per-request configuration and monitor for singletons that need the latest value. Monitor adds a small notification cost.",
+      "tags": [
+        "options",
+        "lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options#options-interfaces"
+      ]
+    },
+    {
+      "id": "configuration-024",
+      "difficulty": "Advanced",
+      "question": "How do you validate that a required configuration section exists?",
+      "answer": "Bind the section and call ValidateOnStart with a validator that asserts required values, or use ValidateDataAnnotations on a class with [Required] properties. The host then fails to start with a clear message when the section is missing. Failing fast at startup is far better than failing on the first request.",
+      "tags": [
+        "options",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options#options-validation"
+      ]
+    },
+    {
+      "id": "configuration-025",
+      "difficulty": "Advanced",
+      "question": "How do you centralize configuration for many services?",
+      "answer": "Use a shared configuration source such as Azure App Configuration with labels per environment, layered under local overrides. Services subscribe to the same source and use feature flags and sentinels for coordinated reloads. This reduces drift across services while keeping environment overrides possible.",
+      "tags": [
+        "configuration",
+        "cloud"
+      ],
+      "references": [
+        "https://learn.microsoft.com/azure/azure-app-configuration/quickstart-aspnet-core-app"
+      ]
+    }
+  ]
+}

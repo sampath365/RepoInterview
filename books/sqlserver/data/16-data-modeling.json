@@ -1,0 +1,208 @@
+{
+  "category": "Data Modeling & Schema Design",
+  "slug": "data-modeling",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "data-modeling-001",
+      "difficulty": "Beginner",
+      "question": "What is a schema in SQL Server?",
+      "answer": "A schema is a container that groups database objects such as tables, views, and procedures under a namespace, for example dbo or sales. It helps organize objects logically and is a unit for permission management. Referencing objects with a schema, such as dbo.Orders, avoids ambiguity and improves plan cache reuse.",
+      "tags": ["schema", "namespace"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/security/authentication-access/create-a-database-schema"]
+    },
+    {
+      "id": "data-modeling-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between OLTP and OLAP?",
+      "answer": "OLTP systems handle many small, concurrent transactions for day-to-day operations and are normalized for write efficiency. OLAP systems support large analytical queries over historical data and are often denormalized into star or snowflake schemas for read performance. Their design goals and indexing strategies differ substantially.",
+      "tags": ["oltp", "olap"],
+      "references": ["https://learn.microsoft.com/azure/architecture/data-guide/relational-data/data-warehousing"]
+    },
+    {
+      "id": "data-modeling-003",
+      "difficulty": "Beginner",
+      "question": "What is a one-to-many relationship?",
+      "answer": "A one-to-many relationship means one row in the parent table relates to many rows in the child table, such as one customer with many orders. It is modeled with a foreign key in the child table pointing to the parent key. This is the most common relationship in relational schemas.",
+      "tags": ["relationships", "one-to-many"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "data-modeling-004",
+      "difficulty": "Beginner",
+      "question": "What is a many-to-many relationship and how do you model it?",
+      "answer": "A many-to-many relationship means rows on each side relate to many on the other, such as students and courses. It cannot be represented by a single foreign key, so you create a junction table with foreign keys to both parents, often with a composite primary key. The junction table can also carry attributes of the relationship.",
+      "tags": ["many-to-many", "junction"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "data-modeling-005",
+      "difficulty": "Beginner",
+      "question": "What is a one-to-one relationship and when is it used?",
+      "answer": "A one-to-one relationship links one row in each table, enforced by a unique foreign key. It is used to split a wide table into frequently and rarely used columns, to separate sensitive data, or to model optional attributes. It is less common because it usually adds complexity without much benefit.",
+      "tags": ["one-to-one", "relationships"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "data-modeling-006",
+      "difficulty": "Beginner",
+      "question": "What is a star schema?",
+      "answer": "A star schema organizes data into a central fact table containing measures and foreign keys, surrounded by dimension tables describing the context. It is optimized for analytical queries because a few joins suffice to slice the facts. Star schemas are the standard design for data warehouses and Power BI models.",
+      "tags": ["star-schema", "warehouse"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-007",
+      "difficulty": "Beginner",
+      "question": "What is a fact table?",
+      "answer": "A fact table stores the numeric measures of a business process, such as sales amount or quantity, along with foreign keys to dimensions. It is typically narrow in columns but very tall in rows and is the largest table in a warehouse. Facts are additive values that answer the questions the business asks.",
+      "tags": ["fact-table", "warehouse"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-008",
+      "difficulty": "Beginner",
+      "question": "What is a dimension table?",
+      "answer": "A dimension table holds descriptive attributes that give context to facts, such as product, customer, or date. It is usually wider and shorter than a fact table and is joined by a surrogate key. Dimensions are what you filter and group by in reports.",
+      "tags": ["dimension-table", "warehouse"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-009",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid using reserved words and spaces in object names?",
+      "answer": "Using reserved words or spaces in identifiers forces you to quote them with brackets or double quotes everywhere, which is error-prone and less portable. Descriptive names without spaces, such as OrderDate or CustomerId, are clearer. Consistent naming conventions also help tooling and code review.",
+      "tags": ["naming", "best-practices"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/database-identifiers"]
+    },
+    {
+      "id": "data-modeling-010",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of a date dimension?",
+      "answer": "A date dimension provides one row per calendar date with attributes such as year, quarter, month, and week, so reports can group by any time attribute without functions on the fact table. It also lets you handle fiscal calendars and holidays. This makes time-based analysis simple and fast.",
+      "tags": ["date-dimension", "warehouse"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-011",
+      "difficulty": "Intermediate",
+      "question": "What is a slowly changing dimension and what are its types?",
+      "answer": "A slowly changing dimension tracks how dimension attributes change over time. Type 1 overwrites the old value, losing history; Type 2 adds a new row with effective dates to preserve history; Type 3 adds a column for the previous value. Type 2 is the most common when history matters.",
+      "tags": ["scd", "dimension"],
+      "references": ["https://learn.microsoft.com/sql/integration-services/data-flow/transformations/slowly-changing-dimension-transformation"]
+    },
+    {
+      "id": "data-modeling-012",
+      "difficulty": "Intermediate",
+      "question": "What is a snowflake schema and how does it differ from a star?",
+      "answer": "A snowflake schema normalizes dimensions into multiple related tables, so a product dimension might link to a category dimension. This reduces redundancy but adds joins, which can slow analytical queries and complicate the model. Star schemas are generally preferred for performance and simplicity.",
+      "tags": ["snowflake", "warehouse"],
+      "references": ["https://learn.microsoft.com/azure/architecture/data-guide/relational-data/data-warehousing"]
+    },
+    {
+      "id": "data-modeling-013",
+      "difficulty": "Intermediate",
+      "question": "When would you use a surrogate key versus a natural key in a dimension?",
+      "answer": "A surrogate key is a system-generated integer that is stable and narrow, making joins and indexing efficient, and it lets a Type 2 dimension have multiple rows for the same natural key. A natural key is meaningful to the business and is kept as a separate attribute. Warehouses usually join on surrogate keys.",
+      "tags": ["surrogate-key", "dimension"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/primary-and-foreign-key-constraints"]
+    },
+    {
+      "id": "data-modeling-014",
+      "difficulty": "Intermediate",
+      "question": "How do you model hierarchical data?",
+      "answer": "Common approaches are an adjacency list with a parent key queried by a recursive CTE, a materialized path storing the full path as a string, and a closure table that stores every ancestor-descendant pair. The adjacency list is simplest and flexible, while a closure table makes descendant queries fast. Choose based on how often you traverse the hierarchy.",
+      "tags": ["hierarchy", "modeling"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "data-modeling-015",
+      "difficulty": "Intermediate",
+      "question": "How do you model optional attributes that differ per entity?",
+      "answer": "You can use nullable columns when the set of attributes is small and fixed, a key-value attribute table when attributes vary widely, or sparse columns and XML or JSON for very dynamic schemas. Each trades query simplicity against flexibility. A common choice is a few well-known columns plus a JSON column for the rest.",
+      "tags": ["modeling", "optional-attributes"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/json/json-data-sql-server"]
+    },
+    {
+      "id": "data-modeling-016",
+      "difficulty": "Intermediate",
+      "question": "What is the role of a lookup table?",
+      "answer": "A lookup table stores a small, stable set of allowed values with a code and description, such as status or country, and is referenced by foreign keys. It centralizes the valid values, keeps them consistent, and avoids repeating text. It is a lightweight dimension even in transactional schemas.",
+      "tags": ["lookup-table", "reference-data"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/create-foreign-key-relationships"]
+    },
+    {
+      "id": "data-modeling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle soft deletes in a schema?",
+      "answer": "A soft delete marks a row as inactive with a flag or a deletion timestamp instead of removing it, preserving history and references. Queries must then filter on the flag, often through views or filtered indexes. The trade-off is that tables and indexes grow and every query must remember to exclude deleted rows.",
+      "tags": ["soft-delete", "modeling"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/create-filtered-indexes"]
+    },
+    {
+      "id": "data-modeling-018",
+      "difficulty": "Intermediate",
+      "question": "What is a natural hierarchy in a dimension?",
+      "answer": "A natural hierarchy is a meaningful drill path within a dimension, such as category to subcategory to product, or country to state to city. It enables intuitive drill-down in reports and is usually modeled with columns in the dimension rather than separate tables. Getting the hierarchy right improves the analytical experience.",
+      "tags": ["hierarchy", "dimension"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-019",
+      "difficulty": "Intermediate",
+      "question": "How do you choose between storing data in one wide table or several normalized tables?",
+      "answer": "Normalize when write efficiency, integrity, and avoiding redundancy matter, which is typical of OLTP. Denormalize or use a wide table when read performance and simplicity dominate, as in reporting or a warehouse. The decision follows the workload: many small writes favor normalization, large analytical reads favor denormalization.",
+      "tags": ["normalization", "design"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/indexes/columnstore-indexes-overview"]
+    },
+    {
+      "id": "data-modeling-020",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of an audit or history table?",
+      "answer": "An audit table records who changed what and when, preserving a trail for compliance and troubleshooting. It can be populated by triggers, Change Data Capture, or temporal tables. Keeping history separate from the current table keeps the main table lean and queries fast.",
+      "tags": ["audit", "history"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/temporal-tables"]
+    },
+    {
+      "id": "data-modeling-021",
+      "difficulty": "Advanced",
+      "question": "How do temporal tables implement system-versioned history?",
+      "answer": "A system-versioned temporal table keeps a current table and a history table, and the engine automatically moves the previous version of each row into history when it is updated or deleted, with valid-from and valid-to timestamps. You query any point in time with FOR SYSTEM_TIME. This gives built-in auditing without triggers.",
+      "code": "CREATE TABLE dbo.Product (\n  Id INT PRIMARY KEY, Name NVARCHAR(100),\n  ValidFrom DATETIME2 GENERATED ALWAYS AS ROW START,\n  ValidTo DATETIME2 GENERATED ALWAYS AS ROW END,\n  PERIOD FOR SYSTEM_TIME (ValidFrom, ValidTo)\n) WITH (SYSTEM_VERSIONING = ON);",
+      "tags": ["temporal", "history"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/tables/temporal-tables"]
+    },
+    {
+      "id": "data-modeling-022",
+      "difficulty": "Advanced",
+      "question": "How do you design a schema for multi-tenant data?",
+      "answer": "You can use a shared schema with a tenant column on every table, separate schemas per tenant, or separate databases per tenant. A tenant column is simplest but requires every query and index to include the tenant and risks data leakage if a predicate is missed. Separate databases give strong isolation at higher management cost.",
+      "tags": ["multi-tenant", "design"],
+      "references": ["https://learn.microsoft.com/azure/azure-sql/database/saas-tenancy-app-design-patterns"]
+    },
+    {
+      "id": "data-modeling-023",
+      "difficulty": "Advanced",
+      "question": "What is a bridge table in a dimensional model?",
+      "answer": "A bridge table resolves many-to-many relationships between a fact and a dimension, such as an order with several salespeople or a patient with multiple diagnoses. It sits between the fact and the dimension and often carries a weighting factor to avoid double counting. Bridge tables keep the star model while handling complex relationships.",
+      "tags": ["bridge-table", "dimensional"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-024",
+      "difficulty": "Advanced",
+      "question": "How do you model currency and unit conversion in a warehouse?",
+      "answer": "Store amounts in a base currency along with the transaction currency and the exchange rate applied at the time of the transaction, so you can report in either currency consistently. Keeping the rate with the fact preserves historical accuracy. A currency dimension provides labels and rounding rules.",
+      "tags": ["currency", "warehouse"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    },
+    {
+      "id": "data-modeling-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose the grain of a fact table?",
+      "answer": "The grain is what a single fact row represents, such as one order line or one daily snapshot, and it should be the finest level you need to answer questions. A finer grain is more flexible but produces more rows and storage, while a coarser grain is smaller but limits drill-down. Decide the grain before adding measures or dimensions.",
+      "tags": ["grain", "fact-table"],
+      "references": ["https://learn.microsoft.com/power-bi/guidance/star-schema"]
+    }
+  ]
+}

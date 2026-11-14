@@ -1,0 +1,207 @@
+{
+  "category": "High Availability, Replication & Always On",
+  "slug": "high-availability",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "high-availability-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between high availability and disaster recovery?",
+      "answer": "High availability keeps the system running through component failures with minimal downtime, typically within a data center or region. Disaster recovery restores service after a large-scale event such as a region outage, usually with more downtime and potential data loss. HA and DR are complementary and addressed with different technologies.",
+      "tags": ["ha", "dr"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server"]
+    },
+    {
+      "id": "high-availability-002",
+      "difficulty": "Beginner",
+      "question": "What is an Always On availability group?",
+      "answer": "An availability group is a set of databases that fail over together between a primary replica and one or more secondary replicas. The secondaries keep synchronized copies of the databases and can serve read-only queries. It provides high availability and, with a remote replica, disaster recovery.",
+      "tags": ["availability-group", "ha"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server"]
+    },
+    {
+      "id": "high-availability-003",
+      "difficulty": "Beginner",
+      "question": "What is database mirroring and is it still recommended?",
+      "answer": "Database mirroring maintained a hot standby copy of one database with automatic or manual failover. It is deprecated in favor of Always On availability groups and should not be used for new deployments. Existing mirroring implementations should be migrated.",
+      "tags": ["mirroring", "deprecated"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/database-mirroring/database-mirroring-sql-server"]
+    },
+    {
+      "id": "high-availability-004",
+      "difficulty": "Beginner",
+      "question": "What is failover clustering?",
+      "answer": "A failover cluster uses a Windows Server Failover Cluster to run SQL Server as a clustered resource, so if the active node fails the instance restarts on another node with the same shared storage. It provides instance-level high availability with a single copy of the data. It protects against server failure but not storage failure.",
+      "tags": ["failover-cluster", "ha"],
+      "references": ["https://learn.microsoft.com/sql/sql-server/failover-clusters/windows/always-on-failover-cluster-instances-sql-server"]
+    },
+    {
+      "id": "high-availability-005",
+      "difficulty": "Beginner",
+      "question": "What is a failover cluster instance?",
+      "answer": "A failover cluster instance is SQL Server installed across nodes of a Windows cluster, presenting a single virtual network name and IP to clients. It moves between nodes on failure, and clients reconnect to the same name. Because storage is shared, it does not protect against storage corruption, which requires log shipping or availability groups.",
+      "tags": ["fci", "clustering"],
+      "references": ["https://learn.microsoft.com/sql/sql-server/failover-clusters/windows/always-on-failover-cluster-instances-sql-server"]
+    },
+    {
+      "id": "high-availability-006",
+      "difficulty": "Beginner",
+      "question": "What is log shipping?",
+      "answer": "Log shipping takes transaction log backups on a primary server, copies them to one or more secondary servers, and restores them, keeping a warm standby. It is simple and works across versions and editions, with configurable delay. Failover is manual and the secondary is not readable while restoring unless you use standby mode.",
+      "tags": ["log-shipping", "dr"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/log-shipping/about-log-shipping-sql-server"]
+    },
+    {
+      "id": "high-availability-007",
+      "difficulty": "Beginner",
+      "question": "What is replication?",
+      "answer": "Replication copies and distributes data and objects from a publisher to subscribers, using snapshot, transactional, or merge methods. It is designed for data distribution and scale-out reads rather than as a high availability feature. Each type suits different latency and conflict requirements.",
+      "tags": ["replication", "distribution"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/replication/sql-server-replication"]
+    },
+    {
+      "id": "high-availability-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between transactional and merge replication?",
+      "answer": "Transactional replication streams committed transactions to subscribers in near real time and is usually read-only at the subscriber. Merge replication allows changes at both publisher and subscribers and reconciles them with conflict resolution, suiting occasionally connected clients. Transactional is lower latency; merge is more flexible.",
+      "tags": ["replication", "transactional"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/replication/types-of-replication"]
+    },
+    {
+      "id": "high-availability-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between synchronous and asynchronous commit?",
+      "answer": "Synchronous commit waits for the secondary to harden the log before the primary commits, so no data is lost on failover but latency increases. Asynchronous commit does not wait, so it is faster but a failover can lose recent transactions. The choice balances performance against potential data loss.",
+      "tags": ["synchronous", "asynchronous"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/availability-modes-always-on-availability-groups"]
+    },
+    {
+      "id": "high-availability-010",
+      "difficulty": "Beginner",
+      "question": "What is a recovery point objective (RPO) and recovery time objective (RTO)?",
+      "answer": "RPO is the maximum acceptable amount of data loss measured in time, and RTO is the maximum acceptable downtime. These two objectives drive the choice of HA and DR technology. Synchronous replication gives near-zero RPO, while asynchronous and log shipping trade RPO for lower latency.",
+      "tags": ["rpo", "rto"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server"]
+    },
+    {
+      "id": "high-availability-011",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the Windows Server Failover Cluster in an availability group?",
+      "answer": "The WSFC provides the cluster membership, quorum, and health detection that an availability group relies on to decide when to fail over. The availability group is a clustered resource within the WSFC. Losing quorum stops automatic failover, so quorum configuration is critical.",
+      "tags": ["wsfc", "quorum"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/failover-clustering-and-always-on-availability-groups-sql-server"]
+    },
+    {
+      "id": "high-availability-012",
+      "difficulty": "Intermediate",
+      "question": "What is quorum and why does it matter?",
+      "answer": "Quorum is the voting mechanism that lets a cluster determine whether it has enough healthy members to keep running, preventing split-brain. If quorum is lost, the cluster goes offline and availability groups stop. Node majority, node and disk majority, and cloud witness are common quorum configurations.",
+      "tags": ["quorum", "cluster"],
+      "references": ["https://learn.microsoft.com/sql/sql-server/failover-clusters/windows/wsfc-quorum-modes-and-voting-configuration-sql-server"]
+    },
+    {
+      "id": "high-availability-013",
+      "difficulty": "Intermediate",
+      "question": "What is a listener in an availability group?",
+      "answer": "A listener is a virtual network name and IP address that clients connect to instead of a specific server, and it routes connections to the current primary replica. On failover the listener follows the new primary, so applications reconnect without changing connection strings. Read-only routing can send read-intent connections to a readable secondary.",
+      "tags": ["listener", "availability-group"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/listeners-client-connectivity-application-failover"]
+    },
+    {
+      "id": "high-availability-014",
+      "difficulty": "Intermediate",
+      "question": "What is read-only routing?",
+      "answer": "Read-only routing directs read-intent connections to a readable secondary replica based on a routing list, offloading reporting from the primary. Clients must specify ApplicationIntent=ReadOnly in the connection string, and the replica must be configured for read-only access. It is a way to scale reads without separate infrastructure.",
+      "tags": ["read-only-routing", "scalability"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/configure-read-only-routing-for-an-availability-group-sql-server"]
+    },
+    {
+      "id": "high-availability-015",
+      "difficulty": "Intermediate",
+      "question": "What is automatic failover and what does it require?",
+      "answer": "Automatic failover promotes a secondary without manual intervention when the primary fails, and it requires synchronous commit mode, a synchronized secondary, and a healthy quorum. It minimizes downtime but the synchronous mode adds latency. Only synchronous replicas can be automatic failover targets.",
+      "tags": ["automatic-failover", "availability-group"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/failover-and-failover-modes-always-on-availability-groups"]
+    },
+    {
+      "id": "high-availability-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a planned manual failover and a forced failover?",
+      "answer": "A planned manual failover happens without data loss when the primary is healthy and the secondary is synchronized. A forced failover is used when the primary is unavailable and may lose data because the secondary might not be fully caught up. Forced failover can cause a split-brain if the old primary comes back, requiring resynchronization.",
+      "tags": ["failover", "data-loss"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/failover-and-failover-modes-always-on-availability-groups"]
+    },
+    {
+      "id": "high-availability-017",
+      "difficulty": "Intermediate",
+      "question": "What is a distributed availability group?",
+      "answer": "A distributed availability group links two separate availability groups, typically in different regions or clusters, to provide disaster recovery across sites without a single large cluster. It uses asynchronous replication between the groups. It is common for cross-region DR where a stretched cluster is impractical.",
+      "tags": ["distributed-ag", "dr"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/distributed-availability-groups"]
+    },
+    {
+      "id": "high-availability-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between synchronous and asynchronous replicas in terms of read access?",
+      "answer": "Any secondary replica can be configured to allow read-only connections, but synchronous secondaries are typically the automatic failover targets. A readable secondary uses snapshot isolation for reads and may lag slightly. Asynchronous secondaries can serve reads too but are not eligible for automatic failover.",
+      "tags": ["secondary-replica", "read-access"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/availability-modes-always-on-availability-groups"]
+    },
+    {
+      "id": "high-availability-019",
+      "difficulty": "Intermediate",
+      "question": "How does Azure SQL Database provide high availability?",
+      "answer": "Azure SQL Database automatically maintains multiple replicas of your database using a quorum-based commit, so a failure triggers an automatic failover with no action from you. The service handles patching and hardware failures. Business Critical and Premium tiers add local redundant replicas and read-only replicas.",
+      "tags": ["azure-sql", "ha"],
+      "references": ["https://learn.microsoft.com/azure/azure-sql/database/high-availability-sla"]
+    },
+    {
+      "id": "high-availability-020",
+      "difficulty": "Intermediate",
+      "question": "What is active geo-replication in Azure SQL?",
+      "answer": "Active geo-replication creates readable secondary databases in other Azure regions, and you can initiate a failover to promote a secondary. It provides cross-region disaster recovery with asynchronous replication. It is available in Azure SQL Database, while Azure SQL Managed Instance uses auto-failover groups.",
+      "tags": ["geo-replication", "azure-sql"],
+      "references": ["https://learn.microsoft.com/azure/azure-sql/database/active-geo-replication-overview"]
+    },
+    {
+      "id": "high-availability-021",
+      "difficulty": "Advanced",
+      "question": "How does a quorum failure affect an availability group and how do you mitigate it?",
+      "answer": "If the cluster loses quorum, it goes offline and all availability group replicas stop, even if the databases are healthy. Mitigate with a well-designed quorum, such as a cloud witness in Azure or a file share witness, and avoid even-numbered node sets without a witness. Multi-subnet and dynamic quorum features also help.",
+      "tags": ["quorum", "availability-group"],
+      "references": ["https://learn.microsoft.com/sql/sql-server/failover-clusters/windows/wsfc-quorum-modes-and-voting-configuration-sql-server"]
+    },
+    {
+      "id": "high-availability-022",
+      "difficulty": "Advanced",
+      "question": "How do you perform a rolling upgrade or patching with availability groups?",
+      "answer": "Patch the secondary replicas first, one at a time, allowing them to resynchronize, then perform a manual failover to a patched secondary and patch the former primary. This keeps the databases available with only a brief failover. Ensure the cluster has enough synchronized replicas to maintain quorum throughout.",
+      "tags": ["patching", "availability-group"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/upgrading-always-on-availability-group-replica-instances"]
+    },
+    {
+      "id": "high-availability-023",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of synchronous replication?",
+      "answer": "Synchronous commit adds network round-trip latency to every transaction commit because the primary waits for the secondary to harden the log. On high-latency links this can noticeably slow throughput, so synchronous replicas are usually placed close together. Asynchronous replicas avoid the latency but risk data loss on failover.",
+      "tags": ["synchronous", "performance"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/availability-modes-always-on-availability-groups"]
+    },
+    {
+      "id": "high-availability-024",
+      "difficulty": "Advanced",
+      "question": "How does an availability group handle a database that joins or leaves?",
+      "answer": "Adding a database to an availability group requires a full backup of the primary, a restore WITH NORECOVERY on the secondary, and then joining it, after which it synchronizes through the log. Removing a database detaches it from replication while leaving it on the primary. Operations like these take the database offline briefly on the secondary.",
+      "tags": ["availability-group", "synchronization"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/join-a-secondary-database-to-an-availability-group-sql-server"]
+    },
+    {
+      "id": "high-availability-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose between availability groups, failover cluster instances, and log shipping?",
+      "answer": "Choose a failover cluster instance when you want instance-level HA with shared storage and no data redundancy. Choose availability groups when you need database-level HA with multiple readable copies and protection against storage failure. Choose log shipping when you need simple, low-cost, cross-version disaster recovery with manual failover and some data loss tolerance.",
+      "tags": ["ha", "design"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/availability-groups/windows/overview-of-always-on-availability-groups-sql-server"]
+    }
+  ]
+}

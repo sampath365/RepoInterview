@@ -1,0 +1,389 @@
+{
+  "category": "Design Patterns",
+  "slug": "patterns",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "patterns-001",
+      "difficulty": "Beginner",
+      "question": "What does the Single Responsibility Principle (SRP) state?",
+      "answer": "SRP states that a class should have only one reason to change, meaning it should own a single cohesive responsibility rather than several unrelated concerns. A class that both calculates business rules and persists to a database has two reasons to change and should be split. Following SRP makes types smaller, easier to test, and less likely to break when an unrelated requirement changes.",
+      "code": "// Violates SRP: validation + persistence + email\npublic class OrderService\n{\n    public void Place(Order o)\n    {\n        Validate(o);\n        Save(o);\n        SendEmail(o);\n    }\n}",
+      "tags": [
+        "solid",
+        "srp",
+        "cohesion"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"
+      ]
+    },
+    {
+      "id": "patterns-002",
+      "difficulty": "Beginner",
+      "question": "What is the Open/Closed Principle (OCP)?",
+      "answer": "OCP says software entities should be open for extension but closed for modification, so new behavior is added by adding code rather than editing and re-testing existing code. Abstractions such as interfaces, abstract base classes, and virtual members are the usual mechanisms. For example, a discount calculator can be extended with a new IDiscount implementation instead of adding another branch to a switch statement.",
+      "code": "public interface IDiscount\n{\n    decimal Apply(decimal total);\n}\n\npublic class VipDiscount : IDiscount\n{\n    public decimal Apply(decimal total) => total * 0.9m;\n}",
+      "tags": [
+        "solid",
+        "ocp",
+        "extensibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"
+      ]
+    },
+    {
+      "id": "patterns-003",
+      "difficulty": "Beginner",
+      "question": "What is the Liskov Substitution Principle (LSP)?",
+      "answer": "LSP requires that objects of a derived type be usable anywhere the base type is expected without breaking the program's correctness. Subtypes must not strengthen preconditions, weaken postconditions, or throw exceptions the base type does not declare. A classic violation is a Square derived from Rectangle, because setting width and height independently cannot hold for a square.",
+      "tags": [
+        "solid",
+        "lsp",
+        "inheritance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"
+      ]
+    },
+    {
+      "id": "patterns-004",
+      "difficulty": "Beginner",
+      "question": "What is the Interface Segregation Principle (ISP)?",
+      "answer": "ISP says clients should not be forced to depend on methods they do not use, so large general-purpose interfaces should be split into smaller, role-specific ones. An IWorker interface with Work, Eat, and Sleep forces a robot implementation to throw for Eat, which is a design smell. Small focused interfaces keep implementations honest and make mocking in tests simpler.",
+      "code": "public interface IWork { void Work(); }\npublic interface IEat { void Eat(); }\n\npublic class Robot : IWork\n{\n    public void Work() { }\n}",
+      "tags": [
+        "solid",
+        "isp",
+        "interfaces"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"
+      ]
+    },
+    {
+      "id": "patterns-005",
+      "difficulty": "Beginner",
+      "question": "What is the Dependency Inversion Principle (DIP)?",
+      "answer": "DIP states that high-level modules should not depend on low-level modules; both should depend on abstractions, and abstractions should not depend on details. Instead of a business service directly creating a database connection, it depends on an interface such as IOrderRepository that the infrastructure layer implements. This inversion enables testing with fakes and swapping implementations without touching business logic.",
+      "code": "public class OrderService(IOrderRepository repo)\n{\n    public void Place(Order o) => repo.Add(o);\n}",
+      "tags": [
+        "solid",
+        "dip",
+        "abstractions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "patterns-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Factory Method and Abstract Factory?",
+      "answer": "Factory Method creates a single product through a method that subclasses or callers can override, while Abstract Factory creates families of related products through an interface with multiple creation methods. Abstract Factory is useful when products must be used together, such as a UI toolkit producing matching buttons and checkboxes for Windows or macOS. Both hide concrete types from clients, but Abstract Factory groups several related factories behind one abstraction.",
+      "code": "public interface IUiFactory\n{\n    IButton CreateButton();\n    ICheckbox CreateCheckbox();\n}",
+      "tags": [
+        "factory-method",
+        "abstract-factory",
+        "creational"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-007",
+      "difficulty": "Beginner",
+      "question": "What is the Builder pattern?",
+      "answer": "Builder separates the construction of a complex object from its representation, letting the same construction process create different representations. It provides a fluent step-by-step API that avoids telescoping constructors with many optional parameters and keeps the built object immutable. In C#, the pattern is often combined with object initializers or a static Create method that returns a fully configured instance.",
+      "code": "var request = new HttpRequestBuilder()\n    .WithUrl(\"https://example.com\")\n    .WithMethod(HttpMethod.Get)\n    .Build();",
+      "tags": [
+        "builder",
+        "creational",
+        "fluent-api"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/object-and-collection-initializers"
+      ]
+    },
+    {
+      "id": "patterns-008",
+      "difficulty": "Beginner",
+      "question": "What is the Singleton pattern and why is it often considered an anti-pattern?",
+      "answer": "Singleton guarantees a class has exactly one instance and provides a global access point to it, typically via a private constructor and a static Instance property. It is often an anti-pattern because it introduces hidden global state, makes unit testing hard since the instance cannot easily be replaced, and tightly couples callers to a concrete type. In modern .NET the same goal is better achieved by registering a service as a singleton with the built-in DI container and injecting an abstraction.",
+      "code": "public sealed class Cache\n{\n    public static Cache Instance { get; } = new();\n    private Cache() { }\n}",
+      "tags": [
+        "singleton",
+        "anti-pattern",
+        "di"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "patterns-009",
+      "difficulty": "Beginner",
+      "question": "What is the Prototype pattern and how does C# support it?",
+      "answer": "Prototype creates new objects by cloning an existing instance rather than calling a constructor, which is useful when construction is expensive or the configuration is complex. C# supports it with the ICloneable interface, though a typed Clone method is preferred, and with record types whose compiler-generated copy constructor makes non-destructive copies simple. A shallow clone copies references while a deep clone duplicates the referenced objects too.",
+      "code": "public record Person(string Name, List<string> Tags);\nvar copy = original with { };\nvar deep = original with { Tags = [.. original.Tags] };",
+      "tags": [
+        "prototype",
+        "clone",
+        "records"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"
+      ]
+    },
+    {
+      "id": "patterns-010",
+      "difficulty": "Beginner",
+      "question": "What is the Adapter pattern?",
+      "answer": "Adapter converts the interface of a class into another interface that clients expect, letting incompatible types work together without modifying their source. It is common when integrating a third-party library or legacy component behind your own abstraction. In C#, an adapter is usually a small class that implements your interface and delegates to the incompatible type, which also makes that dependency mockable in tests.",
+      "code": "public class LegacyLoggerAdapter(ILegacyLog log) : IAppLogger\n{\n    public void Info(string msg) => log.Write(\"INFO\", msg);\n}",
+      "tags": [
+        "adapter",
+        "structural",
+        "integration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a thread-safe Singleton in C#?",
+      "answer": "The cleanest thread-safe approach relies on the runtime's type-initialization guarantees: a static readonly field initialized inline, or a Lazy<T> with LazyThreadSafetyMode.ExecutionAndPublication, gives one instance that is created lazily and safely without explicit locks. A static constructor is also thread-safe because the CLR guarantees it runs once, and double-checked locking with a volatile field works but is easy to get wrong. Note that thread-safe construction does not make the singleton's own members thread-safe, so shared mutable state still needs synchronization.",
+      "code": "public sealed class Cache\n{\n    private static readonly Lazy<Cache> _lazy =\n        new(() => new Cache(), LazyThreadSafetyMode.ExecutionAndPublication);\n    public static Cache Instance => _lazy.Value;\n    private Cache() { }\n}",
+      "tags": [
+        "singleton",
+        "thread-safety",
+        "lazy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.lazy-1",
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/classes-and-structs/static-constructors"
+      ]
+    },
+    {
+      "id": "patterns-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the Decorator and Proxy patterns?",
+      "answer": "Both wrap an object behind the same interface, but Decorator adds responsibilities such as logging, caching, or compression and receives the wrapped object from outside, while Proxy controls access to a subject and typically creates or locates that subject itself. Decorators are composed in a chain and each layer adds behavior, whereas a proxy usually stands in for one real subject to add lazy initialization, security, or remoting. In .NET, Stream wrappers like GZipStream are decorators, while a lazy-loading EF Core navigation property acts as a proxy.",
+      "code": "public class CachingRepo(IOrderRepository inner) : IOrderRepository\n{\n    public Order? Get(int id) => _cache.GetOrAdd(id, inner.Get);\n}",
+      "tags": [
+        "decorator",
+        "proxy",
+        "structural"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.io.stream",
+        "https://learn.microsoft.com/dotnet/api/system.lazy-1"
+      ]
+    },
+    {
+      "id": "patterns-013",
+      "difficulty": "Intermediate",
+      "question": "What is the Facade pattern?",
+      "answer": "Facade provides a simplified, unified interface to a complex subsystem, hiding many collaborating classes behind a few high-level operations. It does not change existing interfaces for compatibility, unlike Adapter, but instead reduces the number of types a client must interact with. A common .NET example is an application service that orchestrates several repositories and external clients behind one method call.",
+      "tags": [
+        "facade",
+        "structural",
+        "simplification"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-014",
+      "difficulty": "Intermediate",
+      "question": "What is the Composite pattern?",
+      "answer": "Composite composes objects into tree structures to represent part-whole hierarchies and lets clients treat individual objects and groups uniformly. A node implements the same interface as its leaves and forwards operations to its children, which is ideal for file systems and UI element trees. In .NET, expression trees and the node types in System.Linq.Expressions follow the same recursive structure.",
+      "code": "public interface INode { int Size(); }\npublic class Folder(List<INode> children) : INode\n{\n    public int Size() => children.Sum(c => c.Size());\n}",
+      "tags": [
+        "composite",
+        "tree",
+        "structural"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/advanced-topics/expression-trees/"
+      ]
+    },
+    {
+      "id": "patterns-015",
+      "difficulty": "Intermediate",
+      "question": "What is the Bridge pattern?",
+      "answer": "Bridge decouples an abstraction from its implementation so both can vary independently, by holding a reference to an implementor interface rather than inheriting concrete behavior. This avoids a combinatorial explosion of subclasses when a hierarchy has two independent dimensions, such as shapes and rendering APIs. It is essentially preferring composition over inheritance for the varying part of a design.",
+      "code": "public abstract class Shape(IRenderer r)\n{\n    protected IRenderer Renderer => r;\n    public abstract void Draw();\n}",
+      "tags": [
+        "bridge",
+        "abstraction",
+        "composition"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-016",
+      "difficulty": "Intermediate",
+      "question": "What is the Flyweight pattern?",
+      "answer": "Flyweight minimizes memory use by sharing as much data as possible between similar objects, splitting state into intrinsic data stored once and extrinsic data passed in by the client. It is valuable when a large number of objects share common immutable data, such as character glyphs in a document or tiles in a game. In .NET, string interning and cached immutable value objects are practical examples of the same idea.",
+      "code": "private static readonly Dictionary<char, Glyph> Cache = new();\nGlyph Get(char c) => Cache.TryGetValue(c, out var g)\n    ? g : Cache[c] = new Glyph(c);",
+      "tags": [
+        "flyweight",
+        "caching",
+        "memory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/garbage-collection/fundamentals"
+      ]
+    },
+    {
+      "id": "patterns-017",
+      "difficulty": "Intermediate",
+      "question": "What is the Strategy pattern and how does it relate to delegates?",
+      "answer": "Strategy defines a family of interchangeable algorithms, encapsulates each one behind a common interface, and lets the client select one at runtime. It removes large conditional blocks from the context class and makes each algorithm independently testable. In modern C#, a strategy is often just a delegate such as Func<decimal, decimal> or a keyed DI registration, which avoids defining a type per algorithm.",
+      "code": "public interface IShipping { decimal Cost(Order o); }\n\npublic class Checkout(IShipping shipping)\n{\n    public decimal Total(Order o) => shipping.Cost(o);\n}",
+      "tags": [
+        "strategy",
+        "behavioral",
+        "delegates"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/delegates-overview"
+      ]
+    },
+    {
+      "id": "patterns-018",
+      "difficulty": "Intermediate",
+      "question": "What is the Observer pattern and how is it implemented in .NET?",
+      "answer": "Observer defines a one-to-many dependency so that when one object changes state, all its dependents are notified automatically. In .NET this is most commonly implemented with events and delegates, where a publisher exposes an event and subscribers attach handlers, or with IObservable<T> and IObserver<T> for a push-based stream. Care must be taken to unsubscribe handlers to avoid memory leaks, which is a common cause of objects being kept alive.",
+      "code": "public class Stock\n{\n    public event EventHandler<decimal>? PriceChanged;\n    public void Update(decimal p) => PriceChanged?.Invoke(this, p);\n}",
+      "tags": [
+        "observer",
+        "events",
+        "behavioral"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/events/observer-design-pattern",
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/event"
+      ]
+    },
+    {
+      "id": "patterns-019",
+      "difficulty": "Intermediate",
+      "question": "What is the Command pattern?",
+      "answer": "Command encapsulates a request as an object, allowing it to be parameterized, queued, logged, or undone. Each command implements a common interface with an Execute method, and an invoker holds and triggers commands without knowing their details. It underpins undo/redo stacks, task queues, and message-based systems, and in C# a command is frequently a small class implementing an interface such as ICommand in MVVM frameworks.",
+      "code": "public interface ICommand { void Execute(); }\npublic class SaveCommand(Document d) : ICommand\n{\n    public void Execute() => d.Save();\n}",
+      "tags": [
+        "command",
+        "behavioral",
+        "undo"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-020",
+      "difficulty": "Intermediate",
+      "question": "How does the Iterator pattern work in C#?",
+      "answer": "Iterator provides a way to access the elements of a collection sequentially without exposing its underlying representation. C# builds the pattern into the language through IEnumerable<T> and IEnumerator<T>, and the yield return statement lets the compiler generate the enumerator state machine for you. Because the compiler transforms an iterator method into a class, iterator methods are lazy and only produce elements as they are requested.",
+      "code": "public static IEnumerable<int> Evens(int max)\n{\n    for (int i = 0; i <= max; i += 2)\n        yield return i;\n}",
+      "tags": [
+        "iterator",
+        "yield",
+        "ienumerable"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/iterators",
+        "https://learn.microsoft.com/dotnet/api/system.collections.generic.ienumerable-1"
+      ]
+    },
+    {
+      "id": "patterns-021",
+      "difficulty": "Advanced",
+      "question": "How do the State and Template Method patterns differ?",
+      "answer": "State models an object whose behavior changes as its internal state changes, with state objects that typically trigger transitions to other states, whereas Template Method defines the fixed skeleton of an algorithm in a base class and defers individual steps to overridden abstract or virtual members. State is about delegating behavior to a swap-in object at runtime, and Template Method is about reusing an algorithm's structure across subclasses. State is usually implemented with a context holding a current state reference, while Template Method relies on inheritance and a non-virtual public method that calls the protected steps.",
+      "code": "public interface IState { IState Next(); void Handle(); }\n\npublic abstract class Importer\n{\n    public void Run() { var d = Read(); Store(d); }\n    protected abstract string Read();\n    protected abstract void Store(string d);\n}",
+      "tags": [
+        "state",
+        "template-method",
+        "behavioral"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-022",
+      "difficulty": "Advanced",
+      "question": "What are the Chain of Responsibility and Mediator patterns?",
+      "answer": "Chain of Responsibility passes a request along a sequence of handlers until one handles it or the chain ends, decoupling the sender from the concrete handler; ASP.NET Core's middleware pipeline is a canonical implementation where each component can handle the request or call the next delegate. Mediator centralizes complex communication between objects through a single hub so that colleagues do not reference each other directly, and libraries such as MediatR apply it to route requests to handlers. Both reduce tight coupling, but Chain of Responsibility is a linear pass-along structure while Mediator is a star topology around one coordinator.",
+      "code": "app.Use(async (ctx, next) =>\n{\n    // before\n    await next();\n    // after\n});",
+      "tags": [
+        "chain-of-responsibility",
+        "mediator",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis",
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class"
+      ]
+    },
+    {
+      "id": "patterns-023",
+      "difficulty": "Advanced",
+      "question": "What are the Visitor and Memento patterns?",
+      "answer": "Visitor adds new operations to a type hierarchy without modifying the types, using double dispatch so an accept method on each element calls the matching visit method on the visitor; it is useful when the set of element types is stable but the operations vary. Memento captures an object's internal state so it can be restored later without exposing its internals, which is the basis for undo and rollback. In C#, records and with-expressions make lightweight mementos easy to produce as immutable snapshots.",
+      "code": "public interface IVisitor { void Visit(Circle c); }\npublic interface IShape { void Accept(IVisitor v); }",
+      "tags": [
+        "visitor",
+        "memento",
+        "behavioral"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/design-guidelines/abstract-class",
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/record"
+      ]
+    },
+    {
+      "id": "patterns-024",
+      "difficulty": "Advanced",
+      "question": "What are the Repository, Unit of Work, and dependency injection patterns?",
+      "answer": "Repository abstracts data access behind a collection-like interface so business code depends on an abstraction instead of an ORM or database, and Unit of Work tracks changes across repositories and commits them in a single transaction, which EF Core's DbContext already implements. Dependency injection is the technique of supplying a class's dependencies from outside rather than having it construct them; constructor injection is the default and is required for mandatory dependencies, property injection suits optional cross-cutting services, and method injection passes a dependency into a single method call. Constructor injection should be preferred because it makes dependencies explicit and leaves the object fully initialized on creation.",
+      "code": "services.AddScoped<IOrderRepository, OrderRepository>();\nservices.AddScoped<IUnitOfWork, EfUnitOfWork>();\n\npublic class OrderService(IOrderRepository repo, IUnitOfWork uow) { }",
+      "tags": [
+        "repository",
+        "unit-of-work",
+        "dependency-injection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "patterns-025",
+      "difficulty": "Advanced",
+      "question": "How do patterns relate to modern C#, and why is Service Locator discouraged while Null Object is encouraged?",
+      "answer": "Many classic patterns are now expressed directly in the language: the built-in DI container replaces hand-written factories and singletons, delegates and Func<T> remove the need for one-type-per-algorithm strategies, and LINQ's expression trees and iterators provide the Visitor and Iterator patterns out of the box. Service Locator, where a class asks a global container for its dependencies at runtime, is discouraged because it hides dependencies from the constructor, complicates testing, and can only be understood by reading the implementation. The Null Object pattern instead provides a do-nothing implementation so callers avoid null checks, and it pairs naturally with DI by registering a NullLogger-style implementation as the default.",
+      "code": "public sealed class NullLogger : IAppLogger\n{\n    public void Info(string msg) { }\n}\nservices.AddSingleton<IAppLogger, NullLogger>();",
+      "tags": [
+        "service-locator",
+        "null-object",
+        "modern-csharp"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines",
+        "https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,223 @@
+{
+  "category": "Strings & Text",
+  "slug": "strings",
+  "icon": "text",
+  "questions": [
+    {
+      "id": "strings-001",
+      "difficulty": "Beginner",
+      "question": "Why are strings immutable in .NET?",
+      "answer": "A System.String cannot change after it is created; operations like Replace or ToUpper return a new string. Immutability makes strings safe to share across threads, allows them to be used as dictionary keys with cached hash codes, and enables literal interning. The cost is that repeated modification creates many temporary strings and extra allocations.",
+      "tags": ["immutability", "string"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/strings/"]
+    },
+    {
+      "id": "strings-002",
+      "difficulty": "Beginner",
+      "question": "When should you use StringBuilder instead of string concatenation?",
+      "answer": "Use StringBuilder when you build a string through many appends or in a loop, because it mutates an internal buffer instead of allocating a new string each time. For a fixed, small number of concatenations the compiler folds them into a single String.Concat call, so a StringBuilder adds overhead without benefit. The rule of thumb is to reach for StringBuilder for loops or an unknown number of pieces.",
+      "code": "var sb = new StringBuilder();\nfor (int i = 0; i < 1000; i++)\n    sb.Append(i).Append(',');\nstring result = sb.ToString();",
+      "tags": ["stringbuilder", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.stringbuilder"]
+    },
+    {
+      "id": "strings-003",
+      "difficulty": "Beginner",
+      "question": "What is string interning?",
+      "answer": "Interning stores one copy of each distinct string literal in a process-wide pool so identical literals share the same instance. This lets the runtime compare interned strings by reference for speed and saves memory for repeated literals. String.Intern adds a runtime string to the pool, but interned strings live for the life of the process.",
+      "code": "string a = \"hello\";\nstring b = \"hello\";\nbool same = ReferenceEquals(a, b); // true",
+      "tags": ["interning", "string"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.string.intern"]
+    },
+    {
+      "id": "strings-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between == and Equals for strings?",
+      "answer": "For strings the == operator and the instance Equals method both perform value comparison, checking that the characters are equal, not that the references match. Equals has overloads that accept a StringComparison for culture or case control, while == always uses ordinal comparison. Use the explicit StringComparison overloads when culture or case sensitivity matters.",
+      "tags": ["equality", "string"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.string.equals"]
+    },
+    {
+      "id": "strings-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between verbatim and regular string literals?",
+      "answer": "A regular string literal interprets escape sequences such as \\n and \\t, while a verbatim literal prefixed with @ treats backslashes and line breaks literally. Verbatim strings are convenient for file paths and regular expressions where escapes would be noisy. To include a double quote in a verbatim string you double it.",
+      "code": "string path = @\"C:\\temp\\logs\";\nstring quote = @\"He said \"\"hi\"\"\";",
+      "tags": ["literals", "verbatim"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/strings/"]
+    },
+    {
+      "id": "strings-006",
+      "difficulty": "Beginner",
+      "question": "What are common string escape sequences in C#?",
+      "answer": "C# uses backslash escapes such as \\n for newline, \\t for tab, \\\\ for a backslash, \\\" for a double quote, \\0 for null, and \\uXXXX or \\UXXXXXXXX for Unicode code points. The $ prefix enables interpolation and @ makes a literal string. Unicode escapes let you embed any character without typing it directly.",
+      "tags": ["escape-sequences", "literals"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/strings/"]
+    },
+    {
+      "id": "strings-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between char and Rune?",
+      "answer": "A char is a single UTF-16 code unit, so it can only represent characters in the Basic Multilingual Plane and cannot hold an emoji or other supplementary character on its own. System.Text.Rune represents a full Unicode scalar value, handling surrogate pairs correctly. Use Rune when you must process text containing characters outside the BMP.",
+      "tags": ["char", "rune", "unicode"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.rune"]
+    },
+    {
+      "id": "strings-008",
+      "difficulty": "Beginner",
+      "question": "How do Unicode, UTF-8, and UTF-16 relate to .NET strings?",
+      "answer": "Unicode assigns a code point to every character, while UTF-8 and UTF-16 are encodings that represent those code points as bytes or 16-bit units. .NET strings are sequences of UTF-16 code units, and Encoding.UTF8 converts them to and from bytes. Supplementary characters need two UTF-16 code units, a surrogate pair, which is why string length may exceed the visible character count.",
+      "code": "byte[] bytes = System.Text.Encoding.UTF8.GetBytes(\"héllo\");\nstring text = System.Text.Encoding.UTF8.GetString(bytes);",
+      "tags": ["unicode", "utf8", "utf16"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.encoding"]
+    },
+    {
+      "id": "strings-009",
+      "difficulty": "Beginner",
+      "question": "What is string interpolation and how does it compare to string.Format?",
+      "answer": "String interpolation with the $ prefix embeds expressions directly in a literal, which the compiler typically rewrites to String.Format or to a more efficient handler. It is more readable and less error-prone than positional placeholders in string.Format because arguments sit next to their text. Both respect the current or a specified culture when formatting values.",
+      "code": "string name = \"Ada\";\nint age = 36;\nstring s = $\"{name} is {age}\";",
+      "tags": ["interpolation", "formatting"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/tutorials/string-interpolation"]
+    },
+    {
+      "id": "strings-010",
+      "difficulty": "Beginner",
+      "question": "How do int.Parse and int.TryParse differ?",
+      "answer": "int.Parse throws a FormatException or OverflowException when the input is invalid, so it should only be used when you are certain the text is valid. int.TryParse returns a bool indicating success and outputs the value through an out parameter, avoiding exceptions for expected bad input. Prefer TryParse for user input and other untrusted text.",
+      "code": "if (int.TryParse(input, out int value))\n    Console.WriteLine(value * 2);",
+      "tags": ["parsing", "tryparse"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.int32.tryparse"]
+    },
+    {
+      "id": "strings-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ordinal and culture-aware string comparison?",
+      "answer": "Ordinal comparison compares the numeric UTF-16 code units and is fast and predictable, making it right for identifiers, file paths, and protocol strings. Culture-aware comparison applies linguistic rules, including case folding and collation, so it is appropriate for sorting or displaying human text. Choosing the wrong one causes subtle bugs, such as sorting surprises or security checks that pass when they should not.",
+      "tags": ["comparison", "culture", "ordinal"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/base-types/best-practices-strings"]
+    },
+    {
+      "id": "strings-012",
+      "difficulty": "Intermediate",
+      "question": "How do you do case-insensitive string comparison correctly?",
+      "answer": "Pass StringComparison.OrdinalIgnoreCase for culture-independent, case-insensitive checks, or StringComparison.CurrentCultureIgnoreCase when linguistic rules matter. Avoid ToLower or ToUpper for comparison because they allocate and can behave incorrectly for certain cultures, such as the Turkish dotless i. Methods like Equals, Contains, and StartsWith all accept a StringComparison argument.",
+      "code": "bool match = fileName.Equals(\"readme.txt\", StringComparison.OrdinalIgnoreCase);",
+      "tags": ["comparison", "case-insensitive"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.stringcomparison"]
+    },
+    {
+      "id": "strings-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Substring and slicing with AsSpan?",
+      "answer": "Substring allocates a new string holding the requested characters, which adds GC pressure when done repeatedly. AsSpan().Slice creates a ReadOnlySpan<char> view over the original string without copying, but the span is a ref struct and cannot be stored on the heap or used across await. Use spans for transient parsing and Substring when you need an actual string.",
+      "code": "ReadOnlySpan<char> span = \"2024-01-15\".AsSpan();\nvar year = span.Slice(0, 4); // no allocation",
+      "tags": ["span", "substring", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/memory-and-spans/memory-t-usage-guidelines"]
+    },
+    {
+      "id": "strings-014",
+      "difficulty": "Intermediate",
+      "question": "What are interpolated string handlers in C# 10 and later?",
+      "answer": "Interpolated string handlers let the compiler pass the interpolation parts to a custom type instead of always building a string. A handler is a struct with an AppendLiteral method, AppendFormatted overloads, and a constructor that takes the interpolation hole count and a format string. This enables zero-allocation logging and custom builders, and string interpolation can target a Span<char> without allocating.",
+      "code": "[InterpolatedStringHandler]\npublic readonly struct Builder { /* AppendLiteral, AppendFormatted */ }",
+      "tags": ["interpolation", "handlers", "csharp-10"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/interpolated-string-handler"]
+    },
+    {
+      "id": "strings-015",
+      "difficulty": "Intermediate",
+      "question": "What are raw string literals in C# 11?",
+      "answer": "Raw string literals are delimited by three or more double quotes and need no escaping for quotes, backslashes, or newlines inside. The closing delimiter's indentation is stripped from each line, making embedded JSON or XML readable. Interpolation with $ still works, and the number of dollar signs controls how many braces start an interpolation.",
+      "code": "string json = \"\"\"\n{\n    \"name\": \"Ada\",\n    \"role\": \"engineer\"\n}\n\"\"\";",
+      "tags": ["raw-string", "csharp-11", "literals"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/tokens/raw-string"]
+    },
+    {
+      "id": "strings-016",
+      "difficulty": "Intermediate",
+      "question": "How do you format a value for a specific culture?",
+      "answer": "Pass a CultureInfo to ToString, for example value.ToString(CultureInfo.InvariantCulture), or supply it as the IFormatProvider to string.Format and interpolation. Invariant culture produces stable, machine-readable output for storage and protocols, while a specific culture matches user expectations for display. The current culture is used by default, which can cause inconsistent results across machines.",
+      "code": "decimal price = 1234.5m;\nstring invariant = price.ToString(CultureInfo.InvariantCulture);",
+      "tags": ["culture", "formatting"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/base-types/formatting-types"]
+    },
+    {
+      "id": "strings-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ToUpper and ToUpperInvariant?",
+      "answer": "ToUpper applies the casing rules of the current culture, which can change behavior or produce unexpected results for some cultures, most famously Turkish where lowercase i maps to a dotted uppercase I. ToUpperInvariant uses culture-independent rules and is stable across environments. Use the invariant form for comparisons, identifiers, and protocol values.",
+      "tags": ["casing", "culture"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.string.toupperinvariant"]
+    },
+    {
+      "id": "strings-018",
+      "difficulty": "Intermediate",
+      "question": "How does StringSplitOptions affect string splitting?",
+      "answer": "String.Split accepts StringSplitOptions such as RemoveEmptyEntries to drop empty results and TrimEntries to trim whitespace from each entry. Combining them avoids post-processing loops and empty tokens. Without RemoveEmptyEntries, consecutive separators or leading separators produce empty strings in the result.",
+      "code": "var parts = csv.Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);",
+      "tags": ["split", "stringsplitoptions"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.stringsplitoptions"]
+    },
+    {
+      "id": "strings-019",
+      "difficulty": "Intermediate",
+      "question": "What do string normalization forms NFC and NFD mean?",
+      "answer": "Unicode normalization converts text to a canonical form so that characters that look the same compare as equal. NFC composes base characters with combining marks into a single code point, while NFD decomposes them. Strings that are visually identical can have different code units, so normalize before comparing or storing if you handle international text.",
+      "tags": ["normalization", "unicode"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.string.normalize"]
+    },
+    {
+      "id": "strings-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between string.Format, interpolation, and concatenation?",
+      "answer": "Concatenation with + is simplest but creates a new string per operation and is inefficient in loops. string.Format uses indexed placeholders and is convenient for templates and localization where the order may change. Interpolation with $ is the most readable for inline values and the compiler can optimize it, sometimes to a custom handler or single concat.",
+      "code": "string a = \"x\" + y;\nstring b = string.Format(\"{0}: {1}\", key, value);\nstring c = $\"{key}: {value}\";",
+      "tags": ["formatting", "concatenation"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/base-types/composite-formatting"]
+    },
+    {
+      "id": "strings-021",
+      "difficulty": "Advanced",
+      "question": "What are the key RegexOptions and when is SourceGeneratedRegex useful?",
+      "answer": "RegexOptions such as IgnoreCase, Multiline, Singleline, and Compiled change matching behavior and performance; Compiled builds IL for a pattern and speeds up heavy use at the cost of JIT time and memory. In .NET 7 and later, [GeneratedRegex] source-generates a specialized matcher at compile time, avoiding runtime parsing and startup cost. Prefer source-generated regex for static patterns in hot or startup-sensitive code.",
+      "code": "[GeneratedRegex(\"\\\\d+\", RegexOptions.Compiled)]\nprivate static partial Regex NumberRegex();",
+      "tags": ["regex", "source-generation", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/base-types/regular-expression-source-generators"]
+    },
+    {
+      "id": "strings-022",
+      "difficulty": "Advanced",
+      "question": "How do you detect and handle surrogate pairs correctly?",
+      "answer": "A supplementary character is encoded as a high surrogate followed by a low surrogate in UTF-16, so iterating by char can split a character in half. Use char.IsSurrogatePair, StringInfo, or System.Text.Rune to treat such characters as single units, and Rune.EnumerateRunes for enumeration. Correct handling prevents corruption when reversing, truncating, or counting text with emoji or rare scripts.",
+      "code": "foreach (var rune in \"a😀b\".EnumerateRunes())\n    Console.WriteLine(rune.Value);",
+      "tags": ["surrogate-pairs", "unicode", "rune"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.rune"]
+    },
+    {
+      "id": "strings-023",
+      "difficulty": "Advanced",
+      "question": "What is StringBuilder pooling and when does it help?",
+      "answer": "Allocating a StringBuilder per operation creates garbage, so high-throughput code can reuse instances from an ObjectPool or use StringBuilderCache-style patterns. The pooled builder is cleared and returned after use, reducing allocation and GC work. Pooling helps most in short-lived, frequent formatting such as logging, and is unnecessary when builders are rare or long-lived.",
+      "tags": ["stringbuilder", "pooling", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.text.stringbuilder"]
+    },
+    {
+      "id": "strings-024",
+      "difficulty": "Advanced",
+      "question": "How do you compare strings safely for security-sensitive checks?",
+      "answer": "Use StringComparison.Ordinal for security decisions such as validating tokens, paths, or identifiers, because culture-aware rules can treat different strings as equal or equal strings as different. Avoid ToLower/ToUpper-based checks and normalize input first when Unicode equivalence is a concern. For secrets, use fixed-time comparison helpers to avoid timing side channels.",
+      "tags": ["security", "comparison", "ordinal"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/base-types/best-practices-strings"]
+    },
+    {
+      "id": "strings-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using ReadOnlySpan<char> for text processing?",
+      "answer": "ReadOnlySpan<char> avoids allocations and lets methods like int.Parse, DateTime.Parse, and StartsWith operate on slices directly, which is valuable in parsers and hot loops. Because it is a ref struct it cannot be boxed, stored in a field of a class, captured in a lambda, or used across await. Keep span-based parsing synchronous, then materialize a string only when you must persist the result.",
+      "code": "ReadOnlySpan<char> line = \"key=value\".AsSpan();\nint eq = line.IndexOf('=');\nvar key = line.Slice(0, eq);\nvar val = line.Slice(eq + 1);",
+      "tags": ["span", "performance", "parsing"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/memory-and-spans/memory-t-usage-guidelines"]
+    }
+  ]
+}

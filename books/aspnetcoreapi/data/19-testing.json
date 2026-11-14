@@ -1,0 +1,337 @@
+{
+  "category": "Testing Web APIs",
+  "slug": "testing",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit and integration tests?",
+      "answer": "Unit tests exercise a small piece of logic in isolation, while integration tests exercise the application through its real pipeline including routing, binding, and serialization. Both are valuable: unit tests are fast and precise, integration tests catch wiring bugs. A healthy suite uses many unit tests and focused integration tests.",
+      "tags": [
+        "testing",
+        "unit-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/"
+      ]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "What is WebApplicationFactory?",
+      "answer": "WebApplicationFactory<TEntryPoint> boots your application in memory with TestServer so integration tests exercise the real request pipeline without a network. It exposes CreateClient to send requests and lets you override services. It is the standard tool for API integration testing.",
+      "tags": [
+        "testing",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ],
+      "code": "var factory = new WebApplicationFactory<Program>();\nvar client = factory.CreateClient();"
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "What is TestServer?",
+      "answer": "TestServer hosts the application in memory and processes requests without opening sockets, which makes tests fast and reliable. It runs the full middleware pipeline, so behavior matches production closely. WebApplicationFactory builds on it.",
+      "tags": [
+        "testing",
+        "test-server"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "How do you test a controller action in isolation?",
+      "answer": "Instantiate the controller with fake or stub dependencies, call the action, and assert on the returned result type and values. This is fast and focused but does not cover routing or binding. Combine it with integration tests for end-to-end confidence.",
+      "tags": [
+        "testing",
+        "unit-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/testing"
+      ],
+      "code": "var ctrl = new ProductsController(new FakeRepo());\nvar result = ctrl.Get(1);\nAssert.IsType<OkObjectResult>(result);"
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "How do you test a minimal API endpoint?",
+      "answer": "Send requests through WebApplicationFactory to exercise the real pipeline, or extract the handler logic into a service and unit test that. Integration tests validate routing, binding, filters, and results together. Keep handlers thin so most logic is unit-testable.",
+      "tags": [
+        "testing",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "What is a test double?",
+      "answer": "A test double is any stand-in for a real dependency, such as a stub, fake, or mock. Fakes are lightweight real implementations, stubs return canned data, and mocks verify interactions. Prefer fakes and stubs over mocks for clarity and stability.",
+      "tags": [
+        "testing",
+        "test-doubles"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "How do you assert on an HTTP response in an integration test?",
+      "answer": "Read the status code, deserialize the body into the expected type, and assert on values and headers. The generated client and System.Net.Http.Json make this concise. Assert the contract, not incidental details.",
+      "tags": [
+        "testing",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ],
+      "code": "var res = await client.GetAsync(\"/api/products/1\");\nres.EnsureSuccessStatusCode();"
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "Why avoid testing private methods?",
+      "answer": "Private methods are implementation details, and testing them couples tests to internals that may change, making refactoring painful. Test behavior through public entry points instead. If a private method is complex enough to need its own tests, extract it into a class.",
+      "tags": [
+        "testing",
+        "best-practices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "What is the Arrange-Act-Assert pattern?",
+      "answer": "Structure each test into setup, the action under test, and the assertions, which makes tests readable and focused. One logical assertion per test keeps failures diagnostic. This pattern is language-agnostic and widely used.",
+      "tags": [
+        "testing",
+        "patterns"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "How do you test that an endpoint requires authentication?",
+      "answer": "Send a request without credentials and assert 401, then with insufficient credentials and assert 403, and finally with valid credentials and assert success. This verifies both the policy and the middleware wiring. Covering the negative cases is as important as the positive one.",
+      "tags": [
+        "testing",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you override services in WebApplicationFactory?",
+      "answer": "Call WithWebHostBuilder and configure Services with ConfigureTestServices to replace registrations, for example swapping a database context for an in-memory one. This isolates the test from external systems. Keep overrides close to the test for clarity.",
+      "tags": [
+        "testing",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ],
+      "code": "factory.WithWebHostBuilder(b =>\n    b.ConfigureTestServices(s =>\n        s.AddSingleton<IRepo, FakeRepo>()));"
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test with a real database?",
+      "answer": "Use a disposable database per test run, such as a containerized database or a unique schema, and reset state between tests. This catches real query and mapping issues that in-memory providers miss. Trade some speed for much higher fidelity.",
+      "tags": [
+        "testing",
+        "database"
+      ],
+      "references": [
+        "https://learn.microsoft.com/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of the EF Core in-memory provider?",
+      "answer": "The in-memory provider is fast and simple but does not enforce relational constraints, transactions, or SQL translation, so it can hide real bugs. It is fine for quick unit tests of logic that does not depend on the database. Prefer SQLite in-memory or a real database for integration fidelity.",
+      "tags": [
+        "testing",
+        "ef-core"
+      ],
+      "references": [
+        "https://learn.microsoft.com/ef/core/testing/"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test authentication in integration tests?",
+      "answer": "Add a test authentication scheme that reads a header or query value and produces a synthetic principal, register it in the test host, and then assert behavior for different identities. This avoids issuing real tokens. It tests your authorization rules end to end.",
+      "tags": [
+        "testing",
+        "authentication"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test CORS and middleware order?",
+      "answer": "Send preflight and cross-origin requests through the test host and assert the CORS headers and status codes, which verifies that the middleware is ordered correctly. Middleware-order bugs are otherwise easy to miss. Combine with tests for security headers.",
+      "tags": [
+        "testing",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/middleware"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "What makes a good unit test?",
+      "answer": "A good test is fast, deterministic, isolated, and tests one behavior with a clear name that describes the expected outcome. It should fail for the right reason and not depend on execution order. Readability matters because tests are read far more often than written.",
+      "tags": [
+        "testing",
+        "best-practices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use parameterized tests?",
+      "answer": "xUnit provides [Theory] with [InlineData] or [MemberData], and NUnit provides [TestCase] or [TestCaseSource], so one test method covers many inputs. This reduces duplication and documents cases. Keep each case independent and clearly labeled.",
+      "tags": [
+        "testing",
+        "xunit"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/"
+      ],
+      "code": "[Theory]\n[InlineData(0, 400)]\n[InlineData(1, 200)]\npublic async Task Get_Returns(int id, int code) { }"
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test validation failures?",
+      "answer": "Post invalid payloads and assert 400 with a ValidationProblemDetails body that names the offending fields. This verifies both the validation rules and the response shape. Include edge cases such as missing required fields and out-of-range values.",
+      "tags": [
+        "testing",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test OpenAPI output?",
+      "answer": "Fetch the generated document from the test host and assert that expected paths, operations, and schemas are present. This catches accidental removal or renaming of endpoints. It also guards documentation regressions.",
+      "tags": [
+        "testing",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test error handling middleware?",
+      "answer": "Configure a test service or endpoint that throws a known exception and assert the status code and ProblemDetails shape from the response. Verify that unknown exceptions do not leak internal details. This validates your error contract end to end.",
+      "tags": [
+        "testing",
+        "error-handling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "How do you keep integration tests fast and reliable?",
+      "answer": "Share an application factory across tests where safe, use a lightweight database such as SQLite in-memory or a container, reset state per test, and avoid real external services by stubbing them. Run the full suite in CI and keep flaky tests out of the critical path. Reliability matters more than raw speed.",
+      "tags": [
+        "testing",
+        "integration-tests"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "How do you structure tests for a large API?",
+      "answer": "Organize by feature or endpoint, extract shared fixtures for the host and data seeding, and use a base class or collection fixture to avoid rebuilding the host per test. Keep unit tests for logic and integration tests for wiring. A clear structure keeps the suite maintainable as it grows.",
+      "tags": [
+        "testing",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you test resilience and failure paths?",
+      "answer": "Inject a stub HttpClient handler or a service that returns failures on demand, then assert that retries, timeouts, and fallbacks behave as configured. Cover the case where the dependency is entirely unavailable. Failure-path tests are often the most valuable ones.",
+      "tags": [
+        "testing",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/resilience/"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "What is contract testing and when is it worth it?",
+      "answer": "Contract testing verifies that a provider and its consumers agree on the API contract, often by validating the provider's OpenAPI document or running consumer-driven contract checks. It catches breaking changes before deployment. It is most valuable for APIs with many independent consumers.",
+      "tags": [
+        "testing",
+        "contracts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure and improve test quality?",
+      "answer": "Track coverage as a rough signal, not a goal, and focus on testing behavior and critical paths, especially negative cases. Review tests in code review and remove or fix flaky ones promptly. Mutation testing can reveal gaps that coverage misses.",
+      "tags": [
+        "testing",
+        "quality"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    }
+  ]
+}

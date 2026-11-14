@@ -1,0 +1,208 @@
+{
+  "category": "Architectural Patterns & Anti-Patterns",
+  "slug": "architecture",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "architecture-001",
+      "difficulty": "Beginner",
+      "question": "What is a layered architecture?",
+      "answer": "Layered architecture organizes code into horizontal layers such as presentation, application, domain, and infrastructure, where each layer depends on the ones below. It separates concerns and makes the system easier to reason about. The risk is that changes ripple through layers if boundaries are not respected.",
+      "tags": ["architecture", "layers"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "architecture-002",
+      "difficulty": "Beginner",
+      "question": "What is the Model-View-Controller pattern?",
+      "answer": "MVC separates an application into a model for data and business rules, a view for presentation, and a controller that handles input and coordinates the two. The controller updates the model and selects a view. This separation improves testability and parallel development.",
+      "tags": ["mvc", "architecture"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/overview"]
+    },
+    {
+      "id": "architecture-003",
+      "difficulty": "Beginner",
+      "question": "What is the Model-View-ViewModel pattern?",
+      "answer": "MVVM separates the view from the data and logic through a view model that exposes state and commands and uses data binding. The view binds to the view model, which has no reference to the view. It is common in WPF, MAUI, and other XAML frameworks.",
+      "tags": ["mvvm", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/maui/mvvm"]
+    },
+    {
+      "id": "architecture-004",
+      "difficulty": "Beginner",
+      "question": "What is a clean or hexagonal architecture?",
+      "answer": "Clean and hexagonal architectures place the domain at the center and push infrastructure to the edges, with dependencies pointing inward. The domain defines interfaces that adapters implement for databases, UI, and external services. This keeps business rules independent of frameworks and testable in isolation.",
+      "tags": ["clean-architecture", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "architecture-005",
+      "difficulty": "Beginner",
+      "question": "What is an anti-pattern?",
+      "answer": "An anti-pattern is a common solution that appears helpful but causes more problems than it solves. It is usually a response to a real need applied in a harmful way. Recognizing anti-patterns helps teams avoid known traps.",
+      "tags": ["anti-patterns", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "architecture-006",
+      "difficulty": "Beginner",
+      "question": "What is a monolith and what are its trade-offs?",
+      "answer": "A monolith is a single deployable application containing all functionality. It is simpler to develop, test, and deploy initially and avoids network boundaries. As it grows, it can become hard to scale and maintain, which is why teams sometimes move to services.",
+      "tags": ["monolith", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/architect-microservice-container-applications/"]
+    },
+    {
+      "id": "architecture-007",
+      "difficulty": "Beginner",
+      "question": "What is a microservices architecture?",
+      "answer": "Microservices structure an application as a set of small, independently deployable services organized around business capabilities. Each service owns its data and communicates over the network. This enables independent scaling and deployment but adds distributed system complexity.",
+      "tags": ["microservices", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/"]
+    },
+    {
+      "id": "architecture-008",
+      "difficulty": "Beginner",
+      "question": "What is a God class anti-pattern?",
+      "answer": "A God class is a class that knows and does too much, accumulating unrelated responsibilities and dependencies. It becomes hard to understand, test, and change. The fix is to split it along cohesive responsibilities using SRP.",
+      "tags": ["anti-patterns", "srp"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/architectural-principles"]
+    },
+    {
+      "id": "architecture-009",
+      "difficulty": "Beginner",
+      "question": "What is the Big Ball of Mud anti-pattern?",
+      "answer": "Big Ball of Mud describes a system with no clear architecture where code is tangled and dependencies are uncontrolled. It usually results from expedient shortcuts without refactoring. Recovery requires incremental refactoring with tests to establish boundaries.",
+      "tags": ["anti-patterns", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "architecture-010",
+      "difficulty": "Beginner",
+      "question": "What is the Repository and Service layer relationship in layered apps?",
+      "answer": "Repositories handle data access and the service layer coordinates business operations, often calling repositories and enforcing rules. Controllers or handlers call services, not repositories directly. This keeps presentation thin and business logic in one place.",
+      "tags": ["architecture", "layers"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "architecture-011",
+      "difficulty": "Intermediate",
+      "question": "How does CQRS improve scalability and clarity?",
+      "answer": "CQRS separates the write model from the read model, letting each be optimized independently. Writes focus on consistency and domain rules, while reads use denormalized models for speed. The cost is eventual consistency and more moving parts when separate stores are used.",
+      "tags": ["cqrs", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/"]
+    },
+    {
+      "id": "architecture-012",
+      "difficulty": "Intermediate",
+      "question": "What is event-driven architecture?",
+      "answer": "Event-driven architecture uses events to communicate between components, with producers publishing and consumers reacting asynchronously. It decouples components and supports scalability and extensibility. The trade-offs include eventual consistency, ordering, and the need for idempotent handlers.",
+      "tags": ["event-driven", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "architecture-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a monolith and microservices in terms of data?",
+      "answer": "A monolith typically has one database shared by all modules, while each microservice owns its own data store and is accessed only through its API. This data ownership enables independent evolution but complicates transactions across services. Cross-service consistency is usually handled with sagas or eventual consistency.",
+      "tags": ["microservices", "data"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/architect-microservice-container-applications/"]
+    },
+    {
+      "id": "architecture-014",
+      "difficulty": "Intermediate",
+      "question": "What is the Backend for Frontend pattern?",
+      "answer": "BFF provides a dedicated backend service tailored to a specific frontend, aggregating and shaping data for that client. It avoids over-fetching and keeps client-specific concerns out of shared services. Each client type can have its own BFF.",
+      "tags": ["bff", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/cloud-native/"]
+    },
+    {
+      "id": "architecture-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between orchestration and choreography in services?",
+      "answer": "Orchestration uses a central coordinator that tells each service what to do, making the flow explicit but adding a bottleneck. Choreography lets services react to events without a central controller, which is more decoupled but harder to trace. The choice depends on complexity and the need for visibility.",
+      "tags": ["architecture", "saga"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "architecture-016",
+      "difficulty": "Intermediate",
+      "question": "What is the Anemic Domain Model anti-pattern?",
+      "answer": "An anemic domain model has data-only classes with no behavior, pushing all logic into services. It scatters business rules and weakens encapsulation. The remedy is to move behavior into the domain entities and value objects where the data lives.",
+      "tags": ["anti-patterns", "ddd"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/microservice-domain-model"]
+    },
+    {
+      "id": "architecture-017",
+      "difficulty": "Intermediate",
+      "question": "What is the Leaky Abstraction anti-pattern?",
+      "answer": "A leaky abstraction fails to hide its underlying details, forcing callers to know about the implementation it was meant to conceal. Repositories exposing IQueryable or APIs that surface provider exceptions are common examples. The fix is to design abstractions around domain needs and map away provider specifics.",
+      "tags": ["anti-patterns", "abstraction"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/infrastructure-persistence-layer-design"]
+    },
+    {
+      "id": "architecture-018",
+      "difficulty": "Intermediate",
+      "question": "How do you decide when to split a monolith into services?",
+      "answer": "Split when independent deployment, scaling, or team autonomy justifies the operational cost of distribution. Look for clear business capability boundaries and stable interfaces. Do not split prematurely, since distributed systems add latency, partial failure, and consistency challenges.",
+      "tags": ["microservices", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/architect-microservice-container-applications/"]
+    },
+    {
+      "id": "architecture-019",
+      "difficulty": "Intermediate",
+      "question": "What is the Circuit Breaker pattern?",
+      "answer": "Circuit Breaker stops calling a failing dependency for a period to prevent cascading failures and allow recovery. It transitions between closed, open, and half-open states based on failure rates. Polly provides this resilience policy in .NET.",
+      "tags": ["resilience", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/"]
+    },
+    {
+      "id": "architecture-020",
+      "difficulty": "Intermediate",
+      "question": "What is the Strangler Fig pattern for modernization?",
+      "answer": "Strangler Fig incrementally replaces a legacy system by routing pieces of functionality to new implementations while the old system still runs. Over time the new system takes over and the legacy one is retired. This reduces risk compared with a full rewrite.",
+      "tags": ["modernization", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/cloud-native/"]
+    },
+    {
+      "id": "architecture-021",
+      "difficulty": "Advanced",
+      "question": "How do you enforce architectural boundaries in code?",
+      "answer": "Use separate projects or assemblies per layer and reference them one-directionally so illegal dependencies fail to compile. Add architecture tests such as NetArchTest or ArchUnitNET to assert rules like the domain not referencing infrastructure. Analyzers and code reviews catch violations early.",
+      "tags": ["architecture", "governance"],
+      "code": "var result = Types.InCurrentDomain()\n    .That().ResideInNamespace(\"Domain\")\n    .ShouldNot().HaveDependencyOn(\"Infrastructure\")\n    .GetResult();",
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "architecture-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle distributed transactions across microservices?",
+      "answer": "Avoid two-phase commit and instead use the saga pattern, where each step has a compensating action for rollback. Coordinate with orchestration or choreography and make steps idempotent. Accept eventual consistency and design for retries and duplicates.",
+      "tags": ["microservices", "saga"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "architecture-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between the Clean Architecture and the traditional layered architecture?",
+      "answer": "Traditional layering depends downward through technical layers, often with the domain depending on infrastructure abstractions. Clean Architecture inverts this so the domain is central and dependencies point inward, with infrastructure implementing domain interfaces. Clean Architecture better isolates business rules from frameworks and databases.",
+      "tags": ["clean-architecture", "layers"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    },
+    {
+      "id": "architecture-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid turning a modular monolith into a distributed big ball of mud?",
+      "answer": "Keep modules loosely coupled with explicit contracts, enforce boundaries with tests, and communicate through in-process events or interfaces. Avoid shared databases between modules and do not reach into another module's internals. If you later extract services, the clean boundaries make it feasible.",
+      "tags": ["modular-monolith", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/architect-microservice-container-applications/"]
+    },
+    {
+      "id": "architecture-025",
+      "difficulty": "Advanced",
+      "question": "How do you choose an architecture for a new application?",
+      "answer": "Start with the simplest architecture that meets current requirements, typically a modular monolith with clear boundaries, and evolve as needs grow. Weigh team size, deployment constraints, scaling, and consistency requirements rather than chasing trends. Design for change so you can adopt patterns like CQRS or microservices when justified.",
+      "tags": ["architecture", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    }
+  ]
+}

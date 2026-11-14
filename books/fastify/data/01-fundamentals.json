@@ -1,0 +1,345 @@
+{
+  "category": "Fastify Fundamentals & Architecture",
+  "slug": "fundamentals",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is Fastify and what problems does it solve?",
+      "answer": "Fastify is a fast, low-overhead web framework for Node.js focused on performance and developer experience. It offers routing, a hook lifecycle, schema-based validation and serialization, and an encapsulation-based plugin system on top of Node's HTTP server. It solves the problem of building JSON APIs and web services efficiently while keeping code modular. Fastify v4 and v5 are the current lines, and v5 requires Node.js 20 or newer.",
+      "tags": [
+        "overview",
+        "framework"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "How do you create a Fastify instance and start an HTTP server?",
+      "answer": "You import the fastify module, which exports a factory function, and call it to create a server instance. You then register routes and call listen, passing a host and port, to begin accepting connections. Calling the factory more than once gives you independent instances. The returned object is the root instance that owns the whole plugin tree.",
+      "tags": [
+        "setup",
+        "listen"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ],
+      "code": "const fastify = require('fastify')({ logger: true })\n\nfastify.get('/', async () => ({ hello: 'world' }))\n\nawait fastify.listen({ port: 3000, host: '0.0.0.0' })"
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the Fastify root instance and a child instance?",
+      "answer": "The root instance is created by the factory and owns the top-level plugin tree. A child instance is created inside a registered plugin via the fastify argument, and it inherits configuration but is encapsulated. Routes, hooks, and decorators added on a child do not leak to siblings or the parent unless shared with fastify-plugin. This is how Fastify keeps features isolated per scope.",
+      "tags": [
+        "encapsulation",
+        "instances"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "Which Node.js versions are supported by Fastify v4 and v5?",
+      "answer": "Fastify v4 supports Node.js 14 through the current LTS lines, while Fastify v5 raised the minimum to Node.js 20. Running an unsupported Node version can cause subtle failures because the framework relies on modern APIs and language features. For new projects you should target an active LTS release such as Node.js 20 or 22. Always check the release notes before upgrading major versions.",
+      "tags": [
+        "nodejs",
+        "versions"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/",
+        "https://nodejs.org/en/about/previous-releases"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "How do you define a basic GET route in Fastify?",
+      "answer": "You call fastify.get with a path and a handler function that receives request and reply. The handler can be synchronous, return a promise, or use the callback style. Fastify matches the URL, runs the lifecycle hooks, and serializes the return value as JSON by default. Async handlers are the most common and readable choice.",
+      "tags": [
+        "routing",
+        "handlers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ],
+      "code": "fastify.get('/users/:id', async (request, reply) => {\n  return { id: request.params.id }\n})"
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What does the logger option do when creating a Fastify instance?",
+      "answer": "Passing logger: true enables the built-in Pino logger so requests, responses, and errors are logged as structured JSON. You can also pass a configuration object to set the level, pretty-print in development, or provide a custom Pino instance. Disabling logging keeps output silent but is rarely a good idea in production. Logs are essential for debugging and observability.",
+      "tags": [
+        "logging",
+        "pino"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ],
+      "code": "const fastify = require('fastify')({\n  logger: { level: 'info' }\n})"
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is fastify.ready() used for?",
+      "answer": "ready() starts the Fastify boot sequence and resolves once every plugin has loaded and all hooks have been registered. You rarely call it directly because listen triggers it, but tests and tools use it to boot the instance without binding a port. Awaiting ready guarantees routes and decorators exist before you exercise the app.",
+      "tags": [
+        "lifecycle",
+        "boot"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What does fastify.close() do and why should you call it?",
+      "answer": "close() stops the server from accepting new connections, waits for in-flight requests to finish, and runs any onClose hooks registered by plugins. It then releases resources such as database pools. Calling it during shutdown prevents dropped requests and leaked handles. It is essential for graceful termination and clean tests.",
+      "tags": [
+        "lifecycle",
+        "shutdown"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "How does Fastify differ from Express?",
+      "answer": "Fastify uses a radix-tree router and schema-based serialization for high throughput, while Express relies on a simpler middleware chain. Fastify has first-class JSON Schema validation, an encapsulation model, and TypeScript types, whereas Express favours flexible middleware. Express has a larger middleware ecosystem, but Fastify is generally faster and more opinionated. Both can build similar APIs, so the choice often comes down to performance and structure.",
+      "tags": [
+        "express",
+        "comparison"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/",
+        "https://expressjs.com/"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What happens when a route handler returns a plain object?",
+      "answer": "Fastify treats the returned object as the response payload and serializes it to JSON automatically. It sets the Content-Type to application/json and runs the payload through the route's response schema if one is defined. If you return a string, Fastify sends it as text unless you set the type explicitly. Returning undefined tells Fastify you handled the reply yourself.",
+      "tags": [
+        "serialization",
+        "handlers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What is encapsulation in Fastify?",
+      "answer": "Encapsulation means each plugin creates a child context whose routes, hooks, and decorators are visible only within that context and its children. The parent instance cannot see what a child added, which prevents naming collisions and accidental coupling. To deliberately share something with ancestors you wrap the plugin with fastify-plugin, which skips creating a new context. This design lets you build composable, isolated feature modules.",
+      "tags": [
+        "encapsulation",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "How does the Fastify instance lifecycle work from creation to shutdown?",
+      "answer": "After the factory creates the instance, plugins are registered and loaded in order by the avvio boot system. listen (or ready) triggers boot, resolves every plugin, and only then starts accepting requests. On shutdown, close runs onClose hooks and drains in-flight requests. Understanding this order explains why decorators must exist before routes use them.",
+      "tags": [
+        "lifecycle",
+        "boot"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between fastify.get() and fastify.route()?",
+      "answer": "fastify.get is a shorthand that registers a single HTTP method for a path. fastify.route is the full form that accepts an options object where you set method, url, schema, handler, and hook overrides explicitly. Use the shorthand for simple cases and route for anything needing custom schemas, multiple methods, or per-route configuration. route also allows an array of methods for the same handler.",
+      "tags": [
+        "routing",
+        "api"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/"
+      ],
+      "code": "fastify.route({\n  method: 'POST',\n  url: '/users',\n  schema: { body: createUserSchema },\n  handler: async (request) => createUser(request.body)\n})"
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "How do you register a custom 404 handler?",
+      "answer": "You call setNotFoundHandler on an instance with a handler that runs when no route matches. Because it is encapsulated, calling it on a child scope makes the handler apply only to that scope. The handler receives request and reply, so you can inspect the URL and return a tailored payload. Registering it on the root covers unmatched requests globally.",
+      "tags": [
+        "404",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#setnotfoundhandler"
+      ],
+      "code": "fastify.setNotFoundHandler((request, reply) => {\n  reply.code(404).send({ error: 'Not Found', path: request.url })\n})"
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What is the role of avvio in Fastify?",
+      "answer": "Avvio is the boot system Fastify uses to load plugins in a predictable order, resolving dependencies between them. It queues registrations, ensures each plugin finishes before the next stage runs, and exposes ready and close for coordination. This guarantees hooks and decorators are available before routes that depend on them. Avvio is what makes Fastify's plugin graph deterministic.",
+      "tags": [
+        "avvio",
+        "boot"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/",
+        "https://github.com/fastify/avvio"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "How do you access the request and reply objects inside a handler?",
+      "answer": "Every handler receives (request, reply) as its arguments. request exposes url, method, params, query, body, headers, and the shared request context. reply provides methods like code, header, send, and type to shape the response. Async handlers usually return a value and let Fastify send it, while callback handlers call reply.send directly.",
+      "tags": [
+        "request",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Request/",
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is fastify.server and when would you use it?",
+      "answer": "fastify.server is the underlying Node.js http.Server instance that Fastify wraps. You use it to attach non-Fastify concerns such as WebSocket upgrades, custom TLS settings, or server-level event listeners. It also lets you access the raw socket for advanced networking tasks. Most application code never needs it, but it is the escape hatch to Node internals.",
+      "tags": [
+        "nodejs",
+        "server"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/",
+        "https://nodejs.org/api/http.html"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "How does Fastify handle HEAD requests for GET routes?",
+      "answer": "By default Fastify automatically registers a HEAD route whenever you define a GET route, using the same handler. The response body is stripped and only headers are sent, as required by HTTP. You can disable this behaviour with the exposeHeadRoutes option if you want full control. This default keeps the framework compliant with HTTP semantics.",
+      "tags": [
+        "http",
+        "routing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/",
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods/HEAD"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What is the ignoreTrailingSlash option and when should you enable it?",
+      "answer": "Setting ignoreTrailingSlash to true makes /users and /users/ resolve to the same route. By default Fastify treats them as distinct, which is technically correct but surprising for some clients. Enable it when integrating with tools or users that are inconsistent about trailing slashes. Keep it off if you rely on the difference for routing decisions.",
+      "tags": [
+        "routing",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#ignoretrailingslash"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "What do the host and port options of listen control?",
+      "answer": "host sets the network interface the server binds to, such as 127.0.0.1 for local only or 0.0.0.0 for all interfaces. port sets the TCP port; passing 0 asks the OS for a free port, which is useful in tests. Together they determine reachability, so binding to localhost in production accidentally blocks external traffic. Fastify also accepts a URL string or an options object.",
+      "tags": [
+        "listen",
+        "networking"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#listen",
+        "https://nodejs.org/api/net.html"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How does Fastify's plugin loading order and after callback work?",
+      "answer": "Plugins load in registration order, and each plugin must finish (or call its done callback) before the next begins. The after callback runs once the current plugin and everything it registered have completed, letting you add code that depends on their decorators. Avvio also supports await-style ordering, so returning a promise from a plugin delays the tree until it resolves. Misusing after is a common source of decorators that appear undefined.",
+      "tags": [
+        "plugins",
+        "avvio"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "How does Fastify achieve lower overhead than many other Node.js frameworks?",
+      "answer": "Fastify uses a compiled radix-tree router that matches routes without per-request regex work. It serializes responses with fast-json-stringify and compiles JSON Schema validators ahead of time, avoiding repeated reflection. The request and reply objects are reused from a pool rather than allocated per request. Together these choices reduce allocations and CPU per request.",
+      "tags": [
+        "performance",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/",
+        "https://fastify.dev/benchmarks/"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "What actually happens during fastify.ready() with respect to the plugin tree?",
+      "answer": "ready() walks the registered plugin tree in order, waiting for each plugin's asynchronous setup to settle. As it goes, it merges each scope's hooks, routes, decorators, and schemas into the compiled routing table. It also validates route definitions and builds the serialization functions. Only after the whole tree resolves does the server become able to serve requests.",
+      "tags": [
+        "lifecycle",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "How would you structure a large Fastify application across multiple files?",
+      "answer": "Split features into plugins under a routes or plugins directory, each exporting a function that receives the instance and registers its routes and services. Register a database plugin first, then feature plugins that depend on it, using fastify-plugin for shared infrastructure. Use encapsulation so each feature owns its own hooks and decorators. This keeps the root file a thin composition layer that is easy to test.",
+      "tags": [
+        "architecture",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Plugins-Guide/"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of Fastify's encapsulated contexts versus a flat application?",
+      "answer": "Encapsulation gives isolation, prevents decorator collisions, and makes features independently testable, which scales well in large codebases. The cost is that sharing helpers requires deliberate use of fastify-plugin, and the scoping rules can confuse newcomers. A flat app is simpler to reason about but becomes fragile as it grows. Most teams adopt encapsulation for infrastructure and shared plugins while keeping small apps flat.",
+      "tags": [
+        "encapsulation",
+        "architecture"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Encapsulation/"
+      ]
+    }
+  ]
+}

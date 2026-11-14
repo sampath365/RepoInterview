@@ -1,0 +1,215 @@
+{
+  "category": "Concurrency, Blocking & Deadlocks",
+  "slug": "concurrency",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "concurrency-001",
+      "difficulty": "Beginner",
+      "question": "What is blocking in SQL Server?",
+      "answer": "Blocking occurs when one session must wait for another to release a lock before it can proceed, which is normal and necessary for consistency. It becomes a problem when it lasts a long time and a chain of sessions builds up behind a slow transaction. Reducing blocking usually means shortening transactions and choosing appropriate isolation levels.",
+      "tags": ["blocking", "locking"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-002",
+      "difficulty": "Beginner",
+      "question": "What is a deadlock?",
+      "answer": "A deadlock happens when two or more sessions each hold a lock the other needs, forming a cycle where none can proceed. SQL Server detects the cycle with its deadlock monitor and chooses a victim to roll back, raising error 1205. The remaining sessions then proceed, so a deadlock is not a permanent stall.",
+      "tags": ["deadlock", "concurrency"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a deadlock and blocking?",
+      "answer": "Blocking is a normal wait that resolves when the blocker finishes, and it is not inherently a fault. A deadlock is a circular wait that can never resolve on its own, so the engine must kill a victim. Blocking can lead to a deadlock, but only deadlocks require forced termination.",
+      "tags": ["deadlock", "blocking"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-004",
+      "difficulty": "Beginner",
+      "question": "What error number indicates a deadlock?",
+      "answer": "Deadlock victim errors are 1205, reported as a transaction being chosen as the deadlock victim. Applications should catch 1205 and retry the transaction, because it is transient. Do not treat it as a permanent failure.",
+      "tags": ["deadlock", "error-1205"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/errors-events/database-engine-events-and-errors"]
+    },
+    {
+      "id": "concurrency-005",
+      "difficulty": "Beginner",
+      "question": "How do you find what is currently blocking?",
+      "answer": "Query sys.dm_exec_requests to see which requests are waiting and their blocking_session_id, then join to sys.dm_exec_sql_text to see the blocking query. This shows the head blocker at the root of the chain. Killing the head blocker releases everyone waiting behind it.",
+      "code": "SELECT session_id, blocking_session_id, wait_type,\n       wait_time, wait_resource\nFROM sys.dm_exec_requests\nWHERE blocking_session_id <> 0;",
+      "tags": ["blocking", "dmv"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-requests-transact-sql"]
+    },
+    {
+      "id": "concurrency-006",
+      "difficulty": "Beginner",
+      "question": "What is a lock wait and how is it reported?",
+      "answer": "A lock wait appears as an LCK_M_ wait type in sys.dm_os_wait_stats and as a nonzero blocking_session_id in sys.dm_exec_requests. The wait resource identifies the locked object. Persistent lock waits point to long transactions or missing indexes that cause scans.",
+      "tags": ["lock-wait", "waits"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-os-wait-stats-transact-sql"]
+    },
+    {
+      "id": "concurrency-007",
+      "difficulty": "Beginner",
+      "question": "What is a hot spot and how does it cause contention?",
+      "answer": "A hot spot is a single row, page, or key that many sessions try to update concurrently, forcing them to serialize on locks. A classic example is a counter row or an identity-like column that every insert touches. Hot spots limit throughput because work cannot proceed in parallel.",
+      "tags": ["hot-spot", "contention"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-008",
+      "difficulty": "Beginner",
+      "question": "How do you kill a blocking session?",
+      "answer": "You use KILL with the session ID, and if the session is in a transaction it will be rolled back. Use it carefully because rollback of a large transaction can take a long time and consume resources. Prefer fixing the root cause of the blocking over repeated kills.",
+      "code": "KILL 57;",
+      "tags": ["kill", "blocking"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/kill-transact-sql"]
+    },
+    {
+      "id": "concurrency-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a live lock and a deadlock?",
+      "answer": "In a deadlock, sessions form a cycle and none can proceed until one is rolled back. In a livelock, sessions keep retrying and conflicting so none makes progress even though no cycle exists, often because of retry storms. Livelock problems are addressed by adding backoff and jitter to retries.",
+      "tags": ["livelock", "deadlock"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-010",
+      "difficulty": "Beginner",
+      "question": "Why is reducing transaction length important for concurrency?",
+      "answer": "Locks are held for the duration of the transaction, so a long transaction blocks other sessions for longer and widens the window for deadlocks. Short transactions release locks quickly and allow more concurrency. Keep work that does not need to be transactional outside the BEGIN TRAN block.",
+      "tags": ["transaction-length", "concurrency"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-011",
+      "difficulty": "Intermediate",
+      "question": "How do you capture deadlock information?",
+      "answer": "You can enable trace flag 1222 to write deadlock graphs to the error log, use Extended Events with the xml_deadlock_report event, or query the system_health session. The deadlock graph shows the resources and statements each session was using. Reading the graph reveals the cycle and the victim.",
+      "code": "DBCC TRACEON (1222, -1);",
+      "tags": ["deadlock-graph", "extended-events"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-requests-transact-sql"]
+    },
+    {
+      "id": "concurrency-012",
+      "difficulty": "Intermediate",
+      "question": "What are the common causes of deadlocks?",
+      "answer": "The most common cause is accessing the same objects in different orders in different transactions, creating a cycle. Other causes include long transactions, missing indexes that cause scans to lock many rows, and mixing different lock granularities. Consistent access order and good indexing eliminate most deadlocks.",
+      "tags": ["deadlock", "root-cause"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-013",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce deadlocks?",
+      "answer": "Access tables and rows in a consistent order across all code paths, keep transactions short, and add indexes so queries lock fewer rows. Use the lowest isolation level that is correct and consider RCSI to reduce reader-writer conflicts. Finally, make applications retry on error 1205.",
+      "tags": ["deadlock", "best-practices"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-014",
+      "difficulty": "Intermediate",
+      "question": "What does the DEADLOCK_PRIORITY setting do?",
+      "answer": "DEADLOCK_PRIORITY sets how likely a session is to be chosen as the deadlock victim, with values from -10 (least likely) to 10 (most likely) or LOW, NORMAL, HIGH. Lower priority means the session is more likely to be rolled back, so you can protect critical work. It influences but does not prevent deadlocks.",
+      "code": "SET DEADLOCK_PRIORITY LOW;",
+      "tags": ["deadlock-priority", "deadlock"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-deadlock-priority-transact-sql"]
+    },
+    {
+      "id": "concurrency-015",
+      "difficulty": "Intermediate",
+      "question": "What is lock escalation and how can it cause blocking?",
+      "answer": "Lock escalation converts many fine-grained row or page locks on one table into a single table lock to reduce lock management overhead. This can suddenly block all other sessions accessing that table. You can disable escalation per table with ALTER TABLE ... SET (LOCK_ESCALATION = DISABLE) or control it with hints.",
+      "code": "ALTER TABLE dbo.Orders SET (LOCK_ESCALATION = DISABLE);",
+      "tags": ["lock-escalation", "blocking"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/alter-table-transact-sql"]
+    },
+    {
+      "id": "concurrency-016",
+      "difficulty": "Intermediate",
+      "question": "How does RCSI help with concurrency problems?",
+      "answer": "RCSI makes READ COMMITTED reads use row versions instead of shared locks, so readers no longer block writers and writers no longer block readers. This removes a large class of blocking without changing application code. The trade-off is increased tempdb usage and version-tag storage.",
+      "tags": ["rcsi", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/framework/data/adonet/sql/snapshot-isolation-in-sql-server"]
+    },
+    {
+      "id": "concurrency-017",
+      "difficulty": "Intermediate",
+      "question": "What is the READPAST hint and when is it useful?",
+      "answer": "READPAST skips rows that are locked by other transactions instead of waiting, returning only unlocked rows. It is used in queue-processing patterns where workers should not block on rows being handled by others. It can cause a query to miss rows, so it must be used where that is acceptable.",
+      "code": "SELECT TOP (1) * FROM dbo.Queue WITH (READPAST, UPDLOCK)\nORDER BY Id;",
+      "tags": ["readpast", "queue"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-table"]
+    },
+    {
+      "id": "concurrency-018",
+      "difficulty": "Intermediate",
+      "question": "How do you diagnose a slow chain of blocked sessions?",
+      "answer": "Find the head blocker, the session whose blocking_session_id is zero or whose blocker is idle, using sys.dm_exec_requests. Then examine its last query and open transaction. Often the head blocker is an application that left a transaction open while waiting for user input or a network call.",
+      "code": "SELECT r.session_id, r.blocking_session_id,\n       t.text, r.open_transaction_count\nFROM sys.dm_exec_requests r\nCROSS APPLY sys.dm_exec_sql_text(r.sql_handle) t;",
+      "tags": ["blocking", "diagnostics"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-requests-transact-sql"]
+    },
+    {
+      "id": "concurrency-019",
+      "difficulty": "Intermediate",
+      "question": "What is a conversion deadlock?",
+      "answer": "A conversion deadlock occurs when two sessions each hold a shared lock on the same resource and both try to convert to an exclusive lock, so each waits for the other to release. It commonly arises in read-then-update patterns under READ COMMITTED. Using UPDLOCK when reading avoids the shared-to-exclusive conversion conflict.",
+      "tags": ["conversion-deadlock", "deadlock"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-020",
+      "difficulty": "Intermediate",
+      "question": "How does the lock monitor work?",
+      "answer": "The lock manager tracks all locks in a lock table and the deadlock monitor periodically scans for cycles among waiting sessions. When it finds one, it picks the victim with the lowest cost and rolls it back. The deadlock monitor runs by default every five seconds.",
+      "tags": ["lock-monitor", "deadlock"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-021",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a deadlock caused by locks and one caused by other resources?",
+      "answer": "Most deadlocks involve locks on data, but cycles can also form over other resources such as worker threads, memory grants, and parallel exchange ports. Worker-thread deadlocks appear under high concurrency with THREADPOOL or exchange waits. These require different fixes, such as reducing parallelism or memory pressure.",
+      "tags": ["deadlock", "resources"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-022",
+      "difficulty": "Advanced",
+      "question": "How can an index reduce blocking and deadlocks?",
+      "answer": "Without a suitable index, a modifying statement may scan a table and take locks on far more rows than it actually changes, increasing the chance of conflict. A proper index lets the statement locate and lock only the affected rows. This is why missing indexes are a frequent root cause of blocking.",
+      "tags": ["index", "deadlock"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a key-range lock and a regular key lock?",
+      "answer": "A regular key lock protects an existing index key, while a key-range lock also protects the range of values between keys to prevent phantoms. Range locks are taken under SERIALIZABLE and are split into range S, range X, and conversion forms. They are a major reason SERIALIZABLE blocks so much.",
+      "tags": ["range-lock", "serializable"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "concurrency-024",
+      "difficulty": "Advanced",
+      "question": "How do you design a queue-processing table to avoid contention?",
+      "answer": "Use a pattern such as UPDATE with OUTPUT or a combination of READPAST and UPDLOCK to claim rows without blocking other workers. Order claims so workers do not fight over the same rows, and consider partitioning the queue. This lets many workers process items concurrently with minimal blocking.",
+      "code": "UPDATE TOP (1) dbo.Queue WITH (READPAST)\nSET Status = 'Processing', Worker = @id\nOUTPUT inserted.Id\nWHERE Status = 'Pending';",
+      "tags": ["queue", "contention"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-table"]
+    },
+    {
+      "id": "concurrency-025",
+      "difficulty": "Advanced",
+      "question": "How does snapshot isolation lead to update conflict errors?",
+      "answer": "Under snapshot isolation, if two transactions try to update the same row, the second one fails with error 3960 because it cannot apply its change to a row that has been modified since its snapshot began. This is optimistic concurrency: the conflict is detected at write time rather than prevented by locks. Applications must handle 3960 by retrying or serializing the update.",
+      "tags": ["snapshot-isolation", "update-conflict"],
+      "references": ["https://learn.microsoft.com/dotnet/framework/data/adonet/sql/snapshot-isolation-in-sql-server"]
+    }
+  ]
+}

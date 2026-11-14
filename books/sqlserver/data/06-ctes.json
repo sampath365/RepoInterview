@@ -1,0 +1,216 @@
+{
+  "category": "Subqueries & CTEs",
+  "slug": "ctes",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "ctes-001",
+      "difficulty": "Beginner",
+      "question": "What is a subquery?",
+      "answer": "A subquery is a query nested inside another statement, used to return a value, a list of values, or a set of rows for the outer query. It can appear in the SELECT list, WHERE, FROM, or HAVING. Subqueries can be scalar (one value), multi-row, or correlated with the outer query.",
+      "code": "SELECT Name\nFROM dbo.Products\nWHERE Price > (SELECT AVG(Price) FROM dbo.Products);",
+      "tags": ["subquery", "nested"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a scalar and a multi-row subquery?",
+      "answer": "A scalar subquery returns exactly one value and can be used wherever an expression is allowed. A multi-row subquery returns a set and is used with IN, EXISTS, or as a derived table in FROM. A scalar subquery that returns more than one row raises an error at runtime.",
+      "tags": ["scalar", "subquery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-003",
+      "difficulty": "Beginner",
+      "question": "What is a correlated subquery?",
+      "answer": "A correlated subquery references columns from the outer query, so it is logically evaluated once per outer row. This makes it flexible but potentially slow on large tables unless the optimizer rewrites it as a join. Many correlated subqueries can be replaced with a join or a window function for better performance.",
+      "code": "SELECT c.Name\nFROM dbo.Customers c\nWHERE EXISTS (SELECT 1 FROM dbo.Orders o WHERE o.CustomerId = c.Id);",
+      "tags": ["correlated", "subquery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-004",
+      "difficulty": "Beginner",
+      "question": "What is a Common Table Expression (CTE)?",
+      "answer": "A CTE is a named temporary result set defined with the WITH clause at the start of a statement, used to simplify complex queries. It exists only for the duration of the single statement that follows it. CTEs improve readability and let you reference the same result set multiple times.",
+      "code": "WITH BigOrders AS (\n  SELECT * FROM dbo.Orders WHERE Total > 1000)\nSELECT * FROM BigOrders WHERE Status = 'Open';",
+      "tags": ["cte", "with"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-005",
+      "difficulty": "Beginner",
+      "question": "How does a CTE differ from a derived table?",
+      "answer": "A derived table is a subquery in the FROM clause that is not named, or named only locally for that statement. A CTE is defined up front with a name and can be referenced multiple times within the statement. Both are logical constructs that do not persist data or guarantee a materialized result.",
+      "tags": ["cte", "derived-table"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between EXISTS and IN?",
+      "answer": "EXISTS tests whether a correlated subquery returns any row and short-circuits as soon as one is found. IN compares a value to a list or the result set of a subquery and can behave unexpectedly with NULLs. EXISTS is generally safe with NULLs and often optimizes to a semi join.",
+      "tags": ["exists", "in"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/exists-transact-sql"]
+    },
+    {
+      "id": "ctes-007",
+      "difficulty": "Beginner",
+      "question": "What is a recursive CTE?",
+      "answer": "A recursive CTE references itself in a second query member and repeatedly produces rows until no new ones are generated, terminated by a WHERE condition. It has an anchor member that seeds the result and a recursive member that builds on the previous iteration. A common use is walking an employee or category hierarchy.",
+      "code": "WITH Org AS (\n  SELECT Id, Name, ManagerId FROM dbo.Emp WHERE ManagerId IS NULL\n  UNION ALL\n  SELECT e.Id, e.Name, e.ManagerId\n  FROM dbo.Emp e JOIN Org o ON e.ManagerId = o.Id)\nSELECT * FROM Org;",
+      "tags": ["recursive-cte", "hierarchy"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-008",
+      "difficulty": "Beginner",
+      "question": "Can a CTE be used in a DELETE or UPDATE statement?",
+      "answer": "Yes, a CTE can precede an UPDATE, DELETE, or INSERT, and you can update or delete through it if it is updatable. This is the standard way to delete duplicates or update a subset of rows. The CTE itself is not stored; it is just a named reference to the query.",
+      "code": "WITH d AS (SELECT TOP (10) * FROM dbo.Queue ORDER BY Id)\nDELETE FROM d;",
+      "tags": ["cte", "update"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-009",
+      "difficulty": "Beginner",
+      "question": "What is a derived table and what are its rules?",
+      "answer": "A derived table is a subquery used in the FROM clause that must have an alias and cannot reference outer columns unless you use APPLY. It behaves like a view scoped to the statement. Derived tables are useful to pre-aggregate or pre-filter before joining.",
+      "tags": ["derived-table", "from"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-010",
+      "difficulty": "Beginner",
+      "question": "Why would you use a CTE instead of a temporary table?",
+      "answer": "A CTE is cleaner for one-off, read-only logic within a single statement and avoids creating and cleaning up objects. A temporary table persists across statements in a batch, can be indexed, and can be reused by several queries. Choose a CTE for readability and a temp table when you need reuse, indexing, or statistics.",
+      "tags": ["cte", "temp-table"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-011",
+      "difficulty": "Intermediate",
+      "question": "Does a CTE get materialized?",
+      "answer": "No, a CTE is a logical construct and is not guaranteed to be materialized; the optimizer inlines its definition into the query and may evaluate it more than once if referenced multiple times. This can lead to repeated work for expensive CTEs. If you need a single evaluation, use a temporary table or a table variable.",
+      "tags": ["cte", "materialization"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write a recursive CTE safely and what are the limits?",
+      "answer": "Always include an anchor member with a terminating condition and a recursive member that references the CTE exactly once, and add OPTION (MAXRECURSION n) to prevent infinite loops, with a default limit of 100. Detecting cycles in the data avoids runaway recursion. Recursive CTEs cannot use outer joins in some positions and cannot be used in a subquery in all cases.",
+      "code": "WITH Nums AS (\n  SELECT 1 AS n\n  UNION ALL\n  SELECT n + 1 FROM Nums WHERE n < 10)\nSELECT * FROM Nums OPTION (MAXRECURSION 100);",
+      "tags": ["recursive-cte", "maxrecursion"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use a CTE to simplify a multi-step transformation?",
+      "answer": "Chain several CTEs separated by commas, where each references the previous ones, to express a pipeline of filtering and aggregation steps. This reads top to bottom like a series of named intermediate results. Because CTEs are not materialized, the optimizer still sees the whole query and can push predicates through.",
+      "tags": ["cte", "pipeline"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a correlated subquery and a join for lookups?",
+      "answer": "A correlated subquery is conceptually evaluated per outer row and often optimizes to a nested loops join, which is efficient when the outer set is small and the inner lookup is indexed. A regular join lets the optimizer choose between nested loops, merge, and hash. For large sets, a join or a window function usually performs better than a correlated subquery.",
+      "tags": ["correlated", "join"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use a CTE with an UPDATE to change only the latest row per group?",
+      "answer": "Define the CTE with a window function that ranks rows per group, then update through the CTE filtering on the rank. This updates exactly the target rows without a self join. The CTE must remain updatable, meaning it maps to a single base table.",
+      "code": "WITH Latest AS (\n  SELECT *, ROW_NUMBER() OVER (PARTITION BY CustId ORDER BY Dt DESC) AS rn\n  FROM dbo.Orders)\nUPDATE Latest SET IsLatest = 1 WHERE rn = 1;",
+      "tags": ["cte", "update", "window"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-016",
+      "difficulty": "Intermediate",
+      "question": "How does a CTE interact with OPTION (MAXRECURSION 0)?",
+      "answer": "OPTION (MAXRECURSION 0) removes the default recursion limit of 100, allowing unlimited recursion until the query terminates on its own. This is useful for deep hierarchies but risks an infinite loop if the data contains cycles. Use it only when you are certain the recursion terminates or you have cycle detection.",
+      "tags": ["maxrecursion", "recursive-cte"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-query"]
+    },
+    {
+      "id": "ctes-017",
+      "difficulty": "Intermediate",
+      "question": "What is a lateral join equivalent in T-SQL?",
+      "answer": "CROSS APPLY and OUTER APPLY are T-SQL's lateral join operators, allowing the right-hand table-valued expression to reference columns from the left input. CROSS APPLY drops rows with no right-side result, while OUTER APPLY preserves them. They are essential for top-n-per-group with a table-valued function.",
+      "tags": ["apply", "lateral"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/from-transact-sql"]
+    },
+    {
+      "id": "ctes-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use a subquery in the SELECT list?",
+      "answer": "A scalar subquery in the SELECT list must return at most one row and one column, and it can reference the outer row. It is a concise way to add a single derived value per row, such as a count or a lookup. If it returns multiple rows it errors, so use an aggregate or a TOP 1 with ORDER BY to guarantee one row.",
+      "code": "SELECT c.Name,\n  (SELECT COUNT(*) FROM dbo.Orders o WHERE o.CustomerId = c.Id) AS OrderCount\nFROM dbo.Customers c;",
+      "tags": ["scalar-subquery", "select"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-019",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid repeating an expensive subquery?",
+      "answer": "If the same expensive subquery is used several times, store its result in a temporary table or a table variable so it is computed once. CTEs are not materialized, so referencing one twice can re-evaluate it. Alternatively, restructure the query to use a join instead of repeated subqueries.",
+      "tags": ["performance", "cte"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/subqueries"]
+    },
+    {
+      "id": "ctes-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a CTE and a view?",
+      "answer": "A CTE is scoped to a single statement and is not a persisted database object. A view is a stored object with a name and permissions that can be reused across many queries and modules. Use a CTE for query-local logic and a view to encapsulate and secure reusable logic.",
+      "tags": ["cte", "view"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/views/views"]
+    },
+    {
+      "id": "ctes-021",
+      "difficulty": "Advanced",
+      "question": "Why can a recursive CTE produce incorrect results when cycles exist?",
+      "answer": "A cycle in the hierarchy causes the recursive member to keep generating the same rows, running until the MAXRECURSION limit is hit and raising an error. To handle cycles, track the visited path and stop when a value repeats. Some systems offer CYCLE detection clauses, but in SQL Server you implement it manually.",
+      "tags": ["recursive-cte", "cycles"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-022",
+      "difficulty": "Advanced",
+      "question": "How do you use a CTE to compute a hierarchy path and depth?",
+      "answer": "Add a level counter and a path string in the anchor member and concatenate them in the recursive member to build the path and depth for each node. This produces an indented hierarchy report from a self-referencing table. Be careful to cast the path to a wide enough type to avoid truncation.",
+      "code": "WITH Org AS (\n  SELECT Id, Name, 1 AS Lvl, CAST(Name AS VARCHAR(500)) AS Path\n  FROM dbo.Emp WHERE ManagerId IS NULL\n  UNION ALL\n  SELECT e.Id, e.Name, o.Lvl + 1,\n         CAST(o.Path + ' > ' + e.Name AS VARCHAR(500))\n  FROM dbo.Emp e JOIN Org o ON e.ManagerId = o.Id)\nSELECT * FROM Org;",
+      "tags": ["hierarchy", "recursive-cte"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-023",
+      "difficulty": "Advanced",
+      "question": "How does the optimizer treat a subquery that could be a semi join versus a regular join?",
+      "answer": "The optimizer can transform many subqueries into semi joins or anti-semi joins, eliminating the need to produce duplicates from the inner side. EXISTS and NOT EXISTS map naturally to semi and anti-semi joins, which are usually cheaper. Sometimes a hint or rewrite is needed when the transformation is not chosen and the plan is poor.",
+      "tags": ["semi-join", "optimizer"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/query-processing-architecture-guide"]
+    },
+    {
+      "id": "ctes-024",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a CTE and a table variable for a recursive algorithm?",
+      "answer": "A recursive CTE is the idiomatic tool for hierarchy traversal and is executed as a single set-based statement. A table variable with a loop is sometimes used for algorithms that need procedural logic or updates between iterations, but it is slower and row-by-row. Prefer a recursive CTE unless the logic genuinely cannot be expressed set-based.",
+      "tags": ["recursive-cte", "table-variable"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/with-common-table-expression-transact-sql"]
+    },
+    {
+      "id": "ctes-025",
+      "difficulty": "Advanced",
+      "question": "How do you debug a complex nested subquery?",
+      "answer": "Break the query into CTEs or temp tables and run each layer separately to inspect intermediate row counts and values. Compare estimated versus actual rows in the execution plan to spot where cardinality diverges. Testing each piece in isolation quickly isolates the faulty logic.",
+      "tags": ["debugging", "subquery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/display-an-actual-execution-plan"]
+    }
+  ]
+}

@@ -1,0 +1,393 @@
+{
+  "category": "RxJS & Observables",
+  "slug": "rxjs",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "rxjs-001",
+      "difficulty": "Beginner",
+      "question": "What is RxJS and how does Angular use it?",
+      "answer": "RxJS is a library for composing asynchronous and event-based programs using Observables and operators. Angular uses it for HTTP responses, router events, and forms value changes, and for interop with signals. Understanding Observables is still essential even in signal-first applications.",
+      "tags": [
+        "rxjs",
+        "observables",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/guide/http/making-requests"
+      ]
+    },
+    {
+      "id": "rxjs-002",
+      "difficulty": "Beginner",
+      "question": "What is an Observable?",
+      "answer": "An Observable is a producer of zero or more values over time that consumers subscribe to. Nothing happens until you subscribe, and the subscription can be cancelled to stop the producer. Observables can be cold, producing a fresh stream per subscriber, or hot, sharing a single source.",
+      "tags": [
+        "observable",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an Observable and a Promise?",
+      "answer": "A Promise represents a single future value, while an Observable can emit many values over time and can be cancelled by unsubscribing. Observables are lazy and composable with operators, and they support synchronous and asynchronous sources. Promises are simpler for one-off operations and are easily converted with from and firstValueFrom.",
+      "tags": [
+        "observable",
+        "promise",
+        "async"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise"
+      ]
+    },
+    {
+      "id": "rxjs-004",
+      "difficulty": "Beginner",
+      "question": "What is a Subscription and why must you manage it?",
+      "answer": "A Subscription represents an active execution of an Observable and holds the resources needed to cancel it. If you subscribe in a component and never unsubscribe, the callback can keep running after the component is destroyed, leaking memory. Tools such as the async pipe, takeUntilDestroyed, and toSignal manage unsubscription for you.",
+      "tags": [
+        "subscription",
+        "memory",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed",
+        "https://angular.dev/api/common/AsyncPipe"
+      ]
+    },
+    {
+      "id": "rxjs-005",
+      "difficulty": "Beginner",
+      "question": "What is a Subject and how does it differ from a BehaviorSubject?",
+      "answer": "A Subject is a multicast Observable that also acts as an observer, so you can push values to all current subscribers. A BehaviorSubject stores the latest value and replays it to new subscribers immediately, so it always has a current value. A ReplaySubject instead replays a configurable number of past emissions.",
+      "tags": [
+        "subject",
+        "behaviorsubject",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/guide/routing/read-route-state"
+      ]
+    },
+    {
+      "id": "rxjs-006",
+      "difficulty": "Beginner",
+      "question": "What does the map operator do?",
+      "answer": "The map operator transforms each emitted value by applying a function, producing a new Observable of the transformed values. It is the pipeable equivalent of Array.prototype.map for streams. map is pure and does not affect how many values are emitted.",
+      "code": "this.http.get<User[]>('/api/users').pipe(\n  map((users) => users.filter((u) => u.active)),\n);",
+      "tags": [
+        "operators",
+        "map",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-007",
+      "difficulty": "Beginner",
+      "question": "What is the async pipe used for with Observables?",
+      "answer": "The async pipe subscribes to an Observable or Promise in a template and unsubscribes when the component is destroyed. It removes the need to manage subscriptions manually and keeps the template declarative. Multiple async pipes on the same cold Observable create separate subscriptions, so share the stream when that matters.",
+      "code": "@if (users$ | async; as users) {\n  <ul>@for (u of users; track u.id) { <li>{{ u.name }}</li> }</ul>\n}",
+      "tags": [
+        "async-pipe",
+        "templates",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/api/common/AsyncPipe",
+        "https://angular.dev/guide/pipes"
+      ]
+    },
+    {
+      "id": "rxjs-008",
+      "difficulty": "Beginner",
+      "question": "What does the filter operator do?",
+      "answer": "The filter operator emits only the values that satisfy a predicate and discards the rest. It is often paired with map to select and transform data in a stream. Like map, it does not change the type of the stream beyond what the predicate guarantees.",
+      "code": "router.events.pipe(\n  filter((e): e is NavigationEnd => e instanceof NavigationEnd),\n)",
+      "tags": [
+        "operators",
+        "filter",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/lifecycle-and-events",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between of and from?",
+      "answer": "of creates an Observable that emits its arguments one by one and then completes, while from converts an array, iterable, or Promise into an Observable that emits each item. Both are creation operators used to start a stream from known values. from is the usual choice for wrapping a Promise.",
+      "tags": [
+        "creation",
+        "of",
+        "from"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/api/core/rxjs-interop/toObservable"
+      ]
+    },
+    {
+      "id": "rxjs-010",
+      "difficulty": "Beginner",
+      "question": "How do you make an HTTP request with Angular and receive an Observable?",
+      "answer": "Inject HttpClient and call a method such as get, which returns a cold Observable that sends the request when subscribed. Operators can then transform or retry the response before the template consumes it. The HttpClient package must be provided with provideHttpClient during bootstrap.",
+      "code": "private http = inject(HttpClient);\nusers$ = this.http.get<User[]>('/api/users');",
+      "tags": [
+        "http",
+        "observable",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpClient"
+      ]
+    },
+    {
+      "id": "rxjs-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between switchMap, mergeMap, concatMap, and exhaustMap?",
+      "answer": "These flattening operators decide how to handle an inner Observable: switchMap cancels the previous inner subscription, mergeMap runs them all in parallel, concatMap queues them in order, and exhaustMap ignores new values while one is active. The right choice depends on whether order, concurrency, or cancellation matters. Search and type-ahead inputs usually want switchMap to discard stale requests.",
+      "code": "this.query.valueChanges.pipe(\n  debounceTime(300),\n  switchMap((q) => this.api.search(q)),\n);",
+      "tags": [
+        "operators",
+        "higher-order",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-012",
+      "difficulty": "Intermediate",
+      "question": "What do debounceTime and distinctUntilChanged do?",
+      "answer": "debounceTime waits for a pause in emissions before forwarding the latest value, which is ideal for search boxes. distinctUntilChanged suppresses consecutive duplicate values to avoid redundant work. Together they reduce how often expensive operations such as HTTP calls run.",
+      "code": "this.search.pipe(debounceTime(300), distinctUntilChanged())",
+      "tags": [
+        "operators",
+        "debounce",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/lifecycle-and-events",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors in an Observable stream?",
+      "answer": "Use catchError to intercept an error, optionally perform a side effect, and return a fallback Observable such as of([]) so the stream can continue. Without handling, an error terminates the Observable and the subscriber stops receiving values. For long-lived streams, keep the error handling close to the source so the outer stream survives.",
+      "code": "this.http.get<Item[]>('/api/items').pipe(\n  catchError(() => of([])),\n);",
+      "tags": [
+        "errors",
+        "catcherror",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/best-practices/error-handling"
+      ]
+    },
+    {
+      "id": "rxjs-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a hot and a cold Observable?",
+      "answer": "A cold Observable starts producing values independently for each subscriber, like an HTTP request, so two subscriptions mean two requests. A hot Observable shares a single source among subscribers, like DOM events or a Subject. Operators such as shareReplay turn a cold source into a shared one.",
+      "tags": [
+        "hot",
+        "cold",
+        "sharereplay"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/api/common/AsyncPipe"
+      ]
+    },
+    {
+      "id": "rxjs-015",
+      "difficulty": "Intermediate",
+      "question": "How does takeUntilDestroyed work?",
+      "answer": "takeUntilDestroyed completes a stream when its injection context is destroyed, which prevents leaks from subscriptions tied to a component. It can be called without arguments inside an injection context, or with a DestroyRef when called elsewhere. It is the modern replacement for a manual Subject plus takeUntil pattern.",
+      "code": "this.route.params\n  .pipe(takeUntilDestroyed(this.destroyRef))\n  .subscribe((p) => this.load(p['id']));",
+      "tags": [
+        "takeuntildestroyed",
+        "memory",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed",
+        "https://angular.dev/api/core/rxjs-interop/takeUntilDestroyed"
+      ]
+    },
+    {
+      "id": "rxjs-016",
+      "difficulty": "Intermediate",
+      "question": "What is the combineLatest operator used for?",
+      "answer": "combineLatest emits an array of the most recent values from several Observables whenever any of them emits, after each has produced at least once. It is useful for deriving view state from multiple independent sources. Because every source must emit once, pair it with startWith when a source may be slow.",
+      "tags": [
+        "operators",
+        "combinelatest",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/guide/routing/read-route-state"
+      ]
+    },
+    {
+      "id": "rxjs-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between merge and concat?",
+      "answer": "merge subscribes to all sources at once and interleaves their emissions as they arrive, while concat subscribes to the next source only after the previous one completes. concat preserves order and back-pressure at the cost of waiting, whereas merge maximizes throughput. Choose based on whether ordering matters.",
+      "tags": [
+        "operators",
+        "merge",
+        "concat"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/guide/http/making-requests"
+      ]
+    },
+    {
+      "id": "rxjs-018",
+      "difficulty": "Intermediate",
+      "question": "How do you share a single subscription among multiple consumers?",
+      "answer": "The share and shareReplay operators multicast a source so multiple subscribers reuse one subscription instead of creating their own. shareReplay additionally caches the latest emissions for late subscribers. This avoids duplicate HTTP calls when several parts of the template read the same stream.",
+      "code": "readonly users$ = this.http.get<User[]>('/api/users').pipe(shareReplay(1));",
+      "tags": [
+        "sharereplay",
+        "multicast",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/api/common/AsyncPipe"
+      ]
+    },
+    {
+      "id": "rxjs-019",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the tap operator?",
+      "answer": "tap performs a side effect for each emission without altering the stream, which is handy for logging, debugging, or triggering non-returning actions. Because it does not transform values, it should not be used for logic that affects downstream results. Side effects in a stream are best kept small and explicit.",
+      "tags": [
+        "operators",
+        "tap",
+        "side-effects"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/interceptors",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-020",
+      "difficulty": "Intermediate",
+      "question": "How do you convert between Observables and signals?",
+      "answer": "toSignal subscribes to an Observable and exposes its latest value as a signal, unsubscribing automatically when the injection context is destroyed. toObservable does the reverse, turning a signal into an Observable so it can be composed with operators. These bridges let you use RxJS for async composition and signals for rendering.",
+      "code": "readonly users = toSignal(this.http.get<User[]>('/api/users'), {\n  initialValue: [],\n});",
+      "tags": [
+        "signals",
+        "rxjs-interop",
+        "tosignal"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/rxjs-interop",
+        "https://angular.dev/api/core/rxjs-interop/toSignal"
+      ]
+    },
+    {
+      "id": "rxjs-021",
+      "difficulty": "Advanced",
+      "question": "How would you implement type-ahead search that cancels stale requests?",
+      "answer": "Listen to the input's value changes, debounce the keystrokes, drop duplicate queries, and flatten with switchMap so each new query cancels the previous in-flight request. Handle errors inside the switchMap so a failed request does not kill the outer stream. This pattern guarantees that only the most recent query's results are displayed.",
+      "code": "this.query.valueChanges.pipe(\n  debounceTime(300),\n  distinctUntilChanged(),\n  switchMap((q) => this.api.search(q).pipe(catchError(() => of([])))),\n);",
+      "tags": [
+        "operators",
+        "switchmap",
+        "search"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "rxjs-022",
+      "difficulty": "Advanced",
+      "question": "What are the differences between scan, reduce, and withLatestFrom?",
+      "answer": "scan accumulates values over the life of the stream and emits each intermediate result, while reduce emits only the final accumulated value when the source completes. withLatestFrom combines the source with the latest value of another Observable only when the source emits. scan is common for stateful streams such as counters.",
+      "tags": [
+        "operators",
+        "scan",
+        "reduce"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/guide/routing/read-route-state"
+      ]
+    },
+    {
+      "id": "rxjs-023",
+      "difficulty": "Advanced",
+      "question": "How do you retry a failed HTTP request with backoff?",
+      "answer": "Use retry with a configurable count, and combine retry with a delay based on the attempt index to implement exponential backoff. Put the retry before the final catchError so failures are retried a bounded number of times before falling back. Avoid retrying non-idempotent requests without care.",
+      "code": "this.http.get<Data>('/api/data').pipe(\n  retry({ count: 3, delay: (_, n) => timer(1000 * 2 ** n) }),\n  catchError(() => of(null)),\n);",
+      "tags": [
+        "retry",
+        "http",
+        "resilience"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/best-practices/error-handling"
+      ]
+    },
+    {
+      "id": "rxjs-024",
+      "difficulty": "Advanced",
+      "question": "What are the risks of nesting subscriptions and how do you avoid them?",
+      "answer": "Nested subscribes create inner subscriptions that are easy to leak and that escape cancellation, and they make error handling and ordering hard to reason about. Flatten with switchMap, mergeMap, concatMap, or exhaustMap instead, and keep a single subscription at the edge. This keeps the stream cancellable and the logic declarative.",
+      "tags": [
+        "anti-pattern",
+        "subscriptions",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/ecosystem/rxjs-interop",
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed"
+      ]
+    },
+    {
+      "id": "rxjs-025",
+      "difficulty": "Advanced",
+      "question": "How does the resource API relate to Observables for data loading?",
+      "answer": "The resource API loads asynchronous data from a reactive request and exposes signals for the value, status, and error, which integrates cleanly with signals and change detection. It handles loading and error states without manual subscription management. RxJS remains the better choice for event streams and complex operator composition, and the two interoperate through the interop helpers.",
+      "tags": [
+        "resource",
+        "signals",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/resource",
+        "https://angular.dev/guide/http/http-resource"
+      ]
+    }
+  ]
+}

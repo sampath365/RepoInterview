@@ -1,0 +1,219 @@
+{
+  "category": "Platform-Specific Code & Handlers",
+  "slug": "platform",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "platform-001",
+      "difficulty": "Beginner",
+      "question": "What is platform-specific code in .NET MAUI?",
+      "answer": "Platform-specific code is code that runs only on one target platform, such as Android or iOS, using that platform's APIs. MAUI keeps shared code in the project root and platform code under the Platforms folder, which the SDK includes conditionally per target. You isolate it behind shared interfaces so the rest of the app stays platform-agnostic. This keeps cross-platform code clean while still reaching native features.",
+      "tags": ["platform", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-002",
+      "difficulty": "Beginner",
+      "question": "What is multi-targeting in a MAUI project?",
+      "answer": "Multi-targeting means one project builds for several target frameworks, each listed in the TargetFrameworks property as net9.0-android, net9.0-ios, net9.0-maccatalyst, and net9.0-windows. The SDK compiles the same shared code for each target and adds platform folders only where relevant. This replaces the old multi-project Xamarin approach with a single project. Conditional properties and compilation tailor behavior per target.",
+      "tags": ["multitargeting", "project"],
+      "code": "<TargetFrameworks>net9.0-android;net9.0-ios;net9.0-maccatalyst</TargetFrameworks>\n<TargetFrameworks Condition=\"$([MSBuild]::IsOSPlatform('windows'))\">\n  $(TargetFrameworks);net9.0-windows10.0.19041.0\n</TargetFrameworks>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/single-project"]
+    },
+    {
+      "id": "platform-003",
+      "difficulty": "Beginner",
+      "question": "How do you use conditional compilation in MAUI?",
+      "answer": "Use #if with platform symbols such as ANDROID, IOS, MACCATALYST, and WINDOWS to include code only for a given target. The SDK defines these symbols automatically per target framework. This lets one file hold platform variants without separate projects. Keep the conditionals small and push logic behind interfaces where possible.",
+      "tags": ["conditional-compilation", "platform"],
+      "code": "#if ANDROID\n    var toast = Android.Widget.Toast.MakeText(\n        Platform.AppContext, text, Android.Widget.ToastLength.Short);\n    toast.Show();\n#endif",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-004",
+      "difficulty": "Beginner",
+      "question": "What is the Platforms folder in a MAUI project?",
+      "answer": "The Platforms folder holds per-platform code and assets organized by target, such as Platforms/Android and Platforms/iOS. The build includes only the folder matching the current target framework, so Android code is not compiled for iOS. This is where you place platform manifests, resource files, and native code. Keeping platform artifacts here avoids polluting shared code.",
+      "tags": ["platforms-folder", "project"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/single-project"]
+    },
+    {
+      "id": "platform-005",
+      "difficulty": "Beginner",
+      "question": "How do you check which platform the app is running on?",
+      "answer": "Use the DeviceInfo.Platform property, which returns a DevicePlatform value such as Android, iOS, MacCatalyst, or WinUI. You can compare it at runtime to branch behavior without conditional compilation. This is useful when you need a runtime decision rather than a compile-time one. Combine it with OnPlatform in XAML for declarative per-platform values.",
+      "tags": ["deviceinfo", "platform"],
+      "code": "if (DeviceInfo.Platform == DevicePlatform.Android)\n{\n    // Android-only runtime behavior\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/information"]
+    },
+    {
+      "id": "platform-006",
+      "difficulty": "Beginner",
+      "question": "What is a partial class and how does it help platform code?",
+      "answer": "A partial class lets you split one class across multiple files, so you can keep a shared definition and add platform-specific members in separate files named by convention, such as MyClass.android.cs. The build includes only the matching platform file. This is how MAUI itself splits platform behavior and how you can too. It keeps shared code readable while still reaching native APIs.",
+      "tags": ["partial-class", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-007",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the MauiProgram partial class on each platform?",
+      "answer": "The shared MauiProgram defines CreateMauiApp, and partial class files under each platform folder can extend it with platform-specific configuration if needed. The build compiles only the file matching the target, so you can add handlers or services per platform without conditional compilation. This keeps the entry point consistent while allowing platform tweaks. It is the recommended way to customize startup per platform.",
+      "tags": ["mauiprogram", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "platform-008",
+      "difficulty": "Beginner",
+      "question": "What is the DeviceInfo helper used for?",
+      "answer": "DeviceInfo reports information about the device such as platform, model, manufacturer, device type, and OS version. It lets you adapt UI or behavior to the form factor or platform. For example you can detect a tablet to change layout density. It is part of MAUI Essentials and works across all platforms.",
+      "tags": ["deviceinfo", "essentials"],
+      "code": "var isTablet = DeviceInfo.Idiom == DeviceIdiom.Tablet;\nvar os = DeviceInfo.VersionString;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/device/information"]
+    },
+    {
+      "id": "platform-009",
+      "difficulty": "Beginner",
+      "question": "How do you call a native Android API from MAUI?",
+      "answer": "Reference the Android namespaces inside an #if ANDROID block or a platform partial file and call the native API directly, such as a Toast or an Intent. You often need the current context, available through Platform.AppContext or Platform.CurrentActivity. Wrap the call behind a shared interface so view models do not depend on Android types. Keep native code isolated to the Platforms folder.",
+      "tags": ["android", "native"],
+      "code": "#if ANDROID\nvar intent = new Android.Content.Intent(\n    Android.Content.Intent.ActionView);\nPlatform.CurrentActivity!.StartActivity(intent);\n#endif",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between DeviceInfo.Platform and conditional compilation?",
+      "answer": "Conditional compilation removes code at build time, so code for other platforms is never compiled and can reference platform-only types safely. DeviceInfo.Platform checks at runtime, so the code must compile for all targets and only runs conditionally. Use compilation for native API calls that only exist on one platform and runtime checks for behavior that is valid everywhere. Combining both is common when a method exists but behaves differently.",
+      "tags": ["platform", "conditional-compilation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-011",
+      "difficulty": "Intermediate",
+      "question": "What role does a handler play in how a MAUI control is rendered?",
+      "answer": "A handler is the abstraction that maps a cross-platform control to its native counterpart on each platform. Each control has a handler that creates and updates the native view when properties change. Handlers replaced the older renderer model and are faster and lighter. Understanding handlers is the key to customizing how controls render natively.",
+      "tags": ["handlers", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/"]
+    },
+    {
+      "id": "platform-012",
+      "difficulty": "Intermediate",
+      "question": "How do you customize a handler for an existing control?",
+      "answer": "Use the ConfigureMauiHandlers method in MauiProgram with AddHandler to append a handler mapper that sets or updates a native property. You can add a mapper for a specific platform to change appearance or behavior without subclassing the control. This is the modern replacement for effect-based customization. Keep the mapping minimal so it does not fight the control's own logic.",
+      "tags": ["handlers", "customization"],
+      "code": "builder.ConfigureMauiHandlers(h =>\n{\n#if ANDROID\n    h.AddHandler<Entry, EntryHandler>();\n#endif\n});",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/customize"]
+    },
+    {
+      "id": "platform-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom handler?",
+      "answer": "Define an interface in shared code, then a handler deriving from ViewHandler<IVirtualView, TNativeView> with a mapper that creates and updates the native view. Register it in ConfigureMauiHandlers. The virtual view holds cross-platform properties and the handler translates them to native ones. This is how you wrap a native control not exposed by MAUI.",
+      "tags": ["handlers", "custom-controls"],
+      "code": "public class MapViewHandler : ViewHandler<IMapView, Android.Gms.Maps.MapView>\n{\n    protected override Android.Gms.Maps.MapView CreatePlatformView()\n        => new Android.Gms.Maps.MapView(Context);\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/create"]
+    },
+    {
+      "id": "platform-014",
+      "difficulty": "Intermediate",
+      "question": "How do you access the current activity or view controller on a platform?",
+      "answer": "Use Platform.CurrentActivity on Android to get the running activity and Platform.GetCurrentUIViewController on Apple platforms to get the active view controller. These are needed for APIs that require a context or a presenter, such as launching intents or showing native dialogs. Always null-check because they may be unavailable during startup. Wrap access in a platform service so shared code stays clean.",
+      "tags": ["platform", "native"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-015",
+      "difficulty": "Intermediate",
+      "question": "How do you add a platform-specific permission in MAUI?",
+      "answer": "Declare the permission in the platform manifest, such as AndroidManifest.xml on Android or Info.plist usage descriptions on iOS, then request it at runtime with the Permissions API. The runtime request prompts the user and returns a status you must check before using the feature. Missing manifest entries cause the request to fail silently. Explain why you need the permission so users can make an informed choice.",
+      "tags": ["permissions", "platform"],
+      "code": "var status = await Permissions.RequestAsync<Permissions.Camera>();\nif (status == PermissionStatus.Granted)\n{\n    // use camera\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/permissions"]
+    },
+    {
+      "id": "platform-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use OnPlatform in XAML?",
+      "answer": "OnPlatform sets different values per platform on a property, either as an element or with the markup extension form. You provide a value for each platform and optionally a default. It is ideal for spacing, fonts, and colors that differ across platforms. Keeping these differences declarative avoids code-behind conditionals.",
+      "tags": ["onplatform", "xaml"],
+      "code": "<Button Padding=\"{OnPlatform Android='12,6', iOS='10,4'}\" />\n<Label>\n  <Label.FontSize>\n    <OnPlatform x:TypeArguments=\"x:Double\"\n                Android=\"14\" iOS=\"16\" Default=\"15\" />\n  </Label.FontSize>\n</Label>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/configure-multi-targeting"]
+    },
+    {
+      "id": "platform-017",
+      "difficulty": "Intermediate",
+      "question": "How do you add platform-specific resources such as fonts and images?",
+      "answer": "Place shared assets in the Resources folder for MAUI to process, and platform-only assets in the matching Platforms subfolder. Fonts are registered with ConfigureFonts in MauiProgram and referenced by alias. Android stores fonts under Platforms/Android/Resources or as embedded resources, while Apple platforms bundle them via Info.plist. Prefer the shared Resources folder unless a platform needs a special format.",
+      "tags": ["resources", "platform"],
+      "code": "builder.ConfigureFonts(fonts =>\n{\n    fonts.AddFont(\"OpenSans-Regular.ttf\", \"OpenSansRegular\");\n});",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/fonts"]
+    },
+    {
+      "id": "platform-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle different screen sizes and safe areas per platform?",
+      "answer": "Use layouts that adapt through Grid star sizing and the OnIdiom markup, and respect safe areas so content is not hidden by notches or system bars. iOS exposes safe area insets and a page property to respect them. Testing on multiple device sizes is essential because a layout that fits a phone may break on a tablet. Device-independent units keep sizing consistent across densities.",
+      "tags": ["layout", "safe-area"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/safe-area"]
+    },
+    {
+      "id": "platform-019",
+      "difficulty": "Intermediate",
+      "question": "How do you use a platform-specific feature through an interface and DI?",
+      "answer": "Define the feature as an interface in shared code, implement it separately per platform, and register the correct implementation in MauiProgram with conditional compilation. View models depend only on the interface. This keeps platform details out of shared code and makes the feature testable with a fake. It is the standard pattern for wrapping native capabilities.",
+      "tags": ["platform", "di"],
+      "code": "public interface IVibrate { void Vibrate(); }\n\n#if ANDROID\nbuilder.Services.AddSingleton<IVibrate, AndroidVibrate>();\n#endif",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a handler and a platform behavior?",
+      "answer": "A handler controls how a whole control is created and rendered natively, while a platform behavior attaches platform-specific logic to a control without replacing its rendering. Behaviors are lighter and scoped to a property or event, whereas handlers change the control's native representation. Use behaviors for small platform tweaks and handlers when you need to change or wrap the native view itself. Both keep the change declarative or centralized.",
+      "tags": ["handlers", "behaviors"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/behaviors"]
+    },
+    {
+      "id": "platform-021",
+      "difficulty": "Advanced",
+      "question": "How does the handler mapper pipeline work when a property changes?",
+      "answer": "Each handler holds mapper dictionaries that connect a virtual property name to a method that updates the native view. When a bindable property changes, the framework invokes the matching mapper, which reads the virtual view and sets the native property. You can append or replace mappers to customize behavior. Understanding the pipeline explains why handler changes are applied immediately and how to avoid redundant native updates.",
+      "tags": ["handlers", "architecture"],
+      "code": "EntryHandler.Mapper.AppendToMapping(\"ClearButtonVisibility\",\n    (handler, view) =>\n    {\n        handler.PlatformView.ClearButtonVisibility =\n            Android.Views.CompoundButtonStates.Visible;\n    });",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/handlers/customize"]
+    },
+    {
+      "id": "platform-022",
+      "difficulty": "Advanced",
+      "question": "How do you migrate a Xamarin.Forms custom renderer to a MAUI handler?",
+      "answer": "Replace the renderer with a handler that derives from ViewHandler and defines mappers instead of overriding OnElementChanged. Move property updates from OnElementPropertyChanged into mapper entries and native setup into CreatePlatformView. Register the handler in ConfigureMauiHandlers. This usually yields simpler, faster code because handlers separate creation from property mapping.",
+      "tags": ["handlers", "migration"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/migration/renderer-to-handler"]
+    },
+    {
+      "id": "platform-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle platform lifecycle events in MAUI?",
+      "answer": "The cross-platform App and Window classes expose lifecycle events such as Created, Activated, Deactivated, and Stopped, and platform-specific events are available under each platform folder for deeper hooks. Subscribe to the events you need in the App or Window and perform state save or restore there. Platform-specific lifecycle can be added through partial classes or platform services. Keeping lifecycle logic centralized avoids duplicated platform code.",
+      "tags": ["lifecycle", "platform"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle"]
+    },
+    {
+      "id": "platform-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of writing shared code versus platform-specific code?",
+      "answer": "Shared code maximizes reuse, reduces maintenance, and keeps behavior consistent, but it may not expose every native capability or may feel least-common-denominator. Platform-specific code unlocks full native features and polish but multiplies work and testing. The best approach maximizes shared logic and isolates native details behind small interfaces. Reserve platform code for cases where the difference is genuinely needed.",
+      "tags": ["platform", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "platform-025",
+      "difficulty": "Advanced",
+      "question": "How do you keep platform-specific code testable and maintainable?",
+      "answer": "Define interfaces for platform capabilities so view models and services depend on abstractions that can be faked in tests. Keep the native implementation thin, pushing logic into shared, testable classes. Use partial classes and conditional compilation to limit where platform code lives. This structure means most logic is covered by ordinary unit tests while only thin adapters need device testing.",
+      "tags": ["platform", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/unit-testing"]
+    }
+  ]
+}

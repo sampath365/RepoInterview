@@ -1,0 +1,211 @@
+{
+  "category": "Themes & Control Customization",
+  "slug": "themes",
+  "icon": "palette",
+  "questions": [
+    {
+      "id": "themes-001",
+      "difficulty": "Beginner",
+      "question": "What is a theme in WPF?",
+      "answer": "A theme is a set of default styles and templates that gives controls their standard appearance for a system or application look. WPF ships with themes such as Aero2 that are applied automatically based on the OS. Themes are stored in resource dictionaries and are overridden by application styles.",
+      "tags": ["themes", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "themes-002",
+      "difficulty": "Beginner",
+      "question": "Where does a control get its default style?",
+      "answer": "A control gets its default style from a theme dictionary keyed by the type, found through the DefaultStyleKey. WPF looks in the generic and theme-specific dictionaries in the assembly's themes folder. If you override the style or template, your version takes precedence.",
+      "tags": ["themes", "default-style"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-003",
+      "difficulty": "Beginner",
+      "question": "How do you apply a custom theme to an application?",
+      "answer": "Merge the theme's resource dictionaries into Application.Resources so its implicit styles apply to controls. Use DynamicResource references where you want the theme to be swappable at runtime. Many third-party libraries distribute a theme as one or more dictionaries to merge.",
+      "tags": ["themes", "application"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/merged-resource-dictionaries"]
+    },
+    {
+      "id": "themes-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a theme and a style?",
+      "answer": "A theme is a coordinated collection of styles and templates that defines an overall look. A style is a single set of property setters for a type or key. Themes are composed of styles, and application styles typically override theme styles.",
+      "tags": ["themes", "styles"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "themes-005",
+      "difficulty": "Beginner",
+      "question": "How do you customize a single control without changing the whole theme?",
+      "answer": "Set its Style or Template property directly, either inline or with a keyed style. A local template or style affects only that control. This is the least invasive way to tweak one control's appearance.",
+      "tags": ["customization", "themes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-006",
+      "difficulty": "Beginner",
+      "question": "What is the themes/generic.xaml file?",
+      "answer": "generic.xaml is the default resource dictionary a custom control uses for its template when no theme-specific dictionary exists. The control finds it through DefaultStyleKeyProperty and the Themes namespace. It is the standard location for a custom control's default style.",
+      "tags": ["generic-xaml", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-007",
+      "difficulty": "Beginner",
+      "question": "How do you change a control's colors without replacing its template?",
+      "answer": "Override the brushes the template uses, either by setting properties such as Background and Foreground or by redefining the resource keys the template references. Because templates often use DynamicResource or TemplateBinding, redefining the brushes updates the look. This is a lightweight form of theming.",
+      "tags": ["themes", "brushes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "themes-008",
+      "difficulty": "Beginner",
+      "question": "What does DefaultStyleKey do?",
+      "answer": "DefaultStyleKey identifies the type used to look up a control's default style in the theme dictionaries. By default it is the control's own type, but a derived control can set it to reuse another control's default style. It is set with DefaultStyleKeyProperty.OverrideMetadata in the static constructor.",
+      "tags": ["defaultstylekey", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-009",
+      "difficulty": "Beginner",
+      "question": "How do you make a control pick up an application-wide look?",
+      "answer": "Define an implicit style for the control's type in Application.Resources or in a merged theme dictionary. The implicit style applies to every control of that type that does not have an explicit style. This is the recommended way to apply consistent branding.",
+      "tags": ["implicit-styles", "themes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "themes-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ThemeStyle and a user-defined style?",
+      "answer": "A theme style is the built-in default style WPF applies from the system theme. A user-defined style is one you author and apply explicitly or implicitly. Your style wins over the theme style because application and local resources are consulted before theme resources.",
+      "tags": ["themes", "styles"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "themes-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom control that supports theming?",
+      "answer": "Derive from Control, set the default style key in the static constructor, and ship a Themes/Generic.xaml dictionary containing the default style and template. Consumers can override the style or re-template it. This makes the control behave like built-in controls.",
+      "code": "static ToggleSwitch()\n{\n    DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleSwitch),\n        new FrameworkPropertyMetadata(typeof(ToggleSwitch)));\n}",
+      "tags": ["custom-controls", "themes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a lookless control and a UserControl?",
+      "answer": "A lookless control derives from Control and defines its appearance through a template that consumers can replace. A UserControl is a fixed composition of existing controls whose visual tree is not easily re-templated. Lookless controls are more flexible and theme-friendly.",
+      "tags": ["lookless-controls", "usercontrol"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-013",
+      "difficulty": "Intermediate",
+      "question": "How do you reference theme resources such as system colors?",
+      "answer": "Use the SystemColors and SystemFonts classes with x:Static, or use the theme brush keys that WPF exposes. Binding to these values keeps your UI consistent with the operating system. DynamicResource is often used so the value updates when the system theme changes.",
+      "code": "<Border Background=\"{x:Static SystemColors.ControlBrush}\">\n  <TextBlock Foreground=\"{x:Static SystemColors.ControlTextBrush}\"/>",
+      "tags": ["system-colors", "themes"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.systemcolors"]
+    },
+    {
+      "id": "themes-014",
+      "difficulty": "Intermediate",
+      "question": "How does the OS theme affect WPF controls?",
+      "answer": "WPF selects the appropriate theme dictionary based on the operating system, such as Aero2 on modern Windows. The theme supplies default styles and templates for controls. Applications can override these defaults with their own resources at application or local scope.",
+      "tags": ["themes", "os"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/styles-templates-overview"]
+    },
+    {
+      "id": "themes-015",
+      "difficulty": "Intermediate",
+      "question": "How do you override the template of a built-in control like a ComboBox?",
+      "answer": "Create a style for the ComboBox with a Template setter containing your ControlTemplate, including the required named parts such as the Popup and ToggleButton. The control uses your template and keeps its behavior. You must include the parts the control expects or behavior breaks.",
+      "tags": ["controltemplate", "combo-box"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-016",
+      "difficulty": "Intermediate",
+      "question": "How do you re-template only part of a control?",
+      "answer": "You cannot partially replace a template; you replace the whole ControlTemplate. To change only part, copy the default template and modify it, keeping the named parts intact. Some controls expose sub-styles you can override instead of the full template.",
+      "tags": ["controltemplate", "themes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-017",
+      "difficulty": "Intermediate",
+      "question": "What are resource key naming conventions for themes?",
+      "answer": "Theme dictionaries often use a consistent prefix such as the control name and a suffix describing the purpose, for example ButtonBackgroundBrush or ButtonPressedBrush. Templates reference these keys with DynamicResource so a theme can replace them. Consistent naming makes themes maintainable and swappable.",
+      "tags": ["themes", "naming"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/merged-resource-dictionaries"]
+    },
+    {
+      "id": "themes-018",
+      "difficulty": "Intermediate",
+      "question": "How do you support both light and dark themes?",
+      "answer": "Define two resource dictionaries with the same keys but different values, and switch them at runtime with DynamicResource references. Store the current theme choice in settings and apply it at startup. Because the keys match, only the values change.",
+      "tags": ["theming", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/merged-resource-dictionaries"]
+    },
+    {
+      "id": "themes-019",
+      "difficulty": "Intermediate",
+      "question": "What is the role of TemplatePartAttribute?",
+      "answer": "TemplatePartAttribute documents the named parts a control template must contain for the control to work. It declares the part name and expected type on the control class. This contract tells template authors which elements to include.",
+      "tags": ["template-parts", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-020",
+      "difficulty": "Intermediate",
+      "question": "How do you make a control's template responsive to its state?",
+      "answer": "Use VisualStateManager or triggers in the template to change visuals based on states such as Normal, MouseOver, and Disabled. VisualStateManager groups states and transitions so the template reacts consistently. Many modern controls use visual states instead of property triggers.",
+      "code": "<VisualStateManager.VisualStateGroups>\n  <VisualStateGroup x:Name=\"CommonStates\">\n    <VisualState x:Name=\"Normal\"/>\n    <VisualState x:Name=\"MouseOver\">\n      <Storyboard>\n        <ColorAnimation Storyboard.TargetName=\"Bd\"\n            Storyboard.TargetProperty=\"(Border.Background).(SolidColorBrush.Color)\"\n            To=\"LightBlue\"/>\n      </Storyboard>\n    </VisualState>\n  </VisualStateGroup>\n</VisualStateManager.VisualStateGroups>",
+      "tags": ["visualstatemanager", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/visualstates-overview"]
+    },
+    {
+      "id": "themes-021",
+      "difficulty": "Advanced",
+      "question": "How does VisualStateManager differ from triggers?",
+      "answer": "VisualStateManager organizes visuals into named states with transitions and is designed for control templates and state-based animation. Triggers respond to property or data values and apply setters. VisualStateManager is preferred for complex state machines because transitions and states are explicit and centralized.",
+      "tags": ["visualstatemanager", "triggers"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/visualstates-overview"]
+    },
+    {
+      "id": "themes-022",
+      "difficulty": "Advanced",
+      "question": "How do you ensure a re-templated control still functions correctly?",
+      "answer": "Include all required template parts declared with TemplatePartAttribute and keep their expected names and types. The control retrieves these parts in OnApplyTemplate and wires behavior to them. Missing or renamed parts cause the control to fail silently or throw.",
+      "code": "public override void OnApplyTemplate()\n{\n    _toggle = GetTemplateChild(\"PART_Toggle\") as ToggleButton;\n    if (_toggle != null) _toggle.Checked += OnToggle;\n}",
+      "tags": ["template-parts", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-023",
+      "difficulty": "Advanced",
+      "question": "How do you load the correct theme dictionary for a control in a separate assembly?",
+      "answer": "Place the dictionary at Themes/Generic.xaml in the control's assembly and reference it with a pack URI. WPF resolves it automatically through the default style key. Theme-specific dictionaries such as Aero2.NormalColor.xaml are selected by the system theme.",
+      "tags": ["themes", "assemblies"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/pack-uris-in-wpf"]
+    },
+    {
+      "id": "themes-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of heavy control re-templating?",
+      "answer": "Re-templating gives full control over appearance but risks breaking accessibility, focus visuals, and state behavior if parts or visual states are omitted. It also increases maintenance when the base control changes. Prefer light styling and resource overrides unless a full redesign is required.",
+      "tags": ["templates", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/controls/control-authoring-overview"]
+    },
+    {
+      "id": "themes-025",
+      "difficulty": "Advanced",
+      "question": "How can you provide high-contrast and accessibility support in a theme?",
+      "answer": "Use SystemColors and system brushes so colors follow the OS high-contrast setting, and reference them with DynamicResource. Preserve focus visuals and keyboard navigation by keeping FocusVisualStyle and access keys. Test with Windows high-contrast mode to confirm readability.",
+      "tags": ["accessibility", "themes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/accessibility-best-practices"]
+    }
+  ]
+}

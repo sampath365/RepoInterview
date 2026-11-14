@@ -1,0 +1,382 @@
+{
+  "category": "Services & Dependency Injection",
+  "slug": "dependency-injection",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "dependency-injection-001",
+      "difficulty": "Beginner",
+      "question": "What is dependency injection and why does Angular use it?",
+      "answer": "Dependency injection is a pattern where a class receives the objects it depends on instead of creating them itself. Angular's injector resolves those dependencies from a provider registry, which decouples classes from their implementations. This makes code easier to test, swap, and share across the application.",
+      "tags": [
+        "di",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/di",
+        "https://angular.dev/guide/di/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-002",
+      "difficulty": "Beginner",
+      "question": "What is a service in Angular?",
+      "answer": "A service is a class, usually decorated with @Injectable, that holds reusable logic or state and is provided to other classes through dependency injection. Services keep components focused on presentation by moving data access, business rules, and shared state out of them. They are plain classes, so they are easy to test in isolation.",
+      "tags": [
+        "services",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/guide/di/creating-injectable-service"
+      ]
+    },
+    {
+      "id": "dependency-injection-003",
+      "difficulty": "Beginner",
+      "question": "What does the @Injectable decorator do?",
+      "answer": "The @Injectable decorator marks a class as available to the dependency injection system and records the metadata Angular needs to construct it. It is required when the class has its own dependencies, even if it has no constructor parameters. It can also specify providedIn to register the service automatically.",
+      "tags": [
+        "injectable",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-injectable-service",
+        "https://angular.dev/api/core/Injectable"
+      ]
+    },
+    {
+      "id": "dependency-injection-004",
+      "difficulty": "Beginner",
+      "question": "What is providedIn: 'root' and what does it mean for a service?",
+      "answer": "providedIn: 'root' registers a service with the root injector, so the whole application shares one instance and the service is tree-shakeable if unused. It removes the need to list the service in a module or component providers array. Use it for stateless, application-wide services.",
+      "tags": [
+        "providedin",
+        "di",
+        "singleton"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-injectable-service",
+        "https://angular.dev/guide/di/hierarchical-dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-005",
+      "difficulty": "Beginner",
+      "question": "How do you inject a service into a component?",
+      "answer": "Declare a constructor parameter typed as the service, or call inject(ServiceClass) in a field initializer inside the injection context. Angular resolves the dependency from the nearest injector that has a provider. The inject() form is common in modern code because it works in functions and field initializers.",
+      "code": "@Component({ selector: 'app-users', template: '...' })\nexport class UsersComponent {\n  private users = inject(UsersService);\n}",
+      "tags": [
+        "inject",
+        "services",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/api/core/inject"
+      ]
+    },
+    {
+      "id": "dependency-injection-006",
+      "difficulty": "Beginner",
+      "question": "What is an InjectionToken and when do you need one?",
+      "answer": "An InjectionToken creates a unique, type-safe key for a value that has no class, such as a configuration object or a primitive. You register a provider for the token and inject it with inject(TOKEN). Tokens avoid the ambiguity of string keys and keep non-class dependencies well typed.",
+      "code": "export const API_URL = new InjectionToken<string>('api.url');\n// provider\n{ provide: API_URL, useValue: 'https://api.example.com' }\n// usage\nconst url = inject(API_URL);",
+      "tags": [
+        "injectiontoken",
+        "di",
+        "configuration"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/lightweight-injection-tokens",
+        "https://angular.dev/api/core/InjectionToken"
+      ]
+    },
+    {
+      "id": "dependency-injection-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between useClass, useValue, useFactory, and useExisting?",
+      "answer": "useClass tells the injector to construct an instance of a class, useValue provides a ready-made value, and useFactory calls a function to produce the value. useExisting aliases one token to another so both share the same instance. These forms let you control how a dependency is created without changing the consuming code.",
+      "code": "{ provide: Logger, useClass: ConsoleLogger }\n{ provide: API_URL, useValue: 'https://api.example.com' }\n{ provide: Logger, useExisting: BetterLogger }",
+      "tags": [
+        "providers",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/defining-dependency-providers",
+        "https://angular.dev/api/core/FactoryProvider"
+      ]
+    },
+    {
+      "id": "dependency-injection-008",
+      "difficulty": "Beginner",
+      "question": "What is an injector in Angular?",
+      "answer": "An injector is the runtime registry that resolves a token to a value using the providers it knows about. Angular creates a hierarchy of injectors from the root platform down through routes and components. When a token is requested, Angular walks up the hierarchy until it finds a provider.",
+      "tags": [
+        "injector",
+        "di",
+        "hierarchy"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/dependency-injection",
+        "https://angular.dev/guide/di/hierarchical-dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-009",
+      "difficulty": "Beginner",
+      "question": "Why should components use services instead of holding shared data directly?",
+      "answer": "Placing shared state and logic in a service lets several components read and update the same source of truth and keeps components focused on the view. It also makes the logic testable without rendering a component. Components that each own their own copy of the data quickly drift out of sync.",
+      "tags": [
+        "services",
+        "state",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-and-using-services",
+        "https://angular.dev/essentials/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-010",
+      "difficulty": "Beginner",
+      "question": "How do you test a component that depends on a service?",
+      "answer": "Provide a test double for the service in the TestBed configuration and inject the component through the fixture. Angular's TestBed lets you supply useValue or useClass providers so the test controls the dependency. This isolates the component from real network or stateful behavior.",
+      "tags": [
+        "testing",
+        "di",
+        "testbed"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/services",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    },
+    {
+      "id": "dependency-injection-011",
+      "difficulty": "Intermediate",
+      "question": "How does hierarchical dependency injection work?",
+      "answer": "Angular creates an injector per component and lazily creates environment injectors for routes and modules. A request for a token starts at the nearest injector and travels upward until a provider is found, so the same token can resolve to different instances at different levels. This scoping lets you isolate state per feature or per component subtree.",
+      "tags": [
+        "hierarchical",
+        "di",
+        "scope"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/di/dependency-injection-context"
+      ]
+    },
+    {
+      "id": "dependency-injection-012",
+      "difficulty": "Intermediate",
+      "question": "What is an environment injector?",
+      "answer": "An environment injector is an injector created for the application or for a route rather than for a component. It is configured with providers in the application config, in a route's providers array, or in an NgModule. Environment injectors hold services that outlive any single component view.",
+      "tags": [
+        "environment-injector",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/dependency-injection-context",
+        "https://angular.dev/api/core/EnvironmentInjector"
+      ]
+    },
+    {
+      "id": "dependency-injection-013",
+      "difficulty": "Intermediate",
+      "question": "How do you provide a service at the route level?",
+      "answer": "Add a providers array to a route definition to register services with that route's environment injector. The service is created when the route is activated and destroyed when the route's injector is destroyed, giving per-feature instances. This pairs well with lazy-loaded routes so the service is only created when needed.",
+      "code": "{\n  path: 'admin',\n  providers: [AdminService],\n  loadComponent: () => import('./admin.component').then((m) => m.AdminComponent),\n}",
+      "tags": [
+        "routing",
+        "providers",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "dependency-injection-014",
+      "difficulty": "Intermediate",
+      "question": "What is the injection context and when is inject() allowed?",
+      "answer": "An injection context is a place where Angular knows which injector to use, such as a constructor, a field initializer, or a factory function. inject() must be called during that context; calling it later in an event handler throws an error. Use runInInjectionContext or Injector.get when you must resolve a dependency outside the context.",
+      "tags": [
+        "inject",
+        "context",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/dependency-injection-context",
+        "https://angular.dev/api/core/runInInjectionContext"
+      ]
+    },
+    {
+      "id": "dependency-injection-015",
+      "difficulty": "Intermediate",
+      "question": "What are injection modifiers such as @Optional, @Self, and @SkipSelf?",
+      "answer": "These modifiers change how Angular resolves a dependency: @Optional allows the value to be null when no provider is found, @Self restricts the search to the current injector, and @SkipSelf starts the search at the parent injector. They give precise control in advanced provider scenarios. The inject() function accepts an options object with the same behaviors.",
+      "code": "private logger = inject(Logger, { optional: true });\nprivate parent = inject(Service, { skipSelf: true });",
+      "tags": [
+        "modifiers",
+        "di",
+        "optional"
+      ],
+      "references": [
+        "https://angular.dev/api/core/Optional",
+        "https://angular.dev/guide/di/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-016",
+      "difficulty": "Intermediate",
+      "question": "What is a multi-provider and when is it useful?",
+      "answer": "A multi-provider registers several values under the same token and collects them into an array, enabled by setting multi: true on each provider. Angular uses this internally for tokens such as NG_VALIDATORS and HTTP_INTERCEPTORS. It is the right pattern when a feature should extend a collection rather than replace a single value.",
+      "code": "{ provide: NG_VALIDATORS, useExisting: MyValidator, multi: true }",
+      "tags": [
+        "multi-provider",
+        "di",
+        "extension"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/defining-dependency-providers",
+        "https://angular.dev/api/core/Provider"
+      ]
+    },
+    {
+      "id": "dependency-injection-017",
+      "difficulty": "Intermediate",
+      "question": "How does Angular know the dependencies of a class at runtime?",
+      "answer": "Angular relies on the type annotations of constructor parameters or on explicit inject() calls, which the compiler records as metadata. When classes are compiled ahead of time, this metadata is emitted so the injector can resolve each parameter. Build tools must preserve the needed metadata, which modern Angular handles automatically.",
+      "tags": [
+        "metadata",
+        "di",
+        "compiler"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/dependency-injection",
+        "https://angular.dev/tools/cli/aot-compiler"
+      ]
+    },
+    {
+      "id": "dependency-injection-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a provider and an import for a service?",
+      "answer": "Importing a service only makes the class available in a file, while providing it registers a factory with an injector so it can be resolved. Importing alone does not make the service injectable. With providedIn: 'root', the providing step is declared on the service itself.",
+      "tags": [
+        "providers",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/defining-dependency-providers",
+        "https://angular.dev/guide/di/creating-injectable-service"
+      ]
+    },
+    {
+      "id": "dependency-injection-019",
+      "difficulty": "Intermediate",
+      "question": "How do you provide configuration values to a service?",
+      "answer": "Define an InjectionToken with the right type and register it with a value or factory provider in the application config or a route. Services inject the token instead of reading globals. This keeps configuration explicit, overridable in tests, and independent of the build environment.",
+      "tags": [
+        "injectiontoken",
+        "configuration",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/lightweight-injection-tokens",
+        "https://angular.dev/guide/di/defining-dependency-providers"
+      ]
+    },
+    {
+      "id": "dependency-injection-020",
+      "difficulty": "Intermediate",
+      "question": "Why is providedIn: 'root' preferred over module-level providers for shared services?",
+      "answer": "providedIn: 'root' registers the provider with the root injector without listing it anywhere, and the bundler can drop the service entirely if nothing injects it. Module-level providers work but require the module to be imported and are harder to tree-shake. The root form also keeps the service's own file self-describing.",
+      "tags": [
+        "providedin",
+        "tree-shaking",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/creating-injectable-service",
+        "https://angular.dev/guide/ngmodules/providers"
+      ]
+    },
+    {
+      "id": "dependency-injection-021",
+      "difficulty": "Advanced",
+      "question": "How does a child component get its own instance of a shared service?",
+      "answer": "Add the service to the component's providers array so Angular creates a component-scoped injector and a fresh instance for that component and its descendants. Children that inject the same token receive the nearest provider, which is the component-level instance. This is a common way to isolate state per component instance.",
+      "tags": [
+        "hierarchical",
+        "scope",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/di/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-022",
+      "difficulty": "Advanced",
+      "question": "What is forwardRef and when is it needed?",
+      "answer": "forwardRef wraps a class reference so it can be used before the class is defined, which resolves circular references between classes. Angular accepts it in places such as provider definitions and host directives. Prefer restructuring the code to break the cycle, and use forwardRef only when that is impractical.",
+      "tags": [
+        "forwardref",
+        "di",
+        "circular"
+      ],
+      "references": [
+        "https://angular.dev/api/core/forwardRef",
+        "https://angular.dev/guide/di/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-023",
+      "difficulty": "Advanced",
+      "question": "How do providers defined on a lazy-loaded route behave?",
+      "answer": "Providers declared on a lazy-loaded route are created in that route's environment injector, so the service instance is created when the route loads and destroyed with the injector. Other parts of the app that inject the same token at the root level get a different instance. This scoping is deliberate and is a frequent source of confusion in large applications.",
+      "tags": [
+        "lazy-loading",
+        "providers",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "dependency-injection-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using inject() versus constructor injection?",
+      "answer": "inject() works in field initializers, factory functions, and guards, and it lets you compose small helper functions that hide their dependencies. Constructor injection makes dependencies explicit in the signature and is familiar to developers coming from other DI frameworks. Both are equivalent at runtime, so teams often standardize on one for consistency.",
+      "tags": [
+        "inject",
+        "constructor",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/dependency-injection-context",
+        "https://angular.dev/api/core/inject"
+      ]
+    },
+    {
+      "id": "dependency-injection-025",
+      "difficulty": "Advanced",
+      "question": "How would you design services to keep an application testable and loosely coupled?",
+      "answer": "Define small interfaces around external concerns, provide implementations through tokens, and keep services free of direct DOM or global access. Injecting an HttpClient or a repository rather than touching the network directly lets tests substitute controlled doubles. Following these boundaries means most logic can be tested without rendering components or hitting the network.",
+      "tags": [
+        "design",
+        "testability",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/services",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,213 @@
+{
+  "category": "Structural Patterns Overview",
+  "slug": "structural-overview",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "structural-overview-001",
+      "difficulty": "Beginner",
+      "question": "What are structural design patterns?",
+      "answer": "Structural patterns describe how classes and objects are composed to form larger structures while keeping them flexible and efficient. They focus on relationships between entities rather than on creation or algorithms. The GoF structural patterns are Adapter, Bridge, Composite, Decorator, Facade, Flyweight, and Proxy.",
+      "tags": ["structural", "overview"],
+      "references": ["https://refactoring.guru/design-patterns/structural-patterns"]
+    },
+    {
+      "id": "structural-overview-002",
+      "difficulty": "Beginner",
+      "question": "What is the Adapter pattern used for?",
+      "answer": "Adapter converts the interface of an existing class into another interface that clients expect, letting incompatible types work together. It is common when integrating third-party or legacy code you cannot change. The adapter wraps the adaptee and translates calls.",
+      "tags": ["adapter", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "structural-overview-003",
+      "difficulty": "Beginner",
+      "question": "What does the Facade pattern do?",
+      "answer": "Facade provides a simplified interface to a complex subsystem, hiding its many classes and interactions behind one entry point. It reduces coupling for clients and makes the subsystem easier to use. It does not prevent advanced callers from using the subsystem directly.",
+      "tags": ["facade", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "structural-overview-004",
+      "difficulty": "Beginner",
+      "question": "What is the Decorator pattern?",
+      "answer": "Decorator attaches additional responsibilities to an object dynamically by wrapping it in another object that implements the same interface. It is a flexible alternative to subclassing for adding behavior like caching, logging, or validation. Decorators can be stacked to compose several behaviors.",
+      "tags": ["decorator", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "structural-overview-005",
+      "difficulty": "Beginner",
+      "question": "What is the Proxy pattern?",
+      "answer": "Proxy provides a surrogate or placeholder for another object to control access to it. Common uses include lazy loading, access control, remote calls, and caching. The proxy implements the same interface as the real subject so clients see no difference.",
+      "tags": ["proxy", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "structural-overview-006",
+      "difficulty": "Beginner",
+      "question": "What is the Composite pattern?",
+      "answer": "Composite composes objects into tree structures to represent part-whole hierarchies, letting clients treat individual objects and groups uniformly. Both leaves and containers implement the same interface. It is ideal for file systems, UI trees, and nested menus.",
+      "tags": ["composite", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "structural-overview-007",
+      "difficulty": "Beginner",
+      "question": "What is the Bridge pattern?",
+      "answer": "Bridge separates an abstraction from its implementation so the two can vary independently. Instead of a combinatorial explosion of subclasses, you have two hierarchies linked by composition. It is useful when both the abstraction and the implementation are expected to grow.",
+      "tags": ["bridge", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "structural-overview-008",
+      "difficulty": "Beginner",
+      "question": "What is the Flyweight pattern?",
+      "answer": "Flyweight shares common intrinsic state across many objects to reduce memory use, keeping extrinsic state outside and passing it in at use time. It is useful when you have a huge number of similar objects, such as characters in a document or tiles in a game. The shared flyweights are immutable.",
+      "tags": ["flyweight", "structural"],
+      "references": ["https://refactoring.guru/design-patterns/flyweight"]
+    },
+    {
+      "id": "structural-overview-009",
+      "difficulty": "Beginner",
+      "question": "How does an Adapter differ from a Decorator?",
+      "answer": "Adapter changes the interface of an object so clients can use it, translating between incompatible APIs. Decorator keeps the same interface but adds behavior around the wrapped object. Adapter is about compatibility, while Decorator is about extending behavior.",
+      "tags": ["adapter", "decorator"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "structural-overview-010",
+      "difficulty": "Beginner",
+      "question": "How does a Facade differ from an Adapter?",
+      "answer": "A Facade simplifies a whole subsystem behind one convenient interface, often combining several classes. An Adapter makes one existing interface match another expected interface. Facade reduces complexity, while Adapter resolves incompatibility.",
+      "tags": ["facade", "adapter"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "structural-overview-011",
+      "difficulty": "Intermediate",
+      "question": "How does the .NET middleware pipeline relate to structural patterns?",
+      "answer": "Middleware components wrap the next delegate in the pipeline, which is the Decorator pattern applied to request handling. Each component can inspect or modify the request and response around the inner handler. Ordering determines the nesting, much like stacking decorators.",
+      "tags": ["decorator", "middleware"],
+      "code": "app.Use(async (ctx, next) =>\n{\n    // before\n    await next();\n    // after\n});",
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"]
+    },
+    {
+      "id": "structural-overview-012",
+      "difficulty": "Intermediate",
+      "question": "How do stream wrappers in .NET illustrate the Decorator pattern?",
+      "answer": "Classes like GZipStream, CryptoStream, and BufferedStream wrap another stream and add behavior while implementing the same Stream interface. They can be layered, for example compressing then encrypting. This is a textbook Decorator because the interface stays the same.",
+      "tags": ["decorator", "streams"],
+      "code": "using var file = File.Create(\"out.gz\");\nusing var gzip = new GZipStream(file, CompressionLevel.Optimal);",
+      "references": ["https://learn.microsoft.com/dotnet/api/system.io.compression.gzipstream"]
+    },
+    {
+      "id": "structural-overview-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a Decorator for a service with DI?",
+      "answer": "Register the concrete service, then wrap it in a decorator that also implements the same interface and delegates to the inner instance. In the built-in container you register the decorator with a factory that resolves the inner service. Third-party containers support decoration more directly.",
+      "tags": ["decorator", "dependency-injection"],
+      "code": "builder.Services.AddScoped<IReportService, ReportService>();\nbuilder.Services.Decorate<IReportService, CachedReportService>();",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "structural-overview-014",
+      "difficulty": "Intermediate",
+      "question": "How does the Composite pattern enable uniform tree traversal?",
+      "answer": "Because leaves and containers share an interface, a client can call an operation on any node and recursion handles the rest. Each container forwards the call to its children. This avoids type checks and special-casing in the client.",
+      "tags": ["composite", "traversal"],
+      "code": "public interface INode { void Render(StringBuilder sb); }\npublic sealed class Panel : INode { /* foreach child.Render(sb) */ }",
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "structural-overview-015",
+      "difficulty": "Intermediate",
+      "question": "How does a Proxy support lazy loading?",
+      "answer": "The proxy holds a reference to the real object and creates it only on first use. Until then, calls either return cached data or trigger initialization. This defers expensive work and is common for large images or remote resources.",
+      "tags": ["proxy", "lazy"],
+      "code": "public sealed class ImageProxy : IImage\n{\n    private IImage? _real;\n    public void Draw() => (_real ??= new RealImage()).Draw();\n}",
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "structural-overview-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a Proxy and a Decorator?",
+      "answer": "Both implement the same interface as the subject, but a Proxy controls access and often manages the subject's lifecycle, while a Decorator adds behavior and is usually supplied the wrapped object. Proxies are often created internally, whereas decorators are composed by the client. Their intent differs even though structure is similar.",
+      "tags": ["proxy", "decorator"],
+      "references": ["https://refactoring.guru/design-patterns/proxy"]
+    },
+    {
+      "id": "structural-overview-017",
+      "difficulty": "Intermediate",
+      "question": "How does the Bridge pattern reduce class explosion?",
+      "answer": "Without Bridge, combining m abstractions with n implementations needs m times n subclasses. Bridge splits them into two hierarchies joined by composition, so you need m plus n types. This keeps each dimension extensible independently.",
+      "tags": ["bridge", "extensibility"],
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "structural-overview-018",
+      "difficulty": "Intermediate",
+      "question": "How does Dependency Injection relate to the Facade pattern?",
+      "answer": "A facade can be a convenient single dependency that hides a subsystem, and injecting it keeps callers decoupled from the subsystem's internals. The facade itself can depend on the subsystem through DI. This combines simplified access with testability.",
+      "tags": ["facade", "dependency-injection"],
+      "references": ["https://refactoring.guru/design-patterns/facade"]
+    },
+    {
+      "id": "structural-overview-019",
+      "difficulty": "Intermediate",
+      "question": "When does a wrapper become an anti-pattern?",
+      "answer": "Wrappers become problematic when they add layers with no behavior or value, making navigation and debugging harder. Passing through every member without adding meaning is a sign the wrapper is unnecessary. Keep wrappers only when they add behavior, translation, or control.",
+      "tags": ["structural", "trade-offs"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "structural-overview-020",
+      "difficulty": "Intermediate",
+      "question": "How do structural patterns help with legacy integration?",
+      "answer": "Adapters isolate legacy APIs behind modern interfaces, and facades hide their complexity from new code. This lets you modernize incrementally without rewriting the legacy system. Proxies can also add caching or retries around slow legacy calls.",
+      "tags": ["adapter", "legacy"],
+      "references": ["https://refactoring.guru/design-patterns/adapter"]
+    },
+    {
+      "id": "structural-overview-021",
+      "difficulty": "Advanced",
+      "question": "How do you choose between Decorator and inheritance for adding cross-cutting behavior?",
+      "answer": "Inheritance fixes behavior at compile time and requires a subclass per combination, which explodes as features multiply. Decorator composes behavior at runtime and lets you apply only the needed combination per instance. Choose inheritance for stable, always-on behavior and Decorator for optional or combinable concerns.",
+      "tags": ["decorator", "inheritance"],
+      "references": ["https://refactoring.guru/design-patterns/decorator"]
+    },
+    {
+      "id": "structural-overview-022",
+      "difficulty": "Advanced",
+      "question": "How do you avoid deep decorator stacks that hurt debugging?",
+      "answer": "Keep decorators thin and focused on one concern, and give each a clear name so stack traces are readable. Limit the number of layers and consider combining closely related concerns into one decorator. Logging at the boundary and using diagnostics can also clarify behavior.",
+      "tags": ["decorator", "debugging"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "structural-overview-023",
+      "difficulty": "Advanced",
+      "question": "How does the Composite pattern interact with caching and invalidation?",
+      "answer": "Caching a composite node's result must account for changes in any descendant, which can be expensive to track. A common approach is to cache per node and invalidate upward when a child changes. Alternatively, cache only leaf computations and recompute containers cheaply.",
+      "tags": ["composite", "caching"],
+      "references": ["https://refactoring.guru/design-patterns/composite"]
+    },
+    {
+      "id": "structural-overview-024",
+      "difficulty": "Advanced",
+      "question": "How would you apply the Bridge pattern to a cross-platform graphics renderer?",
+      "answer": "Define an abstraction hierarchy for shapes and an implementation hierarchy for renderers such as OpenGL or Direct3D. Shapes hold a renderer reference and delegate drawing to it. Adding a shape or a renderer touches only its own hierarchy, keeping combinations linear.",
+      "tags": ["bridge", "graphics"],
+      "code": "public abstract class Shape(IRenderer renderer)\n{\n    protected IRenderer Renderer { get; } = renderer;\n    public abstract void Draw();\n}",
+      "references": ["https://refactoring.guru/design-patterns/bridge"]
+    },
+    {
+      "id": "structural-overview-025",
+      "difficulty": "Advanced",
+      "question": "How do structural patterns combine in a typical layered application?",
+      "answer": "A facade exposes a coarse-grained API to controllers, adapters translate external contracts, decorators add caching and logging, and proxies may control remote or lazy resources. Composite models tree-like domain structures, and flyweight shares heavy immutable data. Together they keep layers decoupled and behavior composable.",
+      "tags": ["structural", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"]
+    }
+  ]
+}

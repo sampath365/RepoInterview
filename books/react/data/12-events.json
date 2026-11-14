@@ -1,0 +1,342 @@
+{
+  "category": "Events & Refs",
+  "slug": "events",
+  "icon": "cursor",
+  "questions": [
+    {
+      "id": "events-001",
+      "difficulty": "Beginner",
+      "question": "How do you handle events in React?",
+      "answer": "You attach an event handler by passing a function to a camelCase prop such as onClick or onChange. React attaches a single listener at the root and dispatches synthetic events to your handlers. You pass the function itself, not a call. The handler receives a synthetic event object with the usual methods.",
+      "code": "<button onClick={handleClick}>Click</button>",
+      "tags": [
+        "events",
+        "handlers"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-002",
+      "difficulty": "Beginner",
+      "question": "Why do you write onClick={handleClick} instead of onClick={handleClick()}?",
+      "answer": "Writing onClick={handleClick} passes the function so React can call it when the event fires. Adding parentheses calls the function immediately during render and passes its return value, which is usually not what you want. If you need to pass arguments, wrap the call in an arrow function. This distinction is a common early mistake.",
+      "code": "<button onClick={() => save(id)}>Save</button>",
+      "tags": [
+        "events",
+        "handlers"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-003",
+      "difficulty": "Beginner",
+      "question": "What is a synthetic event?",
+      "answer": "A synthetic event is React's cross-browser wrapper around the native event, giving a consistent API across browsers. It has methods like preventDefault and stopPropagation and properties like target. Since React 17 the pooling behavior was removed, so you can access the event asynchronously. You rarely need the native event, which is available as event.nativeEvent.",
+      "tags": [
+        "events",
+        "synthetic"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-004",
+      "difficulty": "Beginner",
+      "question": "How do you prevent the default browser behavior?",
+      "answer": "You call event.preventDefault inside the handler, for example to stop a form from reloading the page or a link from navigating. This works on the synthetic event and delegates to the native event. Call it only when you actually need to block the default. Combined with returning false you do not, because React does not use that convention.",
+      "code": "function onSubmit(e) {\n  e.preventDefault();\n}",
+      "tags": [
+        "events",
+        "preventDefault"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-005",
+      "difficulty": "Beginner",
+      "question": "How do you stop an event from bubbling?",
+      "answer": "You call event.stopPropagation in the handler to prevent the event from reaching ancestor handlers. This is useful when a click inside a child should not trigger the parent, such as a delete button inside a clickable row. Prefer restructuring over heavy use of stopPropagation when possible. It can make event flow harder to reason about.",
+      "tags": [
+        "events",
+        "propagation"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-006",
+      "difficulty": "Beginner",
+      "question": "What is a ref in React?",
+      "answer": "A ref is a mutable object created with useRef that persists across renders and has a current property. It is used to reference a DOM node, store a timer id, or keep a value that should not trigger a re-render. Changing current does not update the UI. Refs are the escape hatch for imperative access.",
+      "tags": [
+        "refs",
+        "useRef"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "events-007",
+      "difficulty": "Beginner",
+      "question": "How do you focus an input using a ref?",
+      "answer": "You create a ref, attach it to the input with the ref prop, and call ref.current.focus in an event handler or effect. The ref points to the DOM node after the element mounts. Use an effect if the focus should happen on mount. This is a common use of refs for imperative actions.",
+      "code": "const ref = useRef(null);\nuseEffect(() => ref.current.focus(), []);\nreturn <input ref={ref} />;",
+      "tags": [
+        "refs",
+        "focus"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "events-008",
+      "difficulty": "Beginner",
+      "question": "What is event delegation and how does React use it?",
+      "answer": "Event delegation attaches one listener at a common ancestor and uses the event target to decide what to do. React attaches listeners at the root of your app rather than on every element. This reduces the number of listeners and works well with dynamically added elements. It is why handlers still fire for elements rendered later.",
+      "tags": [
+        "events",
+        "delegation"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-009",
+      "difficulty": "Beginner",
+      "question": "How do you pass arguments to an event handler?",
+      "answer": "You wrap the call in an arrow function, such as onClick={() => remove(id)}, so the function is created at render time and called with the argument on click. Alternatively you can bind the argument, but arrow functions are clearer. Be aware that a new function is created each render. For lists this is normal and usually fine.",
+      "tags": [
+        "events",
+        "handlers"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between state and refs for storing values?",
+      "answer": "State changes trigger re-renders so the UI reflects the new value, while refs hold values without re-rendering. Use state for anything displayed and refs for imperative data such as DOM nodes or timer ids. Mixing them up leads to either missed updates or wasted renders. Choose based on whether the value affects the rendered output.",
+      "tags": [
+        "refs",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "events-011",
+      "difficulty": "Intermediate",
+      "question": "How do you handle keyboard events?",
+      "answer": "You attach onKeyDown, onKeyUp or onKeyPress handlers and inspect event.key to decide what to do, such as triggering an action on Enter or Escape. Prefer semantic elements so keyboard support is built in, and only add custom handling when needed. Always ensure interactive elements are reachable by tab. Keyboard support is a core accessibility requirement.",
+      "code": "function onKeyDown(e) {\n  if (e.key === 'Escape') close();\n}",
+      "tags": [
+        "events",
+        "keyboard"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/KeyboardEvent/key"
+      ]
+    },
+    {
+      "id": "events-012",
+      "difficulty": "Intermediate",
+      "question": "How do you forward a ref through a component?",
+      "answer": "You wrap the component in forwardRef and accept ref as the second parameter, then attach it to a DOM element or pass it further down. This lets parent code access the underlying node. In React 19 ref can be passed as a normal prop instead. Forwarding is common for reusable inputs and buttons.",
+      "code": "const Input = forwardRef((props, ref) => <input ref={ref} {...props} />);",
+      "tags": [
+        "refs",
+        "forwardRef"
+      ],
+      "references": [
+        "https://react.dev/reference/react/forwardRef"
+      ]
+    },
+    {
+      "id": "events-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use a callback ref?",
+      "answer": "Instead of passing a ref object, you pass a function to the ref prop, and React calls it with the DOM node on mount and with null on unmount. This is useful when you need to run code when the node appears, such as measuring it. The callback can also store the node in state or a ref. Remember to handle the null case on cleanup.",
+      "code": "const setNode = (node) => { nodeRef.current = node; };",
+      "tags": [
+        "refs",
+        "callbacks"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/common"
+      ]
+    },
+    {
+      "id": "events-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a click outside a component?",
+      "answer": "You add a document-level listener in an effect and close the component when the click target is not inside its ref. Clean up the listener on unmount to avoid leaks. Some implementations use the capture phase so the close happens before other handlers. This pattern is common for dropdowns and modals.",
+      "code": "useEffect(() => {\n  const onDoc = (e) => {\n    if (!ref.current.contains(e.target)) close();\n  };\n  document.addEventListener('mousedown', onDoc);\n  return () => document.removeEventListener('mousedown', onDoc);\n}, []);",
+      "tags": [
+        "events",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "events-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between onBlur and onFocus?",
+      "answer": "onFocus fires when an element gains focus and onBlur when it loses focus. They are useful for validating fields when the user leaves them or for showing help text. Both bubble in React, unlike the native versions, so you can delegate them. Combine them with state to track the focused field.",
+      "tags": [
+        "events",
+        "focus"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "events-016",
+      "difficulty": "Intermediate",
+      "question": "How do you read the value from an event target?",
+      "answer": "You read event.target.value for inputs and textareas, or event.target.checked for checkboxes and radios. The target is the element that triggered the event. For delegated handlers you may need event.currentTarget, which is the element the handler is attached to. Destructuring these fields keeps handlers concise.",
+      "code": "const { name, value } = e.target;",
+      "tags": [
+        "events",
+        "target"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Event/target"
+      ]
+    },
+    {
+      "id": "events-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a form submit with an async handler?",
+      "answer": "You prevent the default action, set a pending state, await the request and then handle success or failure, updating state accordingly. Disable the submit button while pending to avoid duplicate submissions. Catch errors and show a message. Because the handler is async, ensure you do not rely on event pooling, which no longer applies in React 17 and later.",
+      "tags": [
+        "events",
+        "async"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/form"
+      ]
+    },
+    {
+      "id": "events-018",
+      "difficulty": "Intermediate",
+      "question": "Why can event handlers capture stale state?",
+      "answer": "Each render creates new handler functions that close over the props and state of that render. If a handler runs later, for example from a timer, it may see values from an old render. Use the updater form for state, include dependencies when memoizing, or read the latest value from a ref. Understanding closures explains many async bugs.",
+      "tags": [
+        "events",
+        "closures"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "events-019",
+      "difficulty": "Intermediate",
+      "question": "How do you attach a native event listener in React?",
+      "answer": "You use useEffect to add the listener with addEventListener and remove it in cleanup. This is needed for events React does not expose, for listeners on window or document, or when you need a non-passive option. Keep the listener stable or re-create it only when its dependencies change. Always clean up to avoid duplicate listeners.",
+      "code": "useEffect(() => {\n  window.addEventListener('scroll', onScroll, { passive: true });\n  return () => window.removeEventListener('scroll', onScroll);\n}, []);",
+      "tags": [
+        "events",
+        "native"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useEffect"
+      ]
+    },
+    {
+      "id": "events-020",
+      "difficulty": "Intermediate",
+      "question": "How do you debounce or throttle event handlers?",
+      "answer": "You wrap the handler in a debounce or throttle function so it runs less often, or store a timer in a ref and clear it on each call. Debouncing waits for a pause in events while throttling limits the rate. Remember to clean up timers to avoid work after unmount. This is common for scroll, resize and search input handlers.",
+      "tags": [
+        "events",
+        "performance"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/resize_event"
+      ]
+    },
+    {
+      "id": "events-021",
+      "difficulty": "Advanced",
+      "question": "Why did React remove event pooling and what changed?",
+      "answer": "React used to reuse synthetic event objects for performance and null out their fields after the handler ran, which forced people to call event.persist for async access. Since React 17 pooling was removed because modern browsers made it unnecessary. You can now read event properties at any time after the handler. This simplified async code significantly.",
+      "tags": [
+        "events",
+        "synthetic"
+      ],
+      "references": [
+        "https://react.dev/blog/2020/08/10/react-v17-rc"
+      ]
+    },
+    {
+      "id": "events-022",
+      "difficulty": "Advanced",
+      "question": "How does event propagation differ in React 17 and later?",
+      "answer": "React 17 changed where listeners are attached, moving them from document to the root container. This means events no longer bubble to the document in the same way, which affects code that relied on document-level handlers or stopPropagation across nested roots. Multiple React versions on one page also behave better. For most apps the change is invisible, but integrations should be aware of it.",
+      "tags": [
+        "events",
+        "propagation"
+      ],
+      "references": [
+        "https://react.dev/blog/2020/08/10/react-v17-rc"
+      ]
+    },
+    {
+      "id": "events-023",
+      "difficulty": "Advanced",
+      "question": "How do you coordinate refs across multiple elements?",
+      "answer": "You can keep an array or map of refs in a single ref, or use a callback ref that stores nodes in a collection. This is useful for measuring a list of items or managing focus among many elements. Keep the collection updated when elements mount and unmount. Avoid indexing into refs by position when the list can reorder.",
+      "tags": [
+        "refs",
+        "patterns"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useRef"
+      ]
+    },
+    {
+      "id": "events-024",
+      "difficulty": "Advanced",
+      "question": "How do imperative handles improve component encapsulation?",
+      "answer": "useImperativeHandle lets a component expose only specific methods through its ref instead of the whole DOM node. This keeps the imperative surface small and intentional, which is easier to maintain and document. It pairs with forwardRef to attach the handle. The trade-off is added indirection, so use it only when imperative access is genuinely needed.",
+      "tags": [
+        "refs",
+        "useImperativeHandle"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useImperativeHandle"
+      ]
+    },
+    {
+      "id": "events-025",
+      "difficulty": "Advanced",
+      "question": "What are the accessibility implications of custom event handling?",
+      "answer": "Custom interactive elements must replicate what native controls provide: keyboard activation, focus management, roles and aria state. If you build a button out of a div, you must handle Enter and Space, set tabIndex and a role. Using native elements avoids most of this work. Test with a keyboard and a screen reader to catch gaps.",
+      "tags": [
+        "events",
+        "accessibility"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/button_role"
+      ]
+    }
+  ]
+}

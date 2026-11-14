@@ -1,0 +1,216 @@
+{
+  "category": "Deployment, Localization & Best Practices",
+  "slug": "deployment",
+  "icon": "package",
+  "questions": [
+    {
+      "id": "deployment-001",
+      "difficulty": "Beginner",
+      "question": "What are the ways to deploy a WPF application on modern .NET?",
+      "answer": "You can publish framework-dependent, where the target machine needs the .NET Desktop Runtime, or self-contained, which bundles the runtime with the app. You can also publish as a single file. The choice trades download size and dependency management for deployment simplicity.",
+      "tags": ["deployment", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "deployment-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between framework-dependent and self-contained deployment?",
+      "answer": "Framework-dependent deployment is smaller because it relies on a shared runtime installed on the machine. Self-contained deployment includes the runtime, so it runs without installing .NET but is larger. Self-contained suits controlled environments where installing the runtime is difficult.",
+      "tags": ["deployment", "publishing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "deployment-003",
+      "difficulty": "Beginner",
+      "question": "How do you publish a WPF app with the dotnet CLI?",
+      "answer": "Use dotnet publish with the target framework and configuration, and set runtime and self-contained options as needed. For single-file output add the PublishSingleFile property. The output goes to the publish folder.",
+      "code": "dotnet publish -c Release -r win-x64 --self-contained true \\\n  -p:PublishSingleFile=true",
+      "tags": ["publishing", "cli"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "deployment-004",
+      "difficulty": "Beginner",
+      "question": "What is ClickOnce and is it still used for WPF?",
+      "answer": "ClickOnce is a deployment technology that installs and updates Windows applications from a server or network share with minimal user interaction. It is still supported for WPF but has limitations such as restricted install locations. Many teams now use MSIX or installers instead.",
+      "tags": ["clickonce", "deployment"],
+      "references": ["https://learn.microsoft.com/visualstudio/deployment/clickonce-security-and-deployment"]
+    },
+    {
+      "id": "deployment-005",
+      "difficulty": "Beginner",
+      "question": "What is MSIX for WPF applications?",
+      "answer": "MSIX is a modern packaging format that installs and updates Windows applications with a clean uninstall and containerized file system. It supports WPF desktop apps and integrates with the Microsoft Store and enterprise deployment. It requires code signing for distribution.",
+      "tags": ["msix", "deployment"],
+      "references": ["https://learn.microsoft.com/windows/msix/overview"]
+    },
+    {
+      "id": "deployment-006",
+      "difficulty": "Beginner",
+      "question": "What is localization in WPF?",
+      "answer": "Localization adapts an application for a specific culture, including translated text, formatted numbers and dates, and right-to-left layout. WPF supports localization through resource dictionaries, satellite assemblies, and the Language property. Proper localization also considers images and layout that must adapt.",
+      "tags": ["localization", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between globalization and localization?",
+      "answer": "Globalization is designing an application so it can support multiple cultures, for example using culture-aware formatting. Localization is the process of translating and adapting the application for a specific culture. Globalization comes first and makes localization possible.",
+      "tags": ["globalization", "localization"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-008",
+      "difficulty": "Beginner",
+      "question": "How do you format numbers and dates for the current culture?",
+      "answer": "Use culture-aware formatting with ToString and a format string, or StringFormat in bindings, and let the current culture drive the result. Avoid hard-coding separators or date patterns. WPF bindings use the element's Language and the current culture for formatting.",
+      "code": "<TextBlock Text=\"{Binding Amount, StringFormat={}{0:C}}\"/>",
+      "tags": ["localization", "formatting"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-009",
+      "difficulty": "Beginner",
+      "question": "What is the FrameworkElement.Language property used for?",
+      "answer": "The Language property sets the culture used for formatting and text rendering in the element and its children. By default it follows the WPF default, which may not match the current thread culture. Setting it to the current culture ensures correct formatting.",
+      "code": "Language = XmlLanguage.GetLanguage(\n    CultureInfo.CurrentCulture.IetfLanguageTag);",
+      "tags": ["localization", "culture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-010",
+      "difficulty": "Beginner",
+      "question": "Why should strings not be hard-coded in XAML for localizable apps?",
+      "answer": "Hard-coded strings cannot be translated without editing and recompiling the markup. Extracting them into resource files or resource dictionaries lets translators work separately. This is a core practice for maintainable localization.",
+      "tags": ["localization", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-011",
+      "difficulty": "Intermediate",
+      "question": "How do you localize a WPF application using resource dictionaries?",
+      "answer": "Create a resource dictionary per culture containing the same keys with translated values, and load the appropriate dictionary at startup based on the current culture. Reference strings with DynamicResource so the UI updates if the culture changes. This keeps translations separate from the layout.",
+      "code": "<TextBlock Text=\"{DynamicResource Greeting}\"/>",
+      "tags": ["localization", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-012",
+      "difficulty": "Intermediate",
+      "question": "How do you set the UI culture in a WPF application?",
+      "answer": "Set CultureInfo.DefaultThreadCurrentCulture and DefaultThreadCurrentUICulture, or set the thread culture in the startup code, and apply the same culture to the elements' Language. This ensures formatting and resource lookup use the chosen culture. Persist the user's culture choice in settings.",
+      "code": "var ci = new CultureInfo(\"fr-FR\");\nCultureInfo.DefaultThreadCurrentCulture = ci;\nThread.CurrentThread.CurrentUICulture = ci;",
+      "tags": ["localization", "culture"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-013",
+      "difficulty": "Intermediate",
+      "question": "How do you support right-to-left languages?",
+      "answer": "Set FlowDirection to RightToLeft on the root element, and WPF mirrors the layout and text alignment automatically. Use FlowDirection on individual elements when only part of the UI should be mirrored. Test with an RTL culture to verify that images and alignment adapt.",
+      "code": "<Window FlowDirection=\"RightToLeft\">",
+      "tags": ["localization", "rtl"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-014",
+      "difficulty": "Intermediate",
+      "question": "What is the role of satellite assemblies in localization?",
+      "answer": "Satellite assemblies contain compiled resources for a specific culture and are loaded on demand based on the current UI culture. They keep translations separate from the main assembly. The build process creates them when localized resources exist.",
+      "tags": ["localization", "satellite-assemblies"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-015",
+      "difficulty": "Intermediate",
+      "question": "How do you manage application settings in a WPF app?",
+      "answer": "Use the settings infrastructure to store user and application settings, or a configuration file or JSON store for modern apps. Bind UI to settings or load them at startup. Persist changes explicitly and provide defaults.",
+      "code": "Properties.Settings.Default.Theme = \"Dark\";\nProperties.Settings.Default.Save();",
+      "tags": ["settings", "configuration"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "deployment-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle application updates in a deployed WPF app?",
+      "answer": "Options include ClickOnce automatic updates, MSIX package updates, or a custom updater that checks a server for a new version and downloads it. A custom updater gives control over the update flow. Whatever the mechanism, ensure the update is signed and verified.",
+      "tags": ["updates", "deployment"],
+      "references": ["https://learn.microsoft.com/visualstudio/deployment/clickonce-security-and-deployment"]
+    },
+    {
+      "id": "deployment-017",
+      "difficulty": "Intermediate",
+      "question": "How do you embed and reference images and other assets in a WPF app?",
+      "answer": "Add the files as Resource build action and reference them with a relative or pack URI in XAML. Embedded resources are compiled into the assembly. For large files you may prefer Content with copy-to-output so they load from disk.",
+      "code": "<Image Source=\"pack://application:,,,/MyApp;component/Assets/logo.png\"/>",
+      "tags": ["resources", "pack-uri"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/pack-uris-in-wpf"]
+    },
+    {
+      "id": "deployment-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the Resource and Content build actions?",
+      "answer": "Resource embeds the file in the assembly and loads it through the pack URI system. Content copies the file next to the application and loads it from disk. Resource is simpler for small assets, while Content suits files that must be replaced or are large.",
+      "tags": ["resources", "deployment"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/pack-uris-in-wpf"]
+    },
+    {
+      "id": "deployment-019",
+      "difficulty": "Intermediate",
+      "question": "How do you enable high-DPI awareness for a WPF app?",
+      "answer": "Modern .NET WPF apps are per-monitor DPI aware by default through the application manifest. You can specify DPI awareness in the app manifest and handle DPI change events for dynamic scaling. Testing on mixed-DPI monitors verifies correct scaling.",
+      "tags": ["dpi", "deployment"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/wpf-globalization-and-localization-overview"]
+    },
+    {
+      "id": "deployment-020",
+      "difficulty": "Intermediate",
+      "question": "What are best practices for exception handling in a WPF app?",
+      "answer": "Handle exceptions at the boundaries, subscribe to DispatcherUnhandledException and TaskScheduler.UnobservedTaskException, and log failures. Show a friendly error dialog and keep the app alive when possible. Avoid swallowing exceptions silently, which hides defects.",
+      "code": "AppDomain.CurrentDomain.UnhandledException +=\n    (s, e) => Log((Exception)e.ExceptionObject);",
+      "tags": ["exceptions", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "deployment-021",
+      "difficulty": "Advanced",
+      "question": "How do you structure a large WPF solution for maintainability?",
+      "answer": "Separate the solution into projects for the domain model, view models, views, and shared libraries, and use MVVM to keep layers decoupled. Share styles and resources in a common library. Use dependency injection and a consistent navigation and messaging approach.",
+      "tags": ["architecture", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/data-binding-overview"]
+    },
+    {
+      "id": "deployment-022",
+      "difficulty": "Advanced",
+      "question": "How do you make a WPF app ready for automated UI testing?",
+      "answer": "Set AutomationProperties.AutomationId on key controls and expose meaningful automation peers so tests can find elements reliably. Use UI Automation frameworks such as Appium or FlaUI, and keep logic in testable ViewModels. Stable automation ids reduce brittle tests.",
+      "tags": ["testing", "accessibility"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/accessibility-best-practices"]
+    },
+    {
+      "id": "deployment-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle versioning and compatibility when shipping updates?",
+      "answer": "Use semantic versioning, keep settings and data formats backward compatible, and migrate user data when the schema changes. Provide clear release notes and a rollback path. Avoid breaking changes in shared libraries used by other apps.",
+      "tags": ["versioning", "deployment"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "deployment-024",
+      "difficulty": "Advanced",
+      "question": "What security considerations apply to deploying a WPF app?",
+      "answer": "Sign your binaries and installer so users can verify authenticity, and sign packages for MSIX. Do not store secrets in the app; use protected storage or a service. Validate all input and be careful with file and network access, especially for elevated processes.",
+      "tags": ["security", "deployment"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/overview/"]
+    },
+    {
+      "id": "deployment-025",
+      "difficulty": "Advanced",
+      "question": "What are best practices for WPF application performance, maintainability, and accessibility together?",
+      "answer": "Keep the visual tree shallow and virtualize large lists, adopt MVVM with dependency injection for testable structure, and use automation properties, access keys, and system colors for accessibility. Localize strings and support high DPI from the start. Review these concerns continuously rather than retrofitting them at the end.",
+      "tags": ["best-practices", "accessibility"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-wpf-application-performance"]
+    }
+  ]
+}

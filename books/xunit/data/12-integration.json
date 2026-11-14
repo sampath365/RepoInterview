@@ -1,0 +1,218 @@
+{
+  "category": "Integration Testing & Testcontainers",
+  "slug": "integration",
+  "icon": "network",
+  "questions": [
+    {
+      "id": "integration-001",
+      "difficulty": "Beginner",
+      "question": "What is an integration test?",
+      "answer": "An integration test verifies that several components work together, such as an API, a database, and a message broker, rather than testing one class in isolation. It uses real or realistic infrastructure so it can catch wiring, serialization, and configuration problems that unit tests miss. Integration tests are slower than unit tests, so teams usually keep them focused on critical paths.",
+      "tags": ["integration", "definition"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "integration-002",
+      "difficulty": "Beginner",
+      "question": "What is Testcontainers for .NET?",
+      "answer": "Testcontainers for .NET is a library that starts disposable Docker containers from a test, waits until they are ready, and disposes them when the test finishes. It provides typed builders for databases, message brokers, and other services so you do not have to manage Docker manually. This gives integration tests real dependencies without permanent infrastructure.",
+      "tags": ["testcontainers", "docker"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-003",
+      "difficulty": "Beginner",
+      "question": "Why use containers for integration tests instead of a shared database?",
+      "answer": "A container per test run gives complete isolation, a known clean state, and a pinned version, so tests are reproducible and can run in parallel. A shared database drifts over time, accumulates state, and couples test runs to each other. Containers require Docker but remove the flakiness and coordination cost of shared infrastructure.",
+      "tags": ["isolation", "containers"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-004",
+      "difficulty": "Beginner",
+      "question": "How do you start a container in a test?",
+      "answer": "Build the container with the fluent builder, which pulls the image if needed, and call StartAsync to launch it; retrieve the mapped port or connection string from the container. Stop and dispose it in teardown so resources are released. Prefer a fixture so the container starts once per class or collection.",
+      "code": "var container = new ContainerBuilder()\n    .WithImage(\"postgres:16-alpine\")\n    .WithEnvironment(\"POSTGRES_PASSWORD\", \"pwd\")\n    .WithPortBinding(5432, true)\n    .Build();\nawait container.StartAsync();",
+      "tags": ["startup", "containers"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-005",
+      "difficulty": "Beginner",
+      "question": "What does the WithPortBinding method do?",
+      "answer": "WithPortBinding maps a container port to a host port; passing true lets Docker choose a free host port, which is what you want in tests to avoid conflicts. You then read the assigned port from container.GetMappedPublicPort(containerPort). Letting Docker pick the port is essential when several test runs execute in parallel.",
+      "code": "container.WithPortBinding(6379, true);\nvar port = container.GetMappedPublicPort(6379);",
+      "tags": ["ports", "networking"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-006",
+      "difficulty": "Beginner",
+      "question": "How do you wait until a container is ready?",
+      "answer": "Testcontainers waits automatically for the default readiness check of known modules, such as a database accepting connections, but you can customise it with a wait strategy like Wait.ForUnixContainer().UntilPortIsAvailable(port) or UntilMessageIsLogged. Without a proper wait strategy the first test may run before the service is up, causing flaky failures. Choosing the right strategy is the key to reliable container tests.",
+      "code": "new ContainerBuilder()\n    .WithImage(\"redis:7\")\n    .WithWaitStrategy(Wait.ForUnixContainer()\n        .UntilCommandIsCompleted(\"redis-cli\", \"ping\"))",
+      "tags": ["wait-strategy", "readiness"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-007",
+      "difficulty": "Beginner",
+      "question": "What is a module in Testcontainers?",
+      "answer": "A module is a preconfigured builder for a well-known image, such as PostgreSqlBuilder, MsSqlBuilder, or RedisBuilder, that sets the right ports, environment variables, and default wait strategy. Using a module removes boilerplate and reduces the chance of misconfiguration. Modules also expose connection strings and other helpers.",
+      "code": "var postgres = new PostgreSqlBuilder()\n    .WithImage(\"postgres:16-alpine\")\n    .Build();",
+      "tags": ["modules", "testcontainers"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-008",
+      "difficulty": "Beginner",
+      "question": "How do you clean up containers after tests?",
+      "answer": "Dispose the container, for example by calling DisposeAsync in a fixture's DisposeAsync, and Testcontainers uses the Ryuk resource reaper to remove leftover containers even if the process crashes. Explicit disposal makes the test run end promptly and frees resources. Ryuk is the safety net that prevents orphaned containers in CI.",
+      "tags": ["cleanup", "ryuk"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-009",
+      "difficulty": "Beginner",
+      "question": "What is Docker Compose support in Testcontainers?",
+      "answer": "Testcontainers can start a whole stack defined in a docker-compose file with DockerComposeContainer, which is convenient when your application needs several services such as a database plus a broker. You then reference each service by name to build connection strings. Compose support is useful for complex topologies but heavier than a single container.",
+      "code": "var compose = new DockerComposeContainer(\n    new FileInfo(\"docker-compose.yml\"));\nawait compose.StartAsync();",
+      "tags": ["docker-compose", "stacks"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-010",
+      "difficulty": "Beginner",
+      "question": "How do you connect an application under test to a container?",
+      "answer": "Build the container first, obtain its connection string, and inject that string into the application's configuration, typically by overriding the connection string in a WebApplicationFactory. The application then talks to the real container through its normal code path. This combination gives realistic integration coverage without a permanently running server.",
+      "code": "builder.ConfigureAppConfiguration((_, cfg) =>\n    cfg.AddInMemoryCollection(new Dictionary<string, string?>\n    {\n        [\"ConnectionStrings:Db\"] = postgres.GetConnectionString()\n    }));",
+      "tags": ["configuration", "wiring"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use a container as an xUnit fixture?",
+      "answer": "Implement IAsyncLifetime on the fixture, start the container in InitializeAsync, and dispose it in DisposeAsync, then share it as a collection fixture so it starts once for the group. This amortises the pull and startup cost across many tests. The fixture also exposes the connection string so tests and the app can use it.",
+      "code": "public class DbFixture : IAsyncLifetime\n{\n    private PostgreSqlContainer _db = null!;\n    public string ConnectionString => _db.GetConnectionString();\n    public async ValueTask InitializeAsync()\n    {\n        _db = new PostgreSqlBuilder().Build();\n        await _db.StartAsync();\n    }\n    public async ValueTask DisposeAsync() => await _db.DisposeAsync();\n}",
+      "tags": ["fixtures", "iasynclifetime"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-012",
+      "difficulty": "Intermediate",
+      "question": "How do you run database migrations against a container database?",
+      "answer": "After the container starts, build a DbContext with the container's connection string and call Database.MigrateAsync so the schema matches the current model. Doing this in the fixture means every test run starts from a correct schema. Keep migration application in the fixture rather than in each test.",
+      "code": "var options = new DbContextOptionsBuilder<AppDb>()\n    .UseNpgsql(_db.GetConnectionString()).Options;\nawait using var ctx = new AppDb(options);\nawait ctx.Database.MigrateAsync();",
+      "tags": ["migrations", "efcore"],
+      "references": ["https://learn.microsoft.com/ef/core/managing-schemas/migrations/"]
+    },
+    {
+      "id": "integration-013",
+      "difficulty": "Intermediate",
+      "question": "How do you isolate data between integration tests using a shared container?",
+      "answer": "Give each test its own database, schema, or transaction, or reset the data in the fixture between tests. Rolling back a transaction per test is fast but does not work when the code under test controls its own transaction. For simplicity, many teams create a unique database per test class and drop it afterwards.",
+      "tags": ["isolation", "data"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-with-the-database"]
+    },
+    {
+      "id": "integration-014",
+      "difficulty": "Intermediate",
+      "question": "How do you test a message broker integration?",
+      "answer": "Start the broker in a container, publish a message through the application's producer, and consume it with the application's consumer, asserting that the expected effect occurs within a timeout. Using a real broker verifies serialization, routing, and acknowledgement behaviour. Always poll with a timeout rather than sleeping a fixed duration.",
+      "tags": ["messaging", "broker"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle container startup time in CI?",
+      "answer": "Pull images in a separate earlier step, use small alpine images, and share one container across a collection instead of starting one per test. Caching the Docker layer in CI reduces the pull time significantly. Also configure a generous startup timeout because CI runners are slower than developer machines.",
+      "tags": ["ci", "performance"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use Testcontainers with a non-root Docker socket?",
+      "answer": "Testcontainers honours the standard Docker environment variables such as DOCKER_HOST, so point it at the socket or remote daemon your CI provides. For rootless or remote setups you may need to configure the socket path and ensure Ryuk can reach the daemon. Check the connection with a minimal container test first when troubleshooting.",
+      "tags": ["docker", "ci"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-017",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on a side effect that happens asynchronously?",
+      "answer": "Poll the observable state with a bounded retry loop and a timeout rather than asserting once immediately. A helper that retries until the condition is true or the timeout elapses makes the test robust and still fails clearly when the effect never occurs. This pattern is common when waiting for a message to be consumed or a background job to finish.",
+      "code": "await AssertEx.EventuallyAsync(async () =>\n    Assert.True(await _store.ExistsAsync(id)),\n    timeout: TimeSpan.FromSeconds(10));",
+      "tags": ["polling", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "integration-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test an outbound HTTP dependency in an integration test?",
+      "answer": "Replace the outbound handler with a fake or run a mock server such as WireMock in a container, depending on how much fidelity you need. A fake handler is fastest and verifies that your code sends the right request, while a mock server exercises the real HTTP client stack. Choose based on whether transport behaviour matters.",
+      "tags": ["wiremock", "http"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "integration-019",
+      "difficulty": "Intermediate",
+      "question": "How do you keep integration tests fast?",
+      "answer": "Share expensive infrastructure with collection fixtures, run independent collections in parallel, and keep each test's work small by using targeted data rather than rebuilding everything. Prefer a real but lightweight provider such as SQLite in memory when the full database is not needed. Profile the suite regularly so slow tests do not accumulate unnoticed.",
+      "tags": ["performance", "speed"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "integration-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a fake server and a container for an external API?",
+      "answer": "A fake server such as WireMock or a stub handler is fast and gives precise control over responses, so it is ideal for error and edge cases. A container running the real service gives higher fidelity and catches integration issues the fake would miss, at the cost of speed and complexity. Use fakes for most cases and containers for a few high-value flows.",
+      "tags": ["fakes", "fidelity"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-021",
+      "difficulty": "Advanced",
+      "question": "How do you parallelise integration tests that share containers?",
+      "answer": "Give each parallel unit, such as a collection, its own container and its own database so they never contend for the same resource. Because xUnit parallelises collections, isolating at the collection level lets you keep parallelism while preserving determinism. Sharing a single container across parallel collections usually requires unique schemas or databases per collection.",
+      "tags": ["parallelism", "isolation"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "integration-022",
+      "difficulty": "Advanced",
+      "question": "How do you test database concurrency and locking behaviour?",
+      "answer": "Open two real connections and interleave their operations with explicit synchronisation so you can assert that the expected lock, conflict, or retry behaviour occurs. A real database is required because in-memory providers do not enforce locking or isolation levels. Assert on the observable outcome, such as a conflict exception or a serialisation failure, rather than on internal timing.",
+      "tags": ["concurrency", "locking"],
+      "references": ["https://learn.microsoft.com/ef/core/saving/concurrency"]
+    },
+    {
+      "id": "integration-023",
+      "difficulty": "Advanced",
+      "question": "How do you diagnose a container test that fails only in CI?",
+      "answer": "Common causes are a slower runner hitting startup timeouts, an image that is not cached causing a long pull, and missing permissions for the Docker socket or Ryuk. Capture the container logs on failure so you can see the service's own error output. Reproduce locally by limiting resources and running the same image tag the CI uses.",
+      "code": "var logs = await container.GetLogsAsync();\nConsole.WriteLine(logs.Stdout);",
+      "tags": ["ci", "diagnostics"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-024",
+      "difficulty": "Advanced",
+      "question": "How do you reuse a container across test runs to speed up development?",
+      "answer": "Testcontainers supports reuse by setting WithReuse(true) and enabling reuse in the Docker configuration, which keeps the container alive between runs so the next run attaches instead of starting fresh. This speeds up the local inner loop but can hide state-related bugs, so CI should run without reuse. Treat reused containers as a developer convenience, not a source of truth.",
+      "code": "new PostgreSqlBuilder()\n    .WithImage(\"postgres:16-alpine\")\n    .WithReuse(true)\n    .Build();",
+      "tags": ["reuse", "performance"],
+      "references": ["https://dotnet.testcontainers.org/"]
+    },
+    {
+      "id": "integration-025",
+      "difficulty": "Advanced",
+      "question": "When should an integration test be replaced by a contract test?",
+      "answer": "When the goal is to verify that two services agree on a message or API shape, a consumer-driven contract test such as Pact is faster and more targeted than spinning up the provider. Contract tests run without containers and fail fast when a schema changes incompatibly. Keep a small number of end-to-end integration tests for the highest-value flows and rely on contracts for the rest.",
+      "tags": ["contract-testing", "pact"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/"]
+    }
+  ]
+}

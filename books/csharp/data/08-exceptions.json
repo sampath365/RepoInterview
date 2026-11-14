@@ -1,0 +1,221 @@
+{
+  "category": "Exception Handling",
+  "slug": "exceptions",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "exceptions-001",
+      "difficulty": "Beginner",
+      "question": "What is an exception in C#?",
+      "answer": "An exception is an object that represents an error or unexpected condition during execution. It derives from System.Exception and propagates up the call stack until caught by a try/catch or it reaches the top and terminates the process. Exceptions carry a message, a stack trace, and optionally an inner exception.",
+      "tags": ["exceptions", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/exceptions/"]
+    },
+    {
+      "id": "exceptions-002",
+      "difficulty": "Beginner",
+      "question": "What are try, catch, and finally?",
+      "answer": "try wraps code that may throw. catch handles specific exception types. finally always runs whether or not an exception was thrown, which is ideal for releasing resources. A try must have at least one catch or a finally. Order catch blocks from most specific to most general.",
+      "code": "try\n{\n    DoWork();\n}\ncatch (IOException ex)\n{\n    Log(ex);\n}\nfinally\n{\n    Cleanup();\n}",
+      "tags": ["try-catch", "finally"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/exception-handling-statements"]
+    },
+    {
+      "id": "exceptions-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between throw and throw ex?",
+      "answer": "throw; rethrows the current exception and preserves the original stack trace. throw ex; throws the caught exception again but resets the stack trace to the current location, losing the original origin. Always use a bare throw to rethrow.",
+      "code": "catch (Exception ex)\n{\n    Log(ex);\n    throw; // preserves stack trace\n}",
+      "tags": ["exceptions", "stack-trace", "rethrow"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/exception-handling-statements#the-throw-statement"]
+    },
+    {
+      "id": "exceptions-004",
+      "difficulty": "Beginner",
+      "question": "What are the common built-in exception types?",
+      "answer": "Common types include ArgumentException, ArgumentNullException, ArgumentOutOfRangeException, InvalidOperationException, NullReferenceException, IndexOutOfRangeException, KeyNotFoundException, FormatException, OverflowException, IOException, and NotImplementedException. Choose the most specific type that matches the condition.",
+      "tags": ["exceptions", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/exceptions/"]
+    },
+    {
+      "id": "exceptions-005",
+      "difficulty": "Intermediate",
+      "question": "When should you throw an exception versus return a result?",
+      "answer": "Throw for exceptional conditions that the caller cannot reasonably be expected to handle in normal flow, such as invalid arguments or broken invariants. Use return values, nullable types, or result objects for expected outcomes such as not found or validation failure. Exceptions are costly, so do not use them for ordinary control flow.",
+      "tags": ["exceptions", "design", "error-handling"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/exceptions/best-practices-for-exceptions"]
+    },
+    {
+      "id": "exceptions-006",
+      "difficulty": "Intermediate",
+      "question": "What is a custom exception and how do you create one?",
+      "answer": "A custom exception derives from Exception or a more specific base such as ArgumentException and follows the standard pattern: three constructors, one parameterless, one with a message, and one with a message and inner exception, plus serialization support if needed. Give it a descriptive name ending in Exception.",
+      "code": "public class InsufficientFundsException : Exception\n{\n    public InsufficientFundsException() { }\n    public InsufficientFundsException(string message) : base(message) { }\n    public InsufficientFundsException(string message, Exception inner) : base(message, inner) { }\n}",
+      "tags": ["exceptions", "custom"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/exceptions/how-to-create-user-defined-exceptions"]
+    },
+    {
+      "id": "exceptions-007",
+      "difficulty": "Intermediate",
+      "question": "What is an inner exception and why is it useful?",
+      "answer": "An inner exception captures the original cause when you wrap and rethrow a lower-level error as a more meaningful one. It preserves the chain for diagnostics. Pass it to the constructor and include it when logging so the root cause is visible.",
+      "code": "try { ParseConfig(path); }\ncatch (IOException ex)\n{\n    throw new ConfigurationException($\"Cannot read {path}\", ex);\n}",
+      "tags": ["exceptions", "inner-exception", "diagnostics"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.exception.innerexception"]
+    },
+    {
+      "id": "exceptions-008",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between catch (Exception) and catch?",
+      "answer": "catch (Exception) catches all CLS-compliant exceptions, which is effectively all managed exceptions. A bare catch catches everything including non-CLS exceptions in some legacy scenarios. Both should be used sparingly because they hide programming errors. Prefer catching specific types and rethrowing or logging.",
+      "tags": ["exceptions", "catch"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/exception-handling-statements"]
+    },
+    {
+      "id": "exceptions-009",
+      "difficulty": "Intermediate",
+      "question": "How does the using statement relate to exceptions?",
+      "answer": "The using statement calls Dispose in a finally block, so resources are released even if an exception is thrown. This is the deterministic cleanup mechanism for IDisposable. If the body throws, Dispose still runs and any exception it throws may replace the original, so Dispose should not throw.",
+      "code": "using var stream = File.OpenRead(path);\n// stream.Dispose() runs on scope exit, even on exception",
+      "tags": ["exceptions", "using", "dispose"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/using"]
+    },
+    {
+      "id": "exceptions-010",
+      "difficulty": "Intermediate",
+      "question": "What is exception filtering with the when clause?",
+      "answer": "A catch block can include when (condition) to run only if the condition is true. Unlike catching and rethrowing, filtering does not unwind the stack, so the original stack trace is preserved and other handlers can still see the exception. It is ideal for logging and selective handling.",
+      "code": "catch (Exception ex) when (ex is not OperationCanceledException)\n{\n    Log(ex);\n    throw;\n}",
+      "tags": ["exceptions", "when", "filtering"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/when"]
+    },
+    {
+      "id": "exceptions-011",
+      "difficulty": "Intermediate",
+      "question": "What are the performance implications of exceptions?",
+      "answer": "Throwing is expensive: the runtime captures a stack trace and unwinds frames, which can be orders of magnitude slower than a normal return. In hot paths, use TryParse and TryGetValue instead of exceptions, and reserve exceptions for truly exceptional cases. Catching without throwing is relatively cheap.",
+      "tags": ["exceptions", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/exceptions-and-performance"]
+    },
+    {
+      "id": "exceptions-012",
+      "difficulty": "Advanced",
+      "question": "What is the ExceptionDispatchInfo and how does it preserve a stack trace?",
+      "answer": "ExceptionDispatchInfo.Capture captures an exception and its stack trace, and Throw rethrows it without resetting the trace. It is used when you must catch an exception, store it, and rethrow it later, for example in async coordination or when completing a task with an exception.",
+      "code": "var edi = ExceptionDispatchInfo.Capture(ex);\n// later\nedi.Throw();",
+      "tags": ["exceptions", "stack-trace", "advanced"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.runtime.exceptionservices.exceptiondispatchinfo"]
+    },
+    {
+      "id": "exceptions-013",
+      "difficulty": "Intermediate",
+      "question": "What is an AggregateException?",
+      "answer": "AggregateException holds one or more exceptions, typically from parallel operations or Task.Wait on multiple tasks. Its InnerExceptions collection contains the individual failures. Awaiting a task unwraps the first exception by default, so use Task.WhenAll or inspect AggregateException when you need all errors.",
+      "code": "try { Task.WaitAll(tasks); }\ncatch (AggregateException ae)\n{\n    foreach (var e in ae.InnerExceptions) Log(e);\n}",
+      "tags": ["exceptions", "aggregate", "tasks"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.aggregateexception"]
+    },
+    {
+      "id": "exceptions-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between SystemException and ApplicationException?",
+      "answer": "SystemException is the base for exceptions thrown by the runtime, such as NullReferenceException and IndexOutOfRangeException. ApplicationException was intended as a base for user exceptions but Microsoft no longer recommends deriving from it. Derive custom exceptions directly from Exception or a specific framework exception.",
+      "tags": ["exceptions", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.applicationexception"]
+    },
+    {
+      "id": "exceptions-015",
+      "difficulty": "Advanced",
+      "question": "What is exception neutrality and why does it matter?",
+      "answer": "Exception neutrality means a method should not catch and swallow exceptions it cannot handle, nor should it alter the exception contract of the methods it calls. Swallowing exceptions hides failures and makes debugging hard. Catch only what you can handle, add context, and rethrow with a bare throw otherwise.",
+      "tags": ["exceptions", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/exceptions"]
+    },
+    {
+      "id": "exceptions-016",
+      "difficulty": "Intermediate",
+      "question": "What happens to exceptions in a finally block?",
+      "answer": "If code in a finally block throws, that exception replaces any in-flight exception from the try, hiding the original. This is why finally should only perform cleanup that is unlikely to throw. If both occur, the finally exception propagates and the original is lost unless captured.",
+      "tags": ["exceptions", "finally"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/statements/exception-handling-statements"]
+    },
+    {
+      "id": "exceptions-017",
+      "difficulty": "Intermediate",
+      "question": "What is the NullReferenceException and how do you prevent it?",
+      "answer": "NullReferenceException occurs when you dereference a null reference. Prevent it with nullable reference types, guard clauses, the null-conditional and null-coalescing operators, and ArgumentNullException.ThrowIfNull for parameters. Fix the root cause rather than catching it.",
+      "code": "public void Send(string body)\n{\n    ArgumentNullException.ThrowIfNull(body);\n    _client.Post(body);\n}",
+      "tags": ["exceptions", "null", "defensive-programming"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.nullreferenceexception"]
+    },
+    {
+      "id": "exceptions-018",
+      "difficulty": "Advanced",
+      "question": "How do you handle exceptions in async methods?",
+      "answer": "An exception thrown in an async method is captured in the returned Task and rethrown when awaited, preserving the original stack. Exceptions thrown before the first await may surface synchronously. Do not let exceptions escape into fire-and-forget tasks; observe them or store them. AggregateException appears with Task.WaitAll and Parallel.",
+      "code": "async Task RunAsync()\n{\n    try { await WorkAsync(); }\n    catch (HttpRequestException ex) { Log(ex); }\n}",
+      "tags": ["exceptions", "async", "tasks"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "exceptions-019",
+      "difficulty": "Intermediate",
+      "question": "What is the StackTrace and how do you read it?",
+      "answer": "The stack trace lists the call frames from the throw site outward, with file and line when debug symbols are available. Read from top to bottom to find where the error originated and the path that led there. Inner exceptions have their own traces, so follow the chain to the root cause.",
+      "tags": ["exceptions", "diagnostics", "debugging"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.exception.stacktrace"]
+    },
+    {
+      "id": "exceptions-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a fault and a cancellation in async code?",
+      "answer": "A fault is an error represented by a faulted Task that throws when awaited. Cancellation is cooperative and signaled by OperationCanceledException carrying a CancellationToken. Treat cancellation as normal flow, not an error, and do not log it as a failure.",
+      "code": "try { await WorkAsync(ct); }\ncatch (OperationCanceledException) when (ct.IsCancellationRequested) { /* expected */ }",
+      "tags": ["exceptions", "async", "cancellation"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap"]
+    },
+    {
+      "id": "exceptions-021",
+      "difficulty": "Intermediate",
+      "question": "How do you log exceptions effectively?",
+      "answer": "Log the full exception including type, message, stack trace, and inner exceptions, plus contextual data such as request id or user id. Log once at the boundary that handles the error, not at every layer, to avoid noise. Use structured logging so the fields are queryable.",
+      "tags": ["exceptions", "logging"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/logging"]
+    },
+    {
+      "id": "exceptions-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a recoverable and a non-recoverable exception?",
+      "answer": "A recoverable exception is one the caller can reasonably handle, such as a transient network error, by retrying or falling back. A non-recoverable exception indicates a broken invariant or programming error, such as NullReferenceException or OutOfMemoryException, where continuing is unsafe. Design APIs to distinguish the two, for example with a transient flag or a result type.",
+      "tags": ["exceptions", "design", "resilience"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/implement-resilient-applications/"]
+    },
+    {
+      "id": "exceptions-023",
+      "difficulty": "Intermediate",
+      "question": "What does Exception.ThrowIfNull do?",
+      "answer": "ArgumentNullException.ThrowIfNull is a static helper that throws an ArgumentNullException if the argument is null, otherwise does nothing. It replaces manual null checks and produces a correctly named parameter in the exception. Similar helpers exist such as ArgumentException.ThrowIfNullOrEmpty.",
+      "code": "public void Add(string name)\n{\n    ArgumentException.ThrowIfNullOrWhiteSpace(name);\n    _names.Add(name);\n}",
+      "tags": ["exceptions", "guards", "modern-csharp"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.argumentnullexception.throwifnull"]
+    },
+    {
+      "id": "exceptions-024",
+      "difficulty": "Intermediate",
+      "question": "What is a guard clause?",
+      "answer": "A guard clause validates arguments or preconditions at the start of a method and returns or throws early. It keeps the main logic unindented and makes assumptions explicit. Use guard clauses for null checks, ranges, and state validation, throwing the most specific exception type.",
+      "code": "public decimal Divide(decimal a, decimal b)\n{\n    if (b == 0) throw new DivideByZeroException();\n    return a / b;\n}",
+      "tags": ["guard-clauses", "defensive-programming"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/design-guidelines/"]
+    },
+    {
+      "id": "exceptions-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle exceptions at an application boundary such as an API?",
+      "answer": "Use a global handler or middleware that catches unhandled exceptions, maps known exception types to appropriate status codes, logs the details, and returns a safe response without leaking internals. In ASP.NET Core this is done with the exception handler middleware or IExceptionHandler. Never return raw stack traces to clients.",
+      "code": "app.UseExceptionHandler(errorApp => errorApp.Run(async context =>\n{\n    context.Response.StatusCode = StatusCodes.Status500InternalServerError;\n    await context.Response.WriteAsJsonAsync(new { error = \"Unexpected error\" });\n}));",
+      "tags": ["exceptions", "aspnet-core", "middleware"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"]
+    }
+  ]
+}

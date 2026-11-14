@@ -1,0 +1,386 @@
+{
+  "category": "Signals & Reactivity",
+  "slug": "signals",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "signals-001",
+      "difficulty": "Beginner",
+      "question": "What is a signal in Angular?",
+      "answer": "A signal is a wrapper around a value that notifies interested consumers when that value changes. You read it by calling the function, such as count(), and write to a writable signal with set, update, or as a plain assignment. Signals give Angular a precise way to track dependencies and update only what changed.",
+      "code": "const count = signal(0);\nconsole.log(count()); // read\ncount.set(1);\ncount.update((c) => c + 1);",
+      "tags": [
+        "signals",
+        "reactivity"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/essentials/signals"
+      ]
+    },
+    {
+      "id": "signals-002",
+      "difficulty": "Beginner",
+      "question": "How do you create and update a signal?",
+      "answer": "Create a writable signal with signal(initialValue), then change it with set for a new value or update for a function of the previous value. Reading is done by calling the signal as a function. Writable signals are the source of truth; derived state should use computed instead.",
+      "code": "const items = signal<string[]>([]);\nitems.update((list) => [...list, 'new']);",
+      "tags": [
+        "signals",
+        "writable"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/api/core/signal"
+      ]
+    },
+    {
+      "id": "signals-003",
+      "difficulty": "Beginner",
+      "question": "What is a computed signal?",
+      "answer": "A computed signal derives its value from other signals using a pure function and caches the result. It recomputes lazily only when a dependency changes and the value is read again, which keeps derived state consistent and cheap. Computed signals are read-only.",
+      "code": "const price = signal(10);\nconst qty = signal(3);\nconst total = computed(() => price() * qty());",
+      "tags": [
+        "computed",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/api/core/computed"
+      ]
+    },
+    {
+      "id": "signals-004",
+      "difficulty": "Beginner",
+      "question": "How do you use a signal in a template?",
+      "answer": "Call the signal as a function inside the template, for example {{ count() }} or [value]=\"count()\". Angular tracks the signal and schedules an update for that part of the view when it changes. Because signals are precise, no zone.js notification is needed for these updates.",
+      "code": "<p>Count: {{ count() }}</p>\n<button (click)=\"count.update(c => c + 1)\">+</button>",
+      "tags": [
+        "signals",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/essentials/signals"
+      ]
+    },
+    {
+      "id": "signals-005",
+      "difficulty": "Beginner",
+      "question": "What is an effect in Angular?",
+      "answer": "An effect is a function that runs whenever one of the signals it reads changes, used for side effects such as logging, syncing to storage, or calling imperative APIs. Effects run asynchronously as part of change detection and should not be used to compute state. Create one with effect() inside an injection context.",
+      "code": "effect(() => {\n  localStorage.setItem('theme', theme());\n});",
+      "tags": [
+        "effect",
+        "signals",
+        "side-effects"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/effect",
+        "https://angular.dev/api/core/effect"
+      ]
+    },
+    {
+      "id": "signals-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a signal and a plain class property?",
+      "answer": "A plain property is just a value; Angular only notices changes through change detection or zone.js. A signal notifies its consumers directly, so bindings and computed values that depend on it update precisely. This makes signals more efficient and easier to reason about for reactive state.",
+      "tags": [
+        "signals",
+        "reactivity"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/zoneless"
+      ]
+    },
+    {
+      "id": "signals-007",
+      "difficulty": "Beginner",
+      "question": "What is a signal-based input?",
+      "answer": "A signal input is declared with input() and exposes the parent's bound value as a read-only signal that updates reactively. Unlike a decorator input, it can be used directly inside computed and effect. The required() variant enforces that the parent supplies a value.",
+      "code": "readonly userId = input.required<string>();\nreadonly upper = computed(() => this.userId().toUpperCase());",
+      "tags": [
+        "input",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/inputs",
+        "https://angular.dev/api/core/input"
+      ]
+    },
+    {
+      "id": "signals-008",
+      "difficulty": "Beginner",
+      "question": "What does the model() function do?",
+      "answer": "model() creates a writable signal input that also exposes a change output, enabling two-way binding with the banana-in-a-box syntax. The child can write to the model signal to push a new value back to the parent. It replaces a manual input and output pair for two-way data flow.",
+      "tags": [
+        "model",
+        "two-way-binding",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/model",
+        "https://angular.dev/api/core/model"
+      ]
+    },
+    {
+      "id": "signals-009",
+      "difficulty": "Beginner",
+      "question": "Why are signals useful for zoneless change detection?",
+      "answer": "Signals tell Angular exactly which parts of the UI depend on which state, so the framework can schedule updates without zone.js monkey-patching. This removes the need to trigger a full application check after every async event. Zoneless apps therefore start faster and have more predictable performance.",
+      "tags": [
+        "zoneless",
+        "signals",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "signals-010",
+      "difficulty": "Beginner",
+      "question": "Can signals replace RxJS in Angular?",
+      "answer": "Signals handle synchronous state and derived values well, but RxJS remains better for event streams, cancellation, retries, and complex async composition. Angular provides toSignal and toObservable so the two can be combined rather than chosen exclusively. Most applications use signals for view state and RxJS for async orchestration.",
+      "tags": [
+        "signals",
+        "rxjs",
+        "interop"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/rxjs-interop",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "signals-011",
+      "difficulty": "Intermediate",
+      "question": "How does Angular track dependencies for signals?",
+      "answer": "When a computed or effect runs, Angular records every signal that is read during that run as a dependency. It re-runs the consumer when any of those signals change, and it caches computed values until then. This automatic dependency graph is what makes signals glitch-free and precise.",
+      "tags": [
+        "signals",
+        "dependency-tracking",
+        "reactivity"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/api/core/computed"
+      ]
+    },
+    {
+      "id": "signals-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between effect() and computed()?",
+      "answer": "computed produces a new signal value and must be pure, while effect runs a side effect and returns no value. Computed values are lazy and cached; effects are scheduled and run in response to signal changes. Use computed for derived state and effect only for genuine side effects.",
+      "tags": [
+        "computed",
+        "effect",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/signals/effect"
+      ]
+    },
+    {
+      "id": "signals-013",
+      "difficulty": "Intermediate",
+      "question": "What is untracked() used for?",
+      "answer": "untracked() reads a signal without registering it as a dependency of the surrounding computed or effect. This is useful when a side effect should react to some signals but read others passively. It prevents accidental re-runs caused by signals that should not trigger the consumer.",
+      "tags": [
+        "untracked",
+        "signals",
+        "effect"
+      ],
+      "references": [
+        "https://angular.dev/api/core/untracked",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "signals-014",
+      "difficulty": "Intermediate",
+      "question": "What are signal queries such as viewChild() and viewChildren()?",
+      "answer": "Signal queries return signals that reflect the current query result, so they can be read in computed or effect without waiting for a lifecycle hook. viewChild and contentChild return a signal of a single result, while viewChildren and contentChildren return arrays. They replace decorator queries for signal-first code.",
+      "tags": [
+        "signal-queries",
+        "viewchild",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/queries",
+        "https://angular.dev/api/core/viewChild"
+      ]
+    },
+    {
+      "id": "signals-015",
+      "difficulty": "Intermediate",
+      "question": "How does linkedSignal help with state that resets?",
+      "answer": "linkedSignal creates a writable signal whose value is recomputed when a source changes, but which can also be written locally in between. It suits cases such as a selected item that should reset when the list of options changes. It removes the need to keep a separate effect that synchronizes two signals.",
+      "code": "readonly options = signal<string[]>(['a', 'b']);\nreadonly selected = linkedSignal(() => this.options()[0]);",
+      "tags": [
+        "linkedsignal",
+        "signals",
+        "state"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/linked-signal",
+        "https://angular.dev/api/core/linkedSignal"
+      ]
+    },
+    {
+      "id": "signals-016",
+      "difficulty": "Intermediate",
+      "question": "How do you convert an Observable to a signal?",
+      "answer": "Use toSignal with the Observable, optionally supplying an initial value so the signal is never undefined. Angular subscribes on creation and unsubscribes when the injection context is destroyed. This is the standard bridge for consuming HTTP streams as signals in a template.",
+      "code": "readonly users = toSignal(this.http.get<User[]>('/api/users'), {\n  initialValue: [],\n});",
+      "tags": [
+        "tosignal",
+        "rxjs-interop",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/rxjs-interop",
+        "https://angular.dev/api/core/rxjs-interop/toSignal"
+      ]
+    },
+    {
+      "id": "signals-017",
+      "difficulty": "Intermediate",
+      "question": "How do you convert a signal to an Observable?",
+      "answer": "Use toObservable to create an Observable that emits the signal's value whenever it changes. This lets you apply RxJS operators such as debounceTime or switchMap to signal-based state. The returned Observable emits only after the first change unless you also emit the initial value.",
+      "code": "readonly query = signal('');\nreadonly results = toSignal(\n  toObservable(this.query).pipe(debounceTime(300), switchMap(this.search)),\n);",
+      "tags": [
+        "toobservable",
+        "rxjs-interop",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/rxjs-interop",
+        "https://angular.dev/api/core/rxjs-interop/toObservable"
+      ]
+    },
+    {
+      "id": "signals-018",
+      "difficulty": "Intermediate",
+      "question": "What is the resource API in Angular?",
+      "answer": "The resource API loads asynchronous data from a reactive request and exposes signals for the value, status, and error. It manages loading and error states for you and integrates with signal-based change detection. httpResource wraps HttpClient for the common HTTP case.",
+      "code": "readonly user = httpResource<User>(() => `/api/users/${this.id()}`);\n// template\n@if (user.isLoading()) { <spinner /> } @else { {{ user.value()?.name }} }",
+      "tags": [
+        "resource",
+        "http",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/resource",
+        "https://angular.dev/guide/http/http-resource"
+      ]
+    },
+    {
+      "id": "signals-019",
+      "difficulty": "Intermediate",
+      "question": "Why should you avoid writing to signals inside computed?",
+      "answer": "A computed must be a pure derivation of its inputs; writing to other signals makes it impure and can cause inconsistent values or repeated work. Angular may recompute a computed lazily and in any order, so side effects there are unpredictable. Put writes in effects or event handlers instead.",
+      "tags": [
+        "computed",
+        "purity",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/signals/effect"
+      ]
+    },
+    {
+      "id": "signals-020",
+      "difficulty": "Intermediate",
+      "question": "What are the rules for creating effects?",
+      "answer": "Create an effect inside an injection context, such as a component constructor or field initializer, so Angular can tie it to that context's lifetime. Effects run after change detection and can be cleaned up by returning a cleanup function. Avoid using effects to synchronize state that could instead be derived with computed.",
+      "tags": [
+        "effect",
+        "lifecycle",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/effect",
+        "https://angular.dev/api/core/effect"
+      ]
+    },
+    {
+      "id": "signals-021",
+      "difficulty": "Advanced",
+      "question": "What does glitch-free mean for signals?",
+      "answer": "Glitch-free means that a computed never observes an inconsistent combination of its inputs during an update; Angular resolves dependencies in a consistent order. When several signals change, consumers see a coherent snapshot rather than intermediate states. This is a key advantage of a pull-based reactive graph over naive observers.",
+      "tags": [
+        "signals",
+        "reactivity",
+        "computed"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/api/core/computed"
+      ]
+    },
+    {
+      "id": "signals-022",
+      "difficulty": "Advanced",
+      "question": "How do effects interact with change detection and the component lifecycle?",
+      "answer": "Effects are scheduled and run during change detection, after the component's view has been updated, and are destroyed with their injection context. They always run at least once on the first pass so dependencies can be established. Because they are asynchronous relative to writes, code that must react synchronously should use computed or explicit event handling.",
+      "tags": [
+        "effect",
+        "change-detection",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/effect",
+        "https://angular.dev/guide/zoneless"
+      ]
+    },
+    {
+      "id": "signals-023",
+      "difficulty": "Advanced",
+      "question": "When would you choose a signal over an RxJS Subject for shared state?",
+      "answer": "A signal is simpler and integrates directly with templates and computed values, which makes it ideal for synchronous application state. An RxJS Subject is better when consumers need operators such as debounce, retry, or complex combination over time. Many teams use signals for state and reserve Subjects for event streams at the edges.",
+      "tags": [
+        "signals",
+        "subject",
+        "state"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/signals/rxjs-interop"
+      ]
+    },
+    {
+      "id": "signals-024",
+      "difficulty": "Advanced",
+      "question": "How do signal inputs and computed work together to avoid unnecessary work?",
+      "answer": "Because a computed caches its result and only recomputes when a dependency changes, wrapping expensive derivations of signal inputs in computed avoids recomputation on unrelated updates. Angular also skips re-rendering bindings whose signal values did not change. This combination replaces many manual memoization techniques.",
+      "tags": [
+        "computed",
+        "inputs",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/inputs",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "signals-025",
+      "difficulty": "Advanced",
+      "question": "What is the relationship between signals, zoneless change detection, and rendering performance?",
+      "answer": "Signals provide the fine-grained notifications that zoneless change detection relies on, so Angular can update only the views that actually changed. Without zone.js, there is no full application check after every async event, which reduces overhead and makes performance more predictable. Adopting signals is therefore both a state-management and a performance decision.",
+      "tags": [
+        "signals",
+        "zoneless",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    }
+  ]
+}

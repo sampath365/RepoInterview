@@ -1,0 +1,369 @@
+{
+  "category": "Dependency Injection in Tests",
+  "slug": "dependency-injection",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "dependency-injection-001",
+      "difficulty": "Beginner",
+      "question": "Why does dependency injection make code easier to test?",
+      "answer": "Dependency injection lets a class receive its collaborators from outside instead of constructing them, so a test can supply a substitute for a slow or external dependency. This removes hard-coded coupling to infrastructure. Testability improves as a direct consequence of the design.",
+      "tags": [
+        "dependencyinjection",
+        "testability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "dependency-injection-002",
+      "difficulty": "Beginner",
+      "question": "How do you manually wire up dependencies in an NUnit test?",
+      "answer": "Construct the dependencies you need in the test and pass them into the class under test, for example new OrderService(new FakeRepository()). This explicit wiring keeps the test self-contained and readable. Manual wiring is often clearer than a container for small units.",
+      "code": "var repo = new FakeOrderRepository();\nvar service = new OrderService(repo);\nAssert.That(service.Place(order), Is.True);",
+      "tags": [
+        "dependencyinjection",
+        "manual"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "dependency-injection-003",
+      "difficulty": "Beginner",
+      "question": "What is a service container and when do you use one in tests?",
+      "answer": "A service container maps abstractions to implementations and resolves object graphs on demand. In tests you use one mainly for integration tests where you want the real composition of the application with a few overrides. For unit tests, manual construction is usually simpler.",
+      "tags": [
+        "container",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollection"
+      ]
+    },
+    {
+      "id": "dependency-injection-004",
+      "difficulty": "Beginner",
+      "question": "How do you replace a real service with a fake in a DI container for a test?",
+      "answer": "Register the real services as usual, then re-register the abstraction with your fake so the last registration wins, or build a separate container with the override. This exercises the real composition while substituting the boundary you want to control. Re-registration is the common pattern with the built-in container.",
+      "code": "services.AddSingleton<IClock, SystemClock>();\n// in the test, override it:\nservices.AddSingleton<IClock>(new FakeClock(fixedNow));",
+      "tags": [
+        "container",
+        "fakes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollection",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage"
+      ]
+    },
+    {
+      "id": "dependency-injection-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between AddSingleton, AddScoped and AddTransient?",
+      "answer": "AddSingleton creates one instance for the container's lifetime, AddScoped creates one per scope and AddTransient creates a new instance each time it is requested. The lifetime affects whether state is shared and whether disposal happens once or many times. Choose the narrowest lifetime that satisfies the dependency.",
+      "tags": [
+        "lifetimes",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-006",
+      "difficulty": "Beginner",
+      "question": "How does constructor injection differ from property injection in testability?",
+      "answer": "Constructor injection makes dependencies explicit and mandatory, so a test can see exactly what a class needs and cannot forget to supply it. Property injection is optional and can leave a dependency unset. Constructor injection is preferred for testable design.",
+      "tags": [
+        "constructor",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "dependency-injection-007",
+      "difficulty": "Beginner",
+      "question": "Why is the service locator pattern discouraged in testable code?",
+      "answer": "A service locator hides a class's dependencies behind a global lookup, so tests cannot see or substitute them without configuring the locator. That creates hidden coupling and makes failures harder to diagnose. Explicit injection keeps dependencies visible.",
+      "tags": [
+        "servicelocator",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "dependency-injection-008",
+      "difficulty": "Beginner",
+      "question": "How do you inject configuration values into a class under test?",
+      "answer": "Depend on an options object or a strongly typed settings class and pass a test instance in, rather than reading configuration directly. This makes the class independent of files and environment variables. Use the options pattern in production code so tests can supply values easily.",
+      "tags": [
+        "configuration",
+        "options"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/configuration",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-009",
+      "difficulty": "Beginner",
+      "question": "What does it mean that a class has a seam for testing?",
+      "answer": "A seam is a point where you can substitute behaviour without editing the class, such as an injected interface or a virtual method. Good seams let tests inject doubles at the boundary. Constructor injection is the most common way to create a seam in .NET.",
+      "tags": [
+        "seams",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-010",
+      "difficulty": "Beginner",
+      "question": "How do you test a class that depends on ILogger?",
+      "answer": "Inject a substitute such as NullLogger<T>.Instance when the log output is irrelevant, or a mock when you want to verify that a message was written. Depending on ILogger<T> keeps the class free of concrete logging. Asserting on logs should be done sparingly.",
+      "code": "var service = new OrderService(repo, NullLogger<OrderService>.Instance);",
+      "tags": [
+        "logging",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "dependency-injection-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use a WebApplicationFactory to get a configured service provider in tests?",
+      "answer": "WebApplicationFactory<TEntryPoint> builds the application in memory and exposes its Services collection so tests can resolve real components and apply overrides. This gives an integration-style container without launching a server. It is the standard approach for testing ASP.NET Core composition.",
+      "code": "await using var factory = new WebApplicationFactory<Program>();\nvar service = factory.Services.GetRequiredService<IOrderService>();",
+      "tags": [
+        "webapplicationfactory",
+        "integration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1"
+      ]
+    },
+    {
+      "id": "dependency-injection-012",
+      "difficulty": "Intermediate",
+      "question": "How do you replace a dependency in a WebApplicationFactory test?",
+      "answer": "Use the WithWebHostBuilder hook and call ConfigureServices on the builder to remove or override registrations before the application is built. This lets the test keep the real pipeline while substituting one boundary. The override must happen before the provider is built.",
+      "code": "var factory = new WebApplicationFactory<Program>()\n    .WithWebHostBuilder(b => b.ConfigureServices(s =>\n        s.AddSingleton<IClock>(new FakeClock())));",
+      "tags": [
+        "webapplicationfactory",
+        "overrides"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.aspnetcore.mvc.testing.webapplicationfactory-1"
+      ]
+    },
+    {
+      "id": "dependency-injection-013",
+      "difficulty": "Intermediate",
+      "question": "What is IServiceScopeFactory and why does it matter in tests?",
+      "answer": "IServiceScopeFactory creates scopes so that scoped services can be resolved outside a request, for example in a background task or an integration test. Using a scope ensures scoped services are created and disposed correctly. It avoids captive dependency problems in tests.",
+      "code": "using var scope = factory.Services.GetRequiredService<IServiceScopeFactory>().CreateScope();\nvar repo = scope.ServiceProvider.GetRequiredService<IOrderRepository>();",
+      "tags": [
+        "scopes",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicescopefactory",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-014",
+      "difficulty": "Intermediate",
+      "question": "What is a captive dependency and how does it affect tests?",
+      "answer": "A captive dependency occurs when a longer-lived service captures a shorter-lived one, such as a singleton holding a scoped DbContext, which keeps the shorter-lived instance alive and shared across requests. In tests this shows up as stale data or disposed-object errors. Match lifetimes carefully and validate them at startup.",
+      "tags": [
+        "lifetimes",
+        "captivedependency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-015",
+      "difficulty": "Intermediate",
+      "question": "How do you inject a fake clock to make time-dependent tests deterministic?",
+      "answer": "Introduce an abstraction such as IClock or TimeProvider, inject it into the class under test, and supply a fake that returns a fixed instant in the test. This removes reliance on DateTime.UtcNow and makes the test reproducible. TimeProvider is the modern built-in abstraction for this.",
+      "code": "public interface IClock { DateTime UtcNow { get; } }\nvar service = new OrderService(repo, new FakeClock(new DateTime(2024, 1, 1)));",
+      "tags": [
+        "clock",
+        "determinism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.timeprovider",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "dependency-injection-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test that a service is registered in the container?",
+      "answer": "Resolve the abstraction from the provider in a test and assert that it is not null and of the expected implementation type. This catches missing or misconfigured registrations early. It is a lightweight composition test that complements behaviour tests.",
+      "code": "var svc = factory.Services.GetRequiredService<IOrderService>();\nAssert.That(svc, Is.InstanceOf<OrderService>());",
+      "tags": [
+        "registrations",
+        "container"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage",
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollection"
+      ]
+    },
+    {
+      "id": "dependency-injection-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle a dependency that must be disposed after the test?",
+      "answer": "Create the container or resource inside the test and dispose it with a using statement or in TearDown, so scoped services are released. This prevents leaked connections and background timers between tests. Disposal is part of correct scope management.",
+      "code": "[TearDown]\npublic void TearDown() => _provider.Dispose();",
+      "tags": [
+        "disposal",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollection",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-018",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid rebuilding the whole container for every unit test?",
+      "answer": "For unit tests, construct only the small object graph each test needs rather than a full container, which is faster and clearer. Reserve container construction for integration tests where composition itself is under test. This keeps the test suite fast.",
+      "tags": [
+        "performance",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage"
+      ]
+    },
+    {
+      "id": "dependency-injection-019",
+      "difficulty": "Intermediate",
+      "question": "How do you inject a dependency into an NUnit fixture with a parameterized constructor?",
+      "answer": "NUnit creates fixtures itself, so it does not use your DI container by default; either construct dependencies in the fixture or use a custom attribute or factory to supply them. For integration tests the usual route is to resolve from a WebApplicationFactory. Keep fixtures self-sufficient.",
+      "tags": [
+        "fixtures",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html"
+      ]
+    },
+    {
+      "id": "dependency-injection-020",
+      "difficulty": "Intermediate",
+      "question": "What is the role of IServiceProvider in tests?",
+      "answer": "IServiceProvider is the object you call GetService or GetRequiredService on to resolve dependencies, whether from a built container or a WebApplicationFactory. It is the read side of the container. In tests it is the entry point for verifying composition.",
+      "code": "var clock = provider.GetRequiredService<IClock>();",
+      "tags": [
+        "serviceprovider",
+        "dependencyinjection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.servicecollection",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage"
+      ]
+    },
+    {
+      "id": "dependency-injection-021",
+      "difficulty": "Advanced",
+      "question": "How do you validate the DI configuration of an application in a test?",
+      "answer": "Build the service provider with validation enabled and resolve the root services, or add a test that calls GetRequiredService for each key abstraction. The built-in container can validate scopes and can be asked to validate on build, which surfaces misconfiguration early. A small composition test protects the whole app.",
+      "code": "new ServiceCollection()\n    .AddOrderServices()\n    .BuildServiceProvider(new ServiceProviderOptions\n    {\n        ValidateScopes = true,\n        ValidateOnBuild = true,\n    });",
+      "tags": [
+        "validation",
+        "container"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-usage"
+      ]
+    },
+    {
+      "id": "dependency-injection-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a full container in unit tests?",
+      "answer": "A container removes manual wiring and mirrors production composition, but it slows tests and can hide which dependencies a unit actually uses. It also blurs the line between unit and integration tests. Use containers where composition matters and manual wiring where focus and speed matter.",
+      "tags": [
+        "design",
+        "container"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-023",
+      "difficulty": "Advanced",
+      "question": "How do you test a hosted service that depends on scoped services?",
+      "answer": "Resolve a scope from IServiceScopeFactory inside the test, resolve the hosted service or its dependencies from that scope, and drive it with a cancellation token. This reproduces the runtime scope behaviour. Assert on the observable effects and await shutdown.",
+      "tags": [
+        "hostedservice",
+        "scopes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/microsoft.extensions.dependencyinjection.iservicescopefactory",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-024",
+      "difficulty": "Advanced",
+      "question": "How do you keep integration tests isolated when they share a container?",
+      "answer": "Give each test its own scope, use a unique database or transaction per test, and reset shared state in setup or teardown. Where the container is expensive, share it at fixture level but never share mutable scoped state across tests. Isolation prevents order dependence.",
+      "tags": [
+        "integration",
+        "isolation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://learn.microsoft.com/en-us/ef/core/testing/testing-with-the-database"
+      ]
+    },
+    {
+      "id": "dependency-injection-025",
+      "difficulty": "Advanced",
+      "question": "How does TimeProvider improve testability compared with DateTime.Now?",
+      "answer": "TimeProvider is an injectable abstraction for the current time and timers, so a test can supply a fake provider that returns a controlled instant and advances deterministically. This removes flakiness from time-dependent logic without ad-hoc clock interfaces. It is the recommended modern approach in .NET 8 and later.",
+      "code": "var fake = new FakeTimeProvider(new DateTimeOffset(2024, 1, 1, 0, 0, 0, TimeSpan.Zero));\nvar service = new OrderService(repo, fake);\nfake.Advance(TimeSpan.FromMinutes(5));",
+      "tags": [
+        "timeprovider",
+        "determinism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.timeprovider",
+        "https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,215 @@
+{
+  "category": "Temporary Tables, Table Variables & TempDB",
+  "slug": "tempdb",
+  "icon": "memory",
+  "questions": [
+    {
+      "id": "tempdb-001",
+      "difficulty": "Beginner",
+      "question": "What is tempdb used for?",
+      "answer": "tempdb is a system database that stores temporary user objects, internal objects created by the engine for sorting, hashing, and spooling, and row versions for snapshot isolation. It is recreated from scratch every time SQL Server starts, so nothing in it persists. Because it is a shared, global resource, contention in tempdb affects the whole instance.",
+      "tags": ["tempdb", "overview"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-002",
+      "difficulty": "Beginner",
+      "question": "What is a local temporary table?",
+      "answer": "A local temporary table is a table whose name begins with a single # and that is visible only to the session that created it. It is dropped automatically when the session ends or when the creating procedure or scope finishes. It behaves like a regular table for indexes and constraints, with the exception of some features like foreign keys.",
+      "code": "CREATE TABLE #Staging (Id INT PRIMARY KEY, Name NVARCHAR(100));",
+      "tags": ["temp-table", "local"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/create-table-transact-sql"]
+    },
+    {
+      "id": "tempdb-003",
+      "difficulty": "Beginner",
+      "question": "What is a global temporary table?",
+      "answer": "A global temporary table uses a ## prefix and is visible to all sessions on the instance. It is dropped when the session that created it ends and no other session is referencing it. They are used less often because of the shared visibility and lifetime.",
+      "code": "CREATE TABLE ##SharedData (Id INT, Value INT);",
+      "tags": ["temp-table", "global"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/create-table-transact-sql"]
+    },
+    {
+      "id": "tempdb-004",
+      "difficulty": "Beginner",
+      "question": "What is a table variable?",
+      "answer": "A table variable is declared with DECLARE @t TABLE and behaves like a variable that holds rows, scoped to the batch or procedure. It does not participate in transactions the way temp tables do and it is not affected by rollbacks of nested transactions. Its statistics are limited, which can lead to poor estimates on larger row counts.",
+      "code": "DECLARE @Ids TABLE (Id INT PRIMARY KEY);\nINSERT @Ids VALUES (1), (2), (3);",
+      "tags": ["table-variable", "declare"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/data-types/table-transact-sql"]
+    },
+    {
+      "id": "tempdb-005",
+      "difficulty": "Beginner",
+      "question": "Where are temporary tables and table variables stored?",
+      "answer": "Both are stored in tempdb, not in the user database, regardless of which database the session is connected to. This is why tempdb sizing and configuration matter even for small user databases. Table variables also reside in tempdb, though they use less logging in some cases.",
+      "tags": ["tempdb", "storage"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-006",
+      "difficulty": "Beginner",
+      "question": "Can you create indexes on a temporary table?",
+      "answer": "Yes, temporary tables support indexes, primary keys, and unique constraints, and you should add them for the same reasons as on regular tables. A clustered or nonclustered index on a temp table can dramatically improve query plans that use it. Table variables can have a primary key or unique constraint but not a full index in the same way.",
+      "code": "CREATE TABLE #T (Id INT, Dt DATE);\nCREATE INDEX IX_T_Id ON #T (Id);",
+      "tags": ["temp-table", "index"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/create-index-transact-sql"]
+    },
+    {
+      "id": "tempdb-007",
+      "difficulty": "Beginner",
+      "question": "What happens to a temporary table inside a transaction that rolls back?",
+      "answer": "Changes to a temporary table inside a transaction are rolled back along with the transaction, just like a regular table. However, if the temp table was created inside the transaction, it still exists after rollback but may be empty. Table variables behave differently: their changes are not rolled back by an outer transaction in the same way.",
+      "tags": ["transaction", "temp-table"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/rollback-transaction-transact-sql"]
+    },
+    {
+      "id": "tempdb-008",
+      "difficulty": "Beginner",
+      "question": "What is the scope of a table variable?",
+      "answer": "A table variable is scoped to the batch, stored procedure, or function in which it is declared and goes out of scope when that block ends. It is not visible to nested procedures or to dynamic SQL executed with EXEC. This limited scope is one reason it cannot replace a temp table when sharing data across calls.",
+      "tags": ["table-variable", "scope"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/data-types/table-transact-sql"]
+    },
+    {
+      "id": "tempdb-009",
+      "difficulty": "Beginner",
+      "question": "Why does tempdb get recreated on restart?",
+      "answer": "tempdb is recreated from the model database every time SQL Server starts, so it always begins clean and any leftover temporary objects are gone. This means you cannot back up tempdb or rely on data in it persisting. Sizing and file placement must therefore be configured once and persist through restarts.",
+      "tags": ["tempdb", "restart"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a temp table and a permanent table?",
+      "answer": "A permanent table is stored in a user database and persists until dropped, with full logging, statistics, and constraint support. A temp table lives in tempdb, is scoped to a session or scope, and disappears automatically. Use temp tables for intermediate work within a session and permanent tables for durable data.",
+      "tags": ["temp-table", "permanent"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/create-table-transact-sql"]
+    },
+    {
+      "id": "tempdb-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a temp table and a table variable in terms of statistics?",
+      "answer": "A temp table gets real statistics and supports automatic and manual updates, so the optimizer can estimate row counts accurately. A table variable historically had no statistics, causing the optimizer to assume one row, which leads to bad plans for larger sets. SQL Server 2019 and later add deferred compilation for table variables, improving estimates.",
+      "tags": ["statistics", "table-variable"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/statistics/statistics"]
+    },
+    {
+      "id": "tempdb-012",
+      "difficulty": "Intermediate",
+      "question": "When should you use a table variable instead of a temp table?",
+      "answer": "Use a table variable for small row counts, short-lived lookups, or when you want to avoid recompilation and rollback participation. Use a temp table when the data set is larger, when you need statistics for good plans, or when you need indexes and constraints. The classic guidance is small and simple means table variable, large or complex means temp table.",
+      "tags": ["table-variable", "temp-table"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/data-types/table-transact-sql"]
+    },
+    {
+      "id": "tempdb-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create multiple tempdb data files and why?",
+      "answer": "Add one data file per CPU core up to a reasonable limit, such as eight, using ALTER DATABASE tempdb ADD FILE, all with the same size and growth settings. Multiple equally sized files reduce allocation contention on the shared allocation pages. This is one of the most common tempdb tuning actions.",
+      "code": "ALTER DATABASE tempdb\nADD FILE (NAME = tempdev2, FILENAME = 'D:\\tempdb2.ndf',\n          SIZE = 512MB, FILEGROWTH = 256MB);",
+      "tags": ["tempdb-files", "contention"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-014",
+      "difficulty": "Intermediate",
+      "question": "What is tempdb allocation contention and how do you detect it?",
+      "answer": "Allocation contention happens when many sessions try to allocate pages from the same allocation bitmaps, showing up as PAGELATCH waits on tempdb allocation pages such as 2:1:1 or 2:1:3. It is common in workloads with heavy temp table creation or frequent sorts. Adding data files, enabling trace flag 1118 historically, and using memory-optimized tempdb metadata reduce it.",
+      "tags": ["paglatch", "contention"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-015",
+      "difficulty": "Intermediate",
+      "question": "How do you find what is consuming space in tempdb?",
+      "answer": "Query the tempdb space usage dynamic management views and the sys.dm_db_session_space_usage view to see which sessions are using internal or user objects. You can also list objects in tempdb.sys.all_objects. High internal object usage usually points to sorts, hashes, or versioning.",
+      "code": "SELECT session_id, user_objects_alloc_page_count,\n       internal_objects_alloc_page_count\nFROM sys.dm_db_session_space_usage\nORDER BY internal_objects_alloc_page_count DESC;",
+      "tags": ["tempdb-usage", "dmv"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-session-space-usage-transact-sql"]
+    },
+    {
+      "id": "tempdb-016",
+      "difficulty": "Intermediate",
+      "question": "What is memory-optimized tempdb metadata?",
+      "answer": "Memory-optimized tempdb metadata, introduced in SQL Server 2019, moves tempdb's system catalog into memory-optimized tables to remove latch contention on metadata for workloads that create many temp tables. It is enabled with ALTER SERVER CONFIGURATION. It targets a different bottleneck than allocation contention, namely metadata latching.",
+      "code": "ALTER SERVER CONFIGURATION SET MEMORY_OPTIMIZED TEMPDB_METADATA = ON;",
+      "tags": ["memory-optimized", "tempdb"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-017",
+      "difficulty": "Intermediate",
+      "question": "Why does a long-running transaction affect tempdb?",
+      "answer": "When RCSI or snapshot isolation is enabled, a long-running read transaction prevents version cleanup, so the version store in tempdb grows. Long transactions also hold temp table data and internal objects for their duration. Keeping transactions short limits tempdb growth from both causes.",
+      "tags": ["version-store", "tempdb"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "tempdb-018",
+      "difficulty": "Intermediate",
+      "question": "How do you size tempdb?",
+      "answer": "Start with the size needed for your peak concurrent workload plus headroom, and avoid relying on autogrowth during peak times because growth causes pauses. Set a fixed initial size and a sensible file growth increment, and pre-size all files equally. Monitor usage over time and adjust based on actual peaks.",
+      "tags": ["tempdb-sizing", "configuration"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/tempdb-database"]
+    },
+    {
+      "id": "tempdb-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between internal and user objects in tempdb?",
+      "answer": "User objects are created explicitly by users or applications, such as temp tables and table variables. Internal objects are created by the engine itself for operations like sorts, hash joins, spools, and versioning, and they are not visible as normal tables. Both consume tempdb space and can cause contention.",
+      "tags": ["internal-objects", "tempdb"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-session-space-usage-transact-sql"]
+    },
+    {
+      "id": "tempdb-020",
+      "difficulty": "Intermediate",
+      "question": "How do you monitor tempdb growth over time?",
+      "answer": "Capture the used and free space from sys.dm_db_file_space_usage or the tempdb size counters periodically into a table, and watch for upward trends. Tracking version store usage separately helps distinguish versioning growth from other causes. Regular monitoring reveals whether you need to resize files.",
+      "code": "SELECT SUM(unallocated_extent_page_count) * 8 / 1024 AS FreeMB\nFROM tempdb.sys.dm_db_file_space_usage;",
+      "tags": ["monitoring", "tempdb"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-db-file-space-usage-transact-sql"]
+    },
+    {
+      "id": "tempdb-021",
+      "difficulty": "Advanced",
+      "question": "How does deferred compilation improve table variable performance?",
+      "answer": "Deferred compilation, available from SQL Server 2019, postpones the compilation of statements that reference a table variable until the first time they execute, so the actual row count is known and used for estimates. This fixes the classic one-row guess and produces far better plans. It is part of intelligent query processing and works without code changes.",
+      "tags": ["deferred-compilation", "table-variable"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/intelligent-query-processing"]
+    },
+    {
+      "id": "tempdb-022",
+      "difficulty": "Advanced",
+      "question": "What causes PAGELATCH waits in tempdb and how do you distinguish them from PAGEIOLATCH?",
+      "answer": "PAGELATCH waits are in-memory latch contention on pages, typically tempdb allocation pages, and indicate a concurrency bottleneck rather than disk I/O. PAGEIOLATCH waits, by contrast, mean a page is being read from disk and point to I/O or memory pressure. The distinction is crucial because the fixes are completely different.",
+      "tags": ["paglatch", "pageiolatch"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-os-wait-stats-transact-sql"]
+    },
+    {
+      "id": "tempdb-023",
+      "difficulty": "Advanced",
+      "question": "Why should tempdb files be the same size and growth increment?",
+      "answer": "SQL Server fills files within a filegroup proportionally to their free space, so if files are different sizes the larger ones receive more allocations and become the bottleneck. Equal sizes and growth increments keep the proportional fill balanced across all files. This is why the standard advice is to pre-size all tempdb files identically.",
+      "tags": ["proportional-fill", "tempdb-files"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/databases/database-files-and-filegroups"]
+    },
+    {
+      "id": "tempdb-024",
+      "difficulty": "Advanced",
+      "question": "How does a spill to tempdb appear in an execution plan?",
+      "answer": "A spill appears as a warning on the operator that spilled, such as a Sort or Hash Match, indicating the memory grant was too small. It often comes with high tempdb usage and longer runtimes. Fixing cardinality estimates or allowing more memory usually removes the spill.",
+      "tags": ["spill", "execution-plan"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"]
+    },
+    {
+      "id": "tempdb-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using table variables for large intermediate result sets?",
+      "answer": "Table variables historically produced one-row estimates that led to nested loops over huge sets and poor plans, and they are not indexed unless you add a constraint. Even with deferred compilation, very large sets and complex access patterns favor temp tables with proper indexes and statistics. Use table variables for small, simple sets and temp tables for larger, query-intensive work.",
+      "tags": ["table-variable", "trade-offs"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/data-types/table-transact-sql"]
+    }
+  ]
+}

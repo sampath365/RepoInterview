@@ -1,0 +1,227 @@
+{
+  "category": "LINQ",
+  "slug": "linq",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "linq-001",
+      "difficulty": "Beginner",
+      "question": "What is LINQ?",
+      "answer": "LINQ (Language Integrated Query) is a set of features and operators that let you query collections, databases, XML, and other sources with a uniform syntax. It provides a fluent API over IEnumerable<T> and IQueryable<T> and also query syntax. LINQ operators are implemented as extension methods in System.Linq.",
+      "tags": ["linq", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/linq/"]
+    },
+    {
+      "id": "linq-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between query syntax and method syntax in LINQ?",
+      "answer": "Query syntax uses keywords such as from, where, and select and resembles SQL. Method syntax chains extension methods such as Where and Select. The compiler translates query syntax into method calls, so they are equivalent. Query syntax can be clearer for joins; method syntax is more compact and supports all operators.",
+      "code": "var q1 = from n in numbers where n > 2 select n;\nvar q2 = numbers.Where(n => n > 2);",
+      "tags": ["linq", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/query-syntax-and-method-syntax-in-linq"]
+    },
+    {
+      "id": "linq-003",
+      "difficulty": "Beginner",
+      "question": "What is deferred execution in LINQ?",
+      "answer": "Most LINQ operators build a query object that runs only when enumerated, not when defined. This lets you compose queries cheaply and reflect the latest data. Operators such as ToList, ToArray, Count, First, and Sum force execution. Calling a query twice re-executes it, which can be surprising with mutable sources.",
+      "code": "var q = numbers.Where(n => n > 2); // not executed yet\nvar list = q.ToList();              // executes now",
+      "tags": ["linq", "deferred-execution"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/deferred-execution-and-lazy-evaluation-in-linq-to-xml"]
+    },
+    {
+      "id": "linq-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Where and Select?",
+      "answer": "Where filters elements by a predicate, keeping those that satisfy it. Select projects each element into a new form, such as a property or an anonymous type. They are often chained, with Where reducing the set before Select shapes it.",
+      "code": "var names = people\n    .Where(p => p.Age >= 18)\n    .Select(p => p.Name);",
+      "tags": ["linq", "where", "select"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.where"]
+    },
+    {
+      "id": "linq-005",
+      "difficulty": "Beginner",
+      "question": "What does SelectMany do?",
+      "answer": "SelectMany projects each element to a sequence and flattens the results into one sequence. It is the LINQ equivalent of nested loops and is used to flatten one-to-many relationships, such as orders to their lines, or to combine sequences with a correlation.",
+      "code": "var allLines = orders.SelectMany(o => o.Lines);",
+      "tags": ["linq", "selectmany", "flatten"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.selectmany"]
+    },
+    {
+      "id": "linq-006",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between First, FirstOrDefault, Single, and SingleOrDefault?",
+      "answer": "First returns the first element and throws if the sequence is empty. FirstOrDefault returns default if empty. Single requires exactly one element and throws if empty or if there is more than one. SingleOrDefault returns default if empty but still throws if there is more than one. Use the Single variants to assert uniqueness.",
+      "code": "var a = items.First();\nvar b = items.FirstOrDefault();\nvar c = items.Single(x => x.Id == id);",
+      "tags": ["linq", "first", "single"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.single"]
+    },
+    {
+      "id": "linq-007",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Any and Count?",
+      "answer": "Any() returns true if the sequence has at least one element and stops after the first, which is O(1) in the best case. Count() enumerates the whole sequence to count elements. Use Any for existence checks and reserve Count for when the number is actually needed.",
+      "code": "if (orders.Any()) { }\nint total = orders.Count();",
+      "tags": ["linq", "any", "count", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.any"]
+    },
+    {
+      "id": "linq-008",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between GroupBy and ToLookup?",
+      "answer": "GroupBy defers execution and produces groups lazily, and each group can be enumerated once in a streaming manner. ToLookup executes immediately and returns an ILookup that supports indexed access to groups by key. Use ToLookup when you need repeated keyed lookups.",
+      "code": "var byDept = employees.ToLookup(e => e.Department);\nforeach (var e in byDept[\"Sales\"]) Console.WriteLine(e.Name);",
+      "tags": ["linq", "groupby", "lookup"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.tolookup"]
+    },
+    {
+      "id": "linq-009",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between inner join and group join?",
+      "answer": "An inner join returns only elements that have matches in both sequences. A group join pairs each left element with a sequence of matching right elements, including empty matches, and is the basis of left outer joins when combined with DefaultIfEmpty.",
+      "code": "var outer = from c in customers\n            join o in orders on c.Id equals o.CustomerId into custOrders\n            from o in custOrders.DefaultIfEmpty()\n            select new { c.Name, Order = o };",
+      "tags": ["linq", "join", "outer-join"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/linq/standard-query-operators/join-operations"]
+    },
+    {
+      "id": "linq-010",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between OrderBy and ThenBy?",
+      "answer": "OrderBy establishes the primary sort and returns an IOrderedEnumerable. ThenBy adds a secondary sort on that ordered sequence. Using OrderBy twice replaces the primary sort, so always use ThenBy for tie-breakers. OrderByDescending and ThenByDescending provide descending order.",
+      "code": "var sorted = people\n    .OrderBy(p => p.LastName)\n    .ThenBy(p => p.FirstName);",
+      "tags": ["linq", "sorting"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.thenby"]
+    },
+    {
+      "id": "linq-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ToList and ToArray?",
+      "answer": "ToList materializes into a List<T> that can grow and be modified. ToArray materializes into a fixed-size array. Both force execution. Arrays have slightly less overhead and a smaller memory footprint; lists are easier to modify afterward. Choose by what you do next.",
+      "tags": ["linq", "materialization"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.tolist"]
+    },
+    {
+      "id": "linq-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Aggregate and Sum?",
+      "answer": "Sum is a specialized reduction for numeric sequences. Aggregate is the general fold that applies an accumulator function across a sequence, optionally with a seed and a result selector. Use Sum for totals and Aggregate for custom accumulation such as building a string or a composite value.",
+      "code": "var total = numbers.Sum();\nvar csv = names.Aggregate((a, b) => a + \",\" + b);",
+      "tags": ["linq", "aggregate", "sum"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.aggregate"]
+    },
+    {
+      "id": "linq-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IEnumerable<T> and IQueryable<T> in LINQ?",
+      "answer": "IEnumerable<T> operators run in memory over the objects. IQueryable<T> operators build an expression tree that a provider translates, for example into SQL, so filtering and projection happen at the source. Mixing the two by calling AsEnumerable too early pulls all data into memory.",
+      "tags": ["linq", "iqueryable", "ef-core"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/iqueryable-vs-ienumerable"]
+    },
+    {
+      "id": "linq-014",
+      "difficulty": "Advanced",
+      "question": "What is the difference between Distinct, Union, Intersect, and Except?",
+      "answer": "Distinct removes duplicates from one sequence. Union combines two sequences removing duplicates. Intersect returns elements present in both. Except returns elements in the first not in the second. All use the default comparer or a supplied IEqualityComparer and preserve first-sequence order for the left-side operators.",
+      "code": "var common = a.Intersect(b);\nvar onlyA = a.Except(b);\nvar all = a.Union(b);",
+      "tags": ["linq", "set-operations"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/linq/standard-query-operators/set-operations"]
+    },
+    {
+      "id": "linq-015",
+      "difficulty": "Advanced",
+      "question": "What is the difference between Zip and SelectMany?",
+      "answer": "Zip pairs elements from two sequences by position, stopping at the shorter one, and applies a result selector. SelectMany flattens a sequence of sequences or correlates each element with many others. Use Zip for element-wise combination and SelectMany for one-to-many expansion.",
+      "code": "var sums = a.Zip(b, (x, y) => x + y);",
+      "tags": ["linq", "zip", "selectmany"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.zip"]
+    },
+    {
+      "id": "linq-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Take, Skip, and their While variants?",
+      "answer": "Take(n) returns the first n elements; Skip(n) bypasses the first n. TakeWhile returns elements while a predicate is true and stops at the first false; SkipWhile skips while true and returns the rest. They are used for paging and for stream processing with a stopping condition.",
+      "code": "var page = items.Skip(20).Take(10);\nvar leading = items.TakeWhile(x => x != null);",
+      "tags": ["linq", "paging", "take", "skip"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.take"]
+    },
+    {
+      "id": "linq-017",
+      "difficulty": "Advanced",
+      "question": "How does LINQ's deferred execution interact with mutable collections?",
+      "answer": "Because the query is a recipe, not a snapshot, it reflects the source at enumeration time. If the source changes between definition and execution, the results change, which can cause surprises or InvalidOperationException if the collection is modified during enumeration. Materialize with ToList when you need a stable snapshot.",
+      "code": "var q = list.Where(x => x > 0);\nlist.Add(5); // affects q when enumerated\nvar snapshot = q.ToList();",
+      "tags": ["linq", "deferred-execution", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/linq/deferred-execution-and-lazy-evaluation-in-linq-to-xml"]
+    },
+    {
+      "id": "linq-018",
+      "difficulty": "Intermediate",
+      "question": "What does DefaultIfEmpty do?",
+      "answer": "DefaultIfEmpty returns the sequence itself if it has elements, or a single-element sequence containing default(T) if it is empty. It is the key to left outer joins in LINQ and to guarding downstream operators against empty sequences.",
+      "code": "var result = from c in customers\n             join o in orders on c.Id equals o.CustomerId into g\n             from o in g.DefaultIfEmpty()\n             select new { c.Name, OrderId = o?.Id };",
+      "tags": ["linq", "outer-join"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.defaultifempty"]
+    },
+    {
+      "id": "linq-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Count() and the Count property?",
+      "answer": "Count() is an extension method that enumerates or uses ICollection<T>.Count when available. The Count property on ICollection<T> or List<T> is a direct field read and is O(1). For arrays and lists use the property to avoid the method call overhead, though the LINQ method optimizes for ICollection.",
+      "code": "int a = list.Count;      // property\nint b = list.Count();    // LINQ extension",
+      "tags": ["linq", "performance", "count"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.count"]
+    },
+    {
+      "id": "linq-020",
+      "difficulty": "Advanced",
+      "question": "What is the difference between AsEnumerable, AsQueryable, and AsParallel?",
+      "answer": "AsEnumerable switches a query to in-memory evaluation. AsQueryable lifts an in-memory sequence to IQueryable for provider-style composition. AsParallel enables PLINQ to run operators on multiple threads. Each changes where and how the query executes, with major implications for performance and semantics.",
+      "code": "var inMemory = db.Orders.AsEnumerable().Where(ComplexRule);\nvar parallel = numbers.AsParallel().Select(Heavy).ToArray();",
+      "tags": ["linq", "plinq", "iqueryable"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/parallel-programming/introduction-to-plinq"]
+    },
+    {
+      "id": "linq-021",
+      "difficulty": "Intermediate",
+      "question": "What does the let keyword do in query syntax?",
+      "answer": "The let keyword introduces a range variable that stores an intermediate result so it can be reused in later clauses without recomputation. It is translated into a transparent identifier in the method syntax, improving readability and avoiding repeated calculations.",
+      "code": "var q = from p in people\n        let full = p.First + \" \" + p.Last\n        where full.StartsWith(\"A\")\n        select full;",
+      "tags": ["linq", "query-syntax", "let"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/let-clause"]
+    },
+    {
+      "id": "linq-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between Contains and Any for a membership test?",
+      "answer": "Contains checks whether a specific value is present using equality and can use ICollection<T> optimizations. Any(predicate) checks whether any element satisfies a condition. For a single known value use Contains; for a condition use Any. Both short-circuit on the first match.",
+      "code": "bool hasId = ids.Contains(42);\nbool hasAdult = people.Any(p => p.Age >= 18);",
+      "tags": ["linq", "contains", "any"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.linq.enumerable.contains"]
+    },
+    {
+      "id": "linq-023",
+      "difficulty": "Intermediate",
+      "question": "What are the dangers of using LINQ inside a hot loop?",
+      "answer": "Each LINQ query allocates iterators and delegates, and deferred execution can cause repeated work if the query is enumerated in a loop. Materialize once outside the loop, use arrays and for loops in the hottest paths, and avoid closure allocations. Profile before optimizing, but know that LINQ has real allocation cost.",
+      "tags": ["linq", "performance", "allocations"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/performance/"]
+    },
+    {
+      "id": "linq-024",
+      "difficulty": "Intermediate",
+      "question": "How do you project into an anonymous type and when should you use a named type?",
+      "answer": "An anonymous type created with new { ... } is convenient for temporary projections within a method. It cannot be returned from a public method or used across assemblies easily. Use a named class, record, or tuple when the projection must cross a boundary or be referenced by name.",
+      "code": "var summary = orders.Select(o => new { o.Id, o.Total });\npublic record OrderSummary(int Id, decimal Total);",
+      "tags": ["linq", "anonymous-types", "projection"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/types/anonymous-types"]
+    },
+    {
+      "id": "linq-025",
+      "difficulty": "Advanced",
+      "question": "How does LINQ to Entities differ from LINQ to Objects?",
+      "answer": "LINQ to Objects runs delegates in memory over .NET objects. LINQ to Entities translates expression trees to SQL and runs them in the database, so only supported operations work and some methods throw or silently client-evaluate. Keep queries translatable, project only needed columns, and inspect generated SQL.",
+      "tags": ["linq", "ef-core", "expression-trees"],
+      "references": ["https://learn.microsoft.com/ef/core/querying/"]
+    }
+  ]
+}

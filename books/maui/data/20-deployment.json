@@ -1,0 +1,217 @@
+{
+  "category": "Deployment & Distribution",
+  "slug": "deployment",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "deployment-001",
+      "difficulty": "Beginner",
+      "question": "What does it mean to deploy a .NET MAUI app?",
+      "answer": "Deploying means packaging the built app into the format each platform expects and delivering it to devices or stores. For Android this is an APK or AAB, for iOS and Mac Catalyst an app bundle or IPA, and for Windows an MSIX or unpackaged folder. Each platform has its own signing and distribution requirements. A release build is prepared with the correct configuration, version, and icons.",
+      "tags": ["deployment", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/"]
+    },
+    {
+      "id": "deployment-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between debug and release builds?",
+      "answer": "Debug builds include symbols and disable optimizations so debugging is easy, while release builds enable optimizations, trimming, and AOT for speed and smaller size. Release builds are what you publish to stores. Some issues only appear in release due to trimming or optimizations, so test release builds. Configure both profiles appropriately for each target.",
+      "tags": ["deployment", "builds"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/"]
+    },
+    {
+      "id": "deployment-003",
+      "difficulty": "Beginner",
+      "question": "Why do mobile apps need to be signed?",
+      "answer": "Signing proves the app's authenticity and integrity, so the OS and stores can verify it was not tampered with and can associate it with a developer identity. On Android you sign with a keystore, and on Apple platforms with a certificate and provisioning profile. Losing the signing key can prevent you from updating the app, so store it securely. Signing is mandatory for store distribution.",
+      "tags": ["deployment", "signing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/deployment/publish-google-play"]
+    },
+    {
+      "id": "deployment-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an APK and an AAB?",
+      "answer": "An APK is the installable Android package that runs on a device, while an AAB is the Android App Bundle that Google Play uses to generate optimized APKs per device. Play requires AAB for new app submissions. You can still build APKs for sideloading and testing. The bundle reduces download size by delivering only the needed resources.",
+      "tags": ["deployment", "android"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/deployment/publish-google-play"]
+    },
+    {
+      "id": "deployment-005",
+      "difficulty": "Beginner",
+      "question": "What is a provisioning profile on Apple platforms?",
+      "answer": "A provisioning profile links a signing certificate, an app id, and a set of devices or distribution method, authorizing the app to run. Development profiles allow running on registered test devices, while distribution profiles are used for the App Store or ad hoc distribution. The profile must match the bundle id and certificate. Managing them is part of iOS deployment.",
+      "tags": ["deployment", "ios"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/ios/device-provisioning/"]
+    },
+    {
+      "id": "deployment-006",
+      "difficulty": "Beginner",
+      "question": "How do you set the app version in a MAUI project?",
+      "answer": "Set ApplicationDisplayVersion for the user-visible version, such as 1.2, and ApplicationVersion for the build number in the project file. These map to the platform version fields on each target. The build number must increase for each store submission. Keep them in one place so all platforms stay consistent.",
+      "tags": ["deployment", "versioning"],
+      "code": "<ApplicationDisplayVersion>1.2.0</ApplicationDisplayVersion>\n<ApplicationVersion>5</ApplicationVersion>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/visual-studio-properties"]
+    },
+    {
+      "id": "deployment-007",
+      "difficulty": "Beginner",
+      "question": "What is the app identifier and why does it matter?",
+      "answer": "The app identifier, set through ApplicationId, is the unique reverse-domain name such as com.example.myapp that identifies the app on the store and device. It must be unique and should never change after publishing because the store ties updates to it. It is also used in provisioning profiles and signing. Choose a stable, owned domain for it.",
+      "tags": ["deployment", "identity"],
+      "code": "<ApplicationId>com.example.myapp</ApplicationId>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/visual-studio-properties"]
+    },
+    {
+      "id": "deployment-008",
+      "difficulty": "Beginner",
+      "question": "How do you configure the app icon in MAUI?",
+      "answer": "Place a base icon image in Resources/AppIcon and let the build generate the platform-specific icon sets, configured through MauiIcon in the project file. Each platform uses its own icon sizes and formats, which the tooling derives from the source. Provide a high-resolution square source for best results. The icon and splash settings live alongside other resources.",
+      "tags": ["deployment", "icons"],
+      "code": "<MauiIcon Include=\"Resources/AppIcon/appicon.svg\"\n          ForegroundScale=\"0.5\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/images/app-icons"]
+    },
+    {
+      "id": "deployment-009",
+      "difficulty": "Beginner",
+      "question": "What is a splash screen and how is it configured?",
+      "answer": "A splash screen is the image shown while the app starts, configured through MauiSplashScreen with a source image and color. Each platform renders it in its native startup experience. A simple logo and background color work best. A well-designed splash screen makes startup feel faster.",
+      "tags": ["deployment", "splash"],
+      "code": "<MauiSplashScreen Include=\"Resources/Splash/splash.svg\"\n                  Color=\"#512BD4\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/images/splashscreen"]
+    },
+    {
+      "id": "deployment-010",
+      "difficulty": "Beginner",
+      "question": "How do you install a test build on a device?",
+      "answer": "For Android, install the APK directly on a device with sideloading enabled, or deploy from the IDE to a connected device. For iOS you need a development provisioning profile and a registered device, or use TestFlight for distribution. Deploying from the IDE is the fastest path during development. Test builds let stakeholders try features before store release.",
+      "tags": ["deployment", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/deployment/publish-cli"]
+    },
+    {
+      "id": "deployment-011",
+      "difficulty": "Intermediate",
+      "question": "How do you publish an Android app to Google Play?",
+      "answer": "Build a signed AAB in release configuration, upload it to the Play Console, complete the store listing with description, screenshots, and content rating, and roll it out through a track such as internal, closed, or production. Google Play App Signing manages the final signing key while you sign with an upload key. Increment the version code for each release. Review policies and data declarations before submitting.",
+      "tags": ["deployment", "android"],
+      "code": "dotnet publish -f net9.0-android -c Release \\\n  -p:AndroidPackageFormat=aab",
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/deployment/publish-google-play"]
+    },
+    {
+      "id": "deployment-012",
+      "difficulty": "Intermediate",
+      "question": "How do you publish an iOS app to the App Store?",
+      "answer": "Build a release archive with the correct distribution certificate and provisioning profile, then upload it to App Store Connect using Xcode or the command line, and submit it for review. Fill in metadata, screenshots, and privacy details in App Store Connect. TestFlight lets you distribute builds to testers before release. Apple's review can take a day or more.",
+      "tags": ["deployment", "ios"],
+      "code": "dotnet publish -f net9.0-ios -c Release \\\n  -p:ArchiveOnBuild=true -p:BuildIpa=true",
+      "references": ["https://learn.microsoft.com/dotnet/maui/ios/deployment/publish-app-store"]
+    },
+    {
+      "id": "deployment-013",
+      "difficulty": "Intermediate",
+      "question": "How do you package a Windows MAUI app?",
+      "answer": "Windows apps are typically packaged as MSIX, which supports store distribution and clean install and update, or published unpackaged as a folder. MSIX requires signing and package identity. You configure packaging in the project and publish from Visual Studio or the CLI. Choose MSIX for the Microsoft Store and unpackaged for simpler side-by-side deployment.",
+      "tags": ["deployment", "windows"],
+      "code": "dotnet publish -f net9.0-windows10.0.19041.0 -c Release",
+      "references": ["https://learn.microsoft.com/dotnet/maui/windows/deployment/overview"]
+    },
+    {
+      "id": "deployment-014",
+      "difficulty": "Intermediate",
+      "question": "How do you build a MAUI app from the command line?",
+      "answer": "Use dotnet build or dotnet publish with the target framework, configuration, and any packaging properties, such as AndroidPackageFormat for Android. This is how continuous integration builds apps without an IDE. Specify the runtime identifier where needed. The same commands work across platforms with the appropriate SDKs installed.",
+      "tags": ["deployment", "cli"],
+      "code": "dotnet publish -f net9.0-android -c Release\n",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/"]
+    },
+    {
+      "id": "deployment-015",
+      "difficulty": "Intermediate",
+      "question": "What is trimming and why enable it for release?",
+      "answer": "Trimming removes unused code from the app to reduce its size and memory footprint, which matters for mobile distribution. It requires trimming-safe code because reflection-based code can break. Enable it in release and test thoroughly. It works alongside AOT and can be tuned with trimming settings per target.",
+      "tags": ["deployment", "trimming"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/trimming"]
+    },
+    {
+      "id": "deployment-016",
+      "difficulty": "Intermediate",
+      "question": "How do you configure different environments such as dev and production?",
+      "answer": "Use build configurations or MSBuild properties and constants to vary settings such as API endpoints per environment, and inject the right values at startup. Keep secrets out of source and supply them through secure build variables. Avoid runtime checks for environment where a compile-time constant is clearer. This keeps production behavior distinct from development.",
+      "tags": ["deployment", "configuration"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/"]
+    },
+    {
+      "id": "deployment-017",
+      "difficulty": "Intermediate",
+      "question": "How do you distribute a build to testers?",
+      "answer": "Use TestFlight for iOS, internal or closed tracks on Google Play for Android, and App Center or similar services for cross-platform distribution to testers. Provide clear instructions and collect feedback. TestFlight and Play tracks handle the distribution mechanics. Distribute the same release-style build testers will use to catch release-only issues.",
+      "tags": ["deployment", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/ios/deployment/publish-app-store"]
+    },
+    {
+      "id": "deployment-018",
+      "difficulty": "Intermediate",
+      "question": "How do you automate MAUI builds in CI?",
+      "answer": "Create a pipeline that restores, builds, and publishes the app for each target framework, signs it with securely stored certificates and keystores, and uploads the artifacts or submits to the stores. Cache dependencies to speed up runs. Keep secrets in the CI secret store, never in the repository. Automating builds ensures consistent, repeatable releases.",
+      "tags": ["deployment", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/"]
+    },
+    {
+      "id": "deployment-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle versioning for releases?",
+      "answer": "Set a user-visible version and a monotonically increasing build number per release, and increment them for every store submission. Some teams derive the build number from the CI run number. Keep versioning consistent across platforms and tag the source in version control. This makes it easy to map a store build back to its code.",
+      "tags": ["deployment", "versioning"],
+      "code": "<ApplicationVersion>$([System.DateTime]::Now.ToString(\"yyMMddHHmm\"))</ApplicationVersion>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/appmodel/version-tracking"]
+    },
+    {
+      "id": "deployment-020",
+      "difficulty": "Intermediate",
+      "question": "What should you verify before submitting to a store?",
+      "answer": "Check that the app launches and works on a release build, that the icon, splash, and metadata are correct, and that permissions and privacy declarations match actual usage. Verify version numbers, signing, and that no debug or development endpoints are enabled. Review store policies and content guidelines. A pre-submission checklist prevents costly rejections.",
+      "tags": ["deployment", "release"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/"]
+    },
+    {
+      "id": "deployment-021",
+      "difficulty": "Advanced",
+      "question": "How do you configure runtime identifiers and target frameworks for publishing?",
+      "answer": "Publish with the target framework that matches the platform and specify the runtime identifier when you need a particular architecture, such as android-arm64. You can build per-architecture to reduce size or ship a universal build. The RuntimeIdentifiers property lists the supported architectures. Choosing the right identifiers affects size, performance, and compatibility.",
+      "tags": ["deployment", "publishing"],
+      "code": "dotnet publish -f net9.0-android -c Release \\\n  -p:RuntimeIdentifier=android-arm64",
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/runtimes-compilation"]
+    },
+    {
+      "id": "deployment-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of Native AOT for deployment?",
+      "answer": "Native AOT produces faster startup and lower memory use and can shrink the app, which improves the install and launch experience. It requires trimming-safe code, disables certain reflection scenarios, increases build time, and is not supported on every target. It also complicates some libraries that rely on dynamic code. Adopt it when startup and memory are priorities and your dependencies support it.",
+      "tags": ["deployment", "aot"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/deployment/nativeaot"]
+    },
+    {
+      "id": "deployment-023",
+      "difficulty": "Advanced",
+      "question": "How do you manage signing keys and certificates securely?",
+      "answer": "Store Android keystores and Apple certificates in a secure secret store or key vault, never in the repository, and restrict access to release managers. Back them up because losing an Android keystore can prevent updates, though Play App Signing mitigates this. Use CI secret variables and rotate certificates before expiry. Treat signing material as critical infrastructure.",
+      "tags": ["deployment", "security"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/deployment/publish-google-play"]
+    },
+    {
+      "id": "deployment-024",
+      "difficulty": "Advanced",
+      "question": "How do you set up staged rollouts and manage app updates?",
+      "answer": "Use store features such as staged rollouts on Google Play and phased release on the App Store to expose a new version to a percentage of users first, then increase if metrics are healthy. Monitor crashes and ratings during the rollout and halt if needed. Ensure the app handles the upgrade path from previous versions, including any data migration. Staged rollouts limit the blast radius of a bad release.",
+      "tags": ["deployment", "rollout"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/deployment/publish-google-play"]
+    },
+    {
+      "id": "deployment-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between packaged and unpackaged Windows deployment?",
+      "answer": "Packaged MSIX apps get clean install and update, package identity, and access to certain Windows APIs and the Microsoft Store, but require signing and a packaging step. Unpackaged apps are simpler to build and run side by side but lack package identity, which some features depend on, and need manual update handling. Choose packaged for store distribution and identity-dependent features, and unpackaged for quick internal distribution. You can convert between them with project settings.",
+      "tags": ["deployment", "windows"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/windows/deployment/publish-cli"]
+    }
+  ]
+}

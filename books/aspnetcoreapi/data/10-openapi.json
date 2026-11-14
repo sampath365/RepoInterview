@@ -1,0 +1,341 @@
+{
+  "category": "OpenAPI / Swagger Documentation",
+  "slug": "openapi",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "openapi-001",
+      "difficulty": "Beginner",
+      "question": "What is OpenAPI?",
+      "answer": "OpenAPI is a language-agnostic specification for describing HTTP APIs in a machine-readable document. It describes paths, operations, parameters, request and response schemas, and security schemes. Tools use it to generate documentation, client SDKs, and server stubs.",
+      "tags": [
+        "openapi",
+        "documentation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-002",
+      "difficulty": "Beginner",
+      "question": "What is Swagger?",
+      "answer": "Swagger is the former name of the OpenAPI specification and the name of the original tooling around it. In .NET the Swashbuckle library generates an OpenAPI document and serves the Swagger UI. The specification itself is now called OpenAPI.",
+      "tags": [
+        "swagger",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-003",
+      "difficulty": "Beginner",
+      "question": "How do you add OpenAPI support to an ASP.NET Core API?",
+      "answer": "In .NET 9 call builder.Services.AddOpenApi() and app.MapOpenApi() from the Microsoft.AspNetCore.OpenApi package, or in earlier versions add Swashbuckle with AddSwaggerGen and UseSwagger. This produces a JSON document describing your endpoints. The document is then served at a fixed path such as /openapi/v1.json.",
+      "tags": [
+        "openapi",
+        "setup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "builder.Services.AddOpenApi();\nvar app = builder.Build();\napp.MapOpenApi();"
+    },
+    {
+      "id": "openapi-004",
+      "difficulty": "Beginner",
+      "question": "What does the Swagger UI provide?",
+      "answer": "Swagger UI renders the OpenAPI document as interactive documentation where you can inspect endpoints and send test requests. It is served by UseSwaggerUI or a similar tool and is usually restricted to development. It speeds up exploration and manual testing.",
+      "tags": [
+        "swagger-ui",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "app.UseSwaggerUI(o => o.SwaggerEndpoint(\"/openapi/v1.json\", \"v1\"));"
+    },
+    {
+      "id": "openapi-005",
+      "difficulty": "Beginner",
+      "question": "How does OpenAPI document request and response schemas?",
+      "answer": "The generator inspects action signatures and return types to derive schemas, so a parameter of type Product becomes a request body schema and a return type becomes a response schema. DataAnnotations add constraints such as required and max length. Typed results improve the accuracy of the generated responses.",
+      "tags": [
+        "openapi",
+        "schemas"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between OpenAPI and Swagger UI?",
+      "answer": "OpenAPI is the specification and the document that describes the API, while Swagger UI is one of many tools that render that document as a web page. The document is the source of truth; UIs and code generators consume it. Keeping the document accurate is what matters.",
+      "tags": [
+        "openapi",
+        "swagger"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-007",
+      "difficulty": "Beginner",
+      "question": "How do you add descriptions and examples to endpoints?",
+      "answer": "Use XML documentation comments with GenerateDocumentationFile enabled, or fluent metadata such as WithSummary and WithDescription in minimal APIs and [SwaggerOperation] in Swashbuckle. XML comments are merged into the document automatically. Clear descriptions make the documentation usable.",
+      "tags": [
+        "openapi",
+        "documentation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "/// <summary>Returns a product by id.</summary>\n[HttpGet(\"{id}\")]"
+    },
+    {
+      "id": "openapi-008",
+      "difficulty": "Beginner",
+      "question": "How do you secure the OpenAPI document?",
+      "answer": "Restrict the documentation endpoints to non-production environments or protect them with authentication and authorization, and never expose them publicly if the API is internal. This prevents leaking the full API surface to attackers. Configure the middleware conditionally based on the environment.",
+      "tags": [
+        "security",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-009",
+      "difficulty": "Beginner",
+      "question": "What information does an OpenAPI document contain?",
+      "answer": "It contains the OpenAPI version, API metadata such as title and version, servers, paths and operations, components for reusable schemas and security schemes, and tags for grouping. This structure lets tools understand and consume the API. The document is typically JSON or YAML.",
+      "tags": [
+        "openapi",
+        "specification"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-010",
+      "difficulty": "Beginner",
+      "question": "How do you generate a client from an OpenAPI document?",
+      "answer": "Tools such as NSwag, Kiota, or openapi-generator read the document and emit a strongly typed client for a target language. This keeps client code aligned with the server contract. Regenerating on each API change keeps clients current.",
+      "tags": [
+        "openapi",
+        "codegen"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-011",
+      "difficulty": "Intermediate",
+      "question": "How do you document multiple response status codes?",
+      "answer": "Apply [ProducesResponseType] with the status code and payload type for each response, or use typed results that encode the possible outcomes. This makes the generated document list 200, 400, 404, and similar responses accurately. Accurate responses improve generated clients.",
+      "tags": [
+        "openapi",
+        "responses"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "[ProducesResponseType<Product>(StatusCodes.Status200OK)]\n[ProducesResponseType(StatusCodes.Status404NotFound)]"
+    },
+    {
+      "id": "openapi-012",
+      "difficulty": "Intermediate",
+      "question": "How do you describe security schemes in OpenAPI?",
+      "answer": "Add a security definition for bearer or OAuth2 and reference it globally or per operation, so the UI can prompt for a token. In Swashbuckle you add a SecurityDefinition and a SecurityRequirement. This documents how clients authenticate.",
+      "tags": [
+        "openapi",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "options.AddSecurityDefinition(\"Bearer\", new OpenApiSecurityScheme\n{\n    Scheme = \"bearer\", Type = SecuritySchemeType.Http\n});"
+    },
+    {
+      "id": "openapi-013",
+      "difficulty": "Intermediate",
+      "question": "How do you customize schema generation?",
+      "answer": "Add schema filters or transformers to modify types, for example to add examples, hide properties, or apply a naming policy. In Swashbuckle use ISchemaFilter, and in the built-in generator use schema transformers. Customization keeps the document aligned with the real contract.",
+      "tags": [
+        "openapi",
+        "schemas"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-014",
+      "difficulty": "Intermediate",
+      "question": "How do you generate documentation from XML comments?",
+      "answer": "Enable GenerateDocumentationFile in the project, add XML doc comments to actions and DTOs, and configure the generator to read the produced XML file. This surfaces summaries, parameter descriptions, and response details in the document. It keeps documentation next to the code.",
+      "tags": [
+        "openapi",
+        "xml-docs"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "<GenerateDocumentationFile>true</GenerateDocumentationFile>"
+    },
+    {
+      "id": "openapi-015",
+      "difficulty": "Intermediate",
+      "question": "How do you version an OpenAPI document?",
+      "answer": "Generate one document per API version by wiring the versioning metadata into the document generator, and expose each at a versioned path. Swagger UI can then present all versions in a selector. This keeps documentation aligned with each supported contract.",
+      "tags": [
+        "openapi",
+        "versioning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-016",
+      "difficulty": "Intermediate",
+      "question": "How do you include examples in the generated document?",
+      "answer": "Attach examples to schema or operation filters, or provide them through attributes and fluent metadata. Examples help consumers understand expected payloads without trial and error. Keep examples realistic and consistent with validation rules.",
+      "tags": [
+        "openapi",
+        "examples"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the built-in OpenAPI generator and Swashbuckle?",
+      "answer": "The built-in Microsoft.AspNetCore.OpenApi generator in .NET 9 produces the document with minimal dependencies and integrates with minimal APIs, while Swashbuckle additionally ships Swagger UI and has a longer feature history. Choose the built-in generator plus a separate UI package for a leaner stack. Both produce standards-compliant documents.",
+      "tags": [
+        "openapi",
+        "swashbuckle"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-018",
+      "difficulty": "Intermediate",
+      "question": "How do you group endpoints in the documentation?",
+      "answer": "Apply tags with [Tags] on controllers or WithTags on endpoints and groups, so related operations appear together. Tags improve navigation in Swagger UI. Consistent tagging reflects your resource structure.",
+      "tags": [
+        "openapi",
+        "tags"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "app.MapGroup(\"/products\").WithTags(\"Products\");"
+    },
+    {
+      "id": "openapi-019",
+      "difficulty": "Intermediate",
+      "question": "How do you document ProblemDetails responses?",
+      "answer": "Declare [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status400BadRequest)] and ensure the exception handler emits ProblemDetails, so the schema appears in the document. This tells clients the error shape up front. Consistent error contracts reduce client-side guesswork.",
+      "tags": [
+        "openapi",
+        "problemdetails"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ]
+    },
+    {
+      "id": "openapi-020",
+      "difficulty": "Intermediate",
+      "question": "How do you exclude an endpoint from documentation?",
+      "answer": "Mark it with [ApiExplorerSettings(IgnoreApi = true)] on the controller or action, or use ExcludeFromDescription in minimal APIs. This hides internal or diagnostic endpoints from the public contract. Keep the documented surface limited to what clients should use.",
+      "tags": [
+        "openapi",
+        "apiexplorer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "[ApiExplorerSettings(IgnoreApi = true)]"
+    },
+    {
+      "id": "openapi-021",
+      "difficulty": "Advanced",
+      "question": "How do you generate OpenAPI documents at build time?",
+      "answer": "Use the build-time document generation support or a tool such as the .NET OpenAPI CLI to emit the document from the compiled app, then commit or publish it. This enables contract diffing in CI and client generation without running the app. Build-time generation catches documentation drift early.",
+      "tags": [
+        "openapi",
+        "build"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-022",
+      "difficulty": "Advanced",
+      "question": "How do you enforce API contract changes in CI?",
+      "answer": "Generate the OpenAPI document in the pipeline and compare it with the committed baseline, failing the build on unexpected breaking changes. Tools can classify changes as breaking or non-breaking. This protects consumers from accidental contract drift.",
+      "tags": [
+        "openapi",
+        "ci"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "openapi-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep OpenAPI accurate with minimal APIs and typed results?",
+      "answer": "Use typed results and Results<Ok<T>, NotFound> unions so the compiler records the possible responses, and add metadata with WithSummary and Produces. This lets the generator emit precise schemas without attributes on every handler. Where types are dynamic, add explicit metadata.",
+      "tags": [
+        "openapi",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"
+      ]
+    },
+    {
+      "id": "openapi-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle polymorphic types in OpenAPI schemas?",
+      "answer": "Configure the serializer to emit discriminators, for example with [JsonDerivedType] and JsonPolymorphic, and ensure the schema generator reflects the derived types. This produces oneOf or anyOf schemas with a discriminator. Accurate polymorphism schemas prevent client deserialization failures.",
+      "tags": [
+        "openapi",
+        "polymorphism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/polymorphism"
+      ],
+      "code": "[JsonDerivedType(typeof(Dog), \"dog\")]\npublic abstract class Animal { }"
+    },
+    {
+      "id": "openapi-025",
+      "difficulty": "Advanced",
+      "question": "How do you publish OpenAPI documentation for multiple services?",
+      "answer": "Aggregate documents from each service behind an API gateway or a documentation portal, using per-service versioned documents and consistent metadata. This gives consumers a single entry point while keeping ownership with each team. Automation keeps the aggregate current as services change.",
+      "tags": [
+        "openapi",
+        "api-gateway"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "category": "Generics",
+  "slug": "generics",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "generics-001",
+      "difficulty": "Beginner",
+      "question": "What are generics and why are they useful?",
+      "answer": "Generics let you define types and methods with a placeholder type parameter, such as List<T>. They give compile-time type safety, eliminate casts and boxing, and let one implementation serve many types. The runtime creates specialized code per value type and shares code for reference types, so there is little to no performance cost.",
+      "code": "public T First<T>(IList<T> items) => items[0];",
+      "tags": ["generics", "type-safety"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/types/generics"]
+    },
+    {
+      "id": "generics-002",
+      "difficulty": "Beginner",
+      "question": "What is a generic constraint and what kinds exist?",
+      "answer": "Constraints restrict which types can be used as a type argument and unlock members on the type parameter. Common constraints are where T : class (reference type), struct (value type), new() (parameterless constructor), a base class, an interface, unmanaged, notnull, and a type parameter. Multiple constraints are combined with commas.",
+      "code": "public T Create<T>() where T : new() => new T();\npublic void Save<T>(T item) where T : IEntity, IValidatable { }",
+      "tags": ["generics", "constraints"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"]
+    },
+    {
+      "id": "generics-003",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a generic method and a generic class?",
+      "answer": "A generic method declares its own type parameters that are scoped to that method, so a non-generic class can host one. A generic class declares type parameters that apply to all its members and are fixed when the type is constructed. Use a generic method for a single operation and a generic class when the type parameter is part of the type's identity.",
+      "code": "public class Repository<T> { public void Add(T item) { } }      // class\npublic static T Max<T>(T a, T b) where T : IComparable<T> => a.CompareTo(b) > 0 ? a : b; // method",
+      "tags": ["generics", "methods", "classes"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/generic-methods"]
+    },
+    {
+      "id": "generics-004",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the class and struct constraints?",
+      "answer": "where T : class restricts T to reference types, so T can be null and you can use reference comparison. where T : struct restricts T to non-nullable value types and enables default(T) to be a zeroed value. The struct constraint also excludes nullable value types unless you also allow them.",
+      "tags": ["generics", "constraints"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"]
+    },
+    {
+      "id": "generics-005",
+      "difficulty": "Intermediate",
+      "question": "What is the new() constraint and what does it require?",
+      "answer": "where T : new() requires T to have a public parameterless constructor, so you can instantiate it with new T(). It must be the last constraint listed. It is often used in factories and generic builders to create instances of an unknown type.",
+      "code": "public static List<T> CreateMany<T>(int n) where T : new()\n{\n    var list = new List<T>(n);\n    for (int i = 0; i < n; i++) list.Add(new T());\n    return list;\n}",
+      "tags": ["generics", "constraints", "new"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/new-constraint"]
+    },
+    {
+      "id": "generics-006",
+      "difficulty": "Intermediate",
+      "question": "What is a generic interface and how does it differ from a generic class?",
+      "answer": "A generic interface declares type parameters as part of its contract, such as IRepository<T>. Implementers supply the type argument. It lets you abstract over families of types while keeping type safety. Interfaces support variance annotations (in/out) on their type parameters, which classes do not.",
+      "code": "public interface IRepository<T> where T : class\n{\n    T? Get(int id);\n    void Add(T entity);\n}",
+      "tags": ["generics", "interfaces"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/generic-interfaces"]
+    },
+    {
+      "id": "generics-007",
+      "difficulty": "Advanced",
+      "question": "What are generic type parameter variance annotations in and out?",
+      "answer": "out T (covariance) means T is only used as an output, so a more derived type can substitute. in T (contravariance) means T is only used as input, so a less derived type can substitute. They apply to interfaces and delegates and enable assignment compatibility such as IEnumerable<string> to IEnumerable<object>.",
+      "code": "public interface IProducer<out T> { T Produce(); }\npublic interface IConsumer<in T> { void Consume(T item); }",
+      "tags": ["generics", "variance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/covariance-contravariance/variance-in-generic-interfaces"]
+    },
+    {
+      "id": "generics-008",
+      "difficulty": "Advanced",
+      "question": "How does the runtime handle generics and what is reification?",
+      "answer": "C# generics are reified: the runtime knows the type arguments at execution time. For reference type arguments, one shared native code version is used. For value type arguments, the JIT generates specialized code so there is no boxing. Reification enables reflection over generic arguments and typeof(List<int>).",
+      "tags": ["generics", "runtime", "jit"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/"]
+    },
+    {
+      "id": "generics-009",
+      "difficulty": "Intermediate",
+      "question": "What is the default value of a generic type parameter and how do you get it?",
+      "answer": "The default value is null for reference types, a zeroed value for value types, and null for nullable value types. Use default(T) or the default literal to obtain it without knowing the type. You cannot assign a non-default value generically without constraints.",
+      "code": "public T? GetOrDefault<T>(IList<T> items, int index)\n{\n    return index >= 0 && index < items.Count ? items[index] : default;\n}",
+      "tags": ["generics", "default"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/default"]
+    },
+    {
+      "id": "generics-010",
+      "difficulty": "Intermediate",
+      "question": "Why can't you use arithmetic operators on an unconstrained generic type?",
+      "answer": "Operators are not part of the type parameter contract unless constrained, because the compiler cannot know if the type supports + or <. Historically you used dynamic, expression trees, or a delegate like Func<T,T,T>. Since C# 11 static abstract members in interfaces allow generic math with INumber<T> and similar interfaces.",
+      "code": "public static T Sum<T>(IEnumerable<T> values) where T : INumber<T>\n{\n    T total = T.Zero;\n    foreach (var v in values) total += v;\n    return total;\n}",
+      "tags": ["generics", "generic-math", "operators"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/generics/math"]
+    },
+    {
+      "id": "generics-011",
+      "difficulty": "Advanced",
+      "question": "What is the unmanaged constraint?",
+      "answer": "where T : unmanaged requires T to be a value type whose fields are all unmanaged, meaning no reference types anywhere in its layout. It enables pointer operations and interop and is stricter than the struct constraint. It is used for low-level buffer and interop code.",
+      "code": "unsafe void Fill<T>(T* ptr, int count) where T : unmanaged { }",
+      "tags": ["generics", "unmanaged", "interop"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/builtin-types/unmanaged-types"]
+    },
+    {
+      "id": "generics-012",
+      "difficulty": "Intermediate",
+      "question": "What is the notnull constraint?",
+      "answer": "where T : notnull disallows nullable type arguments. For reference types it means the type argument is a non-nullable reference type; for value types it excludes Nullable<T>. It helps the compiler produce correct nullable warnings in generic code.",
+      "tags": ["generics", "nullable", "constraints"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"]
+    },
+    {
+      "id": "generics-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a generic type and an open or closed constructed type?",
+      "answer": "An open constructed type still has unassigned type parameters, such as List<T> or Dictionary<,>. A closed constructed type has all type arguments supplied, such as List<int>. Reflection distinguishes them with ContainsGenericParameters and IsGenericTypeDefinition.",
+      "tags": ["generics", "reflection", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.type.isgenerictype"]
+    },
+    {
+      "id": "generics-014",
+      "difficulty": "Intermediate",
+      "question": "How do you overload methods using generic type parameters?",
+      "answer": "Two methods cannot differ only by the names of their type parameters, but they can differ by arity, for example Foo<T>() and Foo<T1,T2>(). Overload resolution prefers the more specific non-generic or constrained method when multiple candidates apply.",
+      "code": "void Log<T>(T value) { }\nvoid Log<T1, T2>(T1 a, T2 b) { }",
+      "tags": ["generics", "overloading"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/generic-methods"]
+    },
+    {
+      "id": "generics-015",
+      "difficulty": "Advanced",
+      "question": "What are static abstract interface members and generic math?",
+      "answer": "C# 11 lets interfaces declare static abstract members, including operators and static factory members like T.Zero and T.One. This enables generic algorithms that use arithmetic on a type parameter, provided the constraint names an interface such as INumber<T>. It is the basis of the System.Numerics generic math feature.",
+      "code": "static T Average<T>(IEnumerable<T> xs) where T : INumber<T>\n{\n    T sum = T.Zero; int n = 0;\n    foreach (var x in xs) { sum += x; n++; }\n    return sum / T.CreateChecked(n);\n}",
+      "tags": ["generics", "generic-math", "static-abstract"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/whats-new/tutorials/static-abstract-interface-methods"]
+    },
+    {
+      "id": "generics-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between List<object> and List<T> with a constraint?",
+      "answer": "List<object> can hold any reference type and requires casting to retrieve elements, losing type safety. A generic List<T> constrained to a base class preserves the element type and avoids casts, giving compile-time safety and better performance. Prefer the constrained generic to the object-based collection.",
+      "tags": ["generics", "type-safety"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/types/generics"]
+    },
+    {
+      "id": "generics-017",
+      "difficulty": "Advanced",
+      "question": "What is the difference between IEnumerable<out T> and IReadOnlyList<T>?",
+      "answer": "IEnumerable<out T> is covariant and supports only forward iteration, so IEnumerable<string> is assignable to IEnumerable<object>. IReadOnlyList<T> is invariant and adds Count and indexing but not covariance. Choose covariance when you only iterate and need substitutability, and IReadOnlyList when you need indexing.",
+      "tags": ["generics", "variance", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/generics/covariance-and-contravariance"]
+    },
+    {
+      "id": "generics-018",
+      "difficulty": "Intermediate",
+      "question": "How do you constrain a type parameter to derive from another type parameter?",
+      "answer": "You can write where TDerived : TBase, constraining one type parameter to be the other or derive from it. This is common in fluent builders and generic base repositories where the derived entity must be a subtype of a base entity.",
+      "code": "public abstract class Repository<TEntity, TKey> where TEntity : Entity<TKey>\n{\n    public abstract TEntity? Find(TKey id);\n}",
+      "tags": ["generics", "constraints"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"]
+    },
+    {
+      "id": "generics-019",
+      "difficulty": "Intermediate",
+      "question": "What is a generic delegate and how is it declared?",
+      "answer": "A generic delegate declares type parameters on the delegate itself, such as delegate TResult Mapper<T, TResult>(T input). The built-in Action<...> and Func<...> are generic delegates. Custom generic delegates are rare today because Func and Action cover most cases, but they remain useful for named, self-documenting signatures.",
+      "code": "public delegate T Factory<out T>();\nFactory<Customer> f = () => new Customer();",
+      "tags": ["generics", "delegates"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/generic-delegates"]
+    },
+    {
+      "id": "generics-020",
+      "difficulty": "Advanced",
+      "question": "Why is typeof(List<>) different from typeof(List<int>)?",
+      "answer": "typeof(List<>) returns the open generic type definition with unassigned parameters, while typeof(List<int>) returns a closed constructed type. You create a closed type at runtime with MakeGenericType. Generic type definitions are used in reflection to inspect and build constructed types.",
+      "code": "var open = typeof(List<>);\nvar closed = open.MakeGenericType(typeof(int)); // List<int>",
+      "tags": ["generics", "reflection", "types"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.type.makegenerictype"]
+    },
+    {
+      "id": "generics-021",
+      "difficulty": "Intermediate",
+      "question": "What is a generic type alias or using directive?",
+      "answer": "A using alias directive creates a shorthand for a type, including closed generic types, to shorten long names or disambiguate. It does not create a new type, only a name. C# 12 added the ability to alias any type, including tuples and arrays, and to create aliases with the global modifier.",
+      "code": "using Orders = System.Collections.Generic.Dictionary<int, MyApp.Order>;",
+      "tags": ["generics", "using", "syntax"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/using-directive"]
+    },
+    {
+      "id": "generics-022",
+      "difficulty": "Advanced",
+      "question": "What performance issues can generics introduce?",
+      "answer": "Value type instantiations cause the JIT to generate code per type, which increases code size and JIT time. Constraining to an interface can cause interface dispatch, and using a struct through an interface boxes it. Large structs passed to generic methods are copied. These costs are usually small, but in hot loops prefer concrete types or careful constraints.",
+      "tags": ["generics", "performance", "jit"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/generics/"]
+    },
+    {
+      "id": "generics-023",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a generic method and a method taking object?",
+      "answer": "A method taking object accepts anything but requires boxing for value types and casts for retrieval, and provides no compile-time type safety. A generic method keeps the exact type, avoids boxing, and lets the compiler enforce correctness. Use generics unless you truly need to handle heterogeneous types.",
+      "tags": ["generics", "boxing", "type-safety"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/fundamentals/types/generics"]
+    },
+    {
+      "id": "generics-024",
+      "difficulty": "Advanced",
+      "question": "How do you apply multiple constraints and what is their ordering rule?",
+      "answer": "You list constraints after the where clause separated by commas: a base class first, then interfaces, then the new() constraint last. You can also combine class, struct, notnull, and type parameter constraints. Violating the ordering is a compile error.",
+      "code": "public class Cache<TKey, TValue>\n    where TKey : notnull\n    where TValue : class, ICloneable, new() { }",
+      "tags": ["generics", "constraints"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/generics/constraints-on-type-parameters"]
+    },
+    {
+      "id": "generics-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between covariance in arrays and covariance in generics?",
+      "answer": "Arrays are covariant since C# 1, so a string[] is assignable to object[], but this is unsound: writing an int into the object[] throws ArrayTypeMismatchException at runtime. Generic interfaces and delegates are covariant only when declared with out and are checked statically. Prefer covariant generic interfaces over array covariance.",
+      "code": "object[] arr = new string[1];\n// arr[0] = 5; // throws ArrayTypeMismatchException at runtime",
+      "tags": ["variance", "arrays", "generics"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/covariance-contravariance/"]
+    }
+  ]
+}

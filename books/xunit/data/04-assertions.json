@@ -1,0 +1,224 @@
+{
+  "category": "Assertions",
+  "slug": "assertions",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "assertions-001",
+      "difficulty": "Beginner",
+      "question": "What is the Assert class in xUnit?",
+      "answer": "Assert is the static class that provides all the verification methods in xUnit, such as Assert.Equal, Assert.True, Assert.Null, and Assert.Throws. A test passes when no assertion throws; the first failing assertion throws an exception that aborts the test and is reported with a descriptive message. Assertions live in the xunit.assert package, which is included by the xunit and xunit.v3 meta-packages.",
+      "tags": ["assert", "basics"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "assertions-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Assert.Equal and Assert.Same?",
+      "answer": "Assert.Equal compares two values using their Equals implementation, so two distinct objects with equal contents pass. Assert.Same checks reference identity and passes only when both arguments point to the exact same instance. Use Same when identity is the contract, such as verifying a cache returns the stored object rather than a copy.",
+      "code": "Assert.Equal(\"abc\", string.Concat(\"a\", \"bc\"));   // value equality\nAssert.Same(instance, cache.Get(\"key\"));           // reference equality",
+      "tags": ["equal", "same"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-003",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a collection contains an item?",
+      "answer": "Use Assert.Contains with the expected item and the collection, or the overload that takes a predicate for a matching condition. The assertion fails with a message listing the items when no match is found, which speeds up diagnosis. Assert.DoesNotContain is the inverse for negative cases.",
+      "code": "var names = new[] { \"Ann\", \"Bob\" };\nAssert.Contains(\"Ann\", names);\nAssert.Contains(names, n => n.StartsWith(\"B\"));",
+      "tags": ["contains", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-004",
+      "difficulty": "Beginner",
+      "question": "How do you assert that a string contains a substring?",
+      "answer": "Assert.Contains(expectedSubstring, actualString) checks for a substring when both arguments are strings, and it is overloaded with a StringComparison for case-insensitive checks. Assert.StartsWith and Assert.EndsWith cover prefix and suffix cases. Prefer these over Assert.True(actual.Contains(x)) because they produce clearer failure messages.",
+      "code": "Assert.Contains(\"World\", \"Hello World\");\nAssert.StartsWith(\"Hello\", \"Hello World\");",
+      "tags": ["strings", "contains"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-005",
+      "difficulty": "Beginner",
+      "question": "What does Assert.Empty and Assert.NotEmpty do?",
+      "answer": "Assert.Empty verifies that a collection or string has no elements, and Assert.NotEmpty verifies that it has at least one. They read better than comparing Count to zero and report the actual contents on failure. Both work on any IEnumerable, so they are convenient for LINQ results.",
+      "code": "Assert.Empty(Array.Empty<int>());\nAssert.NotEmpty(new[] { 1 });",
+      "tags": ["empty", "collections"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-006",
+      "difficulty": "Beginner",
+      "question": "How do you check for null with xUnit?",
+      "answer": "Use Assert.Null and Assert.NotNull, which produce a clear message including the unexpected value. Avoid Assert.True(x is null) because it loses that detail and the intent. When nullable reference types are enabled, NotNull also helps the compiler flow analysis understand that the value is non-null afterwards.",
+      "code": "string? result = Find(1);\nAssert.NotNull(result);\nAssert.Equal(3, result.Length);",
+      "tags": ["null", "assert"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-007",
+      "difficulty": "Beginner",
+      "question": "What is Assert.True and when should you prefer a more specific assertion?",
+      "answer": "Assert.True verifies that a boolean expression is true and Assert.False verifies it is false. They are the fallback when no dedicated assertion fits, but specific assertions such as Equal, Contains, or InRange produce far better failure messages because they show the expected and actual values. Prefer the most specific assertion available and reserve True/False for genuinely boolean results.",
+      "tags": ["true", "false"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-008",
+      "difficulty": "Beginner",
+      "question": "How do you assert that two doubles are approximately equal?",
+      "answer": "Use the Assert.Equal overload that accepts a precision parameter, which rounds both values to the given number of decimal places before comparing. For floating-point work you can also supply a tolerance. Never compare floating-point values with the default exact overload unless the values are known to be exactly representable.",
+      "code": "Assert.Equal(3.1416, Math.PI, precision: 4);\nAssert.Equal(0.3, 0.1 + 0.2, tolerance: 1e-9);",
+      "tags": ["floating-point", "precision"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Assert.Equal and Assert.Equivalent?",
+      "answer": "Assert.Equal uses the type's Equals method and also checks that the two values are of compatible types, so it can fail for two objects that look alike but are different types. Assert.Equivalent performs a structural, recursive comparison of public properties and fields regardless of the runtime types, which is useful for comparing anonymous types or DTOs to view models. Equivalent also allows you to specify whether strict type matching is required.",
+      "tags": ["equivalent", "deep-equality"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "assertions-010",
+      "difficulty": "Beginner",
+      "question": "How do you assert that an event is raised?",
+      "answer": "There is no built-in assertion for events, so subscribe a handler that records the call and assert on the recorded state after the action. A common approach is to use a flag or a list captured by a closure. In v3 you can also use Assert.Raises and Assert.RaisesAny, which take an Action that wires up and removes the handler and return the captured arguments.",
+      "code": "var raised = false;\nsubject.Changed += (_, _) => raised = true;\nsubject.Raise();\nAssert.True(raised);",
+      "tags": ["events", "raises"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "assertions-011",
+      "difficulty": "Intermediate",
+      "question": "Why does the argument order in Assert.Equal matter?",
+      "answer": "The first argument is treated as the expected value and the second as the actual, which determines how the failure message and the diff are presented. Swapping them produces a message that describes the comparison backwards and makes triage confusing. The xUnit analyzers include a rule that warns when the actual value appears to be passed first.",
+      "code": "// expected first, actual second\nAssert.Equal(expected: 42, actual: Compute());",
+      "tags": ["equal", "analyzers"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "assertions-012",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that a collection is equal to another collection?",
+      "answer": "Assert.Equal compares two collections element by element and in order, so it fails if the sequences differ in order or length. If order does not matter, use Assert.Equivalent or sort both sequences first. For set-like comparisons, Assert.Contains with a predicate or a manual set comparison is clearer than relying on ordering.",
+      "code": "Assert.Equal(new[] { 1, 2, 3 }, result);\nAssert.Equivalent(new[] { 3, 1, 2 }, result); // order-insensitive",
+      "tags": ["collections", "equal"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-013",
+      "difficulty": "Intermediate",
+      "question": "How do you use Assert.Collection?",
+      "answer": "Assert.Collection takes a sequence and one inspector delegate per expected element, so each delegate verifies the element at that position. It combines a length check with per-element assertions and gives a precise message when a count or element mismatches. It is ideal when each element has a different expected shape.",
+      "code": "Assert.Collection(items,\n    i => Assert.Equal(\"a\", i.Name),\n    i => Assert.Equal(\"b\", i.Name));",
+      "tags": ["collection", "assert"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-014",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that an action does not throw?",
+      "answer": "By default an unhandled exception already fails a test, so the clearest expression of 'does not throw' is simply to call the code and then assert the result. If you want to be explicit you can use the Record.Exception helper and then Assert.Null on the returned exception. This makes the intent visible and lets you assert on the exception when you expect none.",
+      "code": "var ex = Record.Exception(() => service.Validate(input));\nAssert.Null(ex);",
+      "tags": ["record-exception", "assert"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Assert.Throws and Assert.ThrowsAsync?",
+      "answer": "Assert.Throws runs a synchronous delegate and verifies that it throws an exception of the exact type, returning the exception so you can assert on its message or data. Assert.ThrowsAsync takes a Func<Task> and awaits the delegate, verifying the faulted task rather than the call itself. Using the wrong one on async code means the assertion runs before the exception is observed, so always use the async variant for awaited work.",
+      "code": "var ex = await Assert.ThrowsAsync<ArgumentException>(\n    () => service.SaveAsync(null!));",
+      "tags": ["throws", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "assertions-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Assert.Throws and Assert.ThrowsAny?",
+      "answer": "Assert.Throws requires the thrown exception to be exactly the specified type, while Assert.ThrowsAny accepts the type or any derived type. Throws is stricter and prevents a subclass from silently satisfying the test, whereas ThrowsAny is useful when any implementation of a base exception is acceptable. Prefer the exact overload unless you deliberately want to allow derived types.",
+      "tags": ["throws", "throwsany"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "assertions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on a specific exception message?",
+      "answer": "Capture the exception returned by Assert.Throws or ThrowsAsync and then assert on its Message property. Exact message matching is brittle because messages may be localised or reworded, so assert on a stable substring or on an error code when one is available. Comparing the whole message is acceptable only for messages your team owns and treats as part of the contract.",
+      "code": "var ex = Assert.Throws<InvalidOperationException>(() => Act());\nAssert.Contains(\"already exists\", ex.Message);",
+      "tags": ["exceptions", "message"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "assertions-018",
+      "difficulty": "Intermediate",
+      "question": "How do you assert that a value is within a range?",
+      "answer": "Use Assert.InRange(value, low, high), which verifies that the value is greater than or equal to the low bound and less than or equal to the high bound. Assert.NotInRange is the inverse. It reads more clearly than a pair of True assertions and reports the bounds and the value on failure.",
+      "code": "Assert.InRange(result, 1, 10);\nAssert.NotInRange(result, 100, 200);",
+      "tags": ["inrange", "numeric"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-019",
+      "difficulty": "Intermediate",
+      "question": "What does Assert.Multiple do in xUnit v3?",
+      "answer": "Assert.Multiple runs a set of assertions and collects all the failures before throwing, instead of stopping at the first one. This is useful when you want to see every mismatched property of a complex object in a single run. It accepts an action that contains the assertions and reports an aggregate failure listing each problem.",
+      "code": "Assert.Multiple(\n    () => Assert.Equal(1, dto.Id),\n    () => Assert.Equal(\"Ann\", dto.Name));",
+      "tags": ["multiple", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "assertions-020",
+      "difficulty": "Intermediate",
+      "question": "How do you add a custom failure message to an assertion?",
+      "answer": "Most assertions accept an optional user message parameter that is appended to the failure output, which is helpful for identifying which case failed. For complex diagnostics you can instead capture values into variables and include them in the message. Keep messages focused on context that the assertion itself cannot express.",
+      "code": "Assert.Equal(200, response.StatusCode,\n    userMessage: $\"URL was {response.RequestMessage?.RequestUri}\");",
+      "tags": ["messages", "diagnostics"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "assertions-021",
+      "difficulty": "Advanced",
+      "question": "How do you write a custom assertion library for xUnit?",
+      "answer": "Wrap the built-in assertions in extension methods on your domain types so tests read as domain language, and throw the framework's assertion exceptions so failures integrate with the runner. In v3 you can derive from Xunit.Assert to access the protected helpers, or simply call the public Assert methods from your extension. FluentAssertions is a popular third-party library that takes this idea further with a full fluent API.",
+      "code": "public static class OrderAssertions\n{\n    public static void IsPaid(this Order o)\n        => Assert.Equal(OrderStatus.Paid, o.Status);\n}",
+      "tags": ["custom-assertions", "extensibility"],
+      "references": ["https://fluentassertions.com/"]
+    },
+    {
+      "id": "assertions-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using a third-party assertion library such as FluentAssertions?",
+      "answer": "Fluent libraries offer expressive, discoverable syntax and very detailed failure messages, which can shorten diagnosis time for complex objects and collections. The trade-offs are an extra dependency, a second assertion style in the codebase, and potential licensing considerations for commercial use. Teams should standardise on one style so tests do not mix idioms.",
+      "tags": ["fluentassertions", "libraries"],
+      "references": ["https://fluentassertions.com/"]
+    },
+    {
+      "id": "assertions-023",
+      "difficulty": "Advanced",
+      "question": "How does Assert.Equivalent handle cycles and reference loops?",
+      "answer": "Assert.Equivalent performs a recursive structural comparison and tracks visited objects so it does not loop forever on cyclic object graphs. It compares public properties and fields by default and can require strict type matching. Because it reflects over members it is slower than an Equals-based comparison, so reserve it for verification rather than hot paths.",
+      "tags": ["equivalent", "graphs"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "assertions-024",
+      "difficulty": "Advanced",
+      "question": "How can a failing assertion hide information, and how do you avoid that?",
+      "answer": "The first failing assertion aborts the test, so later checks never run and their state is lost, which can send you chasing one symptom at a time. Use Assert.Multiple to gather several independent failures in one run, or split the checks into separate tests so each failure is isolated. Keeping one behaviour per test is the simplest way to preserve diagnostic information.",
+      "tags": ["diagnostics", "multiple"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "assertions-025",
+      "difficulty": "Advanced",
+      "question": "Why is it important to assert on observable behaviour rather than implementation details?",
+      "answer": "Asserting on behaviour keeps tests valid across refactoring because the test describes what the code promises, not how it is built. Implementation-coupled assertions, such as verifying an internal call sequence, break whenever the code is reorganised even though behaviour is unchanged. When you must verify interactions, do so through the public contract or through a mock at an architectural boundary.",
+      "tags": ["behaviour", "refactoring"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

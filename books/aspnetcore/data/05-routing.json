@@ -1,0 +1,218 @@
+{
+  "category": "Routing & Endpoints",
+  "slug": "routing",
+  "icon": "link",
+  "questions": [
+    {
+      "id": "routing-001",
+      "difficulty": "Beginner",
+      "question": "What is routing in ASP.NET Core?",
+      "answer": "Routing matches incoming HTTP requests to endpoints by inspecting the request path, HTTP method, and other constraints, then stores the matched endpoint in HttpContext for execution. It supports both conventional routes defined by templates and attribute routes declared on controllers and actions. Routing is the mechanism that connects URLs to the code that handles them.",
+      "tags": ["routing", "endpoints"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between conventional routing and attribute routing?",
+      "answer": "Conventional routing defines a pattern such as {controller=Home}/{action=Index}/{id?} that applies across controllers, typically in Program.cs. Attribute routing places the template directly on the controller or action with [Route] or [HttpGet(\"path\")], giving each endpoint explicit control over its URL. Attribute routing is the default in Web API templates, while MVC apps often use conventional routes.",
+      "tags": ["conventional-routing", "attribute-routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"]
+    },
+    {
+      "id": "routing-003",
+      "difficulty": "Beginner",
+      "question": "What are route parameters and how are they declared?",
+      "answer": "Route parameters are placeholders in a template, written in braces such as {id}, that capture a segment of the URL and bind it to an action parameter or handler argument. They can be optional with a trailing ? or have default values with =. The captured value is bound by name and type, which is why the action parameter should match the placeholder.",
+      "code": "[HttpGet(\"products/{id:int}\")]\npublic IActionResult Get(int id) => Ok(_repo.Find(id));",
+      "tags": ["route-parameters", "templates"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-004",
+      "difficulty": "Beginner",
+      "question": "What are route constraints?",
+      "answer": "Route constraints restrict which URLs match a route by validating a parameter against a rule such as int, guid, minlength, or a regular expression. They are written after the parameter name with a colon, for example {id:int}. Constraints help disambiguate routes and avoid unnecessary model binding failures.",
+      "tags": ["route-constraints", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-constraints"]
+    },
+    {
+      "id": "routing-005",
+      "difficulty": "Beginner",
+      "question": "How do you map endpoints in the minimal hosting model?",
+      "answer": "You call MapXxx methods on the WebApplication, such as MapControllers, MapGet, MapRazorPages, MapHub, or MapFallback. Each call registers endpoints in the route table during startup. The framework adds routing middleware automatically, so you rarely call UseRouting or UseEndpoints explicitly.",
+      "code": "app.MapControllers();\napp.MapGet(\"/ping\", () => \"pong\");\napp.MapRazorPages();",
+      "tags": ["endpoint-mapping", "minimal-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between MapGet, MapPost, and MapMethods?",
+      "answer": "MapGet and MapPost register endpoints that match only the specified HTTP method, while MapMethods lets you specify an array of methods for a single endpoint. Using method-specific mappings keeps handlers focused and lets routing return 405 for unsupported methods when configured. For controllers, HttpGet and HttpPost attributes play the same role.",
+      "tags": ["http-methods", "minimal-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"]
+    },
+    {
+      "id": "routing-007",
+      "difficulty": "Beginner",
+      "question": "What is an endpoint in ASP.NET Core?",
+      "answer": "An endpoint is the final handler selected by routing, combining a request delegate with metadata such as the route template, HTTP methods, authorization policies, and CORS settings. Endpoints are represented by the Endpoint class and exposed via HttpContext.GetEndpoint(). Metadata drives behaviors like authorization, so routing and other middleware work together through endpoints.",
+      "tags": ["endpoints", "metadata"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-008",
+      "difficulty": "Beginner",
+      "question": "How do you define a route prefix for a controller?",
+      "answer": "You place [Route(\"api/[controller]\")] on the controller, where [controller] is replaced by the controller name without the Controller suffix. Action-level attributes then append to that prefix unless they start with a slash or use an absolute template. This keeps API URLs consistent across a controller.",
+      "code": "[Route(\"api/[controller]\")]\npublic class ProductsController : ControllerBase { }",
+      "tags": ["route-prefix", "controllers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/routing"]
+    },
+    {
+      "id": "routing-009",
+      "difficulty": "Beginner",
+      "question": "What is the fallback route used for?",
+      "answer": "MapFallbackToPage or MapFallback registers an endpoint that handles requests that do not match any other route, commonly used to serve a SPA's index.html so client-side routing works. The fallback should be registered after all other endpoints because it matches broadly. It should not swallow unmatched API calls unless that is intended.",
+      "code": "app.MapControllers();\napp.MapFallbackToFile(\"index.html\");",
+      "tags": ["fallback", "spa"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-010",
+      "difficulty": "Beginner",
+      "question": "What is route precedence in ASP.NET Core?",
+      "answer": "Routing evaluates candidates by specificity rather than registration order, giving literal segments higher priority than parameters and parameters higher priority than catch-all segments. Constraints and defaults also affect the ordering. This means a route like products/new wins over products/{id} regardless of the order they are declared.",
+      "tags": ["precedence", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-precedence"]
+    },
+    {
+      "id": "routing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use RouteGroups to organize minimal API endpoints?",
+      "answer": "MapGroup creates a RouteGroupBuilder that shares a prefix and metadata across endpoints, so you can define common tags, authorization, and filters once. Endpoints are added to the group and inherit its conventions. Groups can be nested and are a clean way to structure larger minimal API apps.",
+      "code": "var api = app.MapGroup(\"/api/v1\")\n    .RequireAuthorization()\n    .WithTags(\"v1\");\napi.MapGet(\"/products\", GetAllProducts);",
+      "tags": ["route-groups", "minimal-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/route-handlers"]
+    },
+    {
+      "id": "routing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you generate URLs from routes in code?",
+      "answer": "You use LinkGenerator to build a URL from a route name, route values, and optional scheme or host, or the Url helper in controllers and Razor views for the same purpose. Named routes let you change templates without breaking links. This decouples link generation from hardcoded paths.",
+      "code": "var url = linkGenerator.GetPathByRouteName(\"GetProduct\",\n    httpContext, new { id = 42 });",
+      "tags": ["link-generation", "urls"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing#url-generation"]
+    },
+    {
+      "id": "routing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom route constraint?",
+      "answer": "You implement IRouteConstraint with a Match method that validates the value, then register it with options.ConstraintMap in Program.cs and reference it in a template by name. Custom constraints are useful for domain rules such as valid slug formats. Prefer the built-in constraints when possible for simplicity.",
+      "code": "builder.Services.Configure<RouteOptions>(o =>\n    o.ConstraintMap.Add(\"slug\", typeof(SlugConstraint)));",
+      "tags": ["custom-constraint", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-constraint-reference"]
+    },
+    {
+      "id": "routing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you apply endpoint metadata to minimal API endpoints?",
+      "answer": "You chain methods such as WithName, WithSummary, RequireAuthorization, and WithOpenApi, or add custom metadata with WithMetadata(new MyMetadata()). Metadata is attached to the endpoint and read by middleware and filters that inspect HttpContext.GetEndpoint(). This makes cross-cutting policies declarative and testable.",
+      "code": "app.MapGet(\"/orders\", GetAllOrders)\n    .WithName(\"GetOrders\")\n    .Produces<List<Order>>(200);",
+      "tags": ["metadata", "minimal-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing#endpoint-metadata"]
+    },
+    {
+      "id": "routing-015",
+      "difficulty": "Intermediate",
+      "question": "How do area routes work in MVC?",
+      "answer": "Areas partition a large MVC app into sections, and area routes include an {area} segment such as {area:exists}/{controller=Home}/{action=Index}. Controllers use [Area(\"Admin\")] to declare their area, and views live under an Areas folder. Areas are useful for admin or feature-specific sections but are less common in modern API-focused apps.",
+      "tags": ["areas", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/areas"]
+    },
+    {
+      "id": "routing-016",
+      "difficulty": "Intermediate",
+      "question": "What are optional parameters and default values in routes?",
+      "answer": "An optional parameter is written with a trailing question mark, such as {page?}, and matches when the segment is absent, while a default value such as {page=1} supplies a value when the segment is missing. Both make a single route match multiple URLs. Defaults also influence route precedence and can help disambiguate candidates.",
+      "tags": ["optional-parameters", "defaults"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle catch-all routes?",
+      "answer": "A catch-all parameter uses a double asterisk, such as {**path}, and captures the remaining path including slashes, exposed as a string that can be split. It is useful for file proxies or SPA fallbacks. Catch-all segments have the lowest precedence, so more specific routes win first.",
+      "code": "app.MapGet(\"/files/{**path}\",\n    (string path) => ServeFile(path));",
+      "tags": ["catch-all", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you add authorization metadata to an endpoint through routing?",
+      "answer": "You call RequireAuthorization on minimal API endpoints or groups, or place [Authorize] on controllers and actions; both attach authorization metadata that the authorization middleware evaluates. The authorization middleware must run after UseRouting so the matched endpoint's metadata is available. AllowAnonymous overrides authorization for specific endpoints.",
+      "tags": ["authorization", "metadata"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing", "https://learn.microsoft.com/aspnet/core/security/authorization/policies"]
+    },
+    {
+      "id": "routing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you bind route, query, header, and body values in minimal APIs?",
+      "answer": "By default simple types come from route or query, complex types are bound from the body as JSON, and you can override the source with attributes such as [FromRoute], [FromQuery], [FromHeader], and [FromBody]. Special types like HttpContext, HttpRequest, and CancellationToken are provided by the framework. Getting the sources right avoids ambiguous binding errors.",
+      "code": "app.MapPost(\"/orders/{id:int}\",\n    (int id, [FromBody] OrderDto dto) => Results.Ok());",
+      "tags": ["binding", "minimal-api"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"]
+    },
+    {
+      "id": "routing-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between UseRouting/UseEndpoints and the automatic routing in .NET 6+?",
+      "answer": "In .NET 6+ WebApplication automatically adds routing middleware when you call MapXxx, so you no longer have to call UseRouting and UseEndpoints explicitly. If you do need custom middleware between routing and endpoint execution, you can still call UseRouting and UseEndpoints manually. The endpoints and behavior are the same; the difference is only explicit versus implicit wiring.",
+      "tags": ["useendpoints", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-021",
+      "difficulty": "Advanced",
+      "question": "How does routing interact with the middleware pipeline and endpoint execution?",
+      "answer": "The routing middleware matches a request to an endpoint and sets it on HttpContext, then the endpoint middleware executes that endpoint's delegate at the end of the pipeline. Middleware between the two can inspect endpoint metadata to apply per-endpoint behavior such as authorization, CORS, and rate limiting. If no endpoint matches, the pipeline falls through to later middleware or a 404.",
+      "tags": ["endpoint-execution", "pipeline"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    },
+    {
+      "id": "routing-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement versioned API routes?",
+      "answer": "You can use the ASP.NET API Versioning library, which supports URL segment, query string, and header versioning and integrates with OpenAPI. Alternatively, you can encode the version in the route template, such as /api/v1/orders, using route groups or controller route prefixes. Library-based versioning is preferred because it handles deprecation, version negotiation, and documentation automatically.",
+      "tags": ["api-versioning", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing", "https://learn.microsoft.com/aspnet/core/web-api/"]
+    },
+    {
+      "id": "routing-023",
+      "difficulty": "Advanced",
+      "question": "How does dynamic route matching and route value transformation work?",
+      "answer": "Route value transformers let you customize how route values are converted to and from URL strings, for example producing slugs for titles, by implementing IOutboundParameterTransformer and applying it with a parameter transformer attribute. This keeps URLs friendly without changing the underlying values. Transformers affect both link generation and matching of the transformed value.",
+      "code": "[Route(\"api/[controller]\")]\n[ApiController]\npublic class BlogPostsController : ControllerBase\n{\n    [HttpGet(\"{slug:slug}\")] public IActionResult Get(string slug) => Ok();\n}",
+      "tags": ["transformers", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/controllers/routing#route-value-transformers"]
+    },
+    {
+      "id": "routing-024",
+      "difficulty": "Advanced",
+      "question": "How do you diagnose and debug ambiguous route matches?",
+      "answer": "Ambiguous matches occur when two endpoints have equal precedence, and the framework throws an AmbiguousMatchException at match time. You resolve them by making one template more specific, adding constraints, or using HTTP method restrictions so only one candidate matches. Route debugging middleware and the EndpointRoutingMiddleware diagnostics can show which endpoints were considered.",
+      "tags": ["debugging", "ambiguity"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing#route-precedence"]
+    },
+    {
+      "id": "routing-025",
+      "difficulty": "Advanced",
+      "question": "How does routing scale with a large number of endpoints?",
+      "answer": "Routing builds an optimized DFA-style matcher over the route table, so matching is fast even with many routes, and endpoints are compiled once at startup. Startup time grows with the number of endpoints, so very large APIs benefit from grouping and lazy loading where available. Precedence computation also happens once, keeping per-request matching cheap.",
+      "tags": ["performance", "routing"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/routing"]
+    }
+  ]
+}

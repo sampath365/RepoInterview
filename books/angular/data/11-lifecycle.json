@@ -1,0 +1,381 @@
+{
+  "category": "Lifecycle Hooks",
+  "slug": "lifecycle",
+  "icon": "clock",
+  "questions": [
+    {
+      "id": "lifecycle-001",
+      "difficulty": "Beginner",
+      "question": "What are lifecycle hooks in Angular?",
+      "answer": "Lifecycle hooks are methods Angular calls at defined moments in a component or directive's life, such as creation, input changes, and destruction. You implement them by name or with the corresponding interface, for example OnInit. They let you run initialization and cleanup at the right time.",
+      "tags": [
+        "lifecycle",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/lifecycle",
+        "https://angular.dev/api/core/OnInit"
+      ]
+    },
+    {
+      "id": "lifecycle-002",
+      "difficulty": "Beginner",
+      "question": "What is ngOnInit and when does it run?",
+      "answer": "ngOnInit runs once after Angular has initialized the component's inputs and set up the view, which makes it the right place for initialization that depends on inputs. It runs after the constructor, so dependencies are ready and inputs have values. Heavy work that does not depend on inputs can often stay in the constructor or field initializers.",
+      "code": "export class UsersComponent implements OnInit {\n  ngOnInit() { this.load(); }\n}",
+      "tags": [
+        "ngoninit",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/api/core/OnInit",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the constructor and ngOnInit?",
+      "answer": "The constructor runs when the class is instantiated, before inputs are set and before the view exists, and it should only wire up dependencies. ngOnInit runs once after inputs are available and is the place for setup logic. Putting DOM or input-dependent work in the constructor causes subtle bugs.",
+      "tags": [
+        "constructor",
+        "ngoninit",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/lifecycle",
+        "https://angular.dev/api/core/OnInit"
+      ]
+    },
+    {
+      "id": "lifecycle-004",
+      "difficulty": "Beginner",
+      "question": "What is ngOnChanges and what does it receive?",
+      "answer": "ngOnChanges runs before ngOnInit and again whenever an input changes, receiving a SimpleChanges object that maps each changed input to its previous and current value. It only fires for inputs bound by Angular, not for signal inputs. Use it when you must react to a specific input transition.",
+      "code": "ngOnChanges(changes: SimpleChanges) {\n  if (changes['userId']) { this.load(changes['userId'].currentValue); }\n}",
+      "tags": [
+        "ngonchanges",
+        "inputs",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/api/core/OnChanges",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-005",
+      "difficulty": "Beginner",
+      "question": "What is ngOnDestroy used for?",
+      "answer": "ngOnDestroy runs just before Angular destroys the component or directive, and it is where you release resources such as subscriptions, timers, and event listeners. Failing to clean up here is a common source of memory leaks. The async pipe, takeUntilDestroyed, and DestroyRef automate much of this.",
+      "code": "export class ChartComponent implements OnDestroy {\n  private timer = setInterval(() => this.tick(), 1000);\n  ngOnDestroy() { clearInterval(this.timer); }\n}",
+      "tags": [
+        "ngondestroy",
+        "cleanup",
+        "memory"
+      ],
+      "references": [
+        "https://angular.dev/api/core/OnDestroy",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-006",
+      "difficulty": "Beginner",
+      "question": "What are ngAfterViewInit and ngAfterContentInit?",
+      "answer": "ngAfterContentInit runs after projected content is initialized, and ngAfterViewInit runs after the component's own view and child views are initialized. Both are one-time hooks used to work with queries or third-party DOM libraries. Reading queried elements is only safe from these hooks.",
+      "tags": [
+        "afterviewinit",
+        "aftercontentinit",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/api/core/AfterViewInit",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-007",
+      "difficulty": "Beginner",
+      "question": "What is ngDoCheck and why should it be used sparingly?",
+      "answer": "ngDoCheck runs on every change detection pass and lets you implement custom change detection for values Angular cannot detect. Because it runs very frequently, expensive logic here hurts performance. Prefer signals, immutable updates, or OnPush with proper inputs instead.",
+      "tags": [
+        "ngdocheck",
+        "change-detection",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/api/core/DoCheck",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-008",
+      "difficulty": "Beginner",
+      "question": "In what order do the lifecycle hooks run?",
+      "answer": "The sequence is constructor, ngOnChanges, ngOnInit, ngDoCheck, ngAfterContentInit, ngAfterContentChecked, ngAfterViewInit, ngAfterViewChecked, and finally ngOnDestroy, with the checked hooks repeating on later passes. ngOnChanges runs before ngOnInit only when there are bound inputs. Knowing the order helps you pick the correct hook.",
+      "tags": [
+        "lifecycle",
+        "order"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/lifecycle",
+        "https://angular.dev/api/core/AfterViewChecked"
+      ]
+    },
+    {
+      "id": "lifecycle-009",
+      "difficulty": "Beginner",
+      "question": "Are lifecycle hooks available in directives too?",
+      "answer": "Yes, directives share the same lifecycle hooks, including ngOnChanges, ngOnInit, ngDoCheck, and ngOnDestroy. A directive has no view, so the view-related hooks such as ngAfterViewInit do not apply. This makes directives suitable for attaching setup and teardown logic to elements.",
+      "tags": [
+        "directives",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-010",
+      "difficulty": "Beginner",
+      "question": "How do signal inputs change how you handle input updates?",
+      "answer": "Signal inputs are read as functions and update reactively, so you can derive values with computed instead of implementing ngOnChanges. This removes imperative diffing and integrates with change detection. ngOnChanges does not fire for signal inputs, so migrate the logic rather than mixing both approaches.",
+      "tags": [
+        "signal-inputs",
+        "ngonchanges",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/inputs",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-011",
+      "difficulty": "Intermediate",
+      "question": "When should you use ngAfterViewInit instead of ngOnInit?",
+      "answer": "ngAfterViewInit is required when you need to access child components, DOM elements, or directives from a query, because those exist only after the view is initialized. ngOnInit runs earlier, when inputs are ready but the view is not. Changing state that affects the view from ngAfterViewInit can cause an ExpressionChangedAfterItHasBeenCheckedError, so update asynchronously when needed.",
+      "tags": [
+        "afterviewinit",
+        "queries",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/lifecycle",
+        "https://angular.dev/errors/NG0100"
+      ]
+    },
+    {
+      "id": "lifecycle-012",
+      "difficulty": "Intermediate",
+      "question": "What is the ExpressionChangedAfterItHasBeenCheckedError?",
+      "answer": "This development-mode error occurs when a value bound in the template changes during or after change detection for the same pass. It often results from writing to state in ngAfterViewInit or a setter that another binding depends on. Fix it by updating state earlier, deferring the update, or using signals so the change is tracked correctly.",
+      "tags": [
+        "errors",
+        "change-detection",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/errors/NG0100",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-013",
+      "difficulty": "Intermediate",
+      "question": "How do signal queries change when you can read query results?",
+      "answer": "Signal queries such as viewChild() and contentChild() return signals that are populated before ngOnInit runs, so you can read them in computed or effect without a separate hook. This removes the need for ngAfterViewInit in many cases. The query updates reactively when the result changes.",
+      "code": "readonly chart = viewChild<ElementRef<HTMLElement>>('chart');\n// read later in an effect, no ngAfterViewInit needed",
+      "tags": [
+        "signal-queries",
+        "viewchild",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/queries",
+        "https://angular.dev/api/core/viewChild"
+      ]
+    },
+    {
+      "id": "lifecycle-014",
+      "difficulty": "Intermediate",
+      "question": "How does ngAfterViewChecked differ from ngAfterViewInit?",
+      "answer": "ngAfterViewInit runs once after the view is initialized, while ngAfterViewChecked runs after every check of the component's view. The checked hook is useful for measuring layout after updates but runs often, so it must be cheap. Writing to state there can trigger the expression-changed error.",
+      "tags": [
+        "afterviewchecked",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/api/core/AfterViewChecked",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-015",
+      "difficulty": "Intermediate",
+      "question": "How do you clean up resources when a component is destroyed?",
+      "answer": "Implement ngOnDestroy or use DestroyRef with takeUntilDestroyed and toSignal so subscriptions end automatically. Clear timers, remove global listeners, and dispose third-party instances. Centralizing cleanup through DestroyRef reduces the chance of forgetting a resource.",
+      "code": "private destroyRef = inject(DestroyRef);\nngOnInit() {\n  interval(1000).pipe(takeUntilDestroyed(this.destroyRef)).subscribe();\n}",
+      "tags": [
+        "cleanup",
+        "destroyref",
+        "memory"
+      ],
+      "references": [
+        "https://angular.dev/api/core/DestroyRef",
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed"
+      ]
+    },
+    {
+      "id": "lifecycle-016",
+      "difficulty": "Intermediate",
+      "question": "What triggers ngOnChanges and what does it not detect?",
+      "answer": "ngOnChanges fires when an input's bound value changes by reference during change detection; it does not fire for mutations inside an object or array. It also does not fire for signal inputs, which update reactively instead. This is why immutable updates or signals are recommended for input data.",
+      "tags": [
+        "ngonchanges",
+        "inputs",
+        "immutability"
+      ],
+      "references": [
+        "https://angular.dev/api/core/OnChanges",
+        "https://angular.dev/guide/components/inputs"
+      ]
+    },
+    {
+      "id": "lifecycle-017",
+      "difficulty": "Intermediate",
+      "question": "How does the lifecycle differ for a directive compared with a component?",
+      "answer": "A directive has no template, so content and view hooks such as ngAfterContentInit and ngAfterViewInit do not run for it. It still receives ngOnChanges, ngOnInit, ngDoCheck, and ngOnDestroy. This makes directives a good place for behavior that must attach and detach with an element.",
+      "tags": [
+        "directives",
+        "lifecycle"
+      ],
+      "references": [
+        "https://angular.dev/guide/directives",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-018",
+      "difficulty": "Intermediate",
+      "question": "How do you run code after the view is rendered on every update?",
+      "answer": "ngAfterViewChecked runs after each view check, which is the hook for post-render work such as syncing a third-party widget. Because it runs on every pass, guard it so the work happens only when relevant data changed. Signals and effects often express the same need more safely.",
+      "tags": [
+        "afterviewchecked",
+        "lifecycle",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/api/core/AfterViewChecked",
+        "https://angular.dev/guide/signals/effect"
+      ]
+    },
+    {
+      "id": "lifecycle-019",
+      "difficulty": "Intermediate",
+      "question": "What is the role of ngOnChanges for derived input state?",
+      "answer": "ngOnChanges is the classic place to recompute derived state when an input changes, comparing the previous and current values. With signals you can instead define a computed over the input signal, which is simpler and avoids manual diffing. Choose the signal approach in new code and reserve ngOnChanges for legacy or decorator-based inputs.",
+      "tags": [
+        "ngonchanges",
+        "signals",
+        "derived-state"
+      ],
+      "references": [
+        "https://angular.dev/api/core/OnChanges",
+        "https://angular.dev/guide/signals/inputs"
+      ]
+    },
+    {
+      "id": "lifecycle-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid common ngOnDestroy mistakes?",
+      "answer": "Forgetting to unsubscribe, clearing only some resources, or completing a service-level Subject from a component are frequent mistakes. Track every subscription and interval, and prefer automatic teardown with takeUntilDestroyed, toSignal, or the async pipe. If a service outlives the component, its cleanup belongs to the service, not the component.",
+      "tags": [
+        "ngondestroy",
+        "memory",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/api/core/DestroyRef",
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed"
+      ]
+    },
+    {
+      "id": "lifecycle-021",
+      "difficulty": "Advanced",
+      "question": "Why can updating state in ngAfterViewInit cause errors, and how do you fix it?",
+      "answer": "By the time ngAfterViewInit runs, Angular has already checked the view for the current pass, so changing a bound value invalidates the check and throws ExpressionChangedAfterItHasBeenCheckedError in development. Fix it by moving the update earlier, deferring it, or expressing the value as a signal or computed so Angular schedules it properly. Understanding this reveals how change detection verifies stability within a pass.",
+      "tags": [
+        "afterviewinit",
+        "errors",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/errors/NG0100",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-022",
+      "difficulty": "Advanced",
+      "question": "How does the lifecycle interact with OnPush change detection?",
+      "answer": "With OnPush, the component is checked only when its inputs change by reference, an event fires from it, or a signal it reads changes. Hooks such as ngDoCheck and ngAfterViewChecked therefore run far less often, which is the point. This makes OnPush components efficient but requires immutable inputs or signals to stay correct.",
+      "tags": [
+        "onpush",
+        "lifecycle",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "lifecycle-023",
+      "difficulty": "Advanced",
+      "question": "How do DestroyRef and takeUntilDestroyed replace manual unsubscription?",
+      "answer": "DestroyRef is an injectable handle to a context's destroy lifecycle, and takeUntilDestroyed uses it to complete a stream automatically when that context is destroyed. This removes the need for a per-component Subject and a takeUntil operator. It also works in services and functions as long as an injection context or DestroyRef is available.",
+      "tags": [
+        "destroyref",
+        "takeuntildestroyed",
+        "memory"
+      ],
+      "references": [
+        "https://angular.dev/api/core/DestroyRef",
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed"
+      ]
+    },
+    {
+      "id": "lifecycle-024",
+      "difficulty": "Advanced",
+      "question": "How does the lifecycle differ for dynamically created components?",
+      "answer": "Components created with ViewContainerRef.createComponent or a dynamic host have their own lifecycle that begins when the view is created and ends when you destroy the view or its container. You must destroy views you create to release resources, and hooks run relative to that view's own change detection. This is common in dialogs, overlays, and portals.",
+      "tags": [
+        "dynamic-components",
+        "lifecycle",
+        "viewcontainerref"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/programmatic-rendering",
+        "https://angular.dev/api/core/ViewContainerRef"
+      ]
+    },
+    {
+      "id": "lifecycle-025",
+      "difficulty": "Advanced",
+      "question": "What are the risks of heavy work in lifecycle hooks and how do you mitigate them?",
+      "answer": "Work in hooks such as ngDoCheck, ngAfterViewChecked, or ngOnChanges runs on every relevant change detection pass, so heavy computation there degrades performance across the whole view tree. Move expensive derivations into computed signals or pure pipes, and offload genuinely heavy tasks to a worker or a debounced call. Keeping hooks small and predictable is the safest strategy.",
+      "tags": [
+        "performance",
+        "lifecycle",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,212 @@
+{
+  "category": "Test Organization & Naming",
+  "slug": "organization",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "organization-001",
+      "difficulty": "Beginner",
+      "question": "Why does naming matter in a test suite?",
+      "answer": "A test name is the primary documentation of the behaviour under test, so when a test fails the name should tell you what broke without opening the code. Clear, consistent names also make it possible to filter and search for related tests. Poor names force readers to reconstruct intent from the body, which slows diagnosis and encourages duplication.",
+      "tags": ["naming", "readability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-002",
+      "difficulty": "Beginner",
+      "question": "What is the Arrange-Act-Assert pattern?",
+      "answer": "Arrange-Act-Assert (AAA) structures a test into three clearly separated phases: set up the objects and inputs, invoke the behaviour under test, and verify the outcome. The separation makes tests easy to read and keeps assertions focused on a single behaviour. Many teams add blank lines or comments between the phases to reinforce the structure.",
+      "code": "[Fact]\npublic void Discount_is_applied_to_large_orders()\n{\n    var cart = new Cart();           // Arrange\n    cart.Add(new Item(100m));\n\n    var total = cart.Total();        // Act\n\n    Assert.Equal(90m, total);        // Assert\n}",
+      "tags": ["aaa", "structure"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-003",
+      "difficulty": "Beginner",
+      "question": "What are the common conventions for naming test classes?",
+      "answer": "A common convention is to name the class after the type under test with a Tests suffix, so OrderServiceTests contains the tests for OrderService. Some teams add the scenario or method to the name, producing classes such as OrderServiceTests or OrderService_Total. The key is consistency across the suite so a reader can predict where a test lives.",
+      "tags": ["naming", "conventions"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-004",
+      "difficulty": "Beginner",
+      "question": "How should test methods be named?",
+      "answer": "A widely used pattern is MethodUnderTest_Scenario_ExpectedResult, for example Total_WhenCartEmpty_ReturnsZero, which encodes what is tested, the condition, and the outcome. Other teams prefer plain sentences such as An_empty_cart_has_a_zero_total. Whichever you choose, name the behaviour rather than the implementation detail so the test survives refactoring.",
+      "tags": ["naming", "methods"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-005",
+      "difficulty": "Beginner",
+      "question": "How should a test project mirror the production project structure?",
+      "answer": "Place a test class in a folder and namespace that mirrors the production type it covers, so OrderService in Services maps to OrderServiceTests in Services under the test project's namespace. This makes navigation predictable and highlights types that lack coverage. Keep one production type per test class as the default and only merge when the tests are genuinely trivial.",
+      "tags": ["structure", "projects"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-with-dotnet-test"]
+    },
+    {
+      "id": "organization-006",
+      "difficulty": "Beginner",
+      "question": "Why is one assertion per test often recommended?",
+      "answer": "A test that verifies one behaviour fails for exactly one reason, so the failure message points directly at the defect. Tests with many unrelated assertions can hide failures because the first failing assertion aborts the method and the later ones never run. Multiple assertions are acceptable when they all describe the same outcome, such as checking several properties of one returned object.",
+      "tags": ["assertions", "focus"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-007",
+      "difficulty": "Beginner",
+      "question": "Should you split fast unit tests and slow integration tests into separate projects?",
+      "answer": "Yes. Keeping them in separate projects lets developers run the fast unit suite on every save while the slower integration suite runs less frequently or only in CI. Separate projects also make it easy to configure different fixtures, timeouts, and parallelization for each level. The split clarifies which dependencies a given test is allowed to touch.",
+      "tags": ["projects", "integration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-008",
+      "difficulty": "Beginner",
+      "question": "What is a test helper and how should it be organized?",
+      "answer": "A test helper is reusable code that builds objects, asserts common shapes, or performs shared setup for many tests. Put helpers in a dedicated folder in the test project and keep them internal so they do not leak into the production assembly. Prefer small, intention-revealing helpers such as a builder for a complex domain object over generic utility grab-bags.",
+      "tags": ["helpers", "organization"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-009",
+      "difficulty": "Beginner",
+      "question": "How do you keep tests independent of each other?",
+      "answer": "Each test must create or obtain its own state and must not rely on a previous test having run, because xUnit creates a fresh test class instance per test and may run tests in any order or in parallel. Avoid static mutable state and shared files that are not isolated per test. When a genuine shared resource exists, protect it with a collection or use a per-test transaction.",
+      "tags": ["isolation", "independence"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "organization-010",
+      "difficulty": "Beginner",
+      "question": "Why should tests avoid depending on execution order?",
+      "answer": "xUnit does not guarantee that tests run in any particular order and by default runs different test classes in parallel, so any order dependency is a latent flake. Order dependencies also break parallelization and make failures hard to reproduce. If two tests genuinely need a sequence, combine them into one test or use an explicit fixture that owns the lifecycle.",
+      "tags": ["ordering", "parallelization"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "organization-011",
+      "difficulty": "Intermediate",
+      "question": "When should you split one test class into several?",
+      "answer": "Split when the class grows large enough that a reader cannot hold it in mind, or when the tests naturally group by scenario or by fixture requirement. A common approach is to create nested classes or separate classes per method under test or per setup context. Splitting also lets you give each group its own class fixture instead of sharing an unnecessarily heavy one.",
+      "tags": ["refactoring", "classes"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "organization-012",
+      "difficulty": "Intermediate",
+      "question": "What is the object mother pattern in test code?",
+      "answer": "An object mother is a factory that returns preconfigured instances of a domain object for common scenarios, such as a valid customer or an expired subscription. It removes the boilerplate of constructing the same object in many tests and keeps the test focused on the behaviour under test. The risk is that the predefined objects become a hidden shared dependency, so a test data builder is often a more flexible alternative.",
+      "code": "public static class Customers\n{\n    public static Customer Active() => new() { Status = Active };\n    public static Customer Suspended() => new() { Status = Suspended };\n}",
+      "tags": ["object-mother", "test-data"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-013",
+      "difficulty": "Intermediate",
+      "question": "What is a test data builder and how does it improve readability?",
+      "answer": "A builder exposes a fluent API with sensible defaults so a test only sets the properties relevant to the scenario. This keeps the test focused on the behaviour being verified instead of the many irrelevant constructor arguments. Builders also localise the impact when a domain object gains a new required field.",
+      "code": "var order = new OrderBuilder()\n    .WithItem(\"Book\", 20m)\n    .WithDiscount(10)\n    .Build();",
+      "tags": ["builder", "test-data"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-014",
+      "difficulty": "Intermediate",
+      "question": "How should you name test fixtures and collections?",
+      "answer": "Name a fixture after the resource it manages, such as DatabaseFixture or ApiServerFixture, and name a collection after the shared context, such as DatabaseCollection. A clear name makes it obvious which tests share the resource and therefore run sequentially. When using v3's generic [Collection<T>] you can name the collection definition type directly, which removes the string-name mismatch risk.",
+      "tags": ["fixtures", "naming"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "organization-015",
+      "difficulty": "Intermediate",
+      "question": "How do you decide the right scope for a test fixture?",
+      "answer": "Choose the smallest scope that still gives the performance benefit you need: per-test for full isolation, class fixture for expensive context shared within a class, and collection fixture only when several classes must share the same resource. Over-sharing creates coupling and order sensitivity, while under-sharing can make the suite slow. Start with per-test isolation and widen the scope only when profiling shows setup dominates.",
+      "tags": ["fixtures", "scope"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "organization-016",
+      "difficulty": "Intermediate",
+      "question": "Should test code be held to the same quality bar as production code?",
+      "answer": "Yes. Test code is read and maintained far more often than it is written, so clarity, naming, and structure matter just as much as in production. Refactor duplicated setup into fixtures or builders, delete obsolete tests, and keep the suite compiling cleanly. Treating tests as second-class code leads to an unmaintainable suite that teams eventually stop trusting.",
+      "tags": ["quality", "maintainability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-017",
+      "difficulty": "Intermediate",
+      "question": "How do you organize tests that share expensive setup across several classes?",
+      "answer": "Define a collection by creating a class decorated with [CollectionDefinition(\"Name\")] that implements ICollectionFixture<T>, then annotate each participating test class with [Collection(\"Name\")]. xUnit creates one fixture instance for the whole collection and disposes it after the last test. In v3 you can instead use [Collection<MyCollection>] to reference the definition type without a string.",
+      "code": "[CollectionDefinition(\"Db\")]\npublic class DbCollection : ICollectionFixture<DbFixture> { }\n\n[Collection(\"Db\")]\npublic class OrderTests { }",
+      "tags": ["collection-fixture", "organization"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "organization-018",
+      "difficulty": "Intermediate",
+      "question": "Why is it a bad idea to put unrelated tests in a single class just to share setup?",
+      "answer": "Grouping unrelated tests forces them to share a fixture and a collection, which serialises their execution and couples their lifetimes unnecessarily. It also blurs the class's purpose, making it hard to know what the class covers. Prefer separate classes with their own appropriately scoped fixtures, and share the expensive resource through a collection fixture when truly needed.",
+      "tags": ["coupling", "fixtures"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "organization-019",
+      "difficulty": "Intermediate",
+      "question": "How do you keep test names stable when refactoring production code?",
+      "answer": "Name tests after observable behaviour rather than private methods or implementation details, so renaming an internal method does not force a rename of the test. Where the name does reference a public API, update it as part of the refactor and rely on search to find all affected tests. Avoid embedding line numbers or other volatile details in test names.",
+      "tags": ["naming", "refactoring"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-020",
+      "difficulty": "Intermediate",
+      "question": "What is the Given-When-Then style and how does it differ from Arrange-Act-Assert?",
+      "answer": "Given-When-Then expresses a scenario as preconditions, the action, and the expected outcome, and it comes from behaviour-driven development vocabulary. It is conceptually the same three-part structure as Arrange-Act-Assert, but the language emphasises the behaviour a stakeholder cares about rather than the mechanics of the test. Teams pick whichever vocabulary matches how they discuss requirements.",
+      "tags": ["given-when-then", "bdd"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-021",
+      "difficulty": "Advanced",
+      "question": "How do you structure a large suite for fast feedback in CI?",
+      "answer": "Split the suite by level and cost, run the fast unit tests on every push, and schedule slower integration and end-to-end tests on a separate pipeline or stage. Use traits to allow targeted re-runs of a failing category and enable parallel execution across projects. Track suite duration as a first-class metric so regressions in speed are caught and addressed.",
+      "tags": ["ci", "strategy"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of nested test classes in xUnit?",
+      "answer": "Nested classes let you group tests that share a setup context, mirroring the 'test class as context' pattern, and xUnit treats each nested class as its own collection so they can run in parallel. The trade-off is that deep nesting hurts discoverability and can confuse IDE navigation. Use nesting sparingly, mainly when several distinct starting states of the same subject deserve separate fixtures.",
+      "code": "public class CartTests\n{\n    public class Empty\n    {\n        [Fact]\n        public void Total_is_zero() { }\n    }\n}",
+      "tags": ["nested-classes", "structure"],
+      "references": ["https://xunit.net/docs/shared-context"]
+    },
+    {
+      "id": "organization-023",
+      "difficulty": "Advanced",
+      "question": "How do you manage test data that changes over time?",
+      "answer": "Avoid depending on real clock time or mutable external data by injecting a time provider or a data source you control. For fixed datasets, snapshot or seed them in the test project so runs are reproducible. When the data must come from outside, load a known baseline in a fixture and assert against that baseline rather than the live source.",
+      "tags": ["test-data", "determinism"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-024",
+      "difficulty": "Advanced",
+      "question": "How should you handle test code that is shared across multiple test projects?",
+      "answer": "Extract shared helpers into a dedicated library that is referenced only by test projects, and keep it free of framework-specific entry points so it stays reusable. Avoid a shared project that contains actual tests, since that hides which project owns them and complicates filtering. Version the shared library like any other internal package and keep its public surface small.",
+      "tags": ["shared-code", "projects"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "organization-025",
+      "difficulty": "Advanced",
+      "question": "What signals tell you a test suite needs restructuring?",
+      "answer": "Long run times, frequent flakiness, tests that fail together, and a large number of skipped tests are classic symptoms of structural problems. Duplicated setup code and classes that reference dozens of unrelated types also point to poor boundaries. Address these by splitting by level, introducing fixtures and builders, and removing tests that no longer assert meaningful behaviour.",
+      "tags": ["refactoring", "smells"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

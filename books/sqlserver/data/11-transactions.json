@@ -1,0 +1,212 @@
+{
+  "category": "Transactions, Locking & Isolation Levels",
+  "slug": "transactions",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "transactions-001",
+      "difficulty": "Beginner",
+      "question": "What is a transaction?",
+      "answer": "A transaction is a unit of work that either completes entirely or not at all, grouping one or more statements into an atomic operation. It is controlled with BEGIN TRANSACTION, COMMIT, and ROLLBACK. Transactions are what make multi-step changes safe in the presence of failures.",
+      "code": "BEGIN TRAN;\nUPDATE dbo.Accounts SET Balance = Balance - 100 WHERE Id = 1;\nUPDATE dbo.Accounts SET Balance = Balance + 100 WHERE Id = 2;\nCOMMIT;",
+      "tags": ["transaction", "acid"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/transactions-transact-sql"]
+    },
+    {
+      "id": "transactions-002",
+      "difficulty": "Beginner",
+      "question": "What do the ACID properties mean?",
+      "answer": "Atomicity means all statements in a transaction succeed or all are undone. Consistency means the database moves from one valid state to another, honoring constraints. Isolation means concurrent transactions do not interfere improperly, and Durability means committed changes survive a crash.",
+      "tags": ["acid", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-log-architecture-and-management-guide"]
+    },
+    {
+      "id": "transactions-003",
+      "difficulty": "Beginner",
+      "question": "What are the isolation levels available in SQL Server?",
+      "answer": "The levels are READ UNCOMMITTED, READ COMMITTED (the default), REPEATABLE READ, SNAPSHOT, and SERIALIZABLE, in increasing order of strictness. Each level trades consistency for concurrency by preventing different phenomena such as dirty reads, non-repeatable reads, and phantoms. You can also enable READ_COMMITTED_SNAPSHOT to make READ COMMITTED use row versioning.",
+      "tags": ["isolation-levels", "concurrency"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-transaction-isolation-level-transact-sql"]
+    },
+    {
+      "id": "transactions-004",
+      "difficulty": "Beginner",
+      "question": "What is a dirty read?",
+      "answer": "A dirty read occurs when a transaction reads data modified by another transaction that has not yet committed, and that other transaction may later roll back. It is allowed under READ UNCOMMITTED and the NOLOCK hint. Dirty reads can produce data that never actually existed in a committed state.",
+      "tags": ["dirty-read", "isolation"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-005",
+      "difficulty": "Beginner",
+      "question": "What is a non-repeatable read?",
+      "answer": "A non-repeatable read happens when a transaction reads the same row twice and gets different values because another transaction updated and committed in between. It is prevented at REPEATABLE READ and above. READ COMMITTED allows it because shared locks are released as soon as the read finishes.",
+      "tags": ["non-repeatable-read", "isolation"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-006",
+      "difficulty": "Beginner",
+      "question": "What is a phantom read?",
+      "answer": "A phantom read occurs when a transaction re-runs a query and sees new rows that another committed transaction inserted, which match the original predicate. It is prevented only at SERIALIZABLE, which holds range locks. The new rows are the phantoms.",
+      "tags": ["phantom", "isolation"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between shared and exclusive locks?",
+      "answer": "A shared (S) lock is taken for reads and allows other shared locks but blocks exclusive locks. An exclusive (X) lock is taken for writes and blocks all other locks on the resource. Shared locks are compatible with each other, which is why many readers can proceed at once.",
+      "tags": ["locking", "shared-exclusive"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-008",
+      "difficulty": "Beginner",
+      "question": "How do you roll back a transaction?",
+      "answer": "You issue ROLLBACK TRANSACTION to undo all changes made since the transaction began, releasing locks and returning the database to its prior state. You can also use a savepoint to roll back only part of a transaction. In application code, a failed statement should trigger a rollback rather than leaving the transaction open.",
+      "code": "BEGIN TRAN;\nSAVE TRANSACTION SavePoint1;\n-- work\nROLLBACK TRANSACTION SavePoint1;",
+      "tags": ["rollback", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/rollback-transaction-transact-sql"]
+    },
+    {
+      "id": "transactions-009",
+      "difficulty": "Beginner",
+      "question": "What is an implicit transaction?",
+      "answer": "An implicit transaction starts automatically before a DML statement and remains open until you explicitly commit or roll back, controlled by SET IMPLICIT_TRANSACTIONS. This mode surprises developers who expect each statement to commit on its own. The default autocommit mode commits each statement individually.",
+      "tags": ["implicit-transaction", "autocommit"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-implicit-transactions-transact-sql"]
+    },
+    {
+      "id": "transactions-010",
+      "difficulty": "Beginner",
+      "question": "What is a distributed transaction?",
+      "answer": "A distributed transaction spans more than one resource manager, such as two SQL Server instances or a database and a message queue, coordinated by the Microsoft Distributed Transaction Coordinator. It uses a two-phase commit protocol to ensure all participants commit or none do. Distributed transactions add latency and operational complexity.",
+      "tags": ["distributed-transaction", "msdtc"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between optimistic and pessimistic concurrency?",
+      "answer": "Pessimistic concurrency locks resources up front so conflicting work waits, guaranteeing correctness but risking blocking. Optimistic concurrency assumes conflicts are rare and detects them at commit time using row versions or timestamps, allowing more parallelism. SQL Server supports optimistic concurrency through snapshot isolation and rowversion columns.",
+      "tags": ["optimistic", "pessimistic"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-012",
+      "difficulty": "Intermediate",
+      "question": "What is snapshot isolation?",
+      "answer": "Snapshot isolation gives a transaction a consistent view of the data as of its start by reading row versions from tempdb rather than taking shared locks, so readers never block writers. It prevents dirty and non-repeatable reads but does not prevent update conflicts, which surface as error 3960. It is enabled with ALTER DATABASE ... SET ALLOW_SNAPSHOT_ISOLATION ON.",
+      "tags": ["snapshot-isolation", "row-versioning"],
+      "references": ["https://learn.microsoft.com/dotnet/framework/data/adonet/sql/snapshot-isolation-in-sql-server"]
+    },
+    {
+      "id": "transactions-013",
+      "difficulty": "Intermediate",
+      "question": "What is READ_COMMITTED_SNAPSHOT (RCSI)?",
+      "answer": "RCSI makes the default READ COMMITTED level use row versioning instead of shared locks, so readers see the last committed version of a row and do not block writers. It is enabled at the database level and is widely used to reduce reader-writer blocking. The cost is extra tempdb usage and 14-byte version tags on rows.",
+      "code": "ALTER DATABASE Sales SET READ_COMMITTED_SNAPSHOT ON;",
+      "tags": ["rcsi", "row-versioning"],
+      "references": ["https://learn.microsoft.com/dotnet/framework/data/adonet/sql/snapshot-isolation-in-sql-server"]
+    },
+    {
+      "id": "transactions-014",
+      "difficulty": "Intermediate",
+      "question": "What are lock granularity and lock escalation?",
+      "answer": "SQL Server takes locks at different levels, from row and key up to page, table, and database, choosing the level that minimizes overhead. When a single statement acquires many row or page locks on one table, the engine may escalate to a table lock to reduce lock management cost. Escalation can suddenly block other sessions, so monitoring and occasional hints are used to control it.",
+      "tags": ["lock-granularity", "lock-escalation"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-015",
+      "difficulty": "Intermediate",
+      "question": "How do you check for open transactions on a session?",
+      "answer": "Query sys.dm_tran_active_transactions and sys.dm_tran_session_transactions to find sessions with open transactions, and use DBCC OPENTRAN to see the oldest active transaction in a database. A long-open transaction blocks log truncation and can cause blocking. Killing the session or committing the transaction releases the resources.",
+      "code": "DBCC OPENTRAN('Sales');",
+      "tags": ["open-transaction", "troubleshooting"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/database-console-commands/dbcc-opentran-transact-sql"]
+    },
+    {
+      "id": "transactions-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between SERIALIZABLE and REPEATABLE READ?",
+      "answer": "REPEATABLE READ prevents non-repeatable reads by holding shared locks until the transaction ends but still allows new rows to appear, so phantoms are possible. SERIALIZABLE adds range locks so no new rows matching the predicate can be inserted, preventing phantoms too. SERIALIZABLE provides the strongest isolation and the most blocking.",
+      "tags": ["serializable", "repeatable-read"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-transaction-isolation-level-transact-sql"]
+    },
+    {
+      "id": "transactions-017",
+      "difficulty": "Intermediate",
+      "question": "How do you minimize the duration of locks?",
+      "answer": "Keep transactions short by doing preparation and validation before BEGIN TRAN, avoid user interaction or network calls inside the transaction, and touch rows in a consistent order. Use the lowest isolation level that meets the requirement and consider RCSI for read-heavy workloads. Short transactions mean less blocking and fewer deadlocks.",
+      "tags": ["locking", "best-practices"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-018",
+      "difficulty": "Intermediate",
+      "question": "What does the UPDLOCK hint do?",
+      "answer": "UPDLOCK takes update locks instead of shared locks when reading, which are held until the transaction ends and prevent other sessions from acquiring update locks. It is the standard pattern to avoid a lost update in a read-then-write sequence without going to SERIALIZABLE. It still allows other plain readers.",
+      "code": "SELECT @bal = Balance\nFROM dbo.Accounts WITH (UPDLOCK)\nWHERE Id = 1;",
+      "tags": ["updlock", "lost-update"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-table"]
+    },
+    {
+      "id": "transactions-019",
+      "difficulty": "Intermediate",
+      "question": "What is a savepoint and how is it used?",
+      "answer": "A savepoint marks a point within a transaction to which you can roll back part of the work while keeping earlier changes. It is created with SAVE TRANSACTION and used with ROLLBACK TRANSACTION to the savepoint name. Savepoints are useful in loops where you want to discard only the current iteration on failure.",
+      "tags": ["savepoint", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/save-transaction-transact-sql"]
+    },
+    {
+      "id": "transactions-020",
+      "difficulty": "Intermediate",
+      "question": "Why does the transaction log grow and how do you control it?",
+      "answer": "The log grows because log records cannot be truncated until the transactions that produced them are committed and the log is backed up or the database is in simple recovery. A long-running transaction or missing log backups prevent truncation. Take regular log backups in full recovery and avoid long transactions to keep the log in check.",
+      "tags": ["transaction-log", "recovery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/logs/the-transaction-log-sql-server"]
+    },
+    {
+      "id": "transactions-021",
+      "difficulty": "Advanced",
+      "question": "What is the difference between READ COMMITTED with locking and with RCSI in terms of behavior?",
+      "answer": "With locking, a reader takes short shared locks and may block behind a writer that holds an exclusive lock. With RCSI, the reader instead reads the last committed version of the row and never blocks, but may see slightly stale data. RCSI trades strict statement-level consistency for far greater concurrency.",
+      "tags": ["rcsi", "read-committed"],
+      "references": ["https://learn.microsoft.com/dotnet/framework/data/adonet/sql/snapshot-isolation-in-sql-server"]
+    },
+    {
+      "id": "transactions-022",
+      "difficulty": "Advanced",
+      "question": "What are intent locks and why are they needed?",
+      "answer": "Intent locks signal that a transaction holds or intends to acquire a lower-level lock, such as a row or page lock within a table. They let the engine detect conflicts at higher levels without inspecting every lower-level lock, making lock checks efficient. Intent locks come in shared, exclusive, and update variants matching the lower-level lock.",
+      "tags": ["intent-locks", "locking"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-023",
+      "difficulty": "Advanced",
+      "question": "How does row versioning consume tempdb and what are the implications?",
+      "answer": "Under RCSI and snapshot isolation, the engine copies the previous version of modified rows into the version store in tempdb so readers can access them. Heavy write workloads with long-running readers can make the version store grow quickly, stressing tempdb. Sizing tempdb and keeping read transactions short are essential when using row versioning.",
+      "tags": ["version-store", "tempdb"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-locking-and-row-versioning-guide"]
+    },
+    {
+      "id": "transactions-024",
+      "difficulty": "Advanced",
+      "question": "What is a bound session and how does sp_getbindtoken relate?",
+      "answer": "A bound session lets two or more sessions share a transaction and its locks, created with sp_getbindtoken and sp_bindsession. This allows several connections to participate in one transaction, which is occasionally used for legacy applications. The feature is deprecated in favor of distributed transactions and MARS.",
+      "tags": ["bound-session", "transaction"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-stored-procedures/sp-getbindtoken-transact-sql"]
+    },
+    {
+      "id": "transactions-025",
+      "difficulty": "Advanced",
+      "question": "How does the transaction log support point-in-time recovery?",
+      "answer": "In full recovery, the combination of full and log backups lets you restore to a specific moment, because the log records every change in order. You restore the full backup, then log backups, and optionally a tail-log backup, stopping at the desired time. This is why full recovery requires regular log backups to bound data loss.",
+      "tags": ["point-in-time", "recovery"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/backup-restore/restore-a-sql-server-database-to-a-point-in-time-full-recovery-model"]
+    }
+  ]
+}

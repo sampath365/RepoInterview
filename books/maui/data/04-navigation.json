@@ -1,0 +1,216 @@
+{
+  "category": "Pages & Navigation",
+  "slug": "navigation",
+  "icon": "compass",
+  "questions": [
+    {
+      "id": "navigation-001",
+      "difficulty": "Beginner",
+      "question": "What is a Page in .NET MAUI?",
+      "answer": "A Page is a visual element that occupies the screen and contains the UI for a part of the app. MAUI provides ContentPage, NavigationPage, TabbedPage, FlyoutPage, and Shell as the main page types. Every app shows at least one page inside a Window.",
+      "tags": ["pages", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/contentpage"]
+    },
+    {
+      "id": "navigation-002",
+      "difficulty": "Beginner",
+      "question": "What is a ContentPage?",
+      "answer": "ContentPage is the most common page type and hosts a single child, usually a layout. You define it in XAML with a root ContentPage element and set its Content property. It is the default page type in MAUI templates.",
+      "tags": ["contentpage", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/contentpage"]
+    },
+    {
+      "id": "navigation-003",
+      "difficulty": "Beginner",
+      "question": "What is NavigationPage used for?",
+      "answer": "NavigationPage provides hierarchical, stack-based navigation with a navigation bar and back button. You push and pop pages with PushAsync and PopAsync, and the stack is exposed through Navigation. It is the classic way to do forward and back navigation when not using Shell.",
+      "tags": ["navigationpage", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-004",
+      "difficulty": "Beginner",
+      "question": "How do you push a new page with NavigationPage?",
+      "answer": "Call Navigation.PushAsync(new DetailsPage()) from within a page hosted in a NavigationPage. The new page slides in and a back button appears. Use PopAsync to return, or PopToRootAsync to return to the first page.",
+      "tags": ["navigation", "navigationpage"],
+      "code": "await Navigation.PushAsync(new DetailsPage());\n// later\nawait Navigation.PopAsync();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-005",
+      "difficulty": "Beginner",
+      "question": "What is a TabbedPage?",
+      "answer": "TabbedPage displays multiple child pages accessed through tabs at the bottom or top depending on platform. Each child page becomes a tab, and the tab title and icon come from the page. It is a quick way to provide top-level sections without Shell.",
+      "tags": ["tabbedpage", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/tabbedpage"]
+    },
+    {
+      "id": "navigation-006",
+      "difficulty": "Beginner",
+      "question": "What is a FlyoutPage?",
+      "answer": "FlyoutPage shows a flyout menu and a detail page, with the flyout sliding in or remaining visible depending on device size. You assign Flyout and Detail pages and toggle visibility with IsPresented. Shell is often preferred because it provides flyout behavior declaratively.",
+      "tags": ["flyoutpage", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/flyoutpage"]
+    },
+    {
+      "id": "navigation-007",
+      "difficulty": "Beginner",
+      "question": "How do you show an alert dialog in MAUI?",
+      "answer": "Call DisplayAlert on the current page to show a message with optional OK and Cancel buttons. It returns a bool when a cancel option is provided, indicating the user's choice. For custom content, use DisplayActionSheet or a popup.",
+      "tags": ["dialogs", "alerts"],
+      "code": "bool ok = await DisplayAlert(\"Confirm\", \"Delete item?\", \"Yes\", \"No\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pop-ups"]
+    },
+    {
+      "id": "navigation-008",
+      "difficulty": "Beginner",
+      "question": "What is an action sheet?",
+      "answer": "An action sheet presents a list of choices from which the user selects one. It is shown with DisplayActionSheet and returns the selected string or null if dismissed. It is useful for contextual commands on a page.",
+      "tags": ["dialogs", "actionsheet"],
+      "code": "string choice = await DisplayActionSheet(\"Options\", \"Cancel\", null, \"Edit\", \"Delete\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pop-ups"]
+    },
+    {
+      "id": "navigation-009",
+      "difficulty": "Beginner",
+      "question": "How do you add a toolbar item to a page?",
+      "answer": "Add ToolbarItem elements to the page's ToolbarItems collection. Each item has Text, IconImageSource, and a Clicked handler or Command. They appear in the navigation bar and are a common place for save or settings actions.",
+      "tags": ["toolbar", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/toolbaritem"]
+    },
+    {
+      "id": "navigation-010",
+      "difficulty": "Beginner",
+      "question": "What is modal navigation?",
+      "answer": "Modal navigation presents a page on top of the current stack without the back button, requiring an explicit dismiss. You call PushModalAsync and PopModalAsync. Modals suit self-contained tasks like wizards or login flows.",
+      "tags": ["navigation", "modal"],
+      "code": "await Navigation.PushModalAsync(new LoginPage());",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-011",
+      "difficulty": "Intermediate",
+      "question": "How do you pass data between pages in MAUI?",
+      "answer": "The simplest approach is a constructor parameter or a public property set before pushing the page. You can also pass a query string through Shell navigation and receive it via QueryProperty or IQueryAttributable. For decoupled communication, use a shared service or the messaging center.",
+      "tags": ["navigation", "data-passing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation", "https://learn.microsoft.com/dotnet/maui/fundamentals/messagingcenter"]
+    },
+    {
+      "id": "navigation-012",
+      "difficulty": "Intermediate",
+      "question": "How do you intercept the back button press on Android?",
+      "answer": "Override OnBackButtonPressed on a Page and return true to mark the press handled. This lets you prompt for unsaved changes or navigate programmatically. Returning false lets the default behavior proceed.",
+      "tags": ["navigation", "android"],
+      "code": "protected override bool OnBackButtonPressed()\n{\n    // handle custom logic\n    return base.OnBackButtonPressed();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-013",
+      "difficulty": "Intermediate",
+      "question": "How do you customize the navigation bar appearance?",
+      "answer": "Use the NavigationPage.SetHasNavigationBar attached property to show or hide the bar per page. Style the bar with BarBackgroundColor, BarTextColor, and the TitleView property for custom content. Shell provides its own properties for toolbar and title customization.",
+      "tags": ["navigationpage", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/pages"]
+    },
+    {
+      "id": "navigation-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Shell navigation and NavigationPage navigation?",
+      "answer": "NavigationPage uses an imperative stack with PushAsync and PopAsync. Shell uses URI-based routes and GoToAsync, and manages flyout, tabs, and the navigation stack declaratively. Shell is the recommended approach for new apps because it centralizes navigation structure and simplifies deep linking.",
+      "tags": ["shell", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation", "https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-015",
+      "difficulty": "Intermediate",
+      "question": "How do you navigate back to the root page?",
+      "answer": "With NavigationPage, call PopToRootAsync to unwind the stack to the first page. With Shell, navigate to the root route using GoToAsync with a route like //main. Both remove intermediate pages from the stack.",
+      "tags": ["navigation", "shell"],
+      "code": "await Shell.Current.GoToAsync(\"//main\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation", "https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-016",
+      "difficulty": "Intermediate",
+      "question": "How do you react to a page appearing or disappearing?",
+      "answer": "Override OnAppearing and OnDisappearing in the page, which run when the page becomes visible or is navigated away from. These are good places to refresh data or cancel work. For view models, drive the same logic from lifecycle-aware services.",
+      "tags": ["lifecycle", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/contentpage"]
+    },
+    {
+      "id": "navigation-017",
+      "difficulty": "Intermediate",
+      "question": "How do you present a popup in .NET MAUI?",
+      "answer": "MAUI does not ship a built-in popup control, so the common options are the Community Toolkit Popup or a modal page. A popup is a lightweight overlay for prompts and confirmations that returns a result. It avoids the heavier full-page modal experience.",
+      "tags": ["popup", "dialogs"],
+      "references": ["https://learn.microsoft.com/dotnet/communitytoolkit/maui/views/popup", "https://learn.microsoft.com/dotnet/maui/user-interface/pop-ups"]
+    },
+    {
+      "id": "navigation-018",
+      "difficulty": "Intermediate",
+      "question": "How do you handle the hardware back button with Shell?",
+      "answer": "Shell manages the back stack automatically, but you can override OnBackButtonPressed on the page or use the Shell.Navigating event to intercept. To stop a navigation, set the event args' Cancel property. This is useful for guarding unsaved changes.",
+      "tags": ["shell", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/lifecycle"]
+    },
+    {
+      "id": "navigation-019",
+      "difficulty": "Intermediate",
+      "question": "How do you navigate with a modal page that returns a result?",
+      "answer": "Push the modal with PushModalAsync, expose a TaskCompletionSource on the modal, and complete it when the user confirms or cancels. Await that task on the caller to receive the result. This pattern keeps the calling flow linear.",
+      "tags": ["navigation", "modal"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    },
+    {
+      "id": "navigation-020",
+      "difficulty": "Intermediate",
+      "question": "How do you set the app's main page in modern .NET MAUI?",
+      "answer": "Override CreateWindow in the App class and return a Window whose Page is your root page, often a Shell or NavigationPage. Older samples set MainPage, which is deprecated in favor of CreateWindow. This keeps multi-window support intact.",
+      "tags": ["app", "navigation"],
+      "code": "protected override Window CreateWindow(IActivationState state)\n    => new Window(new AppShell());",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/windows", "https://learn.microsoft.com/dotnet/maui/fundamentals/app-lifecycle"]
+    },
+    {
+      "id": "navigation-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement deep linking with Shell routes?",
+      "answer": "Register detail routes with Routing.RegisterRoute and navigate using URI paths such as //main/details?id=5. Shell resolves the route to a page and applies query parameters. On each platform you also configure the app to accept external URIs so links open the right route.",
+      "tags": ["shell", "deep-linking"],
+      "code": "Routing.RegisterRoute(\"details\", typeof(DetailsPage));\nawait Shell.Current.GoToAsync(\"//main/details?id=5\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation", "https://learn.microsoft.com/dotnet/maui/android/app-links"]
+    },
+    {
+      "id": "navigation-022",
+      "difficulty": "Advanced",
+      "question": "How do you pass and receive query parameters with Shell?",
+      "answer": "Append parameters to the route, for example details?id=5, and decorate the target with QueryProperty attributes or implement IQueryAttributable. IQueryAttributable receives a dictionary and is preferable when the target is a view model. Values are URL-encoded, so encode complex objects or pass identifiers.",
+      "tags": ["shell", "query-parameters"],
+      "code": "[QueryProperty(nameof(ItemId), \"id\")]\npublic partial class DetailsPage : ContentPage\n{\n    public string ItemId { get; set; }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "navigation-023",
+      "difficulty": "Advanced",
+      "question": "How do you cancel or redirect a navigation in Shell?",
+      "answer": "Subscribe to Shell.Navigating and set the Cancel property on the ShellNavigatingEventArgs to block the navigation. You can inspect Source and Target to make conditional decisions. Redirecting is done by cancelling and then issuing a new GoToAsync.",
+      "tags": ["shell", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "navigation-024",
+      "difficulty": "Advanced",
+      "question": "How do you animate page transitions?",
+      "answer": "NavigationPage exposes PushAsync overloads that accept a boolean animate flag to enable or disable the transition animation. For custom transitions you override platform handlers or apply your own animations in OnAppearing. Shell transitions follow platform conventions and are less customizable.",
+      "tags": ["navigation", "animations"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage", "https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "navigation-025",
+      "difficulty": "Advanced",
+      "question": "What is the Shell navigation lifecycle and how do you hook into it?",
+      "answer": "Shell pages can implement IShellContentInheritor or handle OnNavigating and OnNavigated events raised by Shell. You can also override OnNavigatedTo and OnNavigatedFrom in a page. These hooks let you load data, log navigation, or restore state at the right moment.",
+      "tags": ["shell", "lifecycle"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/lifecycle", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    }
+  ]
+}

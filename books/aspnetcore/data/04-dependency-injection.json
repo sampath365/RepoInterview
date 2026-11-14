@@ -1,0 +1,353 @@
+{
+  "category": "Dependency Injection",
+  "slug": "dependency-injection",
+  "icon": "blocks",
+  "questions": [
+    {
+      "id": "dependency-injection-001",
+      "difficulty": "Beginner",
+      "question": "What is dependency injection and why does ASP.NET Core use it?",
+      "answer": "Dependency injection is a design pattern where a class receives the objects it depends on from an external container rather than creating them itself. ASP.NET Core has a built-in DI container that builds services once at startup and injects them into constructors, controllers, and endpoint delegates. This improves testability, decouples components, and centralizes lifetime management.",
+      "tags": [
+        "dependency-injection",
+        "overview"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-002",
+      "difficulty": "Beginner",
+      "question": "What are the three built-in service lifetimes?",
+      "answer": "Transient services are created every time they are requested, scoped services are created once per request (per scope), and singleton services are created once for the whole application. You choose a lifetime based on how long the state must live and how expensive creation is. A common rule is stateless services as singleton or transient and per-request state as scoped.",
+      "tags": [
+        "lifetimes",
+        "services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection#service-lifetimes"
+      ]
+    },
+    {
+      "id": "dependency-injection-003",
+      "difficulty": "Beginner",
+      "question": "How do you register a service in the DI container?",
+      "answer": "You register services on builder.Services using AddTransient, AddScoped, or AddSingleton, specifying the service type and implementation type. You can also register an instance with AddSingleton(instance) or a factory with a lambda. Registration happens before Build() because the container is immutable once the app is built.",
+      "code": "builder.Services.AddScoped<IOrderService, OrderService>();\nbuilder.Services.AddSingleton<IClock, SystemClock>();",
+      "tags": [
+        "registration",
+        "services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-004",
+      "difficulty": "Beginner",
+      "question": "How does constructor injection work in a controller?",
+      "answer": "The framework resolves constructor parameters of a controller from the DI container when it creates the controller for a request, so you simply declare the dependencies you need as parameters. You should not resolve services manually from the container inside actions. This keeps dependencies explicit and the class easy to unit test.",
+      "code": "public class OrdersController : ControllerBase\n{\n    private readonly IOrderService _orders;\n    public OrdersController(IOrderService orders) => _orders = orders;\n}",
+      "tags": [
+        "constructor-injection",
+        "controllers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between GetService and GetRequiredService?",
+      "answer": "GetService<T>() returns null if the service is not registered, while GetRequiredService<T>() throws an InvalidOperationException when it cannot be resolved. In application code GetRequiredService is preferred because a missing registration is almost always a bug that should fail fast. GetService is useful when a dependency is genuinely optional.",
+      "tags": [
+        "resolution",
+        "iserviceprovider"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/api/microsoft.extensions.dependencyinjection.serviceproviderserviceextensions.getrequiredservice"
+      ]
+    },
+    {
+      "id": "dependency-injection-006",
+      "difficulty": "Beginner",
+      "question": "What is the IServiceProvider?",
+      "answer": "IServiceProvider is the container from which services are resolved, and it is available at app.Services after Build(). You can also get a per-request provider from HttpContext.RequestServices. Directly using the provider is discouraged in business code because it hides dependencies, but it is appropriate in factories and framework integration points.",
+      "tags": [
+        "iserviceprovider",
+        "container"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-007",
+      "difficulty": "Beginner",
+      "question": "How do you register multiple implementations of the same interface?",
+      "answer": "You can call the AddXxx method several times with different implementation types, and resolving IEnumerable<IService> returns all of them in registration order. Resolving the single interface returns the last registration. This pattern is used for plugin-style scenarios such as multiple validators or notification handlers.",
+      "code": "builder.Services.AddScoped<INotifier, EmailNotifier>();\nbuilder.Services.AddScoped<INotifier, SmsNotifier>();\n// IEnumerable<INotifier> yields both",
+      "tags": [
+        "multiple-implementations",
+        "services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-008",
+      "difficulty": "Beginner",
+      "question": "How do you inject services into Minimal API handlers?",
+      "answer": "Minimal API handlers receive services either by declaring them as parameters, which are resolved from the container, or by capturing them in the lambda closure. Parameters are resolved per request and support scoped services naturally. You can also use [FromServices] to disambiguate when a parameter could be bound from the body.",
+      "code": "app.MapGet(\"/orders\", (IOrderService svc) => svc.GetAll());",
+      "tags": [
+        "minimal-api",
+        "injection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ]
+    },
+    {
+      "id": "dependency-injection-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a service and a framework-provided object like HttpContext?",
+      "answer": "Services are objects registered in the DI container and resolved by type, whereas HttpContext is a per-request framework object accessed from the current request rather than injected directly. To use HttpContext outside a request-scoped component you inject IHttpContextAccessor, which exposes the current context. HttpContext itself is not registered in the container by default.",
+      "tags": [
+        "httpcontext",
+        "services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-context"
+      ]
+    },
+    {
+      "id": "dependency-injection-010",
+      "difficulty": "Beginner",
+      "question": "What happens if you request an unregistered service?",
+      "answer": "The container throws an InvalidOperationException indicating that no service of the requested type is registered, typically at the point of resolution during a request. This surfaces as a runtime error, so registering all required services is essential. You can catch these early by validating the container on build or by writing tests that resolve root services.",
+      "tags": [
+        "errors",
+        "registration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "dependency-injection-011",
+      "difficulty": "Intermediate",
+      "question": "What is a captive dependency and how do you avoid it?",
+      "answer": "A captive dependency happens when a longer-lived service captures a shorter-lived one, such as a singleton depending on a scoped service, which keeps the scoped instance alive beyond its intended scope. The built-in container throws at resolution time when scope validation is enabled in the Development environment, but only for directly captured dependencies. Avoid it by matching lifetimes, injecting IServiceScopeFactory, or making the dependency a factory or provider lookup.",
+      "tags": [
+        "captive-dependency",
+        "lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines#captive-dependency"
+      ]
+    },
+    {
+      "id": "dependency-injection-012",
+      "difficulty": "Intermediate",
+      "question": "How do you create a manual scope with IServiceScopeFactory?",
+      "answer": "You inject IServiceScopeFactory and call CreateScope() to get an IServiceScope whose ServiceProvider resolves scoped services for that scope. This is needed in singletons such as background services, because they run outside a request and have no ambient scope. You must dispose the scope so scoped services are released.",
+      "code": "using var scope = _scopeFactory.CreateScope();\nvar svc = scope.ServiceProvider.GetRequiredService<IOrderService>();\nawait svc.ProcessAsync();",
+      "tags": [
+        "scopes",
+        "background-services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-013",
+      "difficulty": "Intermediate",
+      "question": "When should a service be a singleton?",
+      "answer": "A service should be a singleton when it is stateless or holds application-wide state that must be shared, and when its creation is expensive or it wraps a resource like a cache or configuration. Singletons must be thread-safe because they are used concurrently by all requests. Services that depend on per-request data or scoped dependencies should not be singletons.",
+      "tags": [
+        "singleton",
+        "lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection#service-lifetimes"
+      ]
+    },
+    {
+      "id": "dependency-injection-014",
+      "difficulty": "Intermediate",
+      "question": "How does the container dispose services?",
+      "answer": "The container disposes services it created that implement IDisposable or IAsyncDisposable: scoped services are disposed when the request scope ends, and singletons are disposed when the root provider is disposed at app shutdown. Services registered as instances are not disposed by the container. This means you should register factories that create disposables rather than registering the disposable instance directly.",
+      "tags": [
+        "disposal",
+        "lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines#disposable-services"
+      ]
+    },
+    {
+      "id": "dependency-injection-015",
+      "difficulty": "Intermediate",
+      "question": "How do you validate that the DI container is configured correctly?",
+      "answer": "You can enable scope validation in development via ValidateScopes and validate all registrations with ValidateOnBuild when building the host, which fails fast at startup if a service cannot be constructed. You can also write a test that resolves every root service. This catches missing registrations and captive dependencies before deployment.",
+      "code": "builder.Host.UseDefaultServiceProvider(o =>\n{\n    o.ValidateScopes = true;\n    o.ValidateOnBuild = true;\n});",
+      "tags": [
+        "validation",
+        "startup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the built-in container and a third-party one like Autofac?",
+      "answer": "The built-in container is lightweight and sufficient for most apps, supporting constructor injection and the three lifetimes. Third-party containers like Autofac, Simple Injector, or Scrutor add features such as assembly scanning, decorators, interceptors, property injection, and child containers. You should only take on the extra dependency when you actually need those advanced capabilities.",
+      "tags": [
+        "autofac",
+        "containers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-017",
+      "difficulty": "Intermediate",
+      "question": "How do you use keyed services in .NET 8?",
+      "answer": "Keyed services let you register multiple implementations under the same type distinguished by a key, using AddKeyedScoped and resolving with [FromKeyedServices(\"key\")] or GetRequiredKeyedService. This is useful when you need a specific implementation at a specific place without creating marker interfaces. It is a lighter alternative to defining a unique interface per implementation.",
+      "code": "builder.Services.AddKeyedScoped<IPayment, StripePayment>(\"stripe\");\nbuilder.Services.AddKeyedScoped<IPayment, PaypalPayment>(\"paypal\");",
+      "tags": [
+        "keyed-services",
+        "net8"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection#keyed-services"
+      ]
+    },
+    {
+      "id": "dependency-injection-018",
+      "difficulty": "Intermediate",
+      "question": "What is the options pattern and how does it relate to DI?",
+      "answer": "The options pattern binds configuration sections to strongly typed classes and registers them in DI via Configure<T>, AddOptions, or the OptionsBuilder API. It supports IOptions<T> for singletons, IOptionsSnapshot<T> for per-request values, and IOptionsMonitor<T> for change notifications. This keeps configuration strongly typed and validated instead of reading strings everywhere.",
+      "tags": [
+        "options-pattern",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options"
+      ]
+    },
+    {
+      "id": "dependency-injection-019",
+      "difficulty": "Intermediate",
+      "question": "How do you register an open generic service?",
+      "answer": "You register the open generic type with its implementation, and the container closes the generic with the requested type arguments at resolution time. This is useful for generic repositories, handlers, or validators. Each closed generic is effectively treated as a separate registration.",
+      "code": "builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));",
+      "tags": [
+        "generics",
+        "registration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IOptions, IOptionsSnapshot, and IOptionsMonitor?",
+      "answer": "IOptions<T> is a singleton that reads configuration once, IOptionsSnapshot<T> is scoped and re-reads per request, and IOptionsMonitor<T> is a singleton that re-reads on change and raises OnChange callbacks. Use IOptions for static settings, IOptionsSnapshot in request-scoped code that needs current values, and IOptionsMonitor in singletons that must react to updates. All are backed by the options pattern and IConfiguration.",
+      "tags": [
+        "options",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/options"
+      ]
+    },
+    {
+      "id": "dependency-injection-021",
+      "difficulty": "Advanced",
+      "question": "How does the DI container resolve services internally?",
+      "answer": "At build time the container compiles a ServiceProvider that maps service descriptors to factory delegates, and resolution walks the constructor parameters to build the object graph. Each scope keeps a cache of resolved scoped instances, and singletons live in the root scope. The container detects direct captive dependencies when validation is enabled but cannot detect indirect captures.",
+      "tags": [
+        "container-internals",
+        "resolution"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement the decorator pattern with the built-in container?",
+      "answer": "The built-in container does not support automatic decoration, so you either register a factory that resolves the inner service and wraps it, or use a library such as Scrutor which adds a Decorate extension. The factory approach is explicit and works well for one-off cases, while Scrutor keeps registrations concise. Care is needed to avoid infinite recursion when the decorator and inner type share the same service type.",
+      "code": "builder.Services.AddScoped<IOrderService>(sp =>\n    new LoggingOrderService(\n        new OrderService(sp.GetRequiredService<IRepo>())));",
+      "tags": [
+        "decorator",
+        "patterns"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-023",
+      "difficulty": "Advanced",
+      "question": "How does the framework create a per-request scope and what happens to scoped services at the end of a request?",
+      "answer": "For each request the framework creates an IServiceScope from the root provider and exposes it as HttpContext.RequestServices, so scoped services resolve to the same instance for the whole request. When the request completes the scope is disposed, which disposes any scoped IDisposable services and releases their resources. This is why scoped services must not be captured by singletons.",
+      "tags": [
+        "scopes",
+        "request-lifetime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection#service-lifetimes"
+      ]
+    },
+    {
+      "id": "dependency-injection-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle thread safety and disposal when a singleton depends on a scoped resource?",
+      "answer": "A singleton must not hold a scoped instance, but it can create a scope per operation using IServiceScopeFactory and resolve scoped services inside that scope, disposing the scope when the work completes. This gives each operation its own instance and correct disposal. Access to shared singleton state must be synchronized or made immutable.",
+      "tags": [
+        "thread-safety",
+        "scopes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    },
+    {
+      "id": "dependency-injection-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance and memory considerations when choosing service lifetimes?",
+      "answer": "Transient services allocate on every resolution, which can add GC pressure in hot paths, while singletons minimize allocations but hold memory for the app's lifetime. Scoped services balance both but require a scope per request, which has a small overhead. Choosing the shortest safe lifetime and pooling expensive resources, such as DbContext factories or connection pools, keeps memory and throughput balanced.",
+      "tags": [
+        "performance",
+        "lifetimes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/dotnet/core/extensions/dependency-injection-guidelines"
+      ]
+    }
+  ]
+}

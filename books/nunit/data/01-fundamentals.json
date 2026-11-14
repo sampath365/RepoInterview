@@ -1,0 +1,371 @@
+{
+  "category": "NUnit Fundamentals",
+  "slug": "fundamentals",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is NUnit and where does it fit in the .NET test ecosystem?",
+      "answer": "NUnit is a long-standing open-source unit testing framework for .NET, descended from the JUnit and xUnit family of tools. You write test classes and methods, decorate them with attributes such as [TestFixture] and [Test], and a runner discovers and executes them. It works with dotnet test, Visual Studio Test Explorer, the standalone NUnit console runner and CI systems.",
+      "tags": [
+        "nunit",
+        "testing",
+        "basics"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/intro.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "Which NuGet packages do you need to write and run NUnit tests?",
+      "answer": "The NUnit package provides the framework and assertions, NUnit3TestAdapter lets VSTest-based runners such as dotnet test and Test Explorer discover the tests, and Microsoft.NET.Test.Sdk provides the VSTest host. The adapter and SDK are test-only dependencies and are normally referenced with PrivateAssets set so they do not flow to projects that reference the test project.",
+      "code": "dotnet add package NUnit\ndotnet add package NUnit3TestAdapter\ndotnet add package Microsoft.NET.Test.Sdk",
+      "tags": [
+        "nuget",
+        "packages"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/getting-started/installation.html",
+        "https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is a test fixture in NUnit?",
+      "answer": "A test fixture is a class that contains tests, conventionally marked with the [TestFixture] attribute. NUnit creates an instance of the fixture in order to run its tests, and the attribute is optional in modern NUnit because a public class containing [Test] methods is treated as a fixture automatically. Fixtures group related tests and can share setup state.",
+      "code": "[TestFixture]\npublic class CalculatorTests\n{\n    [Test]\n    public void Add_ReturnsSum()\n    {\n        Assert.That(new Calculator().Add(2, 3), Is.EqualTo(5));\n    }\n}",
+      "tags": [
+        "testfixture",
+        "basics"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixture.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/organizing-tests.html"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "How does NUnit discover the tests in an assembly?",
+      "answer": "At discovery time the runner loads the test assembly and NUnit reflects over it, looking for fixtures and methods decorated with test attributes such as [Test] and [TestCase]. It builds a tree of suites and test cases that is then filtered and executed. Because discovery is metadata-driven, no test code runs until execution begins.",
+      "tags": [
+        "discovery",
+        "runner"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/ordinary-tests.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/NUnit-Test-Projects.html"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What does the [Test] attribute do?",
+      "answer": "The [Test] attribute marks a method as a single test case that runs exactly once. The method must be public, take no parameters, and return void or Task. Each [Test] appears as one node in the runner and produces one pass or fail result.",
+      "code": "[Test]\npublic void Discount_Is_Applied_To_Cart()\n{\n    Assert.That(Cart.WithTotal(100).Discount(10).Total, Is.EqualTo(90));\n}",
+      "tags": [
+        "test",
+        "attributes"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/ordinary-tests.html"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is TestContext used for in NUnit?",
+      "answer": "TestContext gives a test access to information about its execution context, such as the current test name, the fully qualified test name and the output writer. Writing to TestContext.Out attaches diagnostic text to the test result. It is a convenient alternative to threading state through method parameters.",
+      "code": "TestContext.Out.WriteLine($\"Running {TestContext.CurrentContext.Test.Name}\");",
+      "tags": [
+        "testcontext",
+        "diagnostics"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestContext.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "How do you create an NUnit test project with the .NET CLI?",
+      "answer": "Run dotnet new nunit to scaffold a test project already configured with the NUnit packages. Add a project reference to the code under test and run dotnet test to build and execute the suite. The template ships with a sample test class that you can replace.",
+      "code": "dotnet new nunit -n MyApp.Tests\ndotnet add MyApp.Tests reference MyApp\ndotnet test MyApp.Tests",
+      "tags": [
+        "cli",
+        "templates"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/getting-started/installation.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-with-nunit"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What are the main differences between NUnit 3 and NUnit 4?",
+      "answer": "NUnit 4 moved the classic assertions into the separate NUnit.Framework.Legacy namespace as ClassicAssert and removed the Assert.That overloads that took a format string plus params in favour of FormattableString. It also raised the minimum platform to .NET 6 and .NET Framework 4.6.2. The constraint model through Assert.That is unchanged and remains the recommended style.",
+      "tags": [
+        "nunit4",
+        "migration"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/release-notes/breaking-changes.html",
+        "https://docs.nunit.org/articles/nunit/release-notes/Nunit4.0-MigrationGuide.html"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "How do you run NUnit tests from the command line?",
+      "answer": "The most common approach is dotnet test, which builds the project and runs it through VSTest using the NUnit adapter. You can also run the standalone nunit3-console runner against a built assembly for more control over the run. Both support filtering and produce result files for CI.",
+      "code": "dotnet test --filter \"FullyQualifiedName~CalculatorTests\"",
+      "tags": [
+        "cli",
+        "dotnet-test"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-test",
+        "https://docs.nunit.org/articles/nunit/running-tests/Console-Command-Line.html"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is the NUnit3TestAdapter and why do you need it?",
+      "answer": "NUnit3TestAdapter is the bridge that exposes NUnit tests to VSTest, which is what dotnet test and Visual Studio Test Explorer use. Without it those tools cannot discover NUnit tests even though the test assembly compiles. It is a test-only dependency and should be marked with PrivateAssets=all.",
+      "tags": [
+        "adapter",
+        "vstest"
+      ],
+      "references": [
+        "https://github.com/nunit/nunit3-vs-adapter",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit's constraint model differ from the classic assertion model?",
+      "answer": "The constraint model uses a single Assert.That(actual, constraint) entry point where the comparison logic lives in a composable constraint object such as Is.EqualTo(x). The classic model used many methods like Assert.AreEqual, one per comparison. NUnit recommends the constraint model because constraints compose, read more naturally and produce clearer failure messages.",
+      "code": "Assert.That(result, Is.Not.Null.And.GreaterThan(0));",
+      "tags": [
+        "assertions",
+        "constraints"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/constraint.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertion-models/classic.html"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Assert and Assume in NUnit?",
+      "answer": "Both share the same constraint syntax, but a failing Assert fails the test while a failing Assume marks it Inconclusive instead. Assumptions express preconditions that must hold for a test to be meaningful, so a violated assumption is reported as inconclusive rather than as a bug. Use Assume.That to guard tests that depend on the environment.",
+      "code": "Assume.That(Environment.OSVersion.Platform, Is.EqualTo(PlatformID.Win32NT));",
+      "tags": [
+        "assumptions",
+        "assertions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/Assumptions.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What outcomes can NUnit report for a test case?",
+      "answer": "NUnit reports Passed, Failed, Skipped (which covers ignored, explicit and platform-excluded tests) and Inconclusive. Passed means all assertions succeeded, Failed means an assertion failed or an unexpected exception escaped, and Inconclusive comes from an unmet assumption. Runners surface these categories separately so a deliberate skip is not confused with a real failure.",
+      "tags": [
+        "results",
+        "reporting"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/assertions.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/Assumptions.html"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "How does a test suite differ from a test fixture in NUnit?",
+      "answer": "A fixture is a class holding tests, while a suite is any node in NUnit's internal test tree that contains other tests, including the assembly, a namespace or a fixture. You rarely build suites by hand because NUnit derives them from the structure of fixtures and namespaces. Some attributes, such as OneTimeSetUp, operate at suite scope.",
+      "tags": [
+        "suites",
+        "structure"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/organizing-tests.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestContext.html"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit generate test names and identifiers?",
+      "answer": "NUnit derives a test name from the method and fixture names and appends argument values for parameterized tests, exposing it through TestContext.CurrentContext.Test.Name. The fully qualified name includes the namespace and fixture and is what filters usually match on. Consistent naming matters because filters and CI reports key off these names.",
+      "tags": [
+        "naming",
+        "testcontext"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestContext.html",
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between TestContext.Out and TestContext.Progress?",
+      "answer": "TestContext.Out buffers output and attaches it to the test result, so it appears when the test finishes. TestContext.Progress writes immediately to the runner, which is useful for long-running tests or when you want to watch progress in real time. Use Out for normal diagnostics and Progress for streaming feedback.",
+      "code": "TestContext.Progress.WriteLine(\"still working...\");\nTestContext.Out.WriteLine(\"attached to the result\");",
+      "tags": [
+        "testcontext",
+        "output"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestContext.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is a SetUpFixture and when would you use one?",
+      "answer": "A class marked [SetUpFixture] provides OneTimeSetUp and OneTimeTearDown that run once for all fixtures in its namespace, or for the whole assembly when it has no namespace. It is the right place to start and stop resources that many fixtures share, such as a test server or a container. Keep it lightweight because a failure there aborts the whole namespace.",
+      "code": "[SetUpFixture]\npublic class AssemblyLifecycle\n{\n    [OneTimeSetUp]\n    public void GlobalSetup() => TestServer.Start();\n\n    [OneTimeTearDown]\n    public void GlobalTeardown() => TestServer.Stop();\n}",
+      "tags": [
+        "setupfixture",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setupfixture.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "How does the NUnit test selection language work with dotnet test?",
+      "answer": "NUnit's engine supports a --where expression with operators such as ==, !=, ~ and &&, for example cat==Slow or test=~Calculator. When running through dotnet test you use the VSTest --filter syntax instead, which matches on FullyQualifiedName, Name, TestCategory and other traits. Both let you run a subset without editing code.",
+      "code": "dotnet test --filter \"TestCategory=Slow\"\ndotnet test --filter \"FullyQualifiedName~Cart\"",
+      "tags": [
+        "filtering",
+        "selection"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/running-tests/Test-Selection-Language.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/selective-unit-tests"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "How does the NUnit engine relate to the NUnit framework?",
+      "answer": "The NUnit framework is the library you reference in tests; it contains attributes, assertions and the code that executes a single test. The engine is a separate component that loads test assemblies, drives the framework through a driver and exposes a common API used by the console runner and adapters. This separation lets the same tests run under many runners.",
+      "tags": [
+        "engine",
+        "architecture"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit-engine/Test-Engine-API.html",
+        "https://github.com/nunit/nunit"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "How do you share common test code between NUnit projects?",
+      "answer": "Extract shared helpers into a normal class library that both test projects reference, keeping only the test framework references in the test projects themselves. You can use Directory.Build.props to centralise package versions and shared build settings. Avoid linking the same test assembly into many projects because that duplicates test identities.",
+      "tags": [
+        "organization",
+        "sharing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/nuget/consume-packages/package-references-in-project-files"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "What is the difference between load time and execution time in NUnit, and why does it matter?",
+      "answer": "Load time is when the engine loads the assembly and the framework builds the test tree, while execution time is when tests actually run. Attributes implementing interfaces such as ITestBuilder or ISimpleTestBuilder run at load time and can shape the tree, so they must not depend on mutable runtime state. Knowing the split matters when you write custom attributes or generate tests dynamically.",
+      "tags": [
+        "architecture",
+        "customization"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/load-time-and-execution-time.html",
+        "https://docs.nunit.org/articles/nunit/extending-nunit/ITestBuilder-Interface.html"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "How would you plan a migration of a large NUnit 3 suite to NUnit 4?",
+      "answer": "First upgrade NUnit.Analyzer and fix its warnings while still on version 3, because the analyzer rewrites classic asserts and the removed Assert.That format overloads before the upgrade. Then bump the NUnit package, add a global using alias for ClassicAssert if you want to keep the old syntax, and update the runner to a compatible version. Run the suite after each step so failures stay attributable.",
+      "code": "// Directory.Build.props\nglobal using NUnit.Framework;\nglobal using ClassicAssert = NUnit.Framework.Legacy.ClassicAssert;",
+      "tags": [
+        "migration",
+        "nunit4"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/release-notes/Nunit4.0-MigrationGuide.html",
+        "https://docs.nunit.org/articles/nunit/release-notes/breaking-changes.html"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "How is NUnit split between framework, engine and adapter, and what are the implications?",
+      "answer": "The framework knows how to run a single test and produce a result, the engine knows how to load assemblies and coordinate runs, and the adapter translates engine operations into the VSTest protocol. Because these layers communicate through the engine API rather than referencing each other directly, you can swap runners without changing tests. The cost is version coupling, since the adapter and engine must be compatible with the framework version.",
+      "tags": [
+        "architecture",
+        "engine"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit-engine/Test-Engine-API.html",
+        "https://github.com/nunit/nunit3-vs-adapter"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "How do you write a custom NUnit attribute that changes how tests run?",
+      "answer": "Implement an attribute deriving from NUnitAttribute plus an interface such as ITestBuilder, ISimpleTestBuilder or IApplyToTest, and build the desired TestCase or TestMethod objects. The attribute runs at load time, so it should compute cases from metadata rather than live state. NUnit discovers the attribute by reflection, so no registration is required.",
+      "code": "public class MyAttribute : NUnitAttribute, ISimpleTestBuilder\n{\n    public TestMethod BuildFrom(IMethodInfo method, Test suite)\n        => new NUnitTestCaseBuilder().BuildTestMethod(method, suite);\n}",
+      "tags": [
+        "extensibility",
+        "customization"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Custom-Attributes.html",
+        "https://docs.nunit.org/articles/nunit/extending-nunit/ISimpleTestBuilder-Interface.html"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of NUnit's fixture-per-class, test-per-method model?",
+      "answer": "The model is simple and discoverable: each public test method is one case and each class is one fixture, which maps cleanly onto code structure. The trade-off is that sharing expensive state requires explicit lifecycle attributes and careful teardown, and very large fixtures become hard to parallelise safely. Teams often keep fixtures small and move shared infrastructure into a SetUpFixture or helper builders.",
+      "tags": [
+        "design",
+        "organization"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/organizing-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    }
+  ]
+}

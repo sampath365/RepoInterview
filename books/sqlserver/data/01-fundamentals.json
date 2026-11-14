@@ -1,0 +1,334 @@
+{
+  "category": "SQL Server Fundamentals & Architecture",
+  "slug": "fundamentals",
+  "icon": "database",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is SQL Server and what is it used for?",
+      "answer": "SQL Server is Microsoft's relational database management system (RDBMS) that stores and manages structured data and serves it to applications. It implements the relational model, the SQL/T-SQL query language, transactions with ACID guarantees, security, backup/restore and high availability. It is commonly used for line-of-business applications, data warehouses, reporting and integration workloads.",
+      "tags": [
+        "overview",
+        "rdbms"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/sql-server/sql-server-technical-documentation"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What is an instance of SQL Server?",
+      "answer": "An instance is a single installation of the SQL Server database engine with its own set of system and user databases, configuration, security and network endpoint. A machine can host multiple named instances side by side, each isolated from the others. The default instance is reached by server name alone, while named instances use SERVERNAME\\INSTANCENAME.",
+      "tags": [
+        "instance",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/database-engine/configure-windows/database-engine-instances-sql-server"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a database and an instance?",
+      "answer": "An instance is the running engine; a database is a container of objects (tables, views, procedures) inside that engine. One instance can host many databases, but a database belongs to exactly one instance and is identified by its name within that instance. Applications connect to an instance and then switch context to a database with USE or a three-part name.",
+      "tags": [
+        "instance",
+        "database"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/databases/databases"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What are the main editions of SQL Server 2022?",
+      "answer": "SQL Server 2022 ships as Enterprise, Standard, Express, Developer and Evaluation editions, plus Azure SQL variants. Enterprise adds the highest scale, advanced high availability and performance features; Standard is a mid-tier for smaller workloads; Express is free with 10 GB per database and limited resources. Developer and Evaluation are full-featured but licensed for non-production or a trial period only.",
+      "tags": [
+        "editions",
+        "licensing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/sql-server/editions-and-components-of-sql-server-2022"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What database files make up a SQL Server database?",
+      "answer": "Each database has at least one primary data file (.mdf), optional secondary data files (.ndf) and at least one transaction log file (.ldf). The primary file holds the database catalog and startup information; secondary files spread data across files or volumes; the log records every change for recovery. Files are grouped into filegroups for placement and backup control.",
+      "tags": [
+        "files",
+        "storage"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/databases/database-files-and-filegroups"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the master database and why is it important?",
+      "answer": "The master database stores instance-level metadata such as logins, linked servers, endpoint configuration and the location of every other database. SQL Server cannot start without it, so it must be backed up regularly. If master is lost, the instance may not start until it is restored.",
+      "tags": [
+        "system-databases",
+        "master"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/databases/master-database"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is SQL Server Management Studio (SSMS)?",
+      "answer": "SSMS is the free graphical tool for administering SQL Server and authoring T-SQL. It provides Object Explorer, a query editor with execution plans, script generation, wizards for backup and security, and integration with source control. Azure Data Studio is a lighter, cross-platform alternative focused on query editing and notebooks.",
+      "tags": [
+        "tools",
+        "ssms"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/ssms/sql-server-management-studio-ssms"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "How does Azure SQL Database differ from SQL Server on-premises?",
+      "answer": "Azure SQL Database is a fully managed platform-as-a-service that runs the SQL Server engine in the cloud, so Microsoft handles patching, backups and high availability. You get no access to the OS or file system, some features (such as certain server-level constructs) are restricted, and scaling is done through service tiers and elastic pools. It always runs the latest stable engine version.",
+      "tags": [
+        "azure-sql",
+        "cloud"
+      ],
+      "references": [
+        "https://learn.microsoft.com/azure/azure-sql/database/sql-database-paas-overview"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What is T-SQL and how does it relate to SQL?",
+      "answer": "T-SQL (Transact-SQL) is Microsoft's procedural extension of the ANSI SQL standard used by SQL Server. It keeps standard DML and DDL and adds variables, control-of-flow, error handling, functions and stored procedures. Because of those extensions, T-SQL written for SQL Server is not always portable to other database engines.",
+      "tags": [
+        "t-sql",
+        "sql"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/language-reference"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is a filegroup and when would you use more than one?",
+      "answer": "A filegroup is a named collection of data files that objects can be placed on. The PRIMARY filegroup contains the primary file and is the default; user filegroups let you spread large tables or indexes across volumes for performance, or make read-only historical data independently backup-able. Secondary data files (.ndf) can be added to a filegroup to grow beyond a single volume.",
+      "tags": [
+        "filegroup",
+        "storage"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/databases/database-files-and-filegroups"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What is SQLOS and what does it manage?",
+      "answer": "SQLOS is a user-mode layer between the database engine and the operating system that provides cooperative, non-preemptive scheduling, memory management, I/O, locking primitives and exception handling. It schedules worker threads on schedulers, one per logical CPU by default, and tracks wait statistics that surface as wait types. Because SQL Server manages its own scheduling and memory, it generally performs best on a dedicated host.",
+      "tags": [
+        "sqlos",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/memory-management-architecture-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What is the buffer pool and how does SQL Server use it?",
+      "answer": "The buffer pool is the largest area of SQL Server memory and caches 8 KB data pages read from disk. When a query needs a page, SQL Server either finds it in the pool or reads it from disk into the pool, so repeated access avoids physical I/O. A page is dirty once modified and is written back by checkpoint or the lazy writer; the pool is managed with a clock-sweep (LRU-K style) algorithm.",
+      "tags": [
+        "buffer-pool",
+        "memory"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/memory-management-architecture-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What is a checkpoint and what does the lazy writer do?",
+      "answer": "A checkpoint flushes dirty pages from the buffer pool to the data files and records the log sequence number in the database boot page, which shortens recovery time. SQL Server runs automatic checkpoints based on the recovery interval and log activity, and indirect checkpoints can target a specific recovery time. The lazy writer runs in the background, aging out pages and writing dirty ones so the pool always has clean buffers available.",
+      "tags": [
+        "checkpoint",
+        "recovery"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/logs/database-checkpoints-sql-server"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "What are the SQL Server system databases and their purposes?",
+      "answer": "Master stores instance metadata and logins, model is the template for every new database, msdb holds Agent jobs, backup history and mail configuration, and tempdb is a shared workspace for temporary objects and version stores. Resource is a hidden read-only database that holds system objects and can be run from an alternate location. All except Resource should be backed up regularly.",
+      "tags": [
+        "system-databases",
+        "administration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/databases/system-databases"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a page and an extent in SQL Server?",
+      "answer": "A page is the fundamental 8 KB unit of storage that holds rows, index entries, text or metadata, and every page has a 96-byte header. An extent is a group of eight contiguous pages (64 KB) and is the unit in which space is allocated to tables and indexes. Uniform extents belong to a single object, while mixed extents are shared by up to eight small objects.",
+      "tags": [
+        "pages",
+        "extents"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/pages-and-extents-architecture-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "What is the plan cache and how does SQL Server reuse execution plans?",
+      "answer": "When a query is compiled, the optimizer produces an execution plan that SQL Server stores in the plan cache keyed by the query text and the set of session settings. On the next execution it searches for a matching plan and reuses it, skipping compilation, provided the context is compatible. Parameter sniffing, SET options, and schema changes can cause different plans or cache misses, and cache entries are evicted under memory pressure.",
+      "tags": [
+        "plan-cache",
+        "optimization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/query-processing-architecture-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the database engine and SQL Server Agent?",
+      "answer": "The database engine is the core service that stores data and processes queries; SQL Server Agent is a separate Windows service that schedules and runs jobs, alerts and operators. Agent is commonly used for backups, index maintenance, ETL and custom T-SQL steps. Agent is not available in Azure SQL Database, where Elastic Jobs or Automation replace it.",
+      "tags": [
+        "agent",
+        "administration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/ssms/agent/sql-server-agent"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "What are the key limits of the SQL Server Express edition?",
+      "answer": "Express is free but capped at 10 GB per database, 1 GB of buffer pool memory, and the lesser of 1 socket or 4 cores, with no SQL Server Agent. It supports features such as backup compression and basic availability groups, but not Always On, Resource Governor or data compression. It is popular for small applications, development and embedded deployments.",
+      "tags": [
+        "editions",
+        "express"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/sql-server/editions-and-components-of-sql-server-2022"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "Why does the SQL Server service account matter?",
+      "answer": "The service account is the Windows identity under which the engine runs and it determines file-system and network permissions the instance has. Best practice is a dedicated low-privilege domain account with only the required rights, such as Log on as a service and access to the data and backup folders. Misconfigured accounts break features such as backups to UNC paths, linked servers and Always On.",
+      "tags": [
+        "service-account",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/database-engine/configure-windows/configure-windows-service-accounts-and-permissions"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "How does SQL Server allocate memory between the buffer pool and other caches?",
+      "answer": "SQL Server dynamically balances memory across the buffer pool, plan cache, columnstore and other clerks, growing the buffer pool when free memory is available and shrinking it under pressure. Max server memory limits the buffer pool and other caches, while min server memory sets a floor. For OLTP workloads a common practice is to cap max server memory to leave headroom for the OS, and the total should leave several GB for Windows.",
+      "tags": [
+        "memory",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/database-engine/configure-windows/server-memory-server-configuration-options"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How does the write-ahead logging (WAL) protocol guarantee durability?",
+      "answer": "Before any modified data page is written to disk, the corresponding log records must be flushed, so the log always describes changes ahead of the data files. On COMMIT the log records are hardened to disk (with WRITELOG waits), which is what makes a transaction durable even if the server crashes before the dirty pages are written. During recovery, redo reapplies logged changes and undo rolls back uncommitted transactions using the same log.",
+      "tags": [
+        "wal",
+        "recovery",
+        "logging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/sql-server-transaction-log-architecture-and-management-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "What happens during SQL Server crash recovery (redo and undo phases)?",
+      "answer": "Recovery has three phases: analysis reads the log to find the last checkpoint and builds the dirty page table and transaction list; redo replays all logged changes from the checkpoint forward to bring data pages current; undo rolls back transactions that were not committed at the crash. The process uses the transaction log, so a large uncheckpointed log means longer recovery. A fast recovery option can avoid redo of committed transactions after a failover.",
+      "tags": [
+        "recovery",
+        "crash"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/logs/the-transaction-log-sql-server"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "Why can memory grants cause concurrency problems?",
+      "answer": "Memory-intensive operations such as sorts, hashes and columnstore builds request a memory grant at compile time based on estimated row sizes and counts. If the estimate is too low, the query spills to tempdb; if too high or under memory pressure, the query waits on RESOURCE_SEMAPHORE, blocking other queries. The granted memory is held until the query completes, so a few large grants can throttle the whole instance.",
+      "tags": [
+        "memory-grants",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/memory-management-architecture-guide"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "What are non-yielding scheduler and spinlock waits and why do they matter?",
+      "answer": "SQLOS uses a cooperative scheduler where a worker must periodically yield so other workers on the same scheduler can run; if a thread does not yield it blocks the scheduler and produces a non-yielding scheduler error or a spike in SOS_SCHEDULER_YIELD waits. Spinlocks are lightweight synchronization objects that a thread spins on briefly before sleeping, and heavy contention appears as high spinlock counts in sys.dm_os_spinlock_stats. Both usually indicate CPU pressure, bad code paths or bugs and are diagnosed with DMVs rather than wait stats alone.",
+      "tags": [
+        "scheduler",
+        "spinlock",
+        "troubleshooting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-os-spinlock-stats-transact-sql"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between server-level and database-level configuration?",
+      "answer": "Server-level configuration (sp_configure options, max server memory, max degree of parallelism, cost threshold for parallelism) applies to the whole instance and is stored in master. Database-level settings such as compatibility level, containment, auto options, snapshot isolation and query store live in the database and travel with it. Some options can also be scoped at the database or query level with hints or DATABASE SCOPED CONFIGURATION, which helps tune individual workloads without changing the instance.",
+      "tags": [
+        "configuration",
+        "compatibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/sql/t-sql/statements/alter-database-scoped-configuration-transact-sql"
+      ]
+    }
+  ]
+}

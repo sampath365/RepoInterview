@@ -1,0 +1,210 @@
+{
+  "category": "Query Tuning & Performance",
+  "slug": "performance",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "What is the first step when a query is slow?",
+      "answer": "Start by looking at the actual execution plan to see where time and I/O are spent, and check the query's wait statistics to understand what it is waiting on. Compare estimated and actual row counts to spot bad cardinality estimates. Do not guess at fixes before you have measured the problem.",
+      "tags": ["tuning", "methodology"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "What does SET STATISTICS IO tell you?",
+      "answer": "SET STATISTICS IO reports the logical and physical reads and the scan count for each table accessed by a query. Logical reads show how many pages were touched from the buffer pool and are the most useful measure of a query's efficiency. High logical reads usually indicate a missing or non-selective index.",
+      "code": "SET STATISTICS IO ON;\nSELECT * FROM dbo.Orders WHERE CustomerId = 42;\nSET STATISTICS IO OFF;",
+      "tags": ["statistics-io", "diagnostics"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-statistics-io-transact-sql"]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "What does SET STATISTICS TIME tell you?",
+      "answer": "SET STATISTICS TIME reports the CPU time and elapsed time for parsing, compiling, and executing each statement. It helps distinguish CPU-bound work from time spent waiting, and reveals how much overhead comes from compilation. Pair it with STATISTICS IO for a full picture.",
+      "code": "SET STATISTICS TIME ON;\nSELECT COUNT(*) FROM dbo.Orders;\nSET STATISTICS TIME OFF;",
+      "tags": ["statistics-time", "diagnostics"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-statistics-time-transact-sql"]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "Why is SELECT * a performance problem?",
+      "answer": "SELECT * retrieves columns you may not need, increasing I/O and network traffic and preventing a covering index from satisfying the query. It also breaks application code when the schema changes. Always select only the columns required.",
+      "tags": ["select-star", "best-practices"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between logical and physical reads?",
+      "answer": "Logical reads count page accesses served from the buffer pool, while physical reads count pages fetched from disk because they were not cached. Physical reads are far slower, so reducing logical reads generally reduces physical reads too. A high logical-to-physical ratio means the working set fits in memory.",
+      "tags": ["io", "buffer-pool"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/set-statistics-io-transact-sql"]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "What is a slow-running query usually waiting on?",
+      "answer": "Queries wait on resources such as CPU, memory grants, I/O, and locks, and the wait type tells you which. Common waits include PAGEIOLATCH for disk reads, RESOURCE_SEMAPHORE for memory grants, and LCK_M_ waits for blocking. Identifying the dominant wait is the fastest route to the right fix.",
+      "tags": ["waits", "troubleshooting"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-os-wait-stats-transact-sql"]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "Why can an implicit conversion slow down a query?",
+      "answer": "When a column and a value have different types, SQL Server converts the lower-precedence operand to the higher one, which may apply the conversion to the column. This makes the predicate non-sargable and turns an index seek into a scan. Match data types between columns and parameters to avoid it.",
+      "tags": ["implicit-conversion", "sargable"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/data-types/data-type-conversion-database-engine"]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "What is the effect of NOLOCK and why is it risky?",
+      "answer": "NOLOCK reads data without taking shared locks, avoiding blocking but allowing dirty, non-repeatable, and phantom reads. It can return rows that were rolled back or miss rows entirely, and it can even cause errors on allocation pages. Use snapshot isolation or RCSI instead when you need reads that do not block writers.",
+      "tags": ["nolock", "isolation"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/queries/hints-transact-sql-table"]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "What does it mean when a query plan shows a high-cost scan?",
+      "answer": "A scan reads an entire table or index, so its cost grows with size and it may indicate a missing or non-selective index. However, a scan is the right choice when the query genuinely needs most of the rows. Confirm by checking selectivity and whether an index could support a seek.",
+      "tags": ["scan", "execution-plan"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/sql-server-index-design-guide"]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "Why is keeping statistics updated important for performance?",
+      "answer": "The optimizer estimates row counts from statistics, and stale statistics cause bad estimates that lead to poor plan choices such as the wrong join type. Auto-update statistics keeps them roughly current, but large batch changes may need an explicit UPDATE STATISTICS. Accurate statistics are the cheapest performance fix available.",
+      "tags": ["statistics", "optimizer"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/statistics/statistics"]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use Query Store to find regressions?",
+      "answer": "Query Store captures query text, plans, and runtime statistics over time, and its Regressed Queries view highlights plans whose performance worsened. You can force a previously good plan without code changes, which is a powerful emergency fix. Enable Query Store on user databases to build this history.",
+      "tags": ["query-store", "regression"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitoring-performance-by-using-the-query-store"]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "What is a plan guide and when would you use one?",
+      "answer": "A plan guide attaches a query hint or a specific plan to a query without changing its text, which is useful when you cannot modify the application. It can force a plan, disable parameter sniffing for a query, or apply hints. Plan guides are a workaround and should be documented because they are invisible in the code.",
+      "tags": ["plan-guide", "hints"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/plan-guides"]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How does the max degree of parallelism setting affect performance?",
+      "answer": "MAXDOP limits the number of processors a parallel plan can use, controlling the balance between speed for big queries and contention for small ones. Setting it too high can cause CPU pressure and many short parallel queries, while too low leaves large queries slow. A common starting point is to match the number of cores per NUMA node, up to 8.",
+      "tags": ["maxdop", "parallelism"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/configure-windows/configure-the-max-degree-of-parallelism-server-configuration-option"]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "What is cost threshold for parallelism and why does the default matter?",
+      "answer": "Cost threshold for parallelism is the estimated cost above which the optimizer considers a parallel plan, and its default of 5 is considered far too low on modern hardware. A low value causes many small queries to go parallel, adding worker and synchronization overhead. Many practitioners raise it to 25 to 50.",
+      "tags": ["parallelism", "configuration"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/configure-windows/configure-the-cost-threshold-for-parallelism-server-configuration-option"]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "What is a residual predicate in an execution plan?",
+      "answer": "A residual predicate is a filter applied after the data is read rather than being used to seek, shown as a Predicate property on a scan or seek. It means rows are read and then discarded, wasting I/O. Turning residual predicates into seek predicates usually requires an index change or a rewrite.",
+      "tags": ["residual-predicate", "execution-plan"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/showplan-logical-and-physical-operators-reference"]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you tune a query that sorts a large result set?",
+      "answer": "Sorts are expensive and can spill to tempdb, so first try to avoid them with an index that provides the order. If the sort is unavoidable, ensure it has an adequate memory grant and reduce the number of rows and columns being sorted. Reconsider whether the client actually needs a globally ordered result.",
+      "tags": ["sort", "tempdb"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a blocking operator and a non-blocking operator?",
+      "answer": "A non-blocking (pipelined) operator can return rows as it reads them, such as a nested loops join. A blocking operator must consume all of its input before producing any output, such as a sort or hash aggregate, so it delays the first row and uses more memory. Blocking operators are often the source of memory grants and spills.",
+      "tags": ["blocking-operator", "execution-plan"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/showplan-logical-and-physical-operators-reference"]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "How do you reduce the cost of a query that returns many rows to the client?",
+      "answer": "Return only the columns and rows the client needs, page results instead of sending everything, and consider server-side aggregation. Reducing network round trips with set-based operations also helps. The fastest row to process is the one you never send.",
+      "tags": ["network", "tuning"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "What is the impact of functions in the WHERE clause on performance?",
+      "answer": "A function applied to a column makes the predicate non-sargable, so the optimizer cannot seek the index and must scan and evaluate the function per row. This applies to built-in and user-defined functions alike. Rewrite as a range comparison on the bare column or use a computed persisted column with an index.",
+      "tags": ["sargable", "functions"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitor-and-tune-for-performance"]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "How do you identify the most expensive queries on a server?",
+      "answer": "Query sys.dm_exec_query_stats joined to sys.dm_exec_sql_text to rank queries by total CPU, total logical reads, or total elapsed time. Sorting by total rather than average highlights the queries that hurt the server most. Query Store provides the same view with history across restarts.",
+      "code": "SELECT TOP (10) qs.total_worker_time, qs.total_logical_reads,\n       SUBSTRING(t.text, 1, 200) AS QueryText\nFROM sys.dm_exec_query_stats qs\nCROSS APPLY sys.dm_exec_sql_text(qs.sql_handle) t\nORDER BY qs.total_worker_time DESC;",
+      "tags": ["dmv", "troubleshooting"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/system-dynamic-management-views/sys-dm-exec-query-stats-transact-sql"]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "What is an adaptive join and how does it help?",
+      "answer": "An adaptive join, introduced in SQL Server 2017, defers the choice between nested loops and hash join until runtime by checking the actual number of rows crossing the threshold. This mitigates plans that are wrong because the estimate was off. It is most valuable for queries whose row counts vary greatly between executions.",
+      "tags": ["adaptive-join", "intelligent-query-processing"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/intelligent-query-processing"]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "What is batch mode on rowstore and when does it help?",
+      "answer": "Batch mode on rowstore lets SQL Server process rowstore data in batches of about 900 rows instead of one row at a time, improving CPU efficiency for analytical queries. It is enabled automatically for eligible queries in SQL Server 2019 and later. It shines on aggregation-heavy reporting queries over regular tables.",
+      "tags": ["batch-mode", "intelligent-query-processing"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/intelligent-query-processing"]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How does parameter-sensitive plan optimization work in SQL Server 2022?",
+      "answer": "PSP optimization detects when a query has multiple cached plans with different parameter values and automatically generates a plan that is good across the range, rather than a plan optimal for one value. It reduces the classic parameter sniffing problem without code changes. It is part of the intelligent query processing family and enabled by default at the appropriate compatibility level.",
+      "tags": ["psp", "intelligent-query-processing"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/parameter-sensitivity-plan-optimization"]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "What is degree of parallelism feedback?",
+      "answer": "DOP feedback, added in SQL Server 2022, monitors parallel queries that run long and lowers their degree of parallelism over successive executions to find a better setting. This reduces the overhead of oversubscribed parallelism without manual intervention. It is part of intelligent query processing and works with the existing parallelism settings.",
+      "tags": ["dop-feedback", "intelligent-query-processing"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/intelligent-query-processing-degree-parallelism-feedback"]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you approach a performance problem that only appears in production?",
+      "answer": "Capture the real plan and waits under production conditions, enable Query Store if it is not already on, and look for regressions tied to deployments or statistics changes. Reproduce with representative data volumes because small test data often hides the problem. Change one thing at a time and measure the effect.",
+      "tags": ["troubleshooting", "production"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/performance/monitoring-performance-by-using-the-query-store"]
+    }
+  ]
+}

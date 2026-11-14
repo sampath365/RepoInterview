@@ -1,0 +1,355 @@
+{
+  "category": "SignalR & Real-Time",
+  "slug": "signalr",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "signalr-001",
+      "difficulty": "Beginner",
+      "question": "What is SignalR?",
+      "answer": "SignalR is a library for ASP.NET Core that adds real-time, bi-directional communication between server and clients, enabling the server to push data without the client polling. It abstracts the transport, choosing WebSockets when available and falling back to server-sent events or long polling. It is well suited to chat, dashboards, notifications, and collaborative apps.",
+      "tags": [
+        "signalr",
+        "real-time"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/introduction"
+      ]
+    },
+    {
+      "id": "signalr-002",
+      "difficulty": "Beginner",
+      "question": "What transports does SignalR use?",
+      "answer": "SignalR prefers WebSockets, falls back to server-sent events, and finally to long polling, negotiating the best option supported by the client and server. WebSockets give full duplex communication, while the fallbacks are less efficient but more compatible with restrictive proxies. You can restrict transports through configuration if needed.",
+      "tags": [
+        "transports",
+        "websockets"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/introduction"
+      ]
+    },
+    {
+      "id": "signalr-003",
+      "difficulty": "Beginner",
+      "question": "What is a hub?",
+      "answer": "A hub is the server-side class that handles client connections and defines methods clients can call, typically deriving from Hub. Methods on the hub can be invoked by clients, and the server can call methods on clients through the Clients property. Hubs are registered with MapHub and resolved through dependency injection.",
+      "code": "public class ChatHub : Hub\n{\n    public Task Send(string user, string message)\n        => Clients.All.SendAsync(\"ReceiveMessage\", user, message);\n}",
+      "tags": [
+        "hub",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-004",
+      "difficulty": "Beginner",
+      "question": "How do you register and map a SignalR hub?",
+      "answer": "You call builder.Services.AddSignalR to register services and app.MapHub<ChatHub>(\"/chathub\") to expose the endpoint. The client connects to that URL. Authorization and CORS can be applied to the hub endpoint.",
+      "code": "builder.Services.AddSignalR();\n...\napp.MapHub<ChatHub>(\"/chathub\");",
+      "tags": [
+        "setup",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-005",
+      "difficulty": "Beginner",
+      "question": "What are groups in SignalR?",
+      "answer": "Groups are named sets of connections that let you send messages to a subset of clients, such as everyone in a chat room or watching a document. Clients are added with Groups.AddToGroupAsync and removed with RemoveFromGroupAsync, and you send with Clients.Group. Group membership is managed by the server and is not persisted across reconnects.",
+      "code": "await Groups.AddToGroupAsync(Context.ConnectionId, \"room-1\");\nawait Clients.Group(\"room-1\").SendAsync(\"Update\", data);",
+      "tags": [
+        "groups",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/groups"
+      ]
+    },
+    {
+      "id": "signalr-006",
+      "difficulty": "Beginner",
+      "question": "What is a connection id?",
+      "answer": "A connection id is a unique string assigned to each client connection, available as Context.ConnectionId in the hub. It is used to target a single client with Clients.Client(id) or to manage group membership. The id changes on reconnect, so it should not be used as a durable user identifier.",
+      "tags": [
+        "connection-id",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-007",
+      "difficulty": "Beginner",
+      "question": "How does a SignalR client connect?",
+      "answer": "The client creates a HubConnectionBuilder, points it at the hub URL, and calls start, then registers handlers with on and invokes server methods with invoke or send. JavaScript, .NET, and Java clients are available. The client must include the SignalR client library matching the server version.",
+      "code": "const conn = new signalR.HubConnectionBuilder()\n  .withUrl(\"/chathub\")\n  .withAutomaticReconnect()\n  .build();\nawait conn.start();",
+      "tags": [
+        "client",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/javascript-client"
+      ]
+    },
+    {
+      "id": "signalr-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Clients.All and Clients.Caller?",
+      "answer": "Clients.All targets every connected client, while Clients.Caller targets only the connection that invoked the hub method. Other selectors include Clients.Others, Clients.Client, Clients.Group, and Clients.User. Choosing the right selector controls who receives the message.",
+      "tags": [
+        "clients",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-009",
+      "difficulty": "Beginner",
+      "question": "How do you send a message to a specific user?",
+      "answer": "You use Clients.User(userId), which requires the connection to be associated with a user identifier, usually through the NameIdentifier claim from authentication. By default the user id is the NameIdentifier claim, but you can customize it with IUserIdProvider. This lets you target all connections of a user across devices.",
+      "code": "await Clients.User(userId).SendAsync(\"Notification\", payload);",
+      "tags": [
+        "users",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-010",
+      "difficulty": "Beginner",
+      "question": "When should you use SignalR versus polling?",
+      "answer": "SignalR is preferable when the server must push updates promptly and frequently, because polling wastes requests and adds latency. Polling is simpler and acceptable for infrequent updates or when a persistent connection is not possible. Choose based on update frequency, latency needs, and client constraints.",
+      "tags": [
+        "trade-offs",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/introduction"
+      ]
+    },
+    {
+      "id": "signalr-011",
+      "difficulty": "Intermediate",
+      "question": "How do you scale SignalR across multiple servers?",
+      "answer": "You add a backplane such as Azure SignalR Service or Redis so messages published on one server reach clients connected to another. Azure SignalR Service offloads connection management entirely, which is the recommended approach for large scale. Without a backplane, clients on different servers do not receive each other's messages.",
+      "code": "builder.Services.AddSignalR()\n    .AddStackExchangeRedis(\"redis:6379\");",
+      "tags": [
+        "scaling",
+        "backplane"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/scale",
+        "https://learn.microsoft.com/azure/azure-signalr/"
+      ]
+    },
+    {
+      "id": "signalr-012",
+      "difficulty": "Intermediate",
+      "question": "How do you add authentication to SignalR?",
+      "answer": "You rely on the standard authentication middleware; the connection's user is available as Context.User, and clients send credentials such as cookies or access tokens. For WebSockets in browsers, the token is often passed via a query string or access token factory because headers cannot be set. You then use [Authorize] on the hub or its methods.",
+      "code": "[Authorize]\npublic class ChatHub : Hub { }",
+      "tags": [
+        "authentication",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/authn-and-authz"
+      ]
+    },
+    {
+      "id": "signalr-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle reconnection in SignalR?",
+      "answer": "The client can enable automatic reconnect with withAutomaticReconnect, which retries with a backoff, and you can listen to onreconnecting and onreconnected to update UI or rejoin groups. Because the connection id changes, the server should re-add the client to groups after reconnect. Connection state should be restored by the app on reconnect.",
+      "code": "conn.onreconnected(async () => {\n  await conn.invoke(\"JoinRoom\", roomId);\n});",
+      "tags": [
+        "reconnect",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/javascript-client"
+      ]
+    },
+    {
+      "id": "signalr-014",
+      "difficulty": "Intermediate",
+      "question": "What is IHubContext and when do you use it?",
+      "answer": "IHubContext<THub> lets you send messages to clients from outside a hub, such as from a controller, background service, or event handler. You inject it and use the same Clients API. This is how server-side events push updates to connected clients.",
+      "code": "public class Notifier\n{\n    private readonly IHubContext<ChatHub> _hub;\n    public Notifier(IHubContext<ChatHub> hub) => _hub = hub;\n    public Task NotifyAsync(string msg)\n        => _hub.Clients.All.SendAsync(\"Notify\", msg);\n}",
+      "tags": [
+        "ihubcontext",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubcontext"
+      ]
+    },
+    {
+      "id": "signalr-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle hub method errors?",
+      "answer": "Exceptions thrown in hub methods are sent to the client as errors, and you can add filters implementing IHubFilter to log and translate them centrally. Enabling detailed errors is useful in development but should be disabled in production. Returning structured error objects is often cleaner than relying on exceptions.",
+      "code": "public class HubErrorFilter : IHubFilter\n{\n    public async ValueTask<object> InvokeMethodAsync(\n        HubInvocationContext ctx, Func<HubInvocationContext, ValueTask<object>> next)\n        => await next(ctx);\n}",
+      "tags": [
+        "errors",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-016",
+      "difficulty": "Intermediate",
+      "question": "How do you implement strongly typed hubs?",
+      "answer": "You derive from Hub<TClient> where TClient is an interface declaring the client methods, and use Clients.All as TClient, giving compile-time checking of method names and arguments. This avoids string-based method names and catches mistakes early. The interface must only contain methods the client implements.",
+      "code": "public interface IChatClient\n{\n    Task ReceiveMessage(string user, string message);\n}\npublic class ChatHub : Hub<IChatClient>\n{\n    public Task Send(string m) => Clients.All.ReceiveMessage(\"me\", m);\n}",
+      "tags": [
+        "strongly-typed",
+        "hubs"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubs"
+      ]
+    },
+    {
+      "id": "signalr-017",
+      "difficulty": "Intermediate",
+      "question": "How do you stream data with SignalR?",
+      "answer": "SignalR supports streaming from server to client with IAsyncEnumerable or ChannelReader returned from a hub method, and streaming from client to server by accepting IAsyncEnumerable parameters or a ChannelReader. This is useful for large or continuous data such as telemetry. Clients consume streams with the streaming APIs.",
+      "code": "public async IAsyncEnumerable<int> Counter(\n    [EnumeratorCancellation] CancellationToken ct)\n{\n    for (var i = 0; i < 10; i++) { yield return i; await Task.Delay(500, ct); }\n}",
+      "tags": [
+        "streaming",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/streaming"
+      ]
+    },
+    {
+      "id": "signalr-018",
+      "difficulty": "Intermediate",
+      "question": "How do you configure CORS for SignalR?",
+      "answer": "You configure CORS with AddCors and a named policy that allows the client origins and credentials, then apply the policy to the hub endpoint with RequireCors or app.UseCors. SignalR requires AllowCredentials when using cookies or Windows authentication. Getting CORS wrong prevents the connection handshake.",
+      "code": "builder.Services.AddCors(o => o.AddPolicy(\"hub\", p => p\n    .WithOrigins(\"https://app.example.com\")\n    .AllowAnyHeader().AllowAnyMethod().AllowCredentials()));\napp.MapHub<ChatHub>(\"/chathub\").RequireCors(\"hub\");",
+      "tags": [
+        "cors",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/security"
+      ]
+    },
+    {
+      "id": "signalr-019",
+      "difficulty": "Intermediate",
+      "question": "What is Azure SignalR Service and why use it?",
+      "answer": "Azure SignalR Service is a fully managed service that handles client connections and message routing, so your app only calls the service API. It simplifies scaling to very large numbers of connections and removes the need to manage WebSocket capacity. You enable it with AddAzureSignalR and a connection string.",
+      "code": "builder.Services.AddSignalR().AddAzureSignalR(conn);",
+      "tags": [
+        "azure",
+        "scaling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/scale",
+        "https://learn.microsoft.com/azure/azure-signalr/"
+      ]
+    },
+    {
+      "id": "signalr-020",
+      "difficulty": "Intermediate",
+      "question": "How do you send messages from a background service to SignalR clients?",
+      "answer": "You inject IHubContext<THub> into the background service and use Clients to push updates, which keeps the hub free of business logic. This is a common pattern for notifications, price updates, or job progress. The service should handle backpressure and failures so a slow client does not block the loop.",
+      "code": "public class PriceService : BackgroundService\n{\n    public PriceService(IHubContext<PriceHub> hub) => _hub = hub;\n    protected override async Task ExecuteAsync(CancellationToken ct) { }\n}",
+      "tags": [
+        "background",
+        "ihubcontext"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/hubcontext",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services"
+      ]
+    },
+    {
+      "id": "signalr-021",
+      "difficulty": "Advanced",
+      "question": "How does SignalR negotiate a connection and choose a transport?",
+      "answer": "The client first posts to the negotiate endpoint, where the server selects a transport and returns connection details, then establishes the chosen transport, upgrading to WebSockets if possible. For Azure SignalR Service the negotiate step returns the service URL and token. This negotiation allows fallbacks without client changes.",
+      "tags": [
+        "internals",
+        "transports"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/introduction"
+      ]
+    },
+    {
+      "id": "signalr-022",
+      "difficulty": "Advanced",
+      "question": "How would you design a scalable, resilient real-time architecture with SignalR?",
+      "answer": "You offload connections to Azure SignalR Service or use a Redis backplane, keep hub methods thin and delegate to services, and push high-frequency updates through a message bus so multiple services can publish. Clients handle reconnection and state resync, and you monitor connection counts and message rates. This separates connection management from business processing and scales each independently.",
+      "tags": [
+        "architecture",
+        "scaling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/scale",
+        "https://learn.microsoft.com/azure/azure-signalr/"
+      ]
+    },
+    {
+      "id": "signalr-023",
+      "difficulty": "Advanced",
+      "question": "How do you secure SignalR hubs against abuse?",
+      "answer": "You require authentication, authorize hub methods and groups, validate all client input, and rate-limit messages to prevent flooding. CORS must be restricted to trusted origins, and sensitive data should not be broadcast to unauthorized groups. Monitoring connection counts and message sizes helps detect abuse.",
+      "code": "[Authorize]\npublic class ChatHub : Hub\n{\n    [Authorize(Policy = \"CanChat\")]\n    public Task Send(string m) => Clients.All.SendAsync(\"Msg\", m);\n}",
+      "tags": [
+        "security",
+        "signalr"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/security",
+        "https://learn.microsoft.com/aspnet/core/signalr/authn-and-authz"
+      ]
+    },
+    {
+      "id": "signalr-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of SignalR versus gRPC streaming and WebSockets directly?",
+      "answer": "SignalR abstracts transport selection, reconnection, and group management, and works from browsers, which is ideal for app-level real-time features. gRPC streaming is contract-first and high-performance but needs HTTP/2 and gRPC-Web for browsers, suiting service-to-service scenarios. Raw WebSockets offer maximum control and minimum overhead but you must build reconnection, scaling, and messaging yourself.",
+      "tags": [
+        "trade-offs",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/introduction",
+        "https://learn.microsoft.com/aspnet/core/grpc/"
+      ]
+    },
+    {
+      "id": "signalr-025",
+      "difficulty": "Advanced",
+      "question": "How do you handle very high connection counts and message throughput with SignalR?",
+      "answer": "You scale out with Azure SignalR Service or a backplane, avoid per-message server work, batch or throttle high-frequency updates, and use groups to limit fan-out. Sticky sessions are unnecessary with the service, and you should monitor connection limits and quotas. Sending only deltas rather than full payloads reduces bandwidth.",
+      "tags": [
+        "performance",
+        "scaling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/signalr/scale",
+        "https://learn.microsoft.com/azure/azure-signalr/"
+      ]
+    }
+  ]
+}

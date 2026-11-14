@@ -1,0 +1,214 @@
+{
+  "category": "Triggers & Cursors",
+  "slug": "triggers",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "triggers-001",
+      "difficulty": "Beginner",
+      "question": "What is a trigger?",
+      "answer": "A trigger is a special stored procedure that fires automatically in response to a data modification event such as INSERT, UPDATE, or DELETE on a table or view. It runs as part of the same transaction as the statement that fired it, so a failure in the trigger can roll back the whole operation. Triggers are used for auditing, enforcing complex rules, and cascading changes.",
+      "tags": ["trigger", "dml"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/dml-triggers"]
+    },
+    {
+      "id": "triggers-002",
+      "difficulty": "Beginner",
+      "question": "What are the AFTER and INSTEAD OF trigger types?",
+      "answer": "An AFTER trigger runs after the triggering statement completes, so the data change has already happened and can still be rolled back. An INSTEAD OF trigger replaces the original statement entirely, letting you control what actually happens to the base tables, which is useful for updatable views. AFTER triggers are the default and most common.",
+      "tags": ["after-trigger", "instead-of"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/dml-triggers"]
+    },
+    {
+      "id": "triggers-003",
+      "difficulty": "Beginner",
+      "question": "What are the inserted and deleted pseudo-tables in a trigger?",
+      "answer": "Inside a DML trigger, inserted holds the new rows for INSERT and UPDATE, and deleted holds the old rows for DELETE and UPDATE. An UPDATE populates both, letting you compare old and new values. These tables exist only for the duration of the trigger and reflect all rows affected by the statement.",
+      "code": "CREATE TRIGGER trgAudit ON dbo.Products AFTER UPDATE AS\n  INSERT dbo.Audit(ProductId, OldPrice, NewPrice)\n  SELECT d.ProductId, d.Price, i.Price\n  FROM deleted d JOIN inserted i ON i.ProductId = d.ProductId;",
+      "tags": ["inserted", "deleted"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/use-the-inserted-and-deleted-tables"]
+    },
+    {
+      "id": "triggers-004",
+      "difficulty": "Beginner",
+      "question": "What is a DDL trigger?",
+      "answer": "A DDL trigger fires in response to data definition language events such as CREATE, ALTER, or DROP of objects, rather than data changes. It can be scoped to the database or to the whole server and is used to audit or block schema changes. For example, you can prevent tables from being dropped in production.",
+      "code": "CREATE TRIGGER trgNoDrop ON DATABASE FOR DROP_TABLE AS\n  PRINT 'Tables cannot be dropped';\n  ROLLBACK;",
+      "tags": ["ddl-trigger", "audit"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/ddl-triggers"]
+    },
+    {
+      "id": "triggers-005",
+      "difficulty": "Beginner",
+      "question": "What is a cursor?",
+      "answer": "A cursor processes a result set one row at a time, allowing procedural logic per row. It is declared, opened, fetched in a loop, and closed and deallocated. Because cursors are slow and hold locks, set-based operations are strongly preferred, and cursors should be a last resort.",
+      "code": "DECLARE c CURSOR FOR SELECT Id FROM dbo.Queue;\nOPEN c;\nFETCH NEXT FROM c INTO @id;\nWHILE @@FETCH_STATUS = 0\n  FETCH NEXT FROM c INTO @id;\nCLOSE c;\nDEALLOCATE c;",
+      "tags": ["cursor", "row-by-row"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/declare-cursor-transact-sql"]
+    },
+    {
+      "id": "triggers-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a trigger and a stored procedure?",
+      "answer": "A stored procedure is invoked explicitly by a user or application, while a trigger fires automatically on a data or DDL event. A procedure takes parameters and can return result sets, but a trigger takes none and cannot be called directly. Triggers are best kept small because they run invisibly inside every relevant statement's transaction.",
+      "tags": ["trigger", "procedure"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/dml-triggers"]
+    },
+    {
+      "id": "triggers-007",
+      "difficulty": "Beginner",
+      "question": "What does @@ROWCOUNT tell you inside a trigger?",
+      "answer": "The @@ROWCOUNT function returns the number of rows affected by the most recent statement, which lets a trigger detect whether it was a single-row or multi-row operation. Triggers must always handle multi-row operations correctly, because a single statement can affect many rows. Never assume inserted or deleted contains only one row.",
+      "tags": ["rowcount", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/rowcount-transact-sql"]
+    },
+    {
+      "id": "triggers-008",
+      "difficulty": "Beginner",
+      "question": "Why is recursion in triggers something to watch out for?",
+      "answer": "A trigger that modifies its own base table can fire itself again, either directly (recursive triggers) or indirectly through another trigger, potentially causing an infinite loop. The nested triggers and recursive triggers server options control whether this is allowed. Enable them deliberately and guard with logic, or keep triggers from updating their own table.",
+      "tags": ["recursion", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/database-engine/configure-windows/configure-the-nested-triggers-server-configuration-option"]
+    },
+    {
+      "id": "triggers-009",
+      "difficulty": "Beginner",
+      "question": "What are the types of cursors in SQL Server?",
+      "answer": "Cursors differ by how they detect changes and where they are stored: static takes a snapshot, dynamic reflects changes as you fetch, forward-only cannot scroll back, and keyset tracks keys. They can also be client-side or server-side. Forward-only read-only cursors are the fastest and most common.",
+      "tags": ["cursor-types", "cursor"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/declare-cursor-transact-sql"]
+    },
+    {
+      "id": "triggers-010",
+      "difficulty": "Beginner",
+      "question": "How do you disable a trigger temporarily?",
+      "answer": "Use DISABLE TRIGGER on the trigger to stop it firing without dropping it, and ENABLE TRIGGER to turn it back on. This is handy during bulk loads or maintenance. Remember that a disabled trigger is not enforcing its rules, so data integrity must be handled another way in the meantime.",
+      "code": "DISABLE TRIGGER trgAudit ON dbo.Products;\n-- maintenance\nENABLE TRIGGER trgAudit ON dbo.Products;",
+      "tags": ["disable-trigger", "maintenance"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/disable-trigger-transact-sql"]
+    },
+    {
+      "id": "triggers-011",
+      "difficulty": "Intermediate",
+      "question": "What are the performance concerns of using triggers?",
+      "answer": "Triggers run synchronously inside the modifying statement's transaction, extending lock duration and adding overhead to every affected write. Poorly written triggers with cursors or heavy queries can dominate the cost of an insert. Keep trigger logic minimal and consider alternatives such as change tracking or application logic when triggers become a bottleneck.",
+      "tags": ["trigger-performance", "locking"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/dml-triggers"]
+    },
+    {
+      "id": "triggers-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write a trigger that handles multi-row updates correctly?",
+      "answer": "Never use a scalar variable assignment from a subquery, because it silently picks one row. Instead, write set-based statements that join inserted and deleted, so all affected rows are processed. This is the single most important rule for correct triggers.",
+      "code": "CREATE TRIGGER trgPrice ON dbo.Products AFTER UPDATE AS\n  UPDATE p SET ModifiedAt = SYSUTCDATETIME()\n  FROM dbo.Products p JOIN inserted i ON i.Id = p.Id;",
+      "tags": ["multi-row", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/create-dml-triggers"]
+    },
+    {
+      "id": "triggers-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a cursor and a WHILE loop over a table?",
+      "answer": "A cursor is the formal mechanism for row-by-row processing with fetch status and options such as scroll and update. A WHILE loop with a table and TOP 1 also iterates but requires care to avoid infinite loops and is generally slower. Both should give way to set-based operations when the logic allows.",
+      "tags": ["cursor", "while-loop"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/declare-cursor-transact-sql"]
+    },
+    {
+      "id": "triggers-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement an audit trail with triggers?",
+      "answer": "Create an audit table, then in an AFTER trigger on the base table insert rows capturing the operation, key, old and new values, user, and timestamp from inserted and deleted. Because triggers run in the same transaction, the audit record is atomic with the change. Keep the audit insert set-based and consider the storage growth.",
+      "code": "INSERT dbo.Audit(Entity, Action, OldVal, NewVal, ChangedBy, ChangedAt)\nSELECT 'Product', 'UPDATE', d.Price, i.Price,\n       SUSER_SNAME(), SYSUTCDATETIME()\nFROM inserted i JOIN deleted d ON i.Id = d.Id;",
+      "tags": ["audit", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/use-the-inserted-and-deleted-tables"]
+    },
+    {
+      "id": "triggers-015",
+      "difficulty": "Intermediate",
+      "question": "What is an INSTEAD OF trigger on a view and why is it useful?",
+      "answer": "An INSTEAD OF trigger on a view intercepts INSERT, UPDATE, or DELETE and lets you translate it into changes on the underlying base tables. This is how you make a view that joins several tables updatable. It also allows complex validation before the change is applied.",
+      "tags": ["instead-of", "view"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/dml-triggers"]
+    },
+    {
+      "id": "triggers-016",
+      "difficulty": "Intermediate",
+      "question": "What is the COLUMNS_UPDATED function used for?",
+      "answer": "COLUMNS_UPDATED returns a varbinary bitmap indicating which columns were referenced in an INSERT or UPDATE, and UPDATE(column) tests a single column. They let a trigger do work only when relevant columns change, avoiding unnecessary overhead. This is useful for audit triggers that should ignore updates to unrelated columns.",
+      "tags": ["columns-updated", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/columns-updated-transact-sql"]
+    },
+    {
+      "id": "triggers-017",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent a trigger from firing during a bulk operation?",
+      "answer": "You cannot selectively skip a trigger for a single statement, but you can disable it before the load and re-enable it afterward, or design the trigger to exit quickly when it detects a bulk context. Some bulk methods such as bcp and BULK INSERT fire triggers by default and can be told not to with a hint or option. Always verify the data afterward if the trigger is skipped.",
+      "tags": ["bulk", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/statements/bulk-insert-transact-sql"]
+    },
+    {
+      "id": "triggers-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a static and a keyset cursor?",
+      "answer": "A static cursor builds a snapshot in tempdb when opened, so it does not see changes made afterward and is read-only but predictable. A keyset cursor tracks the keys and reflects updates to non-key columns but not new inserts, and it can detect deleted rows. Dynamic cursors see all changes but cost more.",
+      "tags": ["cursor-types", "static"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/declare-cursor-transact-sql"]
+    },
+    {
+      "id": "triggers-019",
+      "difficulty": "Intermediate",
+      "question": "How do you log errors inside a trigger?",
+      "answer": "Wrap the trigger body in TRY/CATCH and, in the CATCH block, log the error details and either rethrow or roll back. Because the trigger runs inside the caller's transaction, a rollback in the trigger undoes the original statement too. Be deliberate about whether a failure should block the whole change.",
+      "tags": ["error-handling", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/try-catch-transact-sql"]
+    },
+    {
+      "id": "triggers-020",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid an infinite trigger loop?",
+      "answer": "Prevent the trigger from updating its own base table, or use a guard such as checking TRIGGER_NESTLEVEL to stop after the first level. The recursive triggers and nested triggers server options also control this behavior. Design triggers so each level of nesting terminates.",
+      "code": "IF TRIGGER_NESTLEVEL() > 1 RETURN;",
+      "tags": ["recursion", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/trigger-nestlevel-transact-sql"]
+    },
+    {
+      "id": "triggers-021",
+      "difficulty": "Advanced",
+      "question": "How can triggers cause deadlocks?",
+      "answer": "A trigger runs inside the modifying transaction and may take locks on other tables, so it can participate in lock-ordering conflicts that lead to deadlocks. Long-running triggers hold locks longer, widening the window for a deadlock. Keeping trigger logic short and consistent in lock order reduces the risk.",
+      "tags": ["deadlock", "trigger"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/triggers/dml-triggers"]
+    },
+    {
+      "id": "triggers-022",
+      "difficulty": "Advanced",
+      "question": "What are the alternatives to triggers for auditing changes?",
+      "answer": "Change Data Capture and Change Tracking capture row-level changes without custom trigger code, and Temporal tables keep full history of rows automatically. SQL Server 2022 Ledger tables provide tamper-evident auditing. These built-in features avoid the overhead and fragility of hand-written audit triggers.",
+      "tags": ["auditing", "cdc", "temporal"],
+      "references": ["https://learn.microsoft.com/sql/relational-databases/track-changes/track-data-changes-sql-server"]
+    },
+    {
+      "id": "triggers-023",
+      "difficulty": "Advanced",
+      "question": "Why are cursors considered an anti-pattern and when are they acceptable?",
+      "answer": "Cursors force row-by-row processing, which is far slower than set-based operations and holds locks longer. They are acceptable when the logic genuinely requires per-row procedural steps that cannot be expressed set-based, such as calling a procedure per row or complex sequential state. Even then, consider set-based alternatives or window functions first.",
+      "tags": ["cursor", "anti-pattern"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/language-elements/declare-cursor-transact-sql"]
+    },
+    {
+      "id": "triggers-024",
+      "difficulty": "Advanced",
+      "question": "How do you convert a cursor to a set-based solution?",
+      "answer": "Identify what the cursor does per row, then express it as an UPDATE, DELETE, or INSERT with a join or a window function, such as ROW_NUMBER for top-n-per-group. Running totals become windowed SUM, and lookups become joins. Rewriting cursors set-based is one of the biggest wins in T-SQL tuning.",
+      "tags": ["set-based", "cursor"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/row-number-transact-sql"]
+    },
+    {
+      "id": "triggers-025",
+      "difficulty": "Advanced",
+      "question": "What is the difference between TRIGGER_NESTLEVEL and @@NESTLEVEL?",
+      "answer": "TRIGGER_NESTLEVEL returns how many triggers have executed, and it can be filtered to a specific trigger or object, making it the right tool to limit trigger recursion. @@NESTLEVEL returns the nesting level of stored procedure and trigger execution in the current session, starting at 1 for the initial call. Use TRIGGER_NESTLEVEL for recursion guards.",
+      "tags": ["trigger-nestlevel", "nesting"],
+      "references": ["https://learn.microsoft.com/sql/t-sql/functions/trigger-nestlevel-transact-sql"]
+    }
+  ]
+}

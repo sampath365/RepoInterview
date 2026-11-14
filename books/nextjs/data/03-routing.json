@@ -1,0 +1,340 @@
+{
+  "category": "Routing, Layouts & Navigation",
+  "slug": "routing",
+  "icon": "route",
+  "questions": [
+    {
+      "id": "routing-001",
+      "difficulty": "Beginner",
+      "question": "How do you define a dynamic route segment?",
+      "answer": "Wrap the segment name in square brackets, for example app/blog/[slug]/page.tsx. The value is available in the params prop of the page. It matches a single segment such as /blog/hello. You use it for content whose identifiers are not known at build time.",
+      "tags": [
+        "dynamic-routes",
+        "params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
+      ]
+    },
+    {
+      "id": "routing-002",
+      "difficulty": "Beginner",
+      "question": "What is a catch-all route?",
+      "answer": "A catch-all route uses [...slug] and matches one or more segments after the folder. The params value is an array of the matched segments. It is useful for documentation paths or file trees. It does not match the base path with zero segments.",
+      "code": "// app/docs/[...slug]/page.tsx\n// matches /docs/a and /docs/a/b",
+      "tags": [
+        "catch-all",
+        "dynamic-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
+      ]
+    },
+    {
+      "id": "routing-003",
+      "difficulty": "Beginner",
+      "question": "What is an optional catch-all route?",
+      "answer": "An optional catch-all route uses [[...slug]] and matches the base path as well as deeper paths. With zero segments the params array is empty, so the parent URL also renders. It is used when the index and nested routes share a component. The double brackets make the parameter optional.",
+      "tags": [
+        "catch-all",
+        "dynamic-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/dynamic-routes"
+      ]
+    },
+    {
+      "id": "routing-004",
+      "difficulty": "Beginner",
+      "question": "How do you create a nested route?",
+      "answer": "Create nested folders under app/, each representing a segment, and add a page.tsx at the leaf. For example app/dashboard/settings/page.tsx maps to /dashboard/settings. Intermediate folders do not need a page to exist. Layouts in parent folders wrap the nested pages.",
+      "tags": [
+        "routing",
+        "nesting"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/defining-routes"
+      ]
+    },
+    {
+      "id": "routing-005",
+      "difficulty": "Beginner",
+      "question": "How do you make a link active based on the current route?",
+      "answer": "The usePathname hook returns the current pathname so you can compare and style active links. It must be used in a Client Component. You can conditionally apply classes when the path matches. This is the standard way to highlight navigation.",
+      "code": "'use client';\nconst pathname = usePathname();\nconst active = pathname === href;",
+      "tags": [
+        "navigation",
+        "use-pathname"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-pathname"
+      ]
+    },
+    {
+      "id": "routing-006",
+      "difficulty": "Beginner",
+      "question": "What is the Link component and why use it?",
+      "answer": "next/link renders an anchor that performs client-side navigation and prefetches routes in view. It avoids full page reloads and preserves application state. It supports the replace and scroll props for navigation behavior. Use it instead of a plain anchor for internal navigation.",
+      "code": "import Link from 'next/link';\n<Link href=\"/about\" prefetch>About</Link>",
+      "tags": [
+        "link",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/link"
+      ]
+    },
+    {
+      "id": "routing-007",
+      "difficulty": "Beginner",
+      "question": "How do you programmatically navigate in the App Router?",
+      "answer": "Use the useRouter hook from next/navigation in a Client Component and call router.push or router.replace. You can also call router.back, router.forward, and router.refresh. This is needed after events like form submissions. The Pages Router equivalent is next/router, which differs.",
+      "code": "'use client';\nconst router = useRouter();\nrouter.push('/dashboard');",
+      "tags": [
+        "use-router",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-router"
+      ]
+    },
+    {
+      "id": "routing-008",
+      "difficulty": "Beginner",
+      "question": "What is a route group in routing?",
+      "answer": "A route group is a folder in parentheses such as (auth) that groups routes without adding a URL segment. It lets different sections share or isolate layouts. For example (auth)/login maps to /login. The parentheses are omitted from the final path.",
+      "tags": [
+        "route-groups",
+        "layouts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-groups"
+      ]
+    },
+    {
+      "id": "routing-009",
+      "difficulty": "Beginner",
+      "question": "How do you handle query string parameters?",
+      "answer": "In a page you read the searchParams prop, which contains the parsed query object. In Next.js 15 searchParams is a promise that you await. In Client Components you can use the useSearchParams hook. Search params are strings and arrays, so validate them before use.",
+      "code": "export default async function Page({ searchParams }) {\n  const { q } = await searchParams;\n}",
+      "tags": [
+        "search-params",
+        "query"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-search-params"
+      ]
+    },
+    {
+      "id": "routing-010",
+      "difficulty": "Beginner",
+      "question": "What file defines the UI for a route?",
+      "answer": "The page.tsx file defines the unique UI for a route segment. It is required for a folder to be publicly routable. It receives params and searchParams as props. Without a page.tsx the folder only contributes layout or organization.",
+      "tags": [
+        "page",
+        "file-conventions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ]
+    },
+    {
+      "id": "routing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you generate static params for dynamic routes?",
+      "answer": "Export an async generateStaticParams function that returns the list of param objects to prerender. Next.js builds those pages at build time for static generation. Params not returned are rendered on demand unless dynamicParams is false. This is the App Router replacement for getStaticPaths.",
+      "code": "export async function generateStaticParams() {\n  const posts = await getPosts();\n  return posts.map((p) => ({ slug: p.slug }));\n}",
+      "tags": [
+        "generate-static-params",
+        "ssg"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-static-params"
+      ]
+    },
+    {
+      "id": "routing-012",
+      "difficulty": "Intermediate",
+      "question": "How do layouts and pages share params?",
+      "answer": "Layouts receive params for the dynamic segments in their own folder and above, but not below. Pages receive all params for the route, including dynamic segments. Both are async in Next.js 15. This lets a layout fetch data keyed by a parent segment while the page uses the leaf segment.",
+      "tags": [
+        "layouts",
+        "params"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/layout"
+      ]
+    },
+    {
+      "id": "routing-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a redirect and a rewrite?",
+      "answer": "A redirect sends the browser to a new URL and changes the address bar, returning a 3xx status. A rewrite serves different content under the same URL without changing the address. Both are configured in next.config.js or via middleware. Use redirects for moved pages and rewrites for proxying or URL masking.",
+      "tags": [
+        "redirects",
+        "rewrites"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/redirects"
+      ]
+    },
+    {
+      "id": "routing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you do an imperative redirect in a Server Component?",
+      "answer": "Call the redirect() function from next/navigation, which throws and navigates the user. It works in Server Components, Server Actions, and Route Handlers. In a Server Action it must be called outside a try/catch that swallows the error. It returns a 307 or 308 depending on usage.",
+      "code": "import { redirect } from 'next/navigation';\nif (!session) redirect('/login');",
+      "tags": [
+        "redirect",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/redirect"
+      ]
+    },
+    {
+      "id": "routing-015",
+      "difficulty": "Intermediate",
+      "question": "How does prefetching work with Link?",
+      "answer": "Link prefetches routes when they enter the viewport in production, loading the route's code and data. In development prefetching is limited to avoid overhead. You can set prefetch={false} to disable it or prefetch={true} for full prefetch. Prefetching makes navigations feel instant at the cost of extra requests.",
+      "tags": [
+        "prefetching",
+        "link"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/link"
+      ]
+    },
+    {
+      "id": "routing-016",
+      "difficulty": "Intermediate",
+      "question": "What are intercepting routes used for?",
+      "answer": "Intercepting routes use (.) or (..) notation to render a route within the current layout, typically to show a modal. The full page still renders on direct load or refresh while client navigation shows the intercepted view. They pair well with parallel routes for modals. This gives shareable URLs for overlays.",
+      "tags": [
+        "intercepting-routes",
+        "parallel-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/intercepting-routes"
+      ]
+    },
+    {
+      "id": "routing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle scroll restoration on navigation?",
+      "answer": "Next.js preserves scroll position for the browser back and forward buttons automatically. Link scrolls to the top on navigation unless scroll={false} is set. For restoring a custom scroll you manage it in a Client Component with usePathname. Anchors with hash links scroll to the matching element.",
+      "tags": [
+        "scroll",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/components/link"
+      ]
+    },
+    {
+      "id": "routing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you structure protected routes with layouts?",
+      "answer": "Place the protected routes in a route group and check the session in that group's layout. If unauthenticated, redirect to the login page. The layout wraps all child pages so the check runs once. For fine-grained control also verify permissions in each Server Action or Route Handler.",
+      "tags": [
+        "auth",
+        "layouts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "routing-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between useRouter and usePathname?",
+      "answer": "useRouter returns the router object for imperative navigation methods like push and replace. usePathname returns just the current URL pathname as a string. Both are Client Component hooks from next/navigation. usePathname is read-only and ideal for active link styling.",
+      "tags": [
+        "use-router",
+        "use-pathname"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/use-router"
+      ]
+    },
+    {
+      "id": "routing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you add loading UI for a nested route?",
+      "answer": "Add a loading.tsx in the route folder to show a fallback while that segment loads. Next.js wraps the segment in a Suspense boundary using that file. You can nest loading files for different granularity. This keeps navigation responsive for slow segments.",
+      "tags": [
+        "loading",
+        "suspense"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+      ]
+    },
+    {
+      "id": "routing-021",
+      "difficulty": "Advanced",
+      "question": "How do parallel routes work with slots?",
+      "answer": "Parallel routes define named slots with @folderName and receive them as props in the parent layout. Each slot renders its own page and can have independent loading and error boundaries. They enable dashboards where sections load separately. A default.tsx provides fallback content for unmatched slots.",
+      "code": "// app/@team/page.tsx and app/@analytics/page.tsx\n// layout({ team, analytics })",
+      "tags": [
+        "parallel-routes",
+        "slots"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/parallel-routes"
+      ]
+    },
+    {
+      "id": "routing-022",
+      "difficulty": "Advanced",
+      "question": "How do route handlers interact with the routing system?",
+      "answer": "A route.ts file exports HTTP methods such as GET and POST and handles requests at that path. Route handlers cannot coexist with page.tsx in the same folder. They support dynamic segments and streaming responses. They are the App Router equivalent of API routes.",
+      "tags": [
+        "route-handlers",
+        "api"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route"
+      ]
+    },
+    {
+      "id": "routing-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a hash link and client navigation?",
+      "answer": "A hash link like /docs#setup lets the browser jump to an element id, while client navigation swaps route content without a reload. Next.js scrolls to the matching id on navigation when it exists. If the target is not yet rendered, you handle it in a Client Component effect. This matters for long documentation pages.",
+      "tags": [
+        "scroll",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/linking-and-navigating"
+      ]
+    },
+    {
+      "id": "routing-024",
+      "difficulty": "Advanced",
+      "question": "How do you apply a shared layout to only some routes?",
+      "answer": "Group the routes in a route group such as (dashboard) and add a layout.tsx inside that group. The layout applies only to routes in the group while the root layout still wraps everything. This avoids conditional rendering in a global layout. Route groups keep URLs unchanged.",
+      "tags": [
+        "route-groups",
+        "layouts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-groups"
+      ]
+    },
+    {
+      "id": "routing-025",
+      "difficulty": "Advanced",
+      "question": "How does dynamicParams affect a dynamic route?",
+      "answer": "dynamicParams defaults to true, so params not returned by generateStaticParams are rendered on demand and cached. Setting it to false returns a 404 for unknown params instead. This is useful to restrict content to a known set. It only applies when static params are generated.",
+      "tags": [
+        "dynamic-params",
+        "ssg"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
+      ]
+    }
+  ]
+}

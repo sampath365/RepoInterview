@@ -1,0 +1,225 @@
+{
+  "category": "Async & Await",
+  "slug": "async",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "async-001",
+      "difficulty": "Beginner",
+      "question": "What is asynchronous programming and why is it useful?",
+      "answer": "Asynchronous programming lets a thread start an operation that takes time, such as I/O or a network call, and do other work instead of blocking. This improves scalability and responsiveness because threads are not held waiting. In .NET it is built on Task and the async/await keywords.",
+      "tags": ["async", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/"]
+    },
+    {
+      "id": "async-002",
+      "difficulty": "Beginner",
+      "question": "What does the async keyword do?",
+      "answer": "async marks a method so the compiler can transform it into a state machine that supports await. It allows await inside the method and changes the return type to Task, Task<T>, or ValueTask, or to void only for event handlers. async alone does not create a thread; it enables suspension and resumption.",
+      "code": "public async Task<int> GetCountAsync()\n{\n    await Task.Delay(100);\n    return 42;\n}",
+      "tags": ["async", "compiler"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/keywords/async"]
+    },
+    {
+      "id": "async-003",
+      "difficulty": "Beginner",
+      "question": "What does the await keyword do?",
+      "answer": "await suspends the current method until the awaited Task completes, without blocking the thread. When the task finishes, execution resumes after the await. If the task faulted, await rethrows its exception. If the method already completed, await continues synchronously without a context switch.",
+      "code": "var data = await httpClient.GetStringAsync(url);",
+      "tags": ["await", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/language-reference/operators/await"]
+    },
+    {
+      "id": "async-004",
+      "difficulty": "Intermediate",
+      "question": "What is a Task and what states can it be in?",
+      "answer": "A Task represents an asynchronous operation. It can be WaitingForActivation, WaitingToRun, Running, WaitingForChildrenToComplete, RanToCompletion, Canceled, or Faulted. Check Status, IsCompleted, IsCompletedSuccessfully, IsFaulted, or IsCanceled. Task<T> carries a result of type T.",
+      "tags": ["task", "async", "states"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"]
+    },
+    {
+      "id": "async-005",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Task and Thread?",
+      "answer": "A Thread is an OS-level thread you create and manage. A Task is a higher-level abstraction scheduled on the thread pool, representing a unit of work that may complete asynchronously without occupying a thread the whole time. Tasks compose with await and continuations, while threads require manual coordination.",
+      "tags": ["task", "thread", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/asynchronous-programming-patterns/task-based-asynchronous-pattern-tap"]
+    },
+    {
+      "id": "async-006",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Task and ValueTask?",
+      "answer": "Task is a class allocated on the heap for each operation. ValueTask is a struct that can wrap a result or a Task, avoiding allocation when the operation completes synchronously or is cached. Use ValueTask in high-throughput APIs where most calls complete synchronously, and never await a ValueTask more than once.",
+      "code": "public ValueTask<int> ReadAsync(byte[] buffer)\n{\n    if (buffer.Length == 0) return ValueTask.FromResult(0);\n    return new ValueTask<int>(SlowReadAsync(buffer));\n}",
+      "tags": ["valuetask", "task", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.valuetask-1"]
+    },
+    {
+      "id": "async-007",
+      "difficulty": "Intermediate",
+      "question": "Why is async void generally discouraged?",
+      "answer": "An async void method cannot be awaited and its exceptions cannot be observed by the caller, so they are raised on the synchronization context and can crash the process. Use async Task everywhere except event handlers, where the signature forces void. In event handlers, wrap the body in try/catch.",
+      "code": "private async void Button_Click(object sender, EventArgs e)\n{\n    try { await SaveAsync(); }\n    catch (Exception ex) { ShowError(ex); }\n}",
+      "tags": ["async-void", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/async-return-types"]
+    },
+    {
+      "id": "async-008",
+      "difficulty": "Intermediate",
+      "question": "What is the SynchronizationContext and why does it matter?",
+      "answer": "SynchronizationContext represents the environment where continuations should run, such as a UI thread or the ASP.NET request context. By default await captures it and resumes on it. In UI apps this keeps code on the UI thread; in libraries use ConfigureAwait(false) to avoid capturing it and reduce overhead.",
+      "code": "var data = await client.GetStringAsync(url).ConfigureAwait(false);",
+      "tags": ["synchronizationcontext", "configureawait", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.synchronizationcontext"]
+    },
+    {
+      "id": "async-009",
+      "difficulty": "Intermediate",
+      "question": "What does ConfigureAwait(false) do?",
+      "answer": "ConfigureAwait(false) tells await not to resume on the captured synchronization context, so the continuation runs on a thread pool thread. In library code this avoids deadlocks and improves performance. In UI event handlers keep the default true when you need to touch UI elements after the await.",
+      "tags": ["configureawait", "async", "deadlock"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.configureawait"]
+    },
+    {
+      "id": "async-010",
+      "difficulty": "Advanced",
+      "question": "What causes an async deadlock and how do you avoid it?",
+      "answer": "Blocking on a task with .Result or .Wait() while a synchronization context exists can deadlock: the continuation needs the captured context, but the blocked thread holds it. Avoid blocking on async code; make the call chain async all the way, and use ConfigureAwait(false) in libraries. In ASP.NET Core there is no synchronization context, which hides the bug until it appears in a UI or legacy app.",
+      "code": "// Deadlock risk in UI apps\nvar data = GetDataAsync().Result; // do not do this\n// Prefer\nvar data = await GetDataAsync();",
+      "tags": ["deadlock", "async", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/async-scenarios"]
+    },
+    {
+      "id": "async-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Task.Run and async I/O?",
+      "answer": "Task.Run offloads CPU-bound work to a thread pool thread. For I/O you should await the asynchronous API directly, such as File.ReadAllTextAsync, so no thread is consumed while waiting. Wrapping I/O in Task.Run wastes a thread and gives no benefit.",
+      "code": "await File.WriteAllTextAsync(path, content);       // true async I/O\nawait Task.Run(() => ComputeHash(data));            // CPU-bound offload",
+      "tags": ["task-run", "async", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/async-scenarios"]
+    },
+    {
+      "id": "async-012",
+      "difficulty": "Intermediate",
+      "question": "How do you run multiple tasks concurrently and await them all?",
+      "answer": "Start the tasks first, then await Task.WhenAll with the collection. WhenAll completes when every task completes and rethrows the first exception, though all exceptions are available in the tasks themselves. Awaiting tasks sequentially by starting each after the previous defeats concurrency.",
+      "code": "var tasks = urls.Select(u => client.GetStringAsync(u));\nvar results = await Task.WhenAll(tasks);",
+      "tags": ["task-whenall", "concurrency", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.whenall"]
+    },
+    {
+      "id": "async-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Task.WhenAll and Task.WhenAny?",
+      "answer": "WhenAll waits for all tasks and completes when every one finishes. WhenAny completes when the first task finishes, returning that task, which is useful for timeouts or racing operations. With WhenAny you must still observe the other tasks to avoid unobserved exceptions.",
+      "code": "var completed = await Task.WhenAny(task, Task.Delay(1000));\nif (completed != task) throw new TimeoutException();",
+      "tags": ["task-whenany", "timeout", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.whenany"]
+    },
+    {
+      "id": "async-014",
+      "difficulty": "Intermediate",
+      "question": "How does cancellation work with CancellationToken?",
+      "answer": "A CancellationTokenSource produces a CancellationToken that is passed to async methods. Calling Cancel requests cancellation; well-behaved methods observe the token and throw OperationCanceledException. You can also cancel after a timeout with CancelAfter or a linked token source. Cancellation is cooperative, so methods must check the token.",
+      "code": "using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(5));\nawait DownloadAsync(url, cts.Token);",
+      "tags": ["cancellation", "async", "token"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/threading/cancellation-in-managed-threads"]
+    },
+    {
+      "id": "async-015",
+      "difficulty": "Advanced",
+      "question": "What is a state machine in the context of async methods?",
+      "answer": "The compiler rewrites an async method into a state machine struct or class that tracks where execution paused. Each await saves the state and registers a continuation. When the awaited task completes, the state machine resumes at the saved point. This is why async methods have some overhead and why ref locals cannot cross an await.",
+      "tags": ["async", "state-machine", "compiler"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/programming-guide/concepts/async/task-asynchronous-programming-model"]
+    },
+    {
+      "id": "async-016",
+      "difficulty": "Intermediate",
+      "question": "What is IAsyncEnumerable<T> and when do you use it?",
+      "answer": "IAsyncEnumerable<T> represents an asynchronous stream you consume with await foreach. Each element may be produced asynchronously, which suits paging, streaming from a database, or reading large files. It supports cancellation and can be produced with async iterators using yield return inside an async method.",
+      "code": "await foreach (var row in GetRowsAsync(ct))\n    Console.WriteLine(row);\n\nasync IAsyncEnumerable<int> GetRowsAsync([EnumeratorCancellation] CancellationToken ct)\n{\n    for (int i = 0; i < 10; i++)\n    {\n        await Task.Delay(10, ct);\n        yield return i;\n    }\n}",
+      "tags": ["iasyncenumerable", "async-streams", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/generate-consume-asynchronous-stream"]
+    },
+    {
+      "id": "async-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between parallel and asynchronous execution?",
+      "answer": "Parallelism uses multiple threads or cores to do CPU-bound work faster. Asynchrony frees the current thread while waiting for I/O, improving scalability without extra threads. They are complementary: you might use async I/O plus parallel CPU work with Parallel.For or PLINQ.",
+      "tags": ["parallel", "async", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/parallel-programming/"]
+    },
+    {
+      "id": "async-018",
+      "difficulty": "Intermediate",
+      "question": "What does Task.Delay do and how does it differ from Thread.Sleep?",
+      "answer": "Task.Delay returns a task that completes after a delay without blocking a thread, so the thread is free to do other work. Thread.Sleep blocks the current thread for the duration. In async code use await Task.Delay; in synchronous tests or console code Thread.Sleep may be acceptable.",
+      "code": "await Task.Delay(500);   // non-blocking\nThread.Sleep(500);        // blocks the thread",
+      "tags": ["task-delay", "async", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.delay"]
+    },
+    {
+      "id": "async-019",
+      "difficulty": "Advanced",
+      "question": "What is the difference between await and ContinueWith?",
+      "answer": "await is a compiler-supported construct that resumes the method, handles exceptions naturally, and captures the synchronization context. ContinueWith attaches a continuation with an explicit TaskContinuationOptions and receives the completed task, so it does not rethrow automatically. Prefer await for readability and correctness.",
+      "code": "await DoWorkAsync();\n// versus\nDoWorkAsync().ContinueWith(t => Handle(t.Result));",
+      "tags": ["await", "continuation", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.continuewith"]
+    },
+    {
+      "id": "async-020",
+      "difficulty": "Intermediate",
+      "question": "What is a fire-and-forget task and what are its risks?",
+      "answer": "A fire-and-forget task is started without being awaited, so its result and exceptions are unobserved. If it faults, the exception may be lost or surface later as an UnobservedTaskException. Use a safe wrapper that logs exceptions, or track the task. In hosted services use a background queue instead.",
+      "code": "static async void FireAndForget(Func<Task> work)\n{\n    try { await work(); }\n    catch (Exception ex) { Log(ex); }\n}",
+      "tags": ["fire-and-forget", "async", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.taskscheduler.unobservedtaskexception"]
+    },
+    {
+      "id": "async-021",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between IAsyncDisposable and IDisposable?",
+      "answer": "IDisposable.Dispose releases resources synchronously. IAsyncDisposable.DisposeAsync returns a ValueTask for cleanup that may involve asynchronous I/O, such as flushing a stream. Use await using for async disposal. A type can implement both.",
+      "code": "await using var stream = new FileStream(path, FileMode.Open);\n// DisposeAsync is awaited on scope exit",
+      "tags": ["dispose", "async", "resources"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/garbage-collection/implementing-disposeasync"]
+    },
+    {
+      "id": "async-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a timeout for an async operation?",
+      "answer": "Use a linked CancellationTokenSource with CancelAfter, or await Task.WhenAny against Task.Delay. The cancellation approach is preferred because it stops the underlying work, while WhenAny only stops waiting. .NET 8 also provides a CancellationTokenSource constructor with a timeout.",
+      "code": "using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(3));\nawait LongRunningAsync(cts.Token);",
+      "tags": ["timeout", "async", "cancellation"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.cancellationtokensource"]
+    },
+    {
+      "id": "async-023",
+      "difficulty": "Intermediate",
+      "question": "What is a SemaphoreSlim and how does it help with async concurrency?",
+      "answer": "SemaphoreSlim limits how many operations run concurrently and supports async waiting with WaitAsync. Use it to throttle parallel calls such as limiting outbound HTTP requests. Dispose it when done, and always release in a finally or using pattern.",
+      "code": "private static readonly SemaphoreSlim Gate = new(5);\nawait Gate.WaitAsync();\ntry { await CallApiAsync(); } finally { Gate.Release(); }",
+      "tags": ["semaphore", "throttling", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.semaphoreslim"]
+    },
+    {
+      "id": "async-024",
+      "difficulty": "Advanced",
+      "question": "What is the async method builder and how does a custom awaitable work?",
+      "answer": "Async methods are compiled using an async method builder, by default AsyncTaskMethodBuilder, which coordinates the state machine. A type is awaitable if it has a GetAwaiter method returning an awaiter with IsCompleted, OnCompleted, and GetResult. This enables custom awaitables such as ValueTask and UniTask-style types.",
+      "tags": ["async", "awaitable", "advanced"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.runtime.compilerservices.asyncmethodbuilder"]
+    },
+    {
+      "id": "async-025",
+      "difficulty": "Intermediate",
+      "question": "Why should you avoid async in a constructor?",
+      "answer": "Constructors cannot be async because the caller must receive a fully initialized object, and an async constructor would return before initialization completes. Use a static async factory method that returns Task<T>, or an asynchronous initialization method called explicitly. This keeps the object valid when handed to callers.",
+      "code": "public sealed class Client\n{\n    private Client() { }\n    public static async Task<Client> CreateAsync()\n    {\n        var c = new Client();\n        await c.InitializeAsync();\n        return c;\n    }\n}",
+      "tags": ["async", "constructor", "factory"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/asynchronous-programming-patterns/"]
+    }
+  ]
+}

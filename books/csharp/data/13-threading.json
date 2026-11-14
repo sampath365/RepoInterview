@@ -1,0 +1,369 @@
+{
+  "category": "Threading & Concurrency",
+  "slug": "threading",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "threading-001",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a thread, a Task, and the thread pool?",
+      "answer": "A Thread is an operating-system thread that you create and manage explicitly, including its lifetime and background status. A Task is a higher-level abstraction that represents an asynchronous or parallel unit of work and is normally scheduled on the thread pool, so it does not necessarily own a dedicated thread. The thread pool is a managed set of reusable worker threads that amortizes the cost of thread creation and is the default scheduler for Task.Run and ThreadPool.QueueUserWorkItem.",
+      "tags": [
+        "thread",
+        "task",
+        "thread-pool"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/threads-and-threading",
+        "https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "threading-002",
+      "difficulty": "Beginner",
+      "question": "How do you create and start a thread with the Thread class?",
+      "answer": "You construct a Thread with a ThreadStart or ParameterizedThreadStart delegate, optionally set IsBackground, and call Start. A background thread is terminated automatically when the process exits, whereas a foreground thread keeps the process alive. Join blocks the calling thread until the target thread finishes, and you should avoid Abort because it is unsupported on .NET Core and later.",
+      "code": "var t = new Thread(() => Console.WriteLine(\"working\"));\nt.IsBackground = true;\nt.Start();\nt.Join();",
+      "tags": [
+        "thread",
+        "threadstart",
+        "join"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.thread"
+      ]
+    },
+    {
+      "id": "threading-003",
+      "difficulty": "Beginner",
+      "question": "What is the .NET thread pool and why use it?",
+      "answer": "The thread pool maintains a pool of worker threads that are reused to execute queued work items, avoiding the overhead of creating and destroying a thread per operation. You submit work with ThreadPool.QueueUserWorkItem, Task.Run, or by starting a Task. The pool grows on demand and you can tune it with ThreadPool.SetMinThreads and SetMaxThreads, but long-running blocking work should use a dedicated thread instead of occupying pool threads.",
+      "tags": [
+        "thread-pool",
+        "queueuserworkitem"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/the-managed-thread-pool"
+      ]
+    },
+    {
+      "id": "threading-004",
+      "difficulty": "Beginner",
+      "question": "What is a race condition?",
+      "answer": "A race condition occurs when two or more threads access shared mutable state without synchronization and the result depends on the timing of their interleaving. A classic example is incrementing a counter with count++ executed on multiple threads, because the read-modify-write is not atomic and updates can be lost. Fixes include locking, Interlocked operations, or removing the shared mutable state entirely.",
+      "code": "int count = 0;\nParallel.For(0, 100000, _ => count++);\n// count is usually less than 100000",
+      "tags": [
+        "race-condition",
+        "synchronization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/managed-threading-basics"
+      ]
+    },
+    {
+      "id": "threading-005",
+      "difficulty": "Beginner",
+      "question": "What does the lock statement do?",
+      "answer": "The lock statement acquires an exclusive monitor on a reference-type object for the duration of a block, ensuring that only one thread executes the block at a time. It is compiler sugar for Monitor.Enter in a try block with Monitor.Exit in a finally block. You must lock on a dedicated private object rather than on this, a Type, or a string, because external code could also lock those and cause unexpected contention or deadlocks.",
+      "code": "private readonly object _gate = new();\n\nvoid Increment()\n{\n    lock (_gate)\n    {\n        _count++;\n    }\n}",
+      "tags": [
+        "lock",
+        "monitor",
+        "synchronization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/language-reference/statements/lock"
+      ]
+    },
+    {
+      "id": "threading-006",
+      "difficulty": "Beginner",
+      "question": "What is a deadlock?",
+      "answer": "A deadlock is a situation where two or more threads are permanently blocked, each waiting for a resource that another thread holds. The classic case is two threads that each acquire two locks in opposite order, so each holds one lock and waits for the other. Deadlocks can be avoided with a consistent lock-acquisition order, timeouts such as Monitor.TryEnter, or by minimizing the number of locks held simultaneously.",
+      "tags": [
+        "deadlock",
+        "locks"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/managed-threading-best-practices"
+      ]
+    },
+    {
+      "id": "threading-007",
+      "difficulty": "Beginner",
+      "question": "Are .NET collections thread-safe?",
+      "answer": "Most general-purpose collections such as List<T>, Dictionary<TKey,TValue>, and Queue<T> are not thread-safe for concurrent writes, and even concurrent reads during a write are unsafe. For shared mutable state you should use the System.Collections.Concurrent types like ConcurrentDictionary and ConcurrentQueue, or guard access with a lock. Alternatively, share only immutable data, which is inherently safe to read from any number of threads.",
+      "tags": [
+        "collections",
+        "thread-safety",
+        "concurrent"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/collections/thread-safe/"
+      ]
+    },
+    {
+      "id": "threading-008",
+      "difficulty": "Beginner",
+      "question": "What is context switching overhead in multithreading?",
+      "answer": "A context switch is the operating-system operation of saving one thread's register and stack state and restoring another's so the CPU can run a different thread. It has a real cost in CPU cycles and cache disruption, so creating far more threads than there are cores can make a program slower rather than faster. Using the thread pool and limiting parallelism to roughly the number of cores usually minimizes context switching.",
+      "tags": [
+        "context-switching",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/managed-threading-basics"
+      ]
+    },
+    {
+      "id": "threading-009",
+      "difficulty": "Beginner",
+      "question": "What is starvation in multithreading?",
+      "answer": "Starvation is when a thread is perpetually denied the CPU time or a lock it needs because other threads keep getting scheduled or keep reacquiring the lock first. It often results from unfair locking or from high-priority threads monopolizing resources, and can be worsened by priority inversion. Fair scheduling, avoiding unbounded critical sections, and using fair synchronization primitives reduce the risk.",
+      "tags": [
+        "starvation",
+        "scheduling"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/managed-threading-basics"
+      ]
+    },
+    {
+      "id": "threading-010",
+      "difficulty": "Beginner",
+      "question": "How does CancellationToken support cancellation in threads and tasks?",
+      "answer": "CancellationToken is a cooperative cancellation mechanism: a producer calls Cancel on the linked CancellationTokenSource, and consumers poll IsCancellationRequested or call ThrowIfCancellationRequested. Long-running loops should check the token periodically, and blocking APIs accept it to abort waiting. You can combine sources with CreateLinkedTokenSource so that any one source cancels the operation.",
+      "code": "using var cts = new CancellationTokenSource();\nforeach (var item in items)\n{\n    cts.Token.ThrowIfCancellationRequested();\n    Process(item);\n}",
+      "tags": [
+        "cancellation",
+        "cancellationtoken"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/cancellation-in-managed-threads"
+      ]
+    },
+    {
+      "id": "threading-011",
+      "difficulty": "Intermediate",
+      "question": "What is the relationship between the lock statement and the Monitor class?",
+      "answer": "lock is syntactic sugar for Monitor.Enter with a matching Monitor.Exit in a finally block, so the Monitor class exposes the underlying behavior. Monitor additionally provides TryEnter for non-blocking or timed acquisition and Wait/Pulse/PulseAll for signaling between threads that share the monitor. Wait releases the lock while waiting and reacquires it before returning, which enables efficient producer-consumer coordination.",
+      "code": "lock (_gate)\n{\n    while (!_ready)\n        Monitor.Wait(_gate);\n}",
+      "tags": [
+        "monitor",
+        "lock",
+        "pulse"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.monitor"
+      ]
+    },
+    {
+      "id": "threading-012",
+      "difficulty": "Intermediate",
+      "question": "What are Interlocked operations and when should you use them?",
+      "answer": "The Interlocked class provides atomic operations such as Increment, Decrement, Add, Exchange, and CompareExchange that are performed as a single indivisible step without a lock. They are faster than locking for simple updates to a shared integer or reference and also act as full memory barriers. CompareExchange is the building block for many lock-free algorithms because it updates a value only if it still equals an expected value.",
+      "code": "Interlocked.Increment(ref _counter);\nInterlocked.CompareExchange(ref _value, newValue, expected);",
+      "tags": [
+        "interlocked",
+        "atomic",
+        "lock-free"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.interlocked"
+      ]
+    },
+    {
+      "id": "threading-013",
+      "difficulty": "Intermediate",
+      "question": "What does the volatile keyword do and what does it not guarantee?",
+      "answer": "volatile tells the compiler and runtime that a field may be modified by other threads, so reads and writes must not be cached in a register or reordered across the access. It prevents certain optimization and ordering problems for a single field but does not make compound operations such as increment atomic. For atomicity you need Interlocked or a lock, and volatile applies only to specific field types like int, bool, and reference types.",
+      "code": "private volatile bool _stop;\n// reading _stop in a loop sees updates from other threads",
+      "tags": [
+        "volatile",
+        "memory-model"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.volatile"
+      ]
+    },
+    {
+      "id": "threading-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Mutex, Semaphore, and SemaphoreSlim?",
+      "answer": "A Mutex is a mutually exclusive lock that also works across processes, is owned by a thread, and can be reentrant, but it is slower and has thread affinity. A Semaphore limits the number of threads that can enter a region to a configured count and can also be named for cross-process use. SemaphoreSlim is a lighter in-process version that supports async waiting with WaitAsync and is preferred for purely intra-process, asynchronous synchronization.",
+      "tags": [
+        "mutex",
+        "semaphore",
+        "semaphoreslim"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.semaphoreslim",
+        "https://learn.microsoft.com/dotnet/api/system.threading.mutex"
+      ]
+    },
+    {
+      "id": "threading-015",
+      "difficulty": "Intermediate",
+      "question": "When would you use ReaderWriterLockSlim?",
+      "answer": "ReaderWriterLockSlim allows multiple concurrent readers or a single exclusive writer, which suits data that is read far more often than it is modified. Readers call EnterReadLock and writers call EnterWriteLock, and there is an upgradeable read mode for the rare case of promoting a read to a write. It is much faster than the older ReaderWriterLock, though for very short critical sections a plain lock is often still preferable.",
+      "code": "_rw.EnterReadLock();\ntry { Read(); }\nfinally { _rw.ExitReadLock(); }",
+      "tags": [
+        "readerwriterlockslim",
+        "readers-writer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.readerwriterlockslim"
+      ]
+    },
+    {
+      "id": "threading-016",
+      "difficulty": "Intermediate",
+      "question": "How do ConcurrentDictionary and ConcurrentQueue differ from their non-concurrent counterparts?",
+      "answer": "ConcurrentDictionary and ConcurrentQueue are thread-safe collections designed for concurrent producers and consumers without external locking. ConcurrentDictionary provides atomic compound operations such as GetOrAdd, AddOrUpdate, and TryRemove, while ConcurrentQueue is a lock-free FIFO queue offering Enqueue, TryDequeue, and TryPeek. They trade some single-threaded throughput and memory for safe concurrent access, and individual members are thread-safe but sequences of calls are not.",
+      "code": "var cache = new ConcurrentDictionary<int, string>();\nvar value = cache.GetOrAdd(42, k => Compute(k));",
+      "tags": [
+        "concurrentdictionary",
+        "concurrentqueue",
+        "thread-safety"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentdictionary-2",
+        "https://learn.microsoft.com/dotnet/api/system.collections.concurrent.concurrentqueue-1"
+      ]
+    },
+    {
+      "id": "threading-017",
+      "difficulty": "Intermediate",
+      "question": "What are Parallel.For and Parallel.ForEach used for?",
+      "answer": "Parallel.For and Parallel.ForEach implement data parallelism by partitioning a range or collection and running the iterations across multiple threads from the thread pool. You can tune behavior with ParallelOptions, including MaxDegreeOfParallelism and a CancellationToken, and break early with ParallelLoopState. If any iteration throws, the call throws an AggregateException containing the individual failures. For task-based parallelism where each unit is an independent Task, await them together with Task.WhenAll or Task.WhenAny instead of using the Parallel class.",
+      "code": "Parallel.For(0, 1000, i =>\n{\n    results[i] = Compute(i);\n});",
+      "tags": [
+        "parallel",
+        "data-parallelism"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.tasks.parallel"
+      ]
+    },
+    {
+      "id": "threading-018",
+      "difficulty": "Intermediate",
+      "question": "What is PLINQ and when is it worthwhile?",
+      "answer": "PLINQ runs a LINQ query in parallel by adding AsParallel, partitioning the source and processing elements on multiple threads. Operators like AsOrdered, AsSequential, and WithDegreeOfParallelism control ordering and concurrency. PLINQ can speed up CPU-bound queries over large in-memory sources, but it adds overhead and may be slower for small or I/O-bound sequences, so it should be measured rather than assumed to help.",
+      "code": "var sum = data.AsParallel()\n              .Where(x => x.IsActive)\n              .Sum(x => x.Amount);",
+      "tags": [
+        "plinq",
+        "parallel",
+        "linq"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/parallel-programming/introduction-to-plinq"
+      ]
+    },
+    {
+      "id": "threading-019",
+      "difficulty": "Intermediate",
+      "question": "What are ThreadLocal<T> and [ThreadStatic] and how do they differ?",
+      "answer": "Both provide storage that is unique to each thread, so no synchronization is required for that data. [ThreadStatic] applies to a static field but has no automatic initializer, so the value is default on every thread and any initializer runs only on the first thread. ThreadLocal<T> is a generic instance type with a value factory, supports tracking of values, and implements IDisposable so its per-thread slots can be released.",
+      "code": "private static readonly ThreadLocal<int> _counter =\n    new ThreadLocal<int>(() => 0);",
+      "tags": [
+        "threadlocal",
+        "threadstatic",
+        "thread-affinity"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.threadlocal-1",
+        "https://learn.microsoft.com/dotnet/api/system.threading.threadstaticattribute"
+      ]
+    },
+    {
+      "id": "threading-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between async/await and threading?",
+      "answer": "async/await is about not blocking a thread while an operation is in progress, not about starting new threads; an awaited I/O operation typically frees the thread to do other work and resumes on a continuation. Threading and the thread pool are about running work in parallel on multiple threads. Use async for I/O-bound work and Task.Run or Parallel for CPU-bound work, and remember that the thread pool is shared, so blocking pool threads harms scalability.",
+      "tags": [
+        "async",
+        "threading",
+        "thread-pool"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/dotnet/standard/threading/managed-threading-best-practices"
+      ]
+    },
+    {
+      "id": "threading-021",
+      "difficulty": "Advanced",
+      "question": "What is the .NET memory model and what are memory barriers?",
+      "answer": "The memory model defines the ordering guarantees the CLR and hardware provide for reads and writes observed across threads, including that plain reads and writes may be reordered by the compiler or CPU. A memory barrier is a fence that prevents such reordering and flushes pending writes so other threads see them in order. volatile, Interlocked operations, lock, and Thread.MemoryBarrier all introduce barriers, and lock provides both mutual exclusion and full fences.",
+      "tags": [
+        "memory-model",
+        "memory-barrier",
+        "volatile"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.thread.memorybarrier",
+        "https://learn.microsoft.com/dotnet/api/system.threading.volatile"
+      ]
+    },
+    {
+      "id": "threading-022",
+      "difficulty": "Advanced",
+      "question": "How do atomicity and lock-free programming relate?",
+      "answer": "Atomicity means an operation completes as an indivisible unit, so no other thread can observe an intermediate state. Lock-free programming builds on atomic primitives such as Interlocked.CompareExchange to update shared data without blocking threads, guaranteeing that at least one thread always makes progress. Lock-free code avoids deadlock and priority inversion but is hard to get right and must handle problems like the ABA problem and memory reclamation.",
+      "code": "int original;\ndo\n{\n    original = _value;\n} while (Interlocked.CompareExchange(\n    ref _value, original + 1, original) != original);",
+      "tags": [
+        "atomic",
+        "lock-free",
+        "compareexchange"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.interlocked"
+      ]
+    },
+    {
+      "id": "threading-023",
+      "difficulty": "Advanced",
+      "question": "How can deadlocks be avoided or detected?",
+      "answer": "The most reliable avoidance technique is a global lock ordering: every thread acquires multiple locks in the same predefined order, which makes circular waits impossible. You can also use timeouts with Monitor.TryEnter or Mutex.WaitOne to abandon a wait instead of blocking forever, keep critical sections short, and avoid calling unknown code while holding a lock. Detection at runtime is difficult in .NET because there is no built-in deadlock detector; teams typically rely on dump analysis and tooling such as the Visual Studio parallel stacks window.",
+      "tags": [
+        "deadlock",
+        "lock-ordering",
+        "diagnostics"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/standard/threading/managed-threading-best-practices"
+      ]
+    },
+    {
+      "id": "threading-024",
+      "difficulty": "Advanced",
+      "question": "How do you implement a producer-consumer pattern with BlockingCollection?",
+      "answer": "BlockingCollection<T> wraps a concurrent collection, by default a ConcurrentQueue, and adds blocking and bounding semantics for producer-consumer scenarios. Producers call Add and then CompleteAdding, while consumers enumerate GetConsumingEnumerable or use TryTake with a timeout; a bounded capacity applies backpressure to producers. Take blocks when empty and Add blocks when full, and the collection should be disposed when finished.",
+      "code": "using var queue = new BlockingCollection<int>(boundedCapacity: 100);\nvar producer = Task.Run(() =>\n{\n    foreach (var i in Enumerable.Range(0, 1000)) queue.Add(i);\n    queue.CompleteAdding();\n});\nforeach (var item in queue.GetConsumingEnumerable())\n    Consume(item);\nproducer.Wait();",
+      "tags": [
+        "blockingcollection",
+        "producer-consumer"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.collections.concurrent.blockingcollection-1"
+      ]
+    },
+    {
+      "id": "threading-025",
+      "difficulty": "Advanced",
+      "question": "When should you prefer System.Threading.Channels over BlockingCollection?",
+      "answer": "Channels provide an asynchronous producer-consumer pipeline whose operations return ValueTask, so consumers and producers can await instead of blocking a thread. You create a bounded or unbounded channel with Channel.CreateBounded or Channel.CreateUnbounded, write with WriteAsync and read with ReadAsync or ReadAllAsync, and complete the writer to signal the end. Because blocking collection calls block a thread, Channels are the better choice in async code, while BlockingCollection remains fine for purely synchronous scenarios.",
+      "code": "var channel = Channel.CreateBounded<int>(100);\nawait channel.Writer.WriteAsync(42);\nvar item = await channel.Reader.ReadAsync();",
+      "tags": [
+        "channels",
+        "producer-consumer",
+        "async"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/api/system.threading.channels.channel-1",
+        "https://learn.microsoft.com/dotnet/api/system.collections.concurrent.blockingcollection-1"
+      ]
+    }
+  ]
+}

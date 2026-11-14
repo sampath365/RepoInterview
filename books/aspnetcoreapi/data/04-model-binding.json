@@ -1,0 +1,338 @@
+{
+  "category": "Model Binding & Validation",
+  "slug": "model-binding",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "model-binding-001",
+      "difficulty": "Beginner",
+      "question": "What is model binding?",
+      "answer": "Model binding is the process that populates action or handler parameters from the request, drawing values from route data, query string, form fields, and the body. It converts string values into the parameter types using type converters and formatters. Binding failures are reported through ModelState so validation can react.",
+      "tags": [
+        "model-binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-002",
+      "difficulty": "Beginner",
+      "question": "Where do bound values come from by default?",
+      "answer": "For simple types binding checks route data, then query string, then form fields in that order. Complex types are bound from the body when using [ApiController], or property-by-property from other sources otherwise. Explicit source attributes override these defaults.",
+      "tags": [
+        "model-binding",
+        "sources"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-003",
+      "difficulty": "Beginner",
+      "question": "What do the FromBody, FromQuery, and FromRoute attributes do?",
+      "answer": "They force a parameter to be bound from a single source: the request body, the query string, or route data respectively. This removes ambiguity and documents intent. FromHeader and FromForm bind from headers and form fields.",
+      "tags": [
+        "model-binding",
+        "attributes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ],
+      "code": "[HttpGet]\npublic IActionResult Search([FromQuery] string q, [FromHeader] string? x) => Ok();"
+    },
+    {
+      "id": "model-binding-004",
+      "difficulty": "Beginner",
+      "question": "What is model validation in ASP.NET Core?",
+      "answer": "Model validation checks bound data against rules expressed with DataAnnotations attributes such as [Required], [StringLength], and [Range], or with IValidatableObject. Results are recorded in ModelState, and with [ApiController] an invalid model produces an automatic 400 with ValidationProblemDetails. Validation runs after binding and before the action executes.",
+      "tags": [
+        "validation",
+        "dataannotations"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ],
+      "code": "public record CreateProduct([Required] string Name,\n    [Range(0, 1000)] decimal Price);"
+    },
+    {
+      "id": "model-binding-005",
+      "difficulty": "Beginner",
+      "question": "What does the [Required] attribute do?",
+      "answer": "It marks a property or parameter as mandatory, so validation fails when the value is null or, for strings, empty by default. It also participates in OpenAPI schema generation by marking the field required. Combine it with other attributes such as [StringLength] for fuller rules.",
+      "tags": [
+        "validation",
+        "required"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-006",
+      "difficulty": "Beginner",
+      "question": "What is ModelState?",
+      "answer": "ModelState is a dictionary of binding and validation results exposed through ControllerBase.ModelState and ActionContext. It contains per-key errors and an overall IsValid flag. Actions can inspect it to return custom responses, and the [ApiController] attribute converts invalid state into an automatic 400.",
+      "tags": [
+        "modelstate",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/#configure-model-validation-response"
+      ]
+    },
+    {
+      "id": "model-binding-007",
+      "difficulty": "Beginner",
+      "question": "How does [ApiController] change model binding?",
+      "answer": "It infers binding sources: complex types come from the body and simple types from the route or query string. It also requires attribute routing, triggers automatic 400 responses for invalid models, and handles multipart form data. This removes boilerplate that was needed in earlier versions.",
+      "tags": [
+        "apicontroller",
+        "model-binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "model-binding-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between simple and complex types in binding?",
+      "answer": "Simple types such as int, string, DateTime, and Guid are converted from string values in route or query data. Complex types such as a Product class are bound property by property or, for APIs, as a whole from the body. This distinction drives the default binding behavior.",
+      "tags": [
+        "model-binding",
+        "types"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-009",
+      "difficulty": "Beginner",
+      "question": "How do you bind a file upload?",
+      "answer": "Declare an IFormFile or IFormFileCollection parameter and post a multipart/form-data request; the framework populates it from the form. Use [FromForm] on a model for multiple fields plus a file. Size limits are configured on Kestrel and on FormOptions.",
+      "tags": [
+        "file-upload",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/file-uploads"
+      ],
+      "code": "[HttpPost]\npublic async Task<IActionResult> Upload(IFormFile file)\n{\n    await using var s = file.OpenReadStream();\n    return Ok(file.Length);\n}"
+    },
+    {
+      "id": "model-binding-010",
+      "difficulty": "Beginner",
+      "question": "Why does validation happen automatically in API controllers?",
+      "answer": "The [ApiController] attribute installs a ModelStateInvalidFilter that short-circuits the action when ModelState is invalid and returns a 400 with a ValidationProblemDetails body. This avoids repeating model-state checks in every action. You can customize the response through ApiBehaviorOptions.",
+      "tags": [
+        "validation",
+        "apicontroller"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/#configure-model-validation-response"
+      ]
+    },
+    {
+      "id": "model-binding-011",
+      "difficulty": "Intermediate",
+      "question": "How do you write a custom validation attribute?",
+      "answer": "Derive from ValidationAttribute and override IsValid, returning ValidationResult.Success or a failure with a message. Register it with the model property and it participates in ModelState and OpenAPI generation. For cross-property rules, prefer IValidatableObject.",
+      "tags": [
+        "validation",
+        "custom"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation#custom-validation-attributes"
+      ],
+      "code": "public sealed class EvenAttribute : ValidationAttribute\n{\n    public override bool IsValid(object? value)\n        => value is int i && i % 2 == 0;\n}"
+    },
+    {
+      "id": "model-binding-012",
+      "difficulty": "Intermediate",
+      "question": "When should you use IValidatableObject?",
+      "answer": "Use it when validation depends on multiple properties, such as ensuring an end date is after a start date. Implement Validate and yield ValidationResult instances. It runs after attribute-based validation and complements rather than replaces it.",
+      "tags": [
+        "validation",
+        "ivalidatableobject"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation#ivalidatableobject"
+      ]
+    },
+    {
+      "id": "model-binding-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a custom model binder?",
+      "answer": "Implement IModelBinder and register it with a ModelBinderProvider, or derive from a base binder and apply [ModelBinder]. Custom binders are used when the request format is unusual, such as binding a value from a cookie or a composed header. They are heavier than attributes, so use them only when needed.",
+      "tags": [
+        "model-binding",
+        "custom"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/advanced/custom-model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between BindRequired and Required?",
+      "answer": "[Required] is a validation attribute that fails when the value is null or empty, whereas [BindRequired] is a binding attribute that fails when the source is missing entirely, even if a default value exists. BindRequired is useful to distinguish an omitted field from an intentionally empty one. Both surface errors through ModelState.",
+      "tags": [
+        "validation",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-015",
+      "difficulty": "Intermediate",
+      "question": "How do you validate with records and positional parameters?",
+      "answer": "Attributes can be applied to positional record parameters and are mapped to the generated properties, so validation works the same as with classes. This keeps request DTOs concise and immutable. Complex nested objects are validated recursively when their properties are non-null.",
+      "tags": [
+        "validation",
+        "records"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ],
+      "code": "public record Register(string Email, [Range(18, 120)] int Age);"
+    },
+    {
+      "id": "model-binding-016",
+      "difficulty": "Intermediate",
+      "question": "How do you customize the automatic 400 response?",
+      "answer": "Configure ApiBehaviorOptions.InvalidModelStateResponseFactory to build your own response, for example a custom error shape or a 422 status. The factory receives an ActionContext with ModelState. This is the standard place to align validation errors with your API's error contract.",
+      "tags": [
+        "validation",
+        "apicontroller"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/#configure-model-validation-response"
+      ],
+      "code": "builder.Services.Configure<ApiBehaviorOptions>(o =>\n    o.InvalidModelStateResponseFactory = ctx =>\n        new BadRequestObjectResult(new { error = \"invalid\" }));"
+    },
+    {
+      "id": "model-binding-017",
+      "difficulty": "Intermediate",
+      "question": "How does binding differ for minimal APIs?",
+      "answer": "Minimal APIs bind complex types from the body and simple types from route and query, and they allow only one body parameter by default. Special types such as HttpContext and CancellationToken are supplied by the framework, and [AsParameters] groups multiple values. A type can define TryParse or BindAsync for custom binding.",
+      "tags": [
+        "model-binding",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ]
+    },
+    {
+      "id": "model-binding-018",
+      "difficulty": "Intermediate",
+      "question": "How do you bind a collection of values from the query string?",
+      "answer": "Declare a parameter of a collection type such as string[] or int[] and pass repeated keys like ?ids=1&ids=2. For a complex model, ASP.NET Core binds properties named like tags[0] or tags[] when using form data. Minimal APIs also support array binding from repeated query keys.",
+      "tags": [
+        "model-binding",
+        "collections"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-019",
+      "difficulty": "Intermediate",
+      "question": "What happens when type conversion fails during binding?",
+      "answer": "The binder records a model error in ModelState and leaves the parameter at its default value instead of throwing. With [ApiController] the action is short-circuited and a 400 is returned. In minimal APIs a failed conversion returns a 400 automatically for the affected parameter.",
+      "tags": [
+        "model-binding",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    },
+    {
+      "id": "model-binding-020",
+      "difficulty": "Intermediate",
+      "question": "How do you exclude a property from binding or validation?",
+      "answer": "Apply [BindNever] to exclude a property from model binding and [JsonIgnore] to exclude it from JSON serialization, while [ValidateNever] skips validation for a property or type. These attributes are useful for fields that are set server-side or computed. Keep DTOs free of such fields when possible by separating request and response models.",
+      "tags": [
+        "validation",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-021",
+      "difficulty": "Advanced",
+      "question": "How does validation integrate with OpenAPI schema generation?",
+      "answer": "DataAnnotations attributes are read by the schema generator so constraints such as [Required], [StringLength], and [Range] appear as required flags and min/max values in the OpenAPI document. This lets clients validate before sending requests. Validation filters and IValidatableObject rules are not reflected automatically, so document them explicitly.",
+      "tags": [
+        "validation",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-022",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of model binding and validation?",
+      "answer": "Binding allocates for complex models and validation walks attributes reflectively, so very large payloads can be costly. Reduce cost by keeping DTOs small, avoiding unbounded collections, and using request size limits. Caching validation metadata is handled by the framework, but per-request allocation remains proportional to payload size.",
+      "tags": [
+        "performance",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement custom binding in minimal APIs?",
+      "answer": "Implement a static TryParse method for simple custom types, or a static BindAsync method that receives HttpContext and returns ValueTask<YourType?>. BindAsync is used when the value cannot be derived from a string, such as reading several headers or the body. This is the minimal API replacement for a custom model binder.",
+      "tags": [
+        "model-binding",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/parameter-binding"
+      ],
+      "code": "public static ValueTask<Product?> BindAsync(HttpContext ctx)\n    => ctx.Request.ReadFromJsonAsync<Product>();"
+    },
+    {
+      "id": "model-binding-024",
+      "difficulty": "Advanced",
+      "question": "How do you validate a large nested object graph efficiently?",
+      "answer": "Prefer flattening deeply nested DTOs and validate only what is necessary, since validation traverses non-null reference properties recursively. Use [ValidateNever] to skip branches that are validated elsewhere, and use IValidatableObject for cheap cross-field checks. If rules are complex, consider a dedicated validation library such as FluentValidation.",
+      "tags": [
+        "validation",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/validation"
+      ]
+    },
+    {
+      "id": "model-binding-025",
+      "difficulty": "Advanced",
+      "question": "How do you secure binding against over-posting?",
+      "answer": "Use dedicated request DTOs that contain only the fields a client may set, rather than binding directly to entity types. This prevents clients from setting properties such as Id, IsAdmin, or CreatedAt that they should not control. Combining separate create and update DTOs with explicit mapping is the most robust defense.",
+      "tags": [
+        "security",
+        "binding"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/models/model-binding"
+      ]
+    }
+  ]
+}

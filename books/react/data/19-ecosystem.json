@@ -1,0 +1,333 @@
+{
+  "category": "React Ecosystem & Patterns",
+  "slug": "ecosystem",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "ecosystem-001",
+      "difficulty": "Beginner",
+      "question": "What is the React ecosystem made of?",
+      "answer": "React itself focuses on the view layer, and the ecosystem supplies the rest: routers, state managers, data libraries, form tools, testing utilities, UI kits and build tools. This modularity lets teams pick the pieces that fit their needs. The trade-off is that you assemble and maintain the stack. Most apps settle on a small set of well-supported libraries.",
+      "tags": [
+        "ecosystem",
+        "overview"
+      ],
+      "references": [
+        "https://react.dev/"
+      ]
+    },
+    {
+      "id": "ecosystem-002",
+      "difficulty": "Beginner",
+      "question": "What are React Server Components?",
+      "answer": "React Server Components are components that run only on the server and send a description of their output to the client, so their code never ships to the browser. They can access the database and filesystem directly and reduce bundle size. Client components, marked with use client, handle interactivity. Frameworks like Next.js implement this model.",
+      "tags": [
+        "rsc",
+        "ecosystem"
+      ],
+      "references": [
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "ecosystem-003",
+      "difficulty": "Beginner",
+      "question": "What is a React meta-framework?",
+      "answer": "A meta-framework builds on React to provide routing, data fetching, server rendering and build tooling out of the box. Next.js and Remix, now part of React Router, are the most common examples. They reduce the decisions you must make and encode best practices. Choose one when you want an opinionated, production-ready setup.",
+      "tags": [
+        "ecosystem",
+        "frameworks"
+      ],
+      "references": [
+        "https://react.dev/learn/start-a-new-react-project"
+      ]
+    },
+    {
+      "id": "ecosystem-004",
+      "difficulty": "Beginner",
+      "question": "What is the role of a build tool in a React project?",
+      "answer": "Build tools compile JSX and TypeScript, bundle modules, optimize assets and enable fast development with hot reloading. Vite and the framework-provided bundlers are common choices today. They also handle code splitting and production minification. The tool largely determines the developer experience.",
+      "tags": [
+        "ecosystem",
+        "tooling"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/"
+      ]
+    },
+    {
+      "id": "ecosystem-005",
+      "difficulty": "Beginner",
+      "question": "What are some popular React UI component libraries?",
+      "answer": "Popular libraries include MUI, Chakra UI, Mantine, Ant Design and Radix-based kits such as shadcn/ui. They provide accessible, prebuilt components that speed up development. Some are opinionated about styling while others are headless and unopinionated. The choice affects your styling strategy and bundle size.",
+      "tags": [
+        "ecosystem",
+        "ui-libraries"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-006",
+      "difficulty": "Beginner",
+      "question": "What is a headless component library?",
+      "answer": "A headless library provides behavior, state and accessibility without imposing styles, leaving the visual design to you. Radix UI and React Aria are examples. This keeps full control over look and feel while reusing hard-won accessibility logic. It suits teams with a strong design system.",
+      "tags": [
+        "ecosystem",
+        "headless"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-007",
+      "difficulty": "Beginner",
+      "question": "What is the role of React DevTools?",
+      "answer": "React DevTools is a browser extension that lets you inspect the component tree, view props and state, and profile rendering performance. It shows component names and the hooks used, which helps debugging. The Profiler tab records render timings. It is the primary tool for understanding React apps in the browser.",
+      "tags": [
+        "ecosystem",
+        "devtools"
+      ],
+      "references": [
+        "https://react.dev/learn/react-developer-tools"
+      ]
+    },
+    {
+      "id": "ecosystem-008",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of ESLint plugins for React?",
+      "answer": "The eslint-plugin-react and react-hooks plugins catch common mistakes such as missing dependencies, incorrect hook usage and unsafe patterns. They enforce the rules of hooks automatically. Catching these issues at lint time is far cheaper than at runtime. Most React starters include them by default.",
+      "tags": [
+        "ecosystem",
+        "tooling"
+      ],
+      "references": [
+        "https://react.dev/learn/editor-setup"
+      ]
+    },
+    {
+      "id": "ecosystem-009",
+      "difficulty": "Beginner",
+      "question": "What is the role of PropTypes?",
+      "answer": "PropTypes is a runtime type checker for props that warns in development when a prop has the wrong type or is missing. It predates widespread TypeScript and is largely superseded by it. It can still be useful for plain JavaScript projects. TypeScript provides the same safety at compile time with better tooling.",
+      "tags": [
+        "ecosystem",
+        "proptypes"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "ecosystem-010",
+      "difficulty": "Beginner",
+      "question": "How do you find and evaluate React libraries?",
+      "answer": "Check maintenance activity, download counts, bundle size, documentation and whether it supports the React version you use. Prefer libraries that are actively maintained and have a clear scope. Read the source or changelog for stability signals. Fewer, well-chosen dependencies reduce long-term maintenance.",
+      "tags": [
+        "ecosystem",
+        "libraries"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-011",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of adopting a meta-framework?",
+      "answer": "Meta-frameworks provide routing, server rendering, data loading and optimizations out of the box, which speeds up development and improves performance and SEO. The cost is less flexibility and a larger surface to learn, and you inherit the framework's release cadence. They are a strong default for production apps that need SSR or static generation. For simple client-only apps a plain Vite setup is often enough.",
+      "tags": [
+        "ecosystem",
+        "frameworks"
+      ],
+      "references": [
+        "https://react.dev/learn/start-a-new-react-project"
+      ]
+    },
+    {
+      "id": "ecosystem-012",
+      "difficulty": "Intermediate",
+      "question": "How do React Server Components change data fetching?",
+      "answer": "Server Components can read data directly from a database or API on the server, so no client-side fetching or loading spinners are needed for that data. This reduces bundle size and request waterfalls. Client Components still handle interactivity and can receive server data as props. The model requires a framework that supports it.",
+      "tags": [
+        "ecosystem",
+        "rsc"
+      ],
+      "references": [
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "ecosystem-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between client and server components?",
+      "answer": "Server Components run only on the server, never ship their code to the browser, and cannot use state or effects. Client Components run in the browser, can use hooks and events, and are marked with use client. You compose them by importing Client Components into Server Components. This split lets you keep interactivity small and data logic on the server.",
+      "tags": [
+        "ecosystem",
+        "rsc"
+      ],
+      "references": [
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "ecosystem-014",
+      "difficulty": "Intermediate",
+      "question": "How do you choose between context, Redux and a data library?",
+      "answer": "Use context for low-frequency, widely shared values like theme or auth. Use a data library like TanStack Query for server state with caching and synchronization. Use Redux or Zustand for complex client state shared across many components. Matching the tool to the kind of state avoids over-engineering. Many apps use all three for different concerns.",
+      "tags": [
+        "ecosystem",
+        "state-management"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "ecosystem-015",
+      "difficulty": "Intermediate",
+      "question": "What are design system patterns in React?",
+      "answer": "Design systems provide tokens, primitives and composed components with documented APIs. In React they often use headless primitives for accessibility, a theme layer for tokens, and compound components for expressive APIs. Versioning and documentation are as important as the code. Consistency at scale depends on governance as much as components.",
+      "tags": [
+        "ecosystem",
+        "design-systems"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-016",
+      "difficulty": "Intermediate",
+      "question": "How does monorepo tooling fit into React projects?",
+      "answer": "Monorepo tools like Turborepo, Nx or pnpm workspaces let you share components, hooks and configuration across apps in one repository. They speed up builds with caching and make cross-package changes easier. The cost is setup complexity and the need for clear boundaries. They pay off when several apps share code.",
+      "tags": [
+        "ecosystem",
+        "monorepo"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-017",
+      "difficulty": "Intermediate",
+      "question": "What is the role of TypeScript in the ecosystem?",
+      "answer": "TypeScript has become the default for many React projects because it catches prop and state mistakes at build time and improves editor tooling. Most major libraries ship types. Adopting it improves refactoring confidence in large codebases. The main cost is configuration and some extra annotations.",
+      "tags": [
+        "ecosystem",
+        "typescript"
+      ],
+      "references": [
+        "https://react.dev/learn/typescript"
+      ]
+    },
+    {
+      "id": "ecosystem-018",
+      "difficulty": "Intermediate",
+      "question": "How do React portals fit into common patterns?",
+      "answer": "Portals render children into a different part of the DOM while keeping React tree relationships, which is ideal for modals, tooltips and toasts that must escape overflow or stacking contexts. Events still bubble through the React tree. Libraries use portals for overlays so positioning is not clipped. They are a small API with outsized usefulness.",
+      "code": "createPortal(<Modal />, document.getElementById('root-modal'));",
+      "tags": [
+        "ecosystem",
+        "portals"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/createPortal"
+      ]
+    },
+    {
+      "id": "ecosystem-019",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of error and performance monitoring in production?",
+      "answer": "Monitoring tools like Sentry capture errors, stack traces and performance data from real users, which is essential because issues rarely reproduce locally. They reveal failing components and slow interactions. Respect privacy when sending data. Monitoring closes the loop between development and production reality.",
+      "tags": [
+        "ecosystem",
+        "monitoring"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-020",
+      "difficulty": "Intermediate",
+      "question": "How do you keep dependencies healthy over time?",
+      "answer": "Update regularly in small steps, read changelogs for breaking changes, and rely on tests to catch regressions. Remove unused libraries and prefer a smaller dependency surface. Automate updates with tools like Renovate or Dependabot and review the diffs. A lean dependency tree is easier to secure and upgrade.",
+      "tags": [
+        "ecosystem",
+        "maintenance"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    },
+    {
+      "id": "ecosystem-021",
+      "difficulty": "Advanced",
+      "question": "How do you migrate between major React versions?",
+      "answer": "Read the release notes for deprecations, run the codemods the React team provides, and upgrade one major version at a time with tests as a safety net. Watch for removed legacy APIs and behavior changes such as stricter StrictMode. Test with a canary in staging before a full rollout. Incremental upgrades are far safer than jumping several versions.",
+      "tags": [
+        "ecosystem",
+        "migration"
+      ],
+      "references": [
+        "https://react.dev/blog/2022/03/29/react-v18"
+      ]
+    },
+    {
+      "id": "ecosystem-022",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of adopting React Server Components today?",
+      "answer": "RSCs reduce bundle size and enable direct data access, which improves performance and simplifies data flow. The trade-off is a mental model split between server and client, framework coupling and a still-evolving ecosystem. Not every app needs them, and client-only apps can be simpler. Adopt them when the performance and data benefits outweigh the added complexity.",
+      "tags": [
+        "ecosystem",
+        "rsc"
+      ],
+      "references": [
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "ecosystem-023",
+      "difficulty": "Advanced",
+      "question": "How do you design a reusable internal component library?",
+      "answer": "Start from real usage, extract components with clear APIs and accessibility built in, and document each with examples and guidelines. Publish with versioning and a changelog, and test behavior rather than internals. Provide escape hatches for styling and composition. Treat the library as a product with owners and feedback loops.",
+      "tags": [
+        "ecosystem",
+        "component-library"
+      ],
+      "references": [
+        "https://react.dev/learn/thinking-in-react"
+      ]
+    },
+    {
+      "id": "ecosystem-024",
+      "difficulty": "Advanced",
+      "question": "How do you evaluate build performance and bundle size?",
+      "answer": "Use bundle analyzers to see what contributes to the bundle, and set budgets so size regressions are caught in CI. Track build times and split large dependencies. Prefer smaller alternatives and tree-shakeable imports. Keeping the bundle lean improves load performance and developer feedback loops.",
+      "tags": [
+        "ecosystem",
+        "performance"
+      ],
+      "references": [
+        "https://vitejs.dev/guide/"
+      ]
+    },
+    {
+      "id": "ecosystem-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of heavy abstractions and frameworks?",
+      "answer": "Abstractions and frameworks speed up common tasks and encode best practices, but they add learning cost, limit flexibility and create a dependency on their maintenance. The right level of abstraction matches your team's size and the app's complexity. Prefer well-scoped libraries over sprawling ones, and keep escape hatches. Over-abstracting early is a common source of long-term pain.",
+      "tags": [
+        "ecosystem",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/community"
+      ]
+    }
+  ]
+}

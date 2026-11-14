@@ -1,0 +1,348 @@
+{
+  "category": "Logging with Pino",
+  "slug": "logging",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "logging-001",
+      "difficulty": "Beginner",
+      "question": "What logging library does Fastify use by default?",
+      "answer": "Fastify uses Pino, a fast JSON logger, and exposes it as fastify.log. Enabling it with logger: true produces structured JSON logs for requests and errors. Pino is designed for low overhead. You can configure levels and transports through Fastify options.",
+      "tags": [
+        "logging",
+        "pino"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/",
+        "https://getpino.io/"
+      ]
+    },
+    {
+      "id": "logging-002",
+      "difficulty": "Beginner",
+      "question": "How do you enable logging when creating a Fastify instance?",
+      "answer": "You pass logger: true or a configuration object to the factory. The configuration can set the level, redaction, and transport. Without it, logging is off and you lose request logs. Most apps enable it in all environments.",
+      "tags": [
+        "logging",
+        "setup"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ],
+      "code": "const fastify = require('fastify')({ logger: true })"
+    },
+    {
+      "id": "logging-003",
+      "difficulty": "Beginner",
+      "question": "How do you log a message inside a route handler?",
+      "answer": "You use request.log, which is a child logger carrying the request id and context. You can call log.info, log.warn, log.error, and so on. Using request.log keeps messages correlated to the request. Avoid the global console for structured logging.",
+      "tags": [
+        "logging",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ],
+      "code": "fastify.get('/', async (request) => {\n  request.log.info('handling request')\n  return { ok: true }\n})"
+    },
+    {
+      "id": "logging-004",
+      "difficulty": "Beginner",
+      "question": "What are the standard log levels in Pino?",
+      "answer": "Pino levels, from most to least severe, are fatal, error, warn, info, debug, and trace. Setting a level emits that level and above. Info is a common production default and debug for development. Choosing the right level keeps logs useful and volume manageable.",
+      "tags": [
+        "logging",
+        "levels"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/api?id=levels"
+      ]
+    },
+    {
+      "id": "logging-005",
+      "difficulty": "Beginner",
+      "question": "How do you set the log level?",
+      "answer": "You pass a level in the logger options, for example logger: { level: 'debug' }. The level controls which messages are emitted. You can also change it at runtime on the instance logger. Keeping production at info or warn reduces noise.",
+      "tags": [
+        "logging",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ],
+      "code": "const fastify = require('fastify')({\n  logger: { level: 'debug' }\n})"
+    },
+    {
+      "id": "logging-006",
+      "difficulty": "Beginner",
+      "question": "What is a child logger?",
+      "answer": "A child logger inherits its parent's configuration and adds bound fields such as a request id. Fastify creates one per request as request.log. Children share the parent's level and destination. They make it easy to attach context without repeating it.",
+      "tags": [
+        "logging",
+        "pino"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/child-loggers"
+      ]
+    },
+    {
+      "id": "logging-007",
+      "difficulty": "Beginner",
+      "question": "How do you log the request body?",
+      "answer": "Fastify does not log bodies by default for performance and privacy. You can add a hook that logs request.body at debug level, ideally with redaction. Be careful not to log secrets. Consider disabling it entirely in production.",
+      "tags": [
+        "logging",
+        "request"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-008",
+      "difficulty": "Beginner",
+      "question": "What is request.id used for in logs?",
+      "answer": "request.id appears in every log line for that request, letting you correlate events. Fastify generates it automatically and includes it in request.log. You can propagate it to downstream services for distributed tracing. It is the backbone of request-level debugging.",
+      "tags": [
+        "logging",
+        "tracing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-009",
+      "difficulty": "Beginner",
+      "question": "How do you disable request logging?",
+      "answer": "You set disableRequestLogging to true in the server options, which stops the automatic incoming and completed request logs. This is useful when a reverse proxy already logs requests. You can still log manually inside handlers. It reduces duplicate noise.",
+      "tags": [
+        "logging",
+        "configuration"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#disablerequestlogging"
+      ]
+    },
+    {
+      "id": "logging-010",
+      "difficulty": "Beginner",
+      "question": "Why is structured logging preferred over console.log?",
+      "answer": "Structured logs are JSON objects with consistent fields, so machines can parse, filter, and aggregate them. console.log produces unstructured text that is hard to query at scale. Pino also adds timestamps, levels, and request context automatically. This makes production observability practical.",
+      "tags": [
+        "logging",
+        "observability"
+      ],
+      "references": [
+        "https://getpino.io/"
+      ]
+    },
+    {
+      "id": "logging-011",
+      "difficulty": "Intermediate",
+      "question": "How do you pretty-print logs in development?",
+      "answer": "You use pino-pretty as a transport in the logger options, typically guarded by an environment check. Pretty output is human-friendly but slower, so keep it out of production. The transport can be configured with colour and translation options. It makes local debugging much easier.",
+      "tags": [
+        "logging",
+        "pino-pretty"
+      ],
+      "references": [
+        "https://github.com/pinojs/pino-pretty",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ],
+      "code": "const fastify = require('fastify')({\n  logger: {\n    transport: { target: 'pino-pretty' }\n  }\n})"
+    },
+    {
+      "id": "logging-012",
+      "difficulty": "Intermediate",
+      "question": "How do you redact sensitive fields from logs?",
+      "answer": "You set the redact option in the logger configuration with paths to remove, such as headers.authorization or body.password. Pino replaces them with a placeholder. This prevents secrets from leaking into log storage. Redaction is essential for compliance.",
+      "tags": [
+        "logging",
+        "security"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/redaction",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ],
+      "code": "logger: {\n  redact: ['req.headers.authorization', 'body.password']\n}"
+    },
+    {
+      "id": "logging-013",
+      "difficulty": "Intermediate",
+      "question": "How do you add custom serializers to log output?",
+      "answer": "You provide a serializers object in the logger options to control how specific fields are logged. Fastify already serializes req and res, and you can add your own for custom objects. Serializers keep output compact and consistent. They run only when a matching key is logged.",
+      "tags": [
+        "logging",
+        "pino"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/api?id=serializers",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-014",
+      "difficulty": "Intermediate",
+      "question": "How do you change the logger's serialization of the request object?",
+      "answer": "Fastify uses default serializers for req and res, but you can override them via the logger options. The serializers decide which fields appear, such as method, url, and remote address. Overriding them lets you include headers or hide sensitive ones. Keep output small to control cost.",
+      "tags": [
+        "logging",
+        "serializers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-015",
+      "difficulty": "Intermediate",
+      "question": "How do you log errors with stack traces?",
+      "answer": "You call request.log.error(err) or log.error({ err }, 'message'), and Pino serializes the error including its stack. Fastify also logs unhandled errors automatically. Structured error logs make triage easier. Include context like the request id for correlation.",
+      "tags": [
+        "logging",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/",
+        "https://getpino.io/#/docs/api?id=logmethod"
+      ]
+    },
+    {
+      "id": "logging-016",
+      "difficulty": "Intermediate",
+      "question": "How do you send logs to an external system?",
+      "answer": "You configure a Pino transport that targets your collector, such as pino-elasticsearch, or write JSON to stdout and let the platform ship it. Transports run in worker threads to avoid blocking the main thread. Keep the destination configurable per environment. This decouples app code from infrastructure.",
+      "tags": [
+        "logging",
+        "transports"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/transports"
+      ]
+    },
+    {
+      "id": "logging-017",
+      "difficulty": "Intermediate",
+      "question": "What is the relationship between Fastify logging and Pino transports?",
+      "answer": "Fastify passes the transport option straight through to Pino, so any Pino transport works. The transport handles where logs go while Fastify decides what is logged. This separation lets you change destinations without touching handlers. It is why Fastify logging feels like plain Pino.",
+      "tags": [
+        "logging",
+        "transports"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-018",
+      "difficulty": "Intermediate",
+      "question": "How do you set a custom log level per route?",
+      "answer": "You pass a logLevel option in the route options to override the instance level for that route. This is useful for verbose logging on a specific endpoint. The route's request.log uses that level. It balances detail and volume.",
+      "tags": [
+        "logging",
+        "routes"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/#log-level"
+      ],
+      "code": "fastify.get('/debug', { logLevel: 'debug' }, handler)"
+    },
+    {
+      "id": "logging-019",
+      "difficulty": "Intermediate",
+      "question": "How do you include the response time in logs?",
+      "answer": "Fastify logs a response object with responseTime when a request completes by default. You can also measure it manually in an onResponse hook. This metric is valuable for spotting slow endpoints. Combine it with request id for tracing.",
+      "tags": [
+        "logging",
+        "metrics"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-020",
+      "difficulty": "Intermediate",
+      "question": "How do you use a custom Pino instance with Fastify?",
+      "answer": "You pass a pre-built Pino instance as the logger option, or set it via loggerInstance. This is useful when you need shared configuration or an existing logger. Fastify then uses it for request and error logs. You keep full control over the Pino setup.",
+      "tags": [
+        "logging",
+        "pino"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/#logger-instance"
+      ],
+      "code": "const pino = require('pino')\nconst fastify = require('fastify')({ loggerInstance: pino({ level: 'info' }) })"
+    },
+    {
+      "id": "logging-021",
+      "difficulty": "Advanced",
+      "question": "How does Fastify bind the request logger to the request lifecycle?",
+      "answer": "For each request Fastify creates a child logger with the request id and serialized request data bound as fields. The same child is available as request.log throughout hooks and the handler, and its fields appear in every message. This design gives correlation without passing context manually. It is why logging in Fastify is effectively free of boilerplate.",
+      "tags": [
+        "logging",
+        "internals"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-022",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations of high-volume logging?",
+      "answer": "Serializing and writing logs costs CPU and I/O, so log at info or above in production and redact carefully. Pino is fast, but synchronous destinations can block the event loop, which is why transports run off-thread. Sampling or disabling request logs behind a proxy reduces load. Measure logging overhead under realistic traffic.",
+      "tags": [
+        "logging",
+        "performance"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/benchmarks",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-023",
+      "difficulty": "Advanced",
+      "question": "How do you implement distributed tracing with Fastify logging?",
+      "answer": "You propagate a trace id from an incoming header, store it on the request, and include it in every log and outbound call. Libraries like OpenTelemetry can instrument Fastify via hooks to emit spans. The trace id links logs and spans across services. Consistent context is the key to usable traces.",
+      "tags": [
+        "logging",
+        "tracing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/",
+        "https://opentelemetry.io/docs/languages/js/"
+      ]
+    },
+    {
+      "id": "logging-024",
+      "difficulty": "Advanced",
+      "question": "How do you test that your app logs the expected events?",
+      "answer": "You inject a custom Pino destination or pass a stream to capture output, then assert on parsed JSON lines. Fastify's logger can be pointed at an in-memory stream for tests. This verifies correlation ids, levels, and redaction. Avoid asserting on timestamps that change between runs.",
+      "tags": [
+        "logging",
+        "testing"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/api?id=destination",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "logging-025",
+      "difficulty": "Advanced",
+      "question": "How does log redaction interact with serializers and nested objects?",
+      "answer": "Redaction paths are applied to the final log object, including nested fields and serializer output. If a serializer removes a field first, redaction never sees it; if it keeps it, redaction still applies. Order matters when both are configured. Test redaction with real payloads to confirm secrets never appear.",
+      "tags": [
+        "logging",
+        "security"
+      ],
+      "references": [
+        "https://getpino.io/#/docs/redaction",
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    }
+  ]
+}

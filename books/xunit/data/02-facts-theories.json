@@ -1,0 +1,222 @@
+{
+  "category": "Facts, Theories & Data",
+  "slug": "facts-theories",
+  "icon": "code",
+  "questions": [
+    {
+      "id": "facts-theories-001",
+      "difficulty": "Beginner",
+      "question": "What is a [Fact] in xUnit?",
+      "answer": "A [Fact] marks a test method that represents one invariant scenario and takes no parameters, so xUnit runs it exactly once. Facts are the simplest and most common kind of test and are appropriate when a single set of inputs fully covers the behaviour. Any method decorated with [Fact] must be public and cannot be abstract.",
+      "code": "[Fact]\npublic void Sum_of_empty_array_is_zero()\n    => Assert.Equal(0, Array.Empty<int>().Sum());",
+      "tags": ["fact", "basics"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "facts-theories-002",
+      "difficulty": "Beginner",
+      "question": "What is a [Theory] and when should you use one?",
+      "answer": "A [Theory] marks a parameterized test that xUnit runs once for each supplied data row, so the same logic is verified across many inputs without duplicating the method. Use a theory when the assertion is identical for every case and only the inputs change. Each data row appears as its own test in the runner, so a failing row is reported independently.",
+      "tags": ["theory", "parameterized"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-003",
+      "difficulty": "Beginner",
+      "question": "How does [InlineData] work?",
+      "answer": "[InlineData] supplies constant arguments for a theory by attaching one attribute instance per data row, and the values must be compile-time constants. You can apply it multiple times on the same method to build a table of cases. It is the most readable option for small, literal data sets.",
+      "code": "[Theory]\n[InlineData(1, 1, 2)]\n[InlineData(2, 3, 5)]\npublic void Add_returns_sum(int a, int b, int expected)\n    => Assert.Equal(expected, a + b);",
+      "tags": ["inlinedata", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between [InlineData] and [MemberData]?",
+      "answer": "[InlineData] only accepts compile-time constant values, while [MemberData] pulls data from a public static property or method at runtime, so it can use non-constant objects, computed values, or data loaded from a file. Use [InlineData] for simple literals and [MemberData] when the values are complex or generated. [MemberData] can also return data lazily so large sets are produced only when needed.",
+      "tags": ["memberdata", "inlinedata"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-005",
+      "difficulty": "Beginner",
+      "question": "Can a test method have parameters if it is marked [Fact]?",
+      "answer": "No. A [Fact] takes no parameters because there is no mechanism to supply arguments to it, and xUnit will report an error during discovery if it finds one. If you need to pass inputs you must use [Theory] with a data attribute such as [InlineData]. The only allowed constructor-style injection for facts is via the test class constructor, not the method.",
+      "tags": ["fact", "parameters"],
+      "references": ["https://xunit.net/docs/getting-started/v3/getting-started"]
+    },
+    {
+      "id": "facts-theories-006",
+      "difficulty": "Beginner",
+      "question": "How do you write a theory that takes a string and an expected boolean?",
+      "answer": "Declare the method parameters in the same order as the values in each data attribute and add one row per case. Keeping the parameters and the rows aligned makes failures easy to read because the reported display name includes the argument values. Use clear parameter names so the generated test names are self-documenting.",
+      "code": "[Theory]\n[InlineData(\"123\", true)]\n[InlineData(\"12x\", false)]\npublic void IsDigitsOnly_checks_input(string input, bool expected)\n    => Assert.Equal(expected, input.All(char.IsDigit));",
+      "tags": ["theory", "strings"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-007",
+      "difficulty": "Beginner",
+      "question": "What does the display name of a theory test case look like by default?",
+      "answer": "By default xUnit builds a display name from the method name followed by the parenthesised argument values, so a failing row is easy to identify in the test runner. You can override it with the DisplayName property on [Theory] or on an individual TheoryDataRow. Custom display names are useful when the raw arguments are hard to interpret, such as when passing enums or objects.",
+      "tags": ["display-name", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "facts-theories-008",
+      "difficulty": "Beginner",
+      "question": "Why is it better to use a theory instead of copying and pasting a test?",
+      "answer": "A theory expresses the shared assertion once and varies only the data, which removes duplication and makes the intent obvious. When a new edge case is discovered you add a single data row rather than a whole new method, reducing the chance of copy-paste mistakes. It also produces clearer reporting because every case is a distinct, named test case.",
+      "tags": ["dry", "theory"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "facts-theories-009",
+      "difficulty": "Beginner",
+      "question": "What happens if a [Theory] has no data rows?",
+      "answer": "By default a theory with no data is reported as a failure so that accidentally deleted or misconfigured data does not silently disable the test. xUnit v3 adds the SkipTestWithoutData property on [Theory], which makes an empty theory be skipped instead of failed. That is useful when data is loaded conditionally from an environment that may be unavailable.",
+      "code": "[Theory(SkipTestWithoutData = true)]\n[MemberData(nameof(GetOptionalCases))]\npublic void Runs_when_data_exists(int value) { }",
+      "tags": ["theory", "skip"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "facts-theories-010",
+      "difficulty": "Beginner",
+      "question": "Can [InlineData] pass null values?",
+      "answer": "Yes. You can pass null as a literal value in [InlineData], and the corresponding parameter must be a reference type or a nullable value type. Passing null is a common way to test guard clauses that should throw ArgumentNullException. If the parameter is non-nullable the compiler will warn, so declare it accordingly.",
+      "code": "[Theory]\n[InlineData(null)]\n[InlineData(\"\")]\npublic void Throws_for_missing_name(string? name)\n    => Assert.Throws<ArgumentException>(() => Validate(name!));",
+      "tags": ["inlinedata", "null"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-011",
+      "difficulty": "Intermediate",
+      "question": "How do you return data from a [MemberData] property?",
+      "answer": "The property or method must be public and static and must return IEnumerable<object[]>, IEnumerable<TheoryDataRow>, or a strongly typed TheoryData<T> instance. xUnit takes each element as one data row, so an object[] becomes one set of arguments. Returning a method lets you compute the data at runtime.",
+      "code": "public static TheoryData<int, int> Sums => new()\n{\n    { 1, 1 },\n    { 2, 2 },\n    { 10, 20 }\n};\n\n[Theory]\n[MemberData(nameof(Sums))]\npublic void Sum_is_positive(int a, int b)\n    => Assert.True(a + b > 0);",
+      "tags": ["memberdata", "theorydata"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-012",
+      "difficulty": "Intermediate",
+      "question": "What is TheoryData<T> and why is it preferred over object arrays?",
+      "answer": "TheoryData<T> and its multi-argument generics give you a strongly typed collection builder whose Add calls are checked against the theory's parameter types. This prevents the common bug where an object[] row has the wrong number or types of values, which would otherwise only fail at runtime. The generic form also produces cleaner code and better IntelliSense.",
+      "code": "public static TheoryData<string, int> Lengths = new()\n{\n    { \"a\", 1 },\n    { \"abc\", 3 }\n};",
+      "tags": ["theorydata", "types"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-013",
+      "difficulty": "Intermediate",
+      "question": "What does [ClassData] do and how does it differ from [MemberData]?",
+      "answer": "[ClassData] takes a Type that implements IEnumerable<object[]> and instantiates it to obtain the data rows, whereas [MemberData] reads a static member of the test class or another type. [ClassData] is useful when the data generation logic is substantial enough to deserve its own class or when it needs constructor dependencies. The trade-off is one more type to maintain.",
+      "code": "public class AddCases : IEnumerable<object[]>\n{\n    public IEnumerator<object[]> GetEnumerator()\n    {\n        yield return new object[] { 1, 2, 3 };\n    }\n    IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();\n}\n\n[Theory]\n[ClassData(typeof(AddCases))]\npublic void Adds(int a, int b, int sum)\n    => Assert.Equal(sum, a + b);",
+      "tags": ["classdata", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-014",
+      "difficulty": "Intermediate",
+      "question": "Can a [MemberData] method be asynchronous in xUnit v3?",
+      "answer": "Yes. In v3 a member data method may return a Task<T> or ValueTask<T> whose result is one of the legal row collections, so data can be fetched asynchronously, for example from a database or an API. This removes the need to block on I/O during discovery. The method must still be public and static.",
+      "code": "public static async Task<TheoryData<int>> LoadAsync()\n{\n    var ids = await FetchIdsAsync();\n    var data = new TheoryData<int>();\n    foreach (var id in ids) data.Add(id);\n    return data;\n}",
+      "tags": ["memberdata", "async"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "facts-theories-015",
+      "difficulty": "Intermediate",
+      "question": "What are TheoryDataRow and what metadata can it carry?",
+      "answer": "TheoryDataRow is the v3 base class for a single strongly typed data row, and you can attach metadata such as Skip, Explicit, DisplayName, Timeout, and traits to that row. This lets you mark one case as skipped or explicit without affecting the others in the same theory. You can set the metadata with property initialisers or the fluent WithSkip and similar methods.",
+      "code": "public static TheoryData<int> Data => new()\n{\n    new TheoryDataRow<int>(1),\n    new TheoryDataRow<int>(2) { Skip = \"Known flaky\" }\n};",
+      "tags": ["theorydatarow", "metadata"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "facts-theories-016",
+      "difficulty": "Intermediate",
+      "question": "What is MatrixTheoryData and when is it useful?",
+      "answer": "MatrixTheoryData combines two to five sets of values and produces the Cartesian product as theory data, so you do not have to enumerate every combination by hand. It is handy for testing combinations of inputs such as browser and viewport size. The generated rows are ordinary theory rows and can be filtered and reported like any other.",
+      "code": "public static TheoryData<int, string> Combos =\n    new MatrixTheoryData<int, string>(\n        new[] { 1, 2, 3 },\n        new[] { \"a\", \"b\" });",
+      "tags": ["matrixtheorydata", "v3"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "facts-theories-017",
+      "difficulty": "Intermediate",
+      "question": "How can you share theory data between multiple test classes?",
+      "answer": "Put the data in a public static property or method on a separate class and reference it with [MemberData(nameof(...), MemberType = typeof(SharedData))]. In v3 you can also point [MemberData] at an inherited member. Keeping the data in one place avoids drift between test classes that verify the same inputs.",
+      "code": "public static class SharedData\n{\n    public static TheoryData<int> Primes => new() { 2, 3, 5, 7 };\n}\n\n[Theory]\n[MemberData(nameof(SharedData.Primes), MemberType = typeof(SharedData))]\npublic void Prime_is_odd_or_two(int n) { }",
+      "tags": ["memberdata", "shared"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-018",
+      "difficulty": "Intermediate",
+      "question": "Why do theory data types sometimes need to be serializable?",
+      "answer": "When a runner executes individual data rows in a separate process or persists them, such as Visual Studio's Test Explorer, the data must be serializable so the row can be re-created for execution. Built-in types such as strings, numbers, enums, Guid, Uri, and arrays of these are handled automatically, but custom classes need IXunitSerializable or a registered external serializer in v3. If a type cannot be serialized the row still runs but cannot be invoked individually from the IDE.",
+      "tags": ["serialization", "theory-data"],
+      "references": ["https://xunit.net/docs/theory-data-stability-in-vs"]
+    },
+    {
+      "id": "facts-theories-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between facts and theories in terms of parallel execution?",
+      "answer": "Parallelization is decided at the collection and class level, not by whether a method is a fact or a theory. All rows of a theory and all facts in the same class run sequentially because they share the class collection, while tests in different classes run in parallel. The practical consequence is that a theory with many rows can slow down a class because its rows cannot run concurrently.",
+      "tags": ["theory", "parallelization"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "facts-theories-020",
+      "difficulty": "Intermediate",
+      "question": "How do you generate theory data from a file or a database?",
+      "answer": "Expose a public static member that reads the source and yields rows, then reference it with [MemberData]. Reading files relative to the test assembly with AppContext.BaseDirectory makes the path reliable regardless of the working directory. Because data is produced at discovery time, keep the source small or cache it so discovery stays fast.",
+      "code": "public static TheoryData<string> Names()\n{\n    var path = Path.Combine(AppContext.BaseDirectory, \"names.txt\");\n    var data = new TheoryData<string>();\n    foreach (var line in File.ReadAllLines(path)) data.Add(line);\n    return data;\n}",
+      "tags": ["memberdata", "files"],
+      "references": ["https://xunit.net/docs/getting-started/v3/theory-data-attributes"]
+    },
+    {
+      "id": "facts-theories-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement a custom data attribute for a theory?",
+      "answer": "Derive from DataAttribute and override GetData, which receives the MethodInfo and a DisposalTracker and returns a ValueTask of theory data rows. In v3 the discoverer types were removed and the attribute is responsible for supplying its own data, so the override is the single extension point. This is useful when data comes from a domain-specific source such as an attribute-driven DSL.",
+      "code": "public class SqlDataAttribute : DataAttribute\n{\n    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(\n        MethodInfo testMethod, DisposalTracker disposalTracker)\n    {\n        IReadOnlyCollection<ITheoryDataRow> rows =\n            new[] { new TheoryDataRow(1, 2) };\n        return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(rows);\n    }\n}",
+      "tags": ["custom-attribute", "idataattribute"],
+      "references": ["https://xunit.net/docs/getting-started/v3/extensibility"]
+    },
+    {
+      "id": "facts-theories-022",
+      "difficulty": "Advanced",
+      "question": "How does xUnit decide the order in which theory rows are displayed and executed?",
+      "answer": "Rows are executed in the order produced by the data attribute, but the reported ordering can be normalised by the runner for stability across machines. In v3 the randomization used for test ordering is stable rather than pseudo-random, based on the test assembly's unique ID, so the same assembly in the same location runs in the same order. To force a specific order for a single theory you control the order of rows in the data source.",
+      "tags": ["ordering", "theory"],
+      "references": ["https://xunit.net/docs/getting-started/v3/whats-new"]
+    },
+    {
+      "id": "facts-theories-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of generating very large theory data sets?",
+      "answer": "Large data sets can dramatically inflate discovery time and the size of the reported test list because each row becomes a separate test case. They also multiply the cost of any expensive per-test setup and can make the suite harder to navigate. Prefer a representative sample plus targeted edge cases, or move exhaustive enumeration into a property-based testing tool where it belongs.",
+      "tags": ["performance", "theory-data"],
+      "references": ["https://xunit.net/docs/running-tests-in-parallel"]
+    },
+    {
+      "id": "facts-theories-024",
+      "difficulty": "Advanced",
+      "question": "How do you create an external serializer for custom theory data in xUnit v3?",
+      "answer": "Implement IXunitSerializer, providing methods to serialize an object to a string, deserialize a string back to an object, and report whether a type is supported, then register it with an assembly-level attribute. This lets types you do not own participate in theory data serialization without adding IXunitSerializable to them. v3 added built-in serialization for Guid, Index, Range, and Uri as well.",
+      "code": "[assembly: RegisterXunitSerializer(typeof(MoneySerializer),\n    typeof(Money))]\npublic class MoneySerializer : IXunitSerializer\n{\n    public bool IsSerializable(Type t, object? v, out string? why)\n    {\n        why = null; return true;\n    }\n    public string Serialize(object value) => value.ToString()!;\n    public object Deserialize(Type type, string serialized) => Money.Parse(serialized);\n}",
+      "tags": ["serialization", "ixunitserializer"],
+      "references": ["https://xunit.net/docs/getting-started/v3/custom-serialization"]
+    },
+    {
+      "id": "facts-theories-025",
+      "difficulty": "Advanced",
+      "question": "When should you prefer property-based testing over hand-written theories?",
+      "answer": "Property-based testing generates many random inputs to check an invariant, which is far more effective than hand-picked examples when the input space is large or the correct behaviour is a general rule. Hand-written theories remain better when you need specific, readable regressions for known bugs. A common approach is to keep explicit theories for documented cases and add a property-based test to explore the wider space.",
+      "tags": ["property-based", "theory"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

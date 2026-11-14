@@ -1,0 +1,333 @@
+{
+  "category": "Rendering: SSR, SSG, ISR & CSR",
+  "slug": "rendering",
+  "icon": "monitor",
+  "questions": [
+    {
+      "id": "rendering-001",
+      "difficulty": "Beginner",
+      "question": "What is server-side rendering (SSR)?",
+      "answer": "SSR renders HTML on the server for each request before sending it to the browser. The user sees content faster than client-only rendering and search engines can index it. In the App Router any component that reads request data like cookies becomes dynamic. The page is then hydrated on the client.",
+      "tags": [
+        "ssr",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-side-rendering"
+      ]
+    },
+    {
+      "id": "rendering-002",
+      "difficulty": "Beginner",
+      "question": "What is static site generation (SSG)?",
+      "answer": "SSG renders HTML at build time and serves the same file to every visitor from a CDN. It is the fastest option because there is no per-request rendering. In the App Router pages are static by default when they do not use dynamic APIs. Use it for content that does not change per user.",
+      "tags": [
+        "ssg",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ]
+    },
+    {
+      "id": "rendering-003",
+      "difficulty": "Beginner",
+      "question": "What is incremental static regeneration (ISR)?",
+      "answer": "ISR lets you statically generate pages and revalidate them in the background after a set interval or on demand. Users get fast cached HTML while content stays fresh. You configure it with the revalidate option on fetch or the route segment config. It blends the speed of static with the freshness of dynamic.",
+      "tags": [
+        "isr",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration"
+      ]
+    },
+    {
+      "id": "rendering-004",
+      "difficulty": "Beginner",
+      "question": "What is client-side rendering (CSR)?",
+      "answer": "CSR renders the UI in the browser using JavaScript after the initial document loads. The server sends a minimal shell and the client fetches data and builds the DOM. It is useful for highly interactive, user-specific views. The downside is slower first paint and weaker SEO.",
+      "tags": [
+        "csr",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "rendering-005",
+      "difficulty": "Beginner",
+      "question": "How does Next.js decide static vs dynamic rendering?",
+      "answer": "A route is static unless it uses dynamic APIs such as cookies, headers, or searchParams, or sets dynamic to force-dynamic. Using these opts the route into dynamic rendering. You can also force static with force-static. Next.js reports the result in the build output.",
+      "tags": [
+        "static",
+        "dynamic"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ]
+    },
+    {
+      "id": "rendering-006",
+      "difficulty": "Beginner",
+      "question": "What is hydration?",
+      "answer": "Hydration is the process where React attaches event handlers to server-rendered HTML in the browser. It makes the static markup interactive without re-rendering from scratch. It requires the client render to match the server HTML. Mismatches produce hydration warnings.",
+      "tags": [
+        "hydration",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "rendering-007",
+      "difficulty": "Beginner",
+      "question": "What is streaming in Next.js?",
+      "answer": "Streaming sends HTML to the browser in chunks as parts of the page finish rendering. It lets users see the shell and fast sections before slow ones resolve. Next.js uses Suspense boundaries to control streaming. It improves perceived performance and time to first byte.",
+      "tags": [
+        "streaming",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "rendering-008",
+      "difficulty": "Beginner",
+      "question": "What is a route segment config like revalidate?",
+      "answer": "Route segment config options are exported constants that control rendering for a route. For example export const revalidate = 60 sets time-based revalidation, and dynamic = 'force-dynamic' forces dynamic rendering. They apply to pages, layouts, and route handlers. These settings override defaults for that segment.",
+      "code": "export const revalidate = 60;\nexport const dynamic = 'force-dynamic';",
+      "tags": [
+        "route-config",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
+      ]
+    },
+    {
+      "id": "rendering-009",
+      "difficulty": "Beginner",
+      "question": "How does the App Router pre-render pages at build time?",
+      "answer": "During next build Next.js prerenders routes that do not use dynamic APIs, generating static HTML and data. These pages are served from the CDN instantly. Dynamic routes need generateStaticParams to prerender specific params. The build output lists which routes are static or dynamic.",
+      "tags": [
+        "build",
+        "ssg"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ]
+    },
+    {
+      "id": "rendering-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between SSG and ISR?",
+      "answer": "SSG generates a page once at build time and never changes until the next build. ISR generates it at build time but revalidates it in the background on a schedule or on demand. ISR suits content that changes occasionally, like a blog or product catalog. SSG suits content that rarely changes.",
+      "tags": [
+        "ssg",
+        "isr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration"
+      ]
+    },
+    {
+      "id": "rendering-011",
+      "difficulty": "Intermediate",
+      "question": "How do you force a page to be dynamic?",
+      "answer": "Export const dynamic = 'force-dynamic' from the page or layout. Reading cookies, headers, or searchParams also makes a route dynamic automatically. You can also use the no-store fetch cache option. Use dynamic rendering when content must be fresh per request.",
+      "tags": [
+        "dynamic",
+        "route-config"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
+      ]
+    },
+    {
+      "id": "rendering-012",
+      "difficulty": "Intermediate",
+      "question": "How does ISR with revalidate work under the hood?",
+      "answer": "With revalidate set, Next.js serves the cached page and, once the interval passes, regenerates it in the background on the next request. The first visitor may still see the old page while regeneration runs. You can also trigger regeneration on demand with revalidatePath or revalidateTag. This avoids full rebuilds.",
+      "tags": [
+        "isr",
+        "revalidation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration"
+      ]
+    },
+    {
+      "id": "rendering-013",
+      "difficulty": "Intermediate",
+      "question": "What is stale-while-revalidate behavior?",
+      "answer": "Stale-while-revalidate serves cached stale content immediately while fetching fresh data in the background. Next.js uses this model for ISR and the client router cache. Users get fast responses and content updates shortly after. It trades a small delay in freshness for speed.",
+      "tags": [
+        "isr",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/incremental-static-regeneration"
+      ]
+    },
+    {
+      "id": "rendering-014",
+      "difficulty": "Intermediate",
+      "question": "When should you choose SSR over SSG?",
+      "answer": "Choose SSR when content depends on the request, such as user-specific data, authentication, or real-time values. Choose SSG when the same content serves all users and speed matters most. SSR costs more compute per request. Many apps mix both across routes.",
+      "tags": [
+        "ssr",
+        "ssg"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-side-rendering"
+      ]
+    },
+    {
+      "id": "rendering-015",
+      "difficulty": "Intermediate",
+      "question": "How do you stream a page section while keeping the shell static?",
+      "answer": "Keep the page shell free of dynamic data and wrap slow components in Suspense. The static shell is sent immediately and the suspended parts stream in. This is essentially Partial Prerendering behavior. It gives fast first paint with dynamic content.",
+      "tags": [
+        "streaming",
+        "ppr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "rendering-016",
+      "difficulty": "Intermediate",
+      "question": "How does the App Router handle dynamic data in a static page?",
+      "answer": "If a component reads cookies or headers, the route becomes dynamic unless you use Suspense to isolate it. With Partial Prerendering the shell stays static while the dynamic part streams. Without PPR, using dynamic APIs makes the whole route dynamic. Design boundaries carefully to keep pages static.",
+      "tags": [
+        "dynamic",
+        "ppr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ]
+    },
+    {
+      "id": "rendering-017",
+      "difficulty": "Intermediate",
+      "question": "What is the client router cache?",
+      "answer": "The client router cache stores visited route segments in the browser to make back and forward navigation instant. In Next.js 15 it no longer serves stale data for a set time by default. You can tune it with staleTimes in next.config.js. It is separate from the server data cache.",
+      "tags": [
+        "router-cache",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "rendering-018",
+      "difficulty": "Intermediate",
+      "question": "How does prerendering differ from rendering?",
+      "answer": "Prerendering happens ahead of the request, either at build time or in the background, producing reusable output. Rendering happens on each request for dynamic content. Static pages are prerendered, dynamic pages are rendered per request. PPR combines both in one route.",
+      "tags": [
+        "prerender",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ]
+    },
+    {
+      "id": "rendering-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle personalized content while keeping pages fast?",
+      "answer": "Keep the shell static and isolate personalized parts behind Suspense or in Client Components that fetch after load. Use Partial Prerendering to stream dynamic holes into a static shell. Avoid reading cookies at the top of a page. This preserves caching for the common case.",
+      "tags": [
+        "personalization",
+        "ppr"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering"
+      ]
+    },
+    {
+      "id": "rendering-020",
+      "difficulty": "Intermediate",
+      "question": "How does generateStaticParams enable static dynamic routes?",
+      "answer": "generateStaticParams returns the params to prerender at build time so dynamic routes can be static. Next.js generates those pages ahead of time. Requests for other params render on demand unless dynamicParams is false. This is the App Router replacement for getStaticPaths.",
+      "tags": [
+        "generate-static-params",
+        "ssg"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/generate-static-params"
+      ]
+    },
+    {
+      "id": "rendering-021",
+      "difficulty": "Advanced",
+      "question": "How does Partial Prerendering produce a static shell with dynamic holes?",
+      "answer": "PPR prerenders the parts of a route outside Suspense and leaves the suspended dynamic parts as holes. At request time Next.js serves the static shell and streams the holes as they resolve. This removes the trade-off between fully static and fully dynamic routes. PPR requires enabling the experimental flag.",
+      "tags": [
+        "ppr",
+        "streaming"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/ppr"
+      ]
+    },
+    {
+      "id": "rendering-022",
+      "difficulty": "Advanced",
+      "question": "How do dynamic APIs like cookies affect caching?",
+      "answer": "Calling cookies, headers, or reading searchParams marks the route dynamic, disabling static caching for it. The route is rendered per request. To keep static rendering you must isolate those reads behind Suspense or move them to the client. Understanding this is key to caching strategy.",
+      "tags": [
+        "dynamic",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/static-and-dynamic-rendering"
+      ]
+    },
+    {
+      "id": "rendering-023",
+      "difficulty": "Advanced",
+      "question": "How do you choose between the four rendering strategies per route?",
+      "answer": "Use SSG for content identical for all users, ISR when it changes periodically, SSR when it must be per-request, and CSR for client-only interactivity. In the App Router these are mostly determined by which APIs you use. Prefer static with revalidation and stream dynamic parts. Mix strategies across routes as needed.",
+      "tags": [
+        "strategies",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering"
+      ]
+    },
+    {
+      "id": "rendering-024",
+      "difficulty": "Advanced",
+      "question": "What is the impact of streaming on SEO and metrics?",
+      "answer": "Streaming improves time to first byte and first contentful paint because the shell arrives early. Search engines can still index the final HTML since it is server-rendered. It also lets the browser start fetching assets sooner. Core Web Vitals like LCP often improve with streaming.",
+      "tags": [
+        "streaming",
+        "seo"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "rendering-025",
+      "difficulty": "Advanced",
+      "question": "How does the App Router reconcile static and dynamic data in one page?",
+      "answer": "By default using dynamic APIs makes the whole route dynamic, but you can cache individual fetches while others stay fresh. Partial Prerendering lets a static shell host dynamic Suspense holes. This granularity lets one page mix cached and live data. Design boundaries around what truly varies per request.",
+      "tags": [
+        "ppr",
+        "caching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/partial-prerendering"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,224 @@
+{
+  "category": "Testing ASP.NET Core with WebApplicationFactory",
+  "slug": "aspnetcore",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "aspnetcore-001",
+      "difficulty": "Beginner",
+      "question": "What is WebApplicationFactory?",
+      "answer": "WebApplicationFactory<TEntryPoint> is a class from Microsoft.AspNetCore.Mvc.Testing that boots your ASP.NET Core application in memory using TestServer, so integration tests can send real HTTP requests through the full middleware pipeline. It discovers the app's configuration, services, and startup from the entry point type. Tests get an HttpClient that talks to the in-memory server without opening a network port.",
+      "tags": ["webapplicationfactory", "integration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-002",
+      "difficulty": "Beginner",
+      "question": "How do you create an HttpClient for integration tests?",
+      "answer": "Inject WebApplicationFactory<TEntryPoint> into the test class, usually as a class fixture, and call factory.CreateClient() to get an HttpClient connected to the in-memory server. The client applies the app's routing and middleware exactly as in production. Dispose the factory when the tests finish to release the host.",
+      "code": "public class ApiTests(WebApplicationFactory<Program> factory)\n    : IClassFixture<WebApplicationFactory<Program>>\n{\n    [Fact]\n    public async Task Ping()\n    {\n        var res = await factory.CreateClient().GetAsync(\"/ping\");\n        res.EnsureSuccessStatusCode();\n    }\n}",
+      "tags": ["httpclient", "fixtures"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-003",
+      "difficulty": "Beginner",
+      "question": "What does TestServer do?",
+      "answer": "TestServer is the in-memory HTTP server that WebApplicationFactory starts; it hosts your application's request pipeline without Kestrel or a real socket. Because requests go directly into the pipeline, tests are fast and do not need a free port or network access. WebApplicationFactory configures and owns the TestServer for you.",
+      "tags": ["testserver", "pipeline"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-004",
+      "difficulty": "Beginner",
+      "question": "Why does the test project need a reference to the web project?",
+      "answer": "WebApplicationFactory uses the entry point type, typically Program, to locate the application assembly and its content root, so the test project must reference the web project. This lets the factory discover the app's dependencies and startup configuration automatically. It is why the entry point type is passed as the generic argument.",
+      "tags": ["project-reference", "entry-point"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-005",
+      "difficulty": "Beginner",
+      "question": "How do you test a POST endpoint?",
+      "answer": "Use the injected client to PostAsJsonAsync with a request object, then assert on the status code and the deserialized response body. Reading the typed response with ReadFromJsonAsync keeps the assertion strongly typed. Always assert the status code before deserializing so a failure is easy to diagnose.",
+      "code": "var response = await _client.PostAsJsonAsync(\"/orders\",\n    new CreateOrder { Sku = \"A1\" });\nAssert.Equal(HttpStatusCode.Created, response.StatusCode);\nvar created = await response.Content.ReadFromJsonAsync<Order>();\nAssert.Equal(\"A1\", created!.Sku);",
+      "tags": ["post", "endpoints"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-006",
+      "difficulty": "Beginner",
+      "question": "How do you assert on a JSON response?",
+      "answer": "Read the content with ReadFromJsonAsync into a strongly typed model or a JsonDocument, then assert on the values. Strongly typed reads are easier to maintain, while JsonDocument is convenient for asserting on a property that has no model. For flexible comparisons you can deserialize into a record and use equality assertions.",
+      "code": "var doc = await response.Content.ReadFromJsonAsync<JsonDocument>();\nAssert.Equal(\"A1\", doc!.RootElement.GetProperty(\"sku\").GetString());",
+      "tags": ["json", "assertions"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-007",
+      "difficulty": "Beginner",
+      "question": "How do you override configuration in an integration test?",
+      "answer": "Use factory.WithWebHostBuilder and add in-memory configuration or settings via builder.ConfigureAppConfiguration, which are layered on top of the app's configuration. This lets a test change a feature flag or connection string without editing files. The override applies only to the factory instance you configure.",
+      "code": "var factory = _factory.WithWebHostBuilder(b =>\n    b.ConfigureAppConfiguration((_, cfg) =>\n        cfg.AddInMemoryCollection(new Dictionary<string, string?>\n        {\n            [\"Features:NewCheckout\"] = \"true\"\n        })));",
+      "tags": ["configuration", "override"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-008",
+      "difficulty": "Beginner",
+      "question": "How do you send an authenticated request in an integration test?",
+      "answer": "Add the Authorization header with a valid bearer token, or configure the test host with a fake authentication scheme that authenticates every request. Fake authentication is convenient because it avoids generating real tokens. For token-based flows you can also call the real login endpoint first and reuse the returned token.",
+      "code": "client.DefaultRequestHeaders.Authorization =\n    new AuthenticationHeaderValue(\"Bearer\", token);",
+      "tags": ["authentication", "headers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit tests and integration tests for an API?",
+      "answer": "Unit tests exercise a single class or method in isolation with its dependencies faked, so they are fast and pinpoint logic errors. Integration tests using WebApplicationFactory exercise the full pipeline including routing, model binding, filters, and serialization, so they catch wiring and configuration problems. A healthy suite has many unit tests and a focused set of integration tests for critical paths.",
+      "tags": ["unit-tests", "integration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "aspnetcore-010",
+      "difficulty": "Beginner",
+      "question": "How do you test an endpoint that returns 404?",
+      "answer": "Send a request for a resource that does not exist and assert that the status code is NotFound, optionally checking the problem details body. Asserting on the status code verifies that routing and the not-found handling both work. This is a common contract test that guards against accidentally returning 200 with an empty body.",
+      "code": "var response = await _client.GetAsync(\"/orders/999\");\nAssert.Equal(HttpStatusCode.NotFound, response.StatusCode);",
+      "tags": ["status-codes", "contract"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-011",
+      "difficulty": "Intermediate",
+      "question": "How do you replace a service in the test server?",
+      "answer": "Override ConfigureWebHost and use builder.ConfigureTestServices to remove the production registration and add a fake. Because ConfigureTestServices runs after the app's own configuration, the fake replaces the real service. This is the standard way to stub external dependencies such as payment gateways or email senders.",
+      "code": "protected override void ConfigureWebHost(IWebHostBuilder builder)\n{\n    builder.ConfigureTestServices(s =>\n    {\n        s.RemoveAll<IEmailSender>();\n        s.AddSingleton<IEmailSender, FakeEmailSender>();\n    });\n}",
+      "tags": ["configuretestservices", "fakes"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-012",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom WebApplicationFactory?",
+      "answer": "Subclass WebApplicationFactory<TEntryPoint> and override ConfigureWebHost to customise services, configuration, or the environment for all tests that use it. This centralises common test setup such as replacing the database or adding fake authentication. Expose helper methods on the subclass to keep individual tests concise.",
+      "code": "public class ApiFactory : WebApplicationFactory<Program>\n{\n    protected override void ConfigureWebHost(IWebHostBuilder b)\n    {\n        b.UseEnvironment(\"Testing\");\n        b.ConfigureTestServices(s => s.AddSingleton<IClock, FakeClock>());\n    }\n}",
+      "tags": ["custom-factory", "setup"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test middleware in isolation?",
+      "answer": "Use TestServer with a minimal pipeline that only adds the middleware under test, or use WebApplicationFactory and assert on the effect the middleware has on a request. Testing the middleware alone with TestServer isolates its logic from the rest of the app. Assert on the request and response changes rather than internal state.",
+      "code": "var server = new TestServer(new WebHostBuilder()\n    .Configure(app => app.UseMiddleware<CorrelationMiddleware>()));\nvar client = server.CreateClient();",
+      "tags": ["middleware", "testserver"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/middleware"]
+    },
+    {
+      "id": "aspnetcore-014",
+      "difficulty": "Intermediate",
+      "question": "How do you assert on problem details from an API?",
+      "answer": "Deserialize the response body into ProblemDetails and assert on its status, title, and detail fields. This verifies the error contract that clients rely on, including the correct status code mapping. Asserting on the structured problem details is more robust than matching the raw JSON text.",
+      "code": "var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();\nAssert.Equal(400, problem!.Status);\nAssert.Equal(\"Validation failed\", problem.Title);",
+      "tags": ["problem-details", "errors"],
+      "references": ["https://learn.microsoft.com/aspnet/core/web-api/handle-errors"]
+    },
+    {
+      "id": "aspnetcore-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test minimal API endpoints?",
+      "answer": "Minimal APIs are tested the same way as controllers: use WebApplicationFactory to create a client and send requests to the mapped routes. Because minimal APIs rely on endpoint filters and model binding, integration tests are especially valuable for verifying the request contract. The entry point type is the class that contains the top-level statements, usually Program.",
+      "code": "app.MapGet(\"/health\", () => Results.Ok(new { status = \"ok\" }));\n\nvar res = await client.GetFromJsonAsync<Health>(\"/health\");\nAssert.Equal(\"ok\", res!.Status);",
+      "tags": ["minimal-apis", "endpoints"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/test-min-api"]
+    },
+    {
+      "id": "aspnetcore-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use HttpClient with a message handler to inspect requests in a test?",
+      "answer": "Wrap the test client's handler or use a DelegatingHandler that records outgoing requests, then assert on the recorded URL, headers, and body. This lets you verify what the application sent to a downstream service. Registering the handler in the test factory keeps the production code unchanged.",
+      "code": "public class RecordingHandler : DelegatingHandler\n{\n    public List<HttpRequestMessage> Requests { get; } = new();\n    protected override Task<HttpResponseMessage> SendAsync(\n        HttpRequestMessage r, CancellationToken ct)\n    {\n        Requests.Add(r);\n        return base.SendAsync(r, ct);\n    }\n}",
+      "tags": ["delegating-handler", "verification"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test with a real database in WebApplicationFactory?",
+      "answer": "In ConfigureTestServices replace the DbContext registration with one that points at a test database, such as SQLite or a containerised SQL Server, and apply migrations at startup. This exercises real query translation and constraints. Keep the database isolated per test run and clean up afterwards to avoid cross-run interference.",
+      "tags": ["database", "integration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-018",
+      "difficulty": "Intermediate",
+      "question": "How do you set the hosting environment in tests?",
+      "answer": "Call builder.UseEnvironment(\"Testing\") in ConfigureWebHost so the app loads the correct configuration and skips production-only behaviour such as HTTPS redirection. Using a dedicated environment keeps test behaviour predictable. You can then have environment-specific configuration that only applies to tests.",
+      "code": "builder.UseEnvironment(\"Testing\");",
+      "tags": ["environment", "configuration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test model validation?",
+      "answer": "Send a request with invalid data and assert that the API returns 400 with validation problem details listing the failing fields. This verifies that data annotations or FluentValidation are wired into model binding. Asserting on the field names in the response makes the contract explicit.",
+      "code": "var res = await _client.PostAsJsonAsync(\"/orders\",\n    new CreateOrder { Sku = \"\" });\nAssert.Equal(HttpStatusCode.BadRequest, res.StatusCode);\nvar problem = await res.Content\n    .ReadFromJsonAsync<ValidationProblemDetails>();\nAssert.Contains(\"Sku\", problem!.Errors.Keys);",
+      "tags": ["validation", "contract"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/models/validation"]
+    },
+    {
+      "id": "aspnetcore-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle authentication and authorisation in integration tests?",
+      "answer": "Either configure a test authentication handler that authenticates requests based on a test header, or generate real tokens through the identity provider. The test handler is simpler and lets you assert that unauthorised requests return 401 and forbidden ones return 403. Always test at least one unauthorised case to confirm the policy is applied.",
+      "code": "var request = new HttpRequestMessage(HttpMethod.Get, \"/admin\");\nrequest.Headers.Add(\"X-Test-Role\", \"admin\");\nvar res = await _client.SendAsync(request);\nAssert.Equal(HttpStatusCode.OK, res.StatusCode);",
+      "tags": ["authorization", "authentication"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-021",
+      "difficulty": "Advanced",
+      "question": "How do you share a WebApplicationFactory across many test classes efficiently?",
+      "answer": "Create a single collection fixture that owns the factory and have all integration test classes join that collection. The host starts once for the whole collection, which is much faster than starting it per class. Because the collection runs sequentially, avoid mutating shared application state that other tests depend on.",
+      "code": "[CollectionDefinition(\"Api\")]\npublic class ApiCollection : ICollectionFixture<ApiFactory> { }\n\n[Collection(\"Api\")]\npublic class OrdersTests(ApiFactory factory) { }",
+      "tags": ["collection-fixture", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-022",
+      "difficulty": "Advanced",
+      "question": "How do you test with a real network stack instead of TestServer?",
+      "answer": "Use Kestrel via a custom factory that calls UseKestrel and binds to a port, which lets you test features that TestServer cannot simulate such as HTTP/2, real TLS, or connection-level behaviour. This is slower and requires port management, so reserve it for the cases that genuinely need a socket. TestServer remains the default because it is faster and simpler.",
+      "tags": ["kestrel", "testserver"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-023",
+      "difficulty": "Advanced",
+      "question": "What are the limitations of WebApplicationFactory?",
+      "answer": "TestServer does not exercise the real network stack, so transport-level concerns such as TLS, HTTP/2 negotiation, and socket timeouts are not covered. It also shares the process with the test runner, so global state and static caches behave differently from a deployed app. For these cases use a container-based test that runs the real application image.",
+      "tags": ["limitations", "testserver"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "aspnetcore-024",
+      "difficulty": "Advanced",
+      "question": "How do you test response caching and output caching?",
+      "answer": "Send the same request twice and assert that the second response is served from cache, for example by checking a cache hit header or that a side effect occurred only once. Use a controllable clock and a real cache implementation so the test exercises the actual caching pipeline. Reset the cache between tests to avoid interference.",
+      "code": "var first = await _client.GetAsync(\"/products\");\nvar second = await _client.GetAsync(\"/products\");\nAssert.True(second.Headers.Contains(\"Age\"));",
+      "tags": ["caching", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/response"]
+    },
+    {
+      "id": "aspnetcore-025",
+      "difficulty": "Advanced",
+      "question": "How do you diagnose a flaky integration test?",
+      "answer": "Look for shared mutable state across the collection, dependence on wall-clock time or ordering, and external resources such as a database that another test also modifies. Run the test in isolation and then with the full suite to see whether order or parallelism is the trigger. Replace timing dependencies with explicit signals and give each test its own data so it cannot be affected by others.",
+      "tags": ["flakiness", "diagnostics"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    }
+  ]
+}

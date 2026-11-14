@@ -1,0 +1,362 @@
+{
+  "category": "Setup, Teardown & Lifecycle",
+  "slug": "lifecycle",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "lifecycle-001",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of the [SetUp] attribute?",
+      "answer": "A method marked [SetUp] runs before each test in the fixture and is where you create the fresh state a test needs, such as an object under test or a temporary file. It keeps tests independent because each test starts from the same prepared state. A class may define only one [SetUp] method.",
+      "code": "[SetUp]\npublic void SetUp() => _calculator = new Calculator();",
+      "tags": [
+        "setup",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-002",
+      "difficulty": "Beginner",
+      "question": "What does [TearDown] do and when does it run?",
+      "answer": "A method marked [TearDown] runs after each test in the fixture, whether the test passed or failed, and is where you release resources or clean up state created by the test or its [SetUp]. Because it always runs, it is the reliable place to dispose of things. Like [SetUp], a class may define only one [TearDown] method.",
+      "code": "[TearDown]\npublic void TearDown() => _calculator?.Dispose();",
+      "tags": [
+        "teardown",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/teardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-003",
+      "difficulty": "Beginner",
+      "question": "How is [OneTimeSetUp] different from [SetUp]?",
+      "answer": "[SetUp] runs before every test, while [OneTimeSetUp] runs once before any test in the fixture. Use [OneTimeSetUp] for expensive resources that all tests can share, such as a database connection or a web host. Sharing that state means tests can no longer assume a clean slate, so keep it read-only where possible.",
+      "tags": [
+        "onetimesetup",
+        "setup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-004",
+      "difficulty": "Beginner",
+      "question": "What is [OneTimeTearDown] used for?",
+      "answer": "A method marked [OneTimeTearDown] runs once after all tests in the fixture have finished and releases the resources created in [OneTimeSetUp]. It runs even if some tests failed. It is the counterpart to [OneTimeSetUp] and the place to stop a server or dispose a shared container.",
+      "tags": [
+        "onetimeteardown",
+        "teardown"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimeteardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-005",
+      "difficulty": "Beginner",
+      "question": "In what order do SetUp and TearDown run relative to each test?",
+      "answer": "For each test NUnit runs OneTimeSetUp once, then for every test it runs SetUp, the test, and TearDown, and finally OneTimeTearDown once. So the per-test pair brackets every individual test while the one-time pair brackets the whole fixture. The fixture constructor runs before OneTimeSetUp.",
+      "tags": [
+        "lifecycle",
+        "order"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html"
+      ]
+    },
+    {
+      "id": "lifecycle-006",
+      "difficulty": "Beginner",
+      "question": "What happens if a [SetUp] method throws an exception?",
+      "answer": "If [SetUp] throws, NUnit marks the test as failed and does not run the test body, and it still runs [TearDown] so cleanup can proceed. The exception is reported as the failure reason. This makes a broken [SetUp] immediately visible rather than silently skipping tests.",
+      "tags": [
+        "setup",
+        "failures"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-007",
+      "difficulty": "Beginner",
+      "question": "Can a test fixture have more than one [SetUp] method?",
+      "answer": "No, a single class may define only one [SetUp] and one [TearDown] method; adding a second is an error. However, a base class and a derived class may each have one, and NUnit runs the base class's [SetUp] before the derived class's. This lets you layer common setup in a base fixture.",
+      "tags": [
+        "setup",
+        "inheritance"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-008",
+      "difficulty": "Beginner",
+      "question": "How do you run setup code once for an entire namespace?",
+      "answer": "Create a class marked [SetUpFixture] in the namespace; its [OneTimeSetUp] runs before any test in that namespace and its [OneTimeTearDown] after they all finish. A [SetUpFixture] with no namespace applies to the whole assembly. It is ideal for starting infrastructure that many fixtures share.",
+      "code": "namespace MyApp.Tests\n{\n    [SetUpFixture]\n    public class NamespaceSetup\n    {\n        [OneTimeSetUp] public void Init() => Db.Migrate();\n        [OneTimeTearDown] public void Cleanup() => Db.Drop();\n    }\n}",
+      "tags": [
+        "setupfixture",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setupfixture.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-009",
+      "difficulty": "Beginner",
+      "question": "Does a [OneTimeSetUp] method run before or after the fixture constructor?",
+      "answer": "The fixture constructor runs first, then NUnit calls [OneTimeSetUp]. Because the constructor runs once per fixture instance and [OneTimeSetUp] also runs once, both are safe places for one-time initialisation, but setup logic that can throw or needs the framework context belongs in [OneTimeSetUp]. With per-test lifecycle, a new instance is constructed before each test's SetUp.",
+      "tags": [
+        "lifecycle",
+        "constructor"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html"
+      ]
+    },
+    {
+      "id": "lifecycle-010",
+      "difficulty": "Beginner",
+      "question": "What runs first, [SetUp] or the test's constructor?",
+      "answer": "The constructor runs first because NUnit must create the fixture instance before it can invoke lifecycle methods. Then [SetUp] runs, then the test. The distinction matters when deciding where to put initialisation: the constructor is fine for simple field assignment, while [SetUp] is better for anything that may throw or needs a fresh instance each time.",
+      "tags": [
+        "lifecycle",
+        "constructor"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html"
+      ]
+    },
+    {
+      "id": "lifecycle-011",
+      "difficulty": "Intermediate",
+      "question": "What is the full lifecycle order for a test in a fixture?",
+      "answer": "NUnit constructs the fixture, runs [OneTimeSetUp] once, then for each test runs [SetUp], the test method and [TearDown], and finally runs [OneTimeTearDown] once. If a base class is involved, its setup methods run before the derived ones and its teardown methods after. A SetUpFixture in the namespace wraps all of this at the outer level.",
+      "tags": [
+        "lifecycle",
+        "order"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setupfixture.html"
+      ]
+    },
+    {
+      "id": "lifecycle-012",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit handle SetUp methods in a base and derived class?",
+      "answer": "If both the base class and the derived class define a [SetUp], NUnit runs the base one first, then the derived one, before each test. For teardown the order is reversed: derived [TearDown] runs before base [TearDown]. This mirrors normal construction and disposal ordering and lets a derived fixture build on shared setup.",
+      "tags": [
+        "inheritance",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-013",
+      "difficulty": "Intermediate",
+      "question": "What happens to [TearDown] when [SetUp] fails?",
+      "answer": "NUnit still runs [TearDown] even when [SetUp] throws, so any resource that [SetUp] managed to create can be released. The test body is skipped and the result is a failure caused by the setup exception. Writing defensive teardown that tolerates partial initialisation avoids masking the original error.",
+      "tags": [
+        "teardown",
+        "failures"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/teardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html"
+      ]
+    },
+    {
+      "id": "lifecycle-014",
+      "difficulty": "Intermediate",
+      "question": "How does FixtureLifeCycle affect lifecycle methods?",
+      "answer": "With LifeCycle.SingleInstance the fixture is constructed once and the one-time methods run once for the whole fixture. With LifeCycle.InstancePerTestCase a new instance is constructed for each test, so [SetUp] and [TearDown] still run per test but instance fields are never shared. [OneTimeSetUp] still runs once per fixture in both modes.",
+      "tags": [
+        "fixturelifecycle",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/fixturelifecycle.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the fixture constructor and [OneTimeSetUp]?",
+      "answer": "Both run once per fixture instance, but the constructor cannot easily report setup failures as test failures, while an exception in [OneTimeSetUp] is reported cleanly and marks the affected tests. The constructor also runs before the framework has established context, so you cannot rely on TestContext there. Put real initialisation in [OneTimeSetUp].",
+      "tags": [
+        "constructor",
+        "onetimesetup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/TestContext.html"
+      ]
+    },
+    {
+      "id": "lifecycle-016",
+      "difficulty": "Intermediate",
+      "question": "How do you ensure resources are cleaned up when a test fails partway through?",
+      "answer": "Use [TearDown] or [OneTimeTearDown], which run regardless of the test outcome, and make the cleanup tolerant of partially initialised state. Disposing in the fixture via IDisposable is another option. Avoid putting cleanup only at the end of the test body, because an assertion failure throws before that code runs.",
+      "tags": [
+        "teardown",
+        "cleanup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/teardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-017",
+      "difficulty": "Intermediate",
+      "question": "What happens if [OneTimeSetUp] throws an exception?",
+      "answer": "If [OneTimeSetUp] throws, NUnit reports the failure and does not run the tests in the fixture, and [OneTimeTearDown] still runs so resources can be released. All the tests are marked as failed or not run depending on the runner. This makes an unrecoverable setup problem obvious instead of producing many misleading test failures.",
+      "tags": [
+        "onetimesetup",
+        "failures"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimeteardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-018",
+      "difficulty": "Intermediate",
+      "question": "How do async setup and teardown methods work in NUnit?",
+      "answer": "NUnit supports setup and teardown methods that return Task; it awaits them before proceeding, so you can use async I/O such as opening a connection. Returning Task is the safe form rather than async void. The same applies to [OneTimeSetUp] and [OneTimeTearDown].",
+      "code": "[SetUp]\npublic async Task SetUpAsync() => _db = await Db.OpenAsync();",
+      "tags": [
+        "async",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html"
+      ]
+    },
+    {
+      "id": "lifecycle-019",
+      "difficulty": "Intermediate",
+      "question": "How do you share state between tests within a fixture safely?",
+      "answer": "Create the shared state in [OneTimeSetUp] and treat it as read-only, or use per-test lifecycle with [SetUp] to build fresh state each time. If tests run in parallel and share mutable state you must synchronise access or avoid sharing altogether. The safest default is to share only immutable or externally synchronised resources.",
+      "tags": [
+        "state",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "lifecycle-020",
+      "difficulty": "Intermediate",
+      "question": "How does a SetUpFixture interact with parallel execution?",
+      "answer": "The one-time methods of a SetUpFixture run once around all the tests in its namespace, and NUnit ensures they complete before the contained tests start, even when those tests run in parallel. The setup itself is not run concurrently with the tests it guards. Keep its work short because every test in the namespace waits on it.",
+      "tags": [
+        "setupfixture",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setupfixture.html",
+        "https://docs.nunit.org/articles/nunit/technical-notes/usage/Framework-Parallel-Test-Execution.html"
+      ]
+    },
+    {
+      "id": "lifecycle-021",
+      "difficulty": "Advanced",
+      "question": "How does NUnit order setup methods across an inheritance hierarchy?",
+      "answer": "NUnit collects the [SetUp] methods from the whole hierarchy and runs them from the most base class down to the most derived, then runs the test, then runs [TearDown] methods from the most derived back up to the base. Each class may contribute at most one [SetUp] and one [TearDown]. This guarantees that base infrastructure is ready before derived setup runs.",
+      "tags": [
+        "inheritance",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-022",
+      "difficulty": "Advanced",
+      "question": "What is the lifecycle for a fixture parameterized with [TestFixtureSource]?",
+      "answer": "NUnit builds one fixture instance per argument set and runs the full lifecycle, including [OneTimeSetUp] and [OneTimeTearDown], for each instance. Constructor arguments come from the source and can be captured in fields for the tests. Each instance appears as a separate node in the runner.",
+      "tags": [
+        "testfixturesource",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/testfixturesource.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html"
+      ]
+    },
+    {
+      "id": "lifecycle-023",
+      "difficulty": "Advanced",
+      "question": "How does implementing IDisposable on a fixture interact with the lifecycle?",
+      "answer": "If a fixture implements IDisposable, NUnit calls Dispose after [OneTimeTearDown] for each fixture instance, which makes it a convenient place to release shared resources. Dispose is not a substitute for [TearDown] because it runs once per fixture, not once per test. Ensure Dispose is idempotent so a partially failed run does not throw.",
+      "code": "public class HostFixture : IDisposable\n{\n    private readonly WebApplication _app = Start();\n    public void Dispose() => _app.Dispose();\n}",
+      "tags": [
+        "idisposable",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimeteardown.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    },
+    {
+      "id": "lifecycle-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of heavy OneTimeSetUp state versus per-test SetUp?",
+      "answer": "Heavy [OneTimeSetUp] makes a suite faster because expensive work happens once, but it introduces shared state that can leak between tests and complicate parallel execution. Per-test [SetUp] keeps tests isolated and easy to reason about at the cost of repeated setup. A common compromise is shared read-only infrastructure with per-test mutable state.",
+      "tags": [
+        "design",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html"
+      ]
+    },
+    {
+      "id": "lifecycle-025",
+      "difficulty": "Advanced",
+      "question": "How do action attributes interact with the standard lifecycle methods?",
+      "answer": "Action attributes implementing ITestAction wrap a test with BeforeTest and AfterTest calls, which run inside the standard lifecycle: after [SetUp] and before [TearDown] for tests, or around a whole suite for suite-level actions. This makes them a way to inject setup and teardown logic without editing fixtures. Ordering among several action attributes follows their declaration and scope.",
+      "tags": [
+        "actionattributes",
+        "lifecycle"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/extending-nunit/Action-Attributes.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/setup-and-teardown.html"
+      ]
+    }
+  ]
+}

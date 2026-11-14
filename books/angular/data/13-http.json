@@ -1,0 +1,391 @@
+{
+  "category": "HTTP Client & Interceptors",
+  "slug": "http",
+  "icon": "globe",
+  "questions": [
+    {
+      "id": "http-001",
+      "difficulty": "Beginner",
+      "question": "How do you set up HttpClient in a modern Angular application?",
+      "answer": "Provide it during bootstrap with provideHttpClient, which registers HttpClient and its supporting services. Then inject HttpClient wherever you need to make requests. For standalone applications this replaces importing HttpClientModule.",
+      "code": "bootstrapApplication(AppComponent, {\n  providers: [provideHttpClient()],\n});",
+      "tags": [
+        "http",
+        "setup"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/setup",
+        "https://angular.dev/api/common/http/provideHttpClient"
+      ]
+    },
+    {
+      "id": "http-002",
+      "difficulty": "Beginner",
+      "question": "How do you make a GET request with HttpClient?",
+      "answer": "Inject HttpClient and call get with the URL and an optional typed generic, which returns a cold Observable. Nothing is sent until you subscribe or use it through the async pipe or a resource. The generic parameter types the parsed response body.",
+      "code": "this.http.get<User[]>('/api/users').subscribe((users) => this.users = users);",
+      "tags": [
+        "http",
+        "get",
+        "observable"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpClient"
+      ]
+    },
+    {
+      "id": "http-003",
+      "difficulty": "Beginner",
+      "question": "How do you send data with POST, PUT, and DELETE?",
+      "answer": "Use post and put with a body and optional options, and delete with a URL, all returning Observables. The default response type is JSON, and you can set observe to receive the full response. Requests are typed so the response body matches the generic you provide.",
+      "code": "this.http.post<User>('/api/users', payload);\nthis.http.delete<void>('/api/users/1');",
+      "tags": [
+        "http",
+        "post",
+        "rest"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpClient"
+      ]
+    },
+    {
+      "id": "http-004",
+      "difficulty": "Beginner",
+      "question": "How do you pass query parameters and headers?",
+      "answer": "Use HttpParams for query strings and HttpHeaders for request headers, passed through the options object. The helpers handle encoding and let you build parameters immutably. Interceptors can also add headers globally.",
+      "code": "this.http.get<Item[]>('/api/items', {\n  params: new HttpParams().set('page', '1'),\n  headers: new HttpHeaders({ 'X-Trace': id }),\n});",
+      "tags": [
+        "http",
+        "params",
+        "headers"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpParams"
+      ]
+    },
+    {
+      "id": "http-005",
+      "difficulty": "Beginner",
+      "question": "What are HttpInterceptors used for?",
+      "answer": "An interceptor is a function that sits between the application and the backend, letting you inspect and transform outgoing requests and incoming responses. Common uses are attaching auth tokens, logging, and handling errors. Interceptors are registered with withInterceptors and run in order.",
+      "code": "export const authInterceptor: HttpInterceptorFn = (req, next) =>\n  next(req.clone({ setHeaders: { Authorization: `Bearer ${token}` } }));",
+      "tags": [
+        "interceptors",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/interceptors",
+        "https://angular.dev/api/common/http/HttpInterceptorFn"
+      ]
+    },
+    {
+      "id": "http-006",
+      "difficulty": "Beginner",
+      "question": "How do you handle errors from an HTTP request?",
+      "answer": "Errors surface through the Observable's error channel, so handle them with catchError or an interceptor rather than assuming success. HttpErrorResponse contains the status, statusText, and any error body. Converting errors into a user-friendly state or rethrowing after logging are both valid strategies.",
+      "code": "this.http.get<Data>('/api/data').pipe(\n  catchError((err: HttpErrorResponse) => {\n    this.message = err.status === 404 ? 'Not found' : 'Failed';\n    return of(null);\n  }),\n);",
+      "tags": [
+        "errors",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpErrorResponse"
+      ]
+    },
+    {
+      "id": "http-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between observe: 'body' and observe: 'response'?",
+      "answer": "The default observe: 'body' emits only the parsed response body, while observe: 'response' emits the full HttpResponse including status and headers. Use the full response when you need metadata such as pagination headers or the status code. Choosing body keeps the type simpler.",
+      "code": "this.http.get<User>('/api/me', { observe: 'response' })",
+      "tags": [
+        "http",
+        "options"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpResponse"
+      ]
+    },
+    {
+      "id": "http-008",
+      "difficulty": "Beginner",
+      "question": "How do you type the response of an HTTP request?",
+      "answer": "Pass the expected type as a generic to the method, for example get<User[]>(), so the emitted value is typed. HttpClient parses JSON by default and casts to that type, but it does not validate the payload at runtime. For untrusted data, validate the structure after receiving it.",
+      "tags": [
+        "http",
+        "typescript",
+        "typing"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpClient"
+      ]
+    },
+    {
+      "id": "http-009",
+      "difficulty": "Beginner",
+      "question": "How do you cancel an in-flight HTTP request?",
+      "answer": "Unsubscribing from the Observable aborts the underlying request, and operators such as switchMap unsubscribe from the previous inner request automatically. takeUntilDestroyed ties cancellation to the component lifetime. This avoids updating state after the user has navigated away.",
+      "tags": [
+        "http",
+        "cancellation",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/ecosystem/rxjs-interop/take-until-destroyed"
+      ]
+    },
+    {
+      "id": "http-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between HttpClient and fetch for Angular applications?",
+      "answer": "HttpClient integrates with Angular's dependency injection, interceptors, and testing utilities, and returns Observables that compose with RxJS. fetch is a browser API that returns a Promise and requires manual wiring for interceptors and typing. HttpClient is usually the better default in Angular, while fetch or a signal-based resource can suit simple cases.",
+      "tags": [
+        "http",
+        "fetch",
+        "comparison"
+      ],
+      "references": [
+        "https://angular.dev/guide/http",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch"
+      ]
+    },
+    {
+      "id": "http-011",
+      "difficulty": "Intermediate",
+      "question": "How do functional interceptors differ from class-based interceptors?",
+      "answer": "Functional interceptors are plain functions registered with withInterceptors, which makes them simpler to write, compose, and test. Class-based interceptors implement HttpInterceptor and are registered through HTTP_INTERCEPTORS. New code should use the functional form, which also works cleanly with dependency injection via inject().",
+      "code": "provideHttpClient(withInterceptors([authInterceptor, loggingInterceptor]))",
+      "tags": [
+        "interceptors",
+        "functional",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/interceptors",
+        "https://angular.dev/api/common/http/withInterceptors"
+      ]
+    },
+    {
+      "id": "http-012",
+      "difficulty": "Intermediate",
+      "question": "How do you retry a failed request with a backoff strategy?",
+      "answer": "Use the retry operator with a count and a delay function, often computing an exponential backoff based on the attempt number. Place retry before any catchError that provides a fallback. Only retry idempotent requests to avoid duplicate side effects.",
+      "code": "this.http.get<Data>('/api/data').pipe(\n  retry({ count: 3, delay: (_, n) => timer(1000 * 2 ** n) }),\n);",
+      "tags": [
+        "retry",
+        "http",
+        "resilience"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/best-practices/error-handling"
+      ]
+    },
+    {
+      "id": "http-013",
+      "difficulty": "Intermediate",
+      "question": "How do you add an authentication token to every request?",
+      "answer": "Use an interceptor to clone the outgoing request and add an Authorization header from the auth service. Because interceptors run for every request, this keeps token logic in one place. Handle 401 responses in the same layer to trigger re-authentication.",
+      "tags": [
+        "auth",
+        "interceptors",
+        "security"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/interceptors",
+        "https://angular.dev/best-practices/security"
+      ]
+    },
+    {
+      "id": "http-014",
+      "difficulty": "Intermediate",
+      "question": "How do you upload or download files with HttpClient?",
+      "answer": "For uploads, send a FormData body and let the browser set the content type, and for downloads request a blob or arraybuffer response type. Progress can be tracked with the reportProgress and observe options. Set the response type explicitly because the default is JSON.",
+      "code": "this.http.post('/api/upload', formData);\nthis.http.get('/api/report', { responseType: 'blob' });",
+      "tags": [
+        "http",
+        "files",
+        "upload"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/api/common/http/HttpRequest"
+      ]
+    },
+    {
+      "id": "http-015",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the request context in interceptors?",
+      "answer": "HttpContext carries per-request metadata that interceptors can read without changing the request signature, such as a flag to skip caching or logging. You create a context token and set values on the request options. This keeps interceptor behavior configurable per call.",
+      "code": "export const SKIP_AUTH = new HttpContextToken(() => false);\nthis.http.get('/api/public', { context: new HttpContext().set(SKIP_AUTH, true) });",
+      "tags": [
+        "http",
+        "context",
+        "interceptors"
+      ],
+      "references": [
+        "https://angular.dev/api/common/http/HttpContext",
+        "https://angular.dev/guide/http/interceptors"
+      ]
+    },
+    {
+      "id": "http-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test components that use HttpClient?",
+      "answer": "Provide HttpClientTestingModule or provideHttpClientTesting, inject HttpTestingController, and assert on requests with expectOne and flush. The test double lets you simulate responses and errors without a network. Always call verify() to confirm there are no unexpected requests.",
+      "code": "const httpMock = TestBed.inject(HttpTestingController);\nservice.getUsers().subscribe();\nhttpMock.expectOne('/api/users').flush([{ id: 1 }]);\nhttpMock.verify();",
+      "tags": [
+        "testing",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/testing",
+        "https://angular.dev/api/common/http/testing/HttpTestingController"
+      ]
+    },
+    {
+      "id": "http-017",
+      "difficulty": "Intermediate",
+      "question": "How does httpResource simplify data fetching with signals?",
+      "answer": "httpResource wraps HttpClient and exposes the result as signals for value, status, and error, so templates can render loading and error states reactively. It re-fetches when the signals it depends on change, such as a route parameter. This removes manual subscription management for common read scenarios.",
+      "code": "readonly user = httpResource<User>(() => `/api/users/${this.id()}`);",
+      "tags": [
+        "httpresource",
+        "signals",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/http-resource",
+        "https://angular.dev/guide/signals/resource"
+      ]
+    },
+    {
+      "id": "http-018",
+      "difficulty": "Intermediate",
+      "question": "How do you configure a base URL for all requests?",
+      "answer": "Provide a base URL through an InjectionToken or a small wrapper service that prefixes relative paths, then use it in your data services. Interceptors can also rewrite the URL. Centralizing the base keeps environment differences out of feature code.",
+      "tags": [
+        "http",
+        "configuration",
+        "environment"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/setup",
+        "https://angular.dev/guide/di/lightweight-injection-tokens"
+      ]
+    },
+    {
+      "id": "http-019",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between an interceptor and a service wrapper for HTTP?",
+      "answer": "An interceptor applies cross-cutting concerns such as auth, logging, and error handling to all requests, while a service wrapper encapsulates the endpoints of a domain and returns typed results. Interceptors cannot easily encode domain-specific mapping, and services cannot easily apply global concerns. Well-structured apps use both together.",
+      "tags": [
+        "http",
+        "architecture",
+        "interceptors"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/interceptors",
+        "https://angular.dev/guide/http/making-requests"
+      ]
+    },
+    {
+      "id": "http-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle concurrent requests efficiently?",
+      "answer": "Use forkJoin to wait for a fixed set of requests to complete, combineLatest to react to the latest values, or merge and flattening operators for dynamic sets. These compose multiple Observables without nesting subscriptions. Choose based on whether you need all results together or a stream of updates.",
+      "code": "forkJoin({\n  user: this.http.get<User>('/api/me'),\n  orgs: this.http.get<Org[]>('/api/orgs'),\n}).subscribe(({ user, orgs }) => this.set(user, orgs));",
+      "tags": [
+        "http",
+        "rxjs",
+        "concurrency"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://angular.dev/ecosystem/rxjs-interop"
+      ]
+    },
+    {
+      "id": "http-021",
+      "difficulty": "Advanced",
+      "question": "How would you implement a caching interceptor?",
+      "answer": "A caching interceptor checks a cache keyed by method and URL before sending, returns the cached Observable for hits, and stores the response for misses, usually with shareReplay to deduplicate in-flight requests. It should respect request context so callers can bypass or invalidate the cache. Cache invalidation on mutations is the hard part and must be designed deliberately.",
+      "tags": [
+        "caching",
+        "interceptors",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/interceptors",
+        "https://angular.dev/guide/http/making-requests"
+      ]
+    },
+    {
+      "id": "http-022",
+      "difficulty": "Advanced",
+      "question": "How do you handle request timeouts and cancellation together?",
+      "answer": "Use the timeout operator to fail a slow request and switchMap to cancel superseded requests, combining them so neither leaks. Cancellation via unsubscribe aborts the underlying XHR, which also frees resources. Handling both makes the UI responsive to slow or obsolete work.",
+      "tags": [
+        "timeout",
+        "cancellation",
+        "http"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/making-requests",
+        "https://developer.mozilla.org/en-US/docs/Web/API/AbortController"
+      ]
+    },
+    {
+      "id": "http-023",
+      "difficulty": "Advanced",
+      "question": "How does Angular protect against XSS in HTTP and templates?",
+      "answer": "Angular escapes values interpolated into templates, which neutralizes most injection attempts, and it blocks dangerous bindings unless you explicitly trust a value with the sanitizer. Never bypass sanitization on data that comes from a server or user. For security-sensitive flows, validate on the server as well, because the client is not a trust boundary.",
+      "tags": [
+        "security",
+        "xss",
+        "sanitizer"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/security",
+        "https://angular.dev/api/platform-browser/DomSanitizer"
+      ]
+    },
+    {
+      "id": "http-024",
+      "difficulty": "Advanced",
+      "question": "How do you structure data access for a large application?",
+      "answer": "Create a service per domain that owns its endpoints and types, keep HTTP concerns out of components, and centralize cross-cutting behavior in interceptors. Expose state through signals or Observables so features stay decoupled from transport details. This layering makes the data layer testable and swappable.",
+      "tags": [
+        "architecture",
+        "http",
+        "services"
+      ],
+      "references": [
+        "https://angular.dev/guide/http",
+        "https://angular.dev/guide/di/creating-and-using-services"
+      ]
+    },
+    {
+      "id": "http-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between httpResource, RxJS, and manual subscriptions for data loading?",
+      "answer": "httpResource and signals give concise loading and error state and integrate with change detection but are less flexible for complex operator pipelines. RxJS offers fine-grained control over cancellation, retries, and combination but requires managing subscriptions. Manual subscriptions are the most flexible and the most error-prone, so prefer the higher-level tools unless you need their power.",
+      "tags": [
+        "http",
+        "signals",
+        "rxjs"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/http-resource",
+        "https://angular.dev/guide/signals/rxjs-interop"
+      ]
+    }
+  ]
+}

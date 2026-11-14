@@ -1,0 +1,220 @@
+{
+  "category": "Input, Focus & Validation",
+  "slug": "input",
+  "icon": "keyboard",
+  "questions": [
+    {
+      "id": "input-001",
+      "difficulty": "Beginner",
+      "question": "What are the main input event types in WPF?",
+      "answer": "WPF input events cover keyboard, mouse, stylus, and touch. Keyboard events include KeyDown and KeyUp with preview versions, and mouse events include MouseDown, MouseMove, and MouseWheel. They are routed events that tunnel then bubble.",
+      "tags": ["input", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-002",
+      "difficulty": "Beginner",
+      "question": "What is keyboard focus in WPF?",
+      "answer": "Keyboard focus determines which element receives keyboard input, and only one element has it at a time. An element gets focus when the user tabs to it or clicks it, or when you call Focus. Keyboard focus requires the element to be focusable and visible.",
+      "tags": ["focus", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/focus-overview"]
+    },
+    {
+      "id": "input-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between logical focus and keyboard focus?",
+      "answer": "Keyboard focus is the single element that receives keystrokes across the application. Logical focus is the focused element within a specific focus scope, such as a window or a toolbar, and is remembered when focus leaves the scope. When a scope regains keyboard focus, its logical focus element is restored.",
+      "tags": ["focus", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/focus-overview"]
+    },
+    {
+      "id": "input-004",
+      "difficulty": "Beginner",
+      "question": "How do you set keyboard focus to a control?",
+      "answer": "Call the Focus method on the element, which returns true if focus was set. The element must be focusable, visible, and enabled. Use FocusManager for logical focus in scopes.",
+      "code": "if (myTextBox.Focus())\n{\n    myTextBox.SelectAll();\n}",
+      "tags": ["focus", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/focus-overview"]
+    },
+    {
+      "id": "input-005",
+      "difficulty": "Beginner",
+      "question": "What is a keyboard access key?",
+      "answer": "An access key is a letter preceded by an underscore in a label or button content that lets the user activate the control with Alt plus that letter. It improves keyboard navigation. Access keys are shown underlined when Alt is pressed.",
+      "code": "<Button Content=\"_Save\" Click=\"OnSave\"/>",
+      "tags": ["access-keys", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/accessibility-best-practices"]
+    },
+    {
+      "id": "input-006",
+      "difficulty": "Beginner",
+      "question": "What is a key gesture and input binding?",
+      "answer": "A KeyGesture combines a key and modifier keys, such as Ctrl plus S. An InputBinding associates a gesture with a command so the shortcut triggers the command. This is how keyboard shortcuts are wired to commands declaratively.",
+      "code": "<Window.InputBindings>\n  <KeyBinding Gesture=\"Ctrl+S\" Command=\"ApplicationCommands.Save\"/>\n</Window.InputBindings>",
+      "tags": ["inputbinding", "shortcuts"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-007",
+      "difficulty": "Beginner",
+      "question": "How do you handle a key press on a specific key?",
+      "answer": "Handle the KeyDown event and check the Key property of KeyEventArgs, or use a KeyBinding for commands. For text input, prefer the TextInput event or the control's Text property. Mark the event handled to stop further routing.",
+      "code": "private void OnKeyDown(object sender, KeyEventArgs e)\n{\n    if (e.Key == Key.Enter) { Submit(); e.Handled = true; }\n}",
+      "tags": ["keyboard", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between KeyDown and PreviewKeyDown?",
+      "answer": "PreviewKeyDown is a tunneling event that travels from the root down to the source and fires first. KeyDown is the bubbling event that travels back up. Use Preview when you need to intercept input before controls handle it.",
+      "tags": ["keyboard", "routing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-009",
+      "difficulty": "Beginner",
+      "question": "How do you capture mouse position?",
+      "answer": "Use Mouse.GetPosition with a reference element to get coordinates relative to that element, or e.GetPosition in a mouse event handler. The returned Point is in that element's coordinate space. This is essential for drawing and drag operations.",
+      "code": "var p = e.GetPosition(myCanvas);",
+      "tags": ["mouse", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-010",
+      "difficulty": "Beginner",
+      "question": "How do you validate user input in WPF?",
+      "answer": "Use binding validation with exceptions, IDataErrorInfo, or INotifyDataErrorInfo, and display errors through a validation error template. The Validation.HasError attached property indicates failure. This ties validation to the data layer and updates the UI automatically.",
+      "tags": ["validation", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-binding-validation"]
+    },
+    {
+      "id": "input-011",
+      "difficulty": "Intermediate",
+      "question": "What is a focus scope and when do you need one?",
+      "answer": "A focus scope is a container that isolates logical focus, such as a window, a ToolBar, or a Menu. Elements in different scopes maintain separate logical focus. Custom controls that host other focusable elements often define their own focus scope.",
+      "tags": ["focus", "scopes"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/focus-overview"]
+    },
+    {
+      "id": "input-012",
+      "difficulty": "Intermediate",
+      "question": "How do you control tab order between controls?",
+      "answer": "Set the KeyboardNavigation.TabIndex property to define order, or rely on the visual tree order. IsTabStop controls whether an element participates in tabbing, and KeyboardNavigation.TabNavigation controls wrap behavior on a container. Use these to make forms keyboard-friendly.",
+      "code": "<TextBox KeyboardNavigation.TabIndex=\"0\"/>\n<TextBox KeyboardNavigation.TabIndex=\"1\" IsTabStop=\"True\"/>",
+      "tags": ["tab-order", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/focus-overview"]
+    },
+    {
+      "id": "input-013",
+      "difficulty": "Intermediate",
+      "question": "How do you display a validation error on a control?",
+      "answer": "Use a validation error template set through the Validation.ErrorTemplate attached property on the control. WPF shows the template when Validation.HasError is true. You can also bind a tooltip to Validation.Errors to show the message.",
+      "code": "<TextBox Text=\"{Binding Age, UpdateSourceTrigger=PropertyChanged}\">\n  <Validation.ErrorTemplate>\n    <ControlTemplate>\n      <Border BorderBrush=\"Red\" BorderThickness=\"1\">\n        <AdornedElementPlaceholder/>\n      </Border>\n    </ControlTemplate>\n  </Validation.ErrorTemplate>\n</TextBox>",
+      "tags": ["validation", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-binding-validation"]
+    },
+    {
+      "id": "input-014",
+      "difficulty": "Intermediate",
+      "question": "How do you restrict input to numbers in a TextBox?",
+      "answer": "Handle PreviewTextInput and PreviewKeyDown to reject non-numeric characters, or use a behavior with a regex. You can also bind to a numeric property with validation and a converter. Combining input filtering with validation gives the best experience.",
+      "code": "private void OnPreviewTextInput(object s, TextCompositionEventArgs e)\n    => e.Handled = !int.TryParse(e.Text, out _);",
+      "tags": ["input", "validation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-015",
+      "difficulty": "Intermediate",
+      "question": "What is mouse capture and when is it used?",
+      "answer": "Mouse capture routes all mouse events to a specific element until capture is released. Controls use it during drag operations, such as dragging a thumb or selecting text. Call CaptureMouse and ReleaseMouseCapture, and handle LostMouseCapture.",
+      "code": "myThumb.CaptureMouse();\n// later\nmyThumb.ReleaseMouseCapture();",
+      "tags": ["mouse", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle touch or stylus input?",
+      "answer": "WPF exposes touch events such as TouchDown and TouchMove and stylus events through StylusPlugIn and the stylus events. Touch input can be promoted to mouse events for compatibility. Set IsManipulationEnabled to receive manipulation events for gestures.",
+      "tags": ["touch", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/walkthrough-enabling-touch-and-stylus-support-in-a-wpf-application"]
+    },
+    {
+      "id": "input-017",
+      "difficulty": "Intermediate",
+      "question": "What are manipulation events?",
+      "answer": "Manipulation events such as ManipulationStarted, ManipulationDelta, and ManipulationCompleted report multi-touch gestures including translation, rotation, and scaling. They require IsManipulationEnabled on the element. They simplify building pan and zoom interactions.",
+      "tags": ["touch", "manipulation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-018",
+      "difficulty": "Intermediate",
+      "question": "How do you implement keyboard navigation in a custom control?",
+      "answer": "Handle OnKeyDown or use KeyboardNavigation attached properties, and move focus with the Focus or MoveFocus method. Define access keys and tab stops so users can reach the control. Follow platform conventions for arrow and tab behavior.",
+      "code": "protected override void OnKeyDown(KeyEventArgs e)\n{\n    if (e.Key == Key.Right) MoveFocus(new TraversalRequest(\n        FocusNavigationDirection.Right));\n}",
+      "tags": ["keyboard", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/focus-overview"]
+    },
+    {
+      "id": "input-019",
+      "difficulty": "Intermediate",
+      "question": "How do you show a red border around an invalid control?",
+      "answer": "Use a validation error template that wraps the adorned element with a red Border, or use a style trigger on Validation.HasError to change the border brush. The template approach keeps the error visual consistent. Binding the tooltip to the error message shows the reason.",
+      "code": "<Style.Triggers>\n  <Trigger Property=\"Validation.HasError\" Value=\"True\">\n    <Setter Property=\"BorderBrush\" Value=\"Red\"/>\n  </Trigger>\n</Style.Triggers>",
+      "tags": ["validation", "styling"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-binding-validation"]
+    },
+    {
+      "id": "input-020",
+      "difficulty": "Intermediate",
+      "question": "What is the TextInput event used for?",
+      "answer": "TextInput reports composed text input from the keyboard, including characters from input methods. It is preferable to KeyDown when you care about the actual text rather than physical keys. It also handles alternative input such as handwriting.",
+      "tags": ["input", "text"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement a custom validation rule?",
+      "answer": "Derive from ValidationRule, override Validate to return a ValidationResult with an error message, and add the rule to a binding's ValidationRules collection. Validation rules run before the source is updated. You can also make rules configurable through properties.",
+      "code": "public class AgeRule : ValidationRule\n{\n    public override ValidationResult Validate(object value, CultureInfo c)\n        => int.TryParse(value?.ToString(), out var a) && a >= 0\n            ? ValidationResult.ValidResult\n            : new ValidationResult(false, \"Age must be >= 0\");\n}",
+      "tags": ["validation", "custom"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-binding-validation"]
+    },
+    {
+      "id": "input-022",
+      "difficulty": "Advanced",
+      "question": "How does focus affect routed events and commands?",
+      "answer": "Commands are routed based on the focused element's position in the tree, so focus determines which CommandBinding handles a command. Input events also route from the focused element. Managing focus correctly is essential for keyboard-driven command handling.",
+      "tags": ["focus", "commands"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "input-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle input at the application level?",
+      "answer": "Add handlers to the InputManager or use InputBindings on the window, or handle Preview events at the root. Application-level input handling is useful for global shortcuts but must not interfere with text editing. Consider CommandManager for context-sensitive handling.",
+      "tags": ["input", "application"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/input-overview"]
+    },
+    {
+      "id": "input-024",
+      "difficulty": "Advanced",
+      "question": "How do you support screen readers and automation in WPF?",
+      "answer": "Set AutomationProperties.Name, HelpText, and LabeledBy on controls, and implement automation peers for custom controls. Use AutomationProperties.AutomationId for test automation. Testing with a screen reader and UI Automation tools verifies accessibility.",
+      "tags": ["accessibility", "input"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/accessibility-best-practices"]
+    },
+    {
+      "id": "input-025",
+      "difficulty": "Advanced",
+      "question": "How do you implement undo and redo for text or document editing?",
+      "answer": "WPF provides a built-in undo stack for text controls through the UndoManager and the ApplicationCommands.Undo and Redo commands. For custom editing, maintain your own command history with inverse operations. Bind the commands to toolbar buttons for a standard experience.",
+      "code": "<Button Command=\"ApplicationCommands.Undo\"/>\n<Button Command=\"ApplicationCommands.Redo\"/>",
+      "tags": ["undo", "editing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    }
+  ]
+}

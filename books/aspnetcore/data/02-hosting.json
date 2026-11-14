@@ -1,0 +1,343 @@
+{
+  "category": "Hosting Model & Startup",
+  "slug": "hosting",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "hosting-001",
+      "difficulty": "Beginner",
+      "question": "What is the Generic Host and what does it manage?",
+      "answer": "The Generic Host is the object that bootstraps and manages the lifetime of an app, shared by ASP.NET Core web apps and worker services. It sets up dependency injection, configuration, logging, and the host lifetime, and it can run multiple hosted services alongside the web server. In ASP.NET Core you get it through WebApplication.CreateBuilder, which returns a builder that exposes Services and Configuration.",
+      "tags": [
+        "generic-host",
+        "lifetime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-002",
+      "difficulty": "Beginner",
+      "question": "What does WebApplication.CreateBuilder(args) do?",
+      "answer": "It creates a WebApplicationBuilder that already configures sensible defaults: Kestrel as the server, appsettings.json and environment variables as configuration sources, console logging, and the Development environment detection. You then register additional services on builder.Services, build the app with builder.Build(), configure middleware, and start it. It replaces the older separate Host and Startup classes with a single fluent entry point.",
+      "tags": [
+        "webapplicationbuilder",
+        "startup"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "hosting-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between builder.Services and app.Services?",
+      "answer": "builder.Services is the IServiceCollection where you register services before the container is built. app.Services is the built IServiceProvider that can resolve services, and it should only be used during startup for one-off work, not captured for request handling. Request-time dependencies should be injected into constructors or endpoint delegates so their lifetimes are managed correctly.",
+      "tags": [
+        "dependency-injection",
+        "services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection"
+      ]
+    },
+    {
+      "id": "hosting-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between app.Run and app.RunAsync?",
+      "answer": "app.Run() is a blocking call that starts the host and waits for shutdown, and app.RunAsync() is the awaitable equivalent used in async entry points. Both start the server and block or await until the app stops. Internally RunAsync calls host.StartAsync, waits on the host lifetime, and then stops the host.",
+      "tags": [
+        "run",
+        "lifetime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-005",
+      "difficulty": "Beginner",
+      "question": "How is Kestrel configured as the web server?",
+      "answer": "Kestrel is the default server, so you usually do not have to add it explicitly; WebApplicationBuilder registers it automatically. You configure it through builder.WebHost.ConfigureKestrel or the Kestrel section in appsettings.json, where you set endpoints, ports, and limits. For hosting behind IIS you can add the IIS integration, and for testing you can swap in TestServer.",
+      "tags": [
+        "kestrel",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel"
+      ]
+    },
+    {
+      "id": "hosting-006",
+      "difficulty": "Beginner",
+      "question": "What are launchSettings.json and appsettings.json used for?",
+      "answer": "launchSettings.json stores development-only launch profiles, including the application URL, environment variables, and IIS Express settings, and it is not used in production. appsettings.json stores application configuration that is loaded by the host and can be overridden per environment, for example appsettings.Production.json. launchSettings.json lives under Properties and is ignored by default in published output.",
+      "tags": [
+        "launchsettings",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/environments",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ]
+    },
+    {
+      "id": "hosting-007",
+      "difficulty": "Beginner",
+      "question": "How do you set the hosting environment name?",
+      "answer": "You set the ASPNETCORE_ENVIRONMENT environment variable (or DOTNET_ENVIRONMENT for non-web hosts), and ASP.NET Core reads it into IHostEnvironment.EnvironmentName. In development, launchSettings.json commonly sets it to Development, and in production it is usually configured in the deployment platform or Docker image. The values Development, Staging, and Production are conventional and checked by frameworks for behavior such as error pages.",
+      "tags": [
+        "environments",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/environments"
+      ]
+    },
+    {
+      "id": "hosting-008",
+      "difficulty": "Beginner",
+      "question": "What is IHostApplicationLifetime used for?",
+      "answer": "IHostApplicationLifetime exposes cancellation tokens and callbacks for the app lifecycle: ApplicationStarted, ApplicationStopping, and ApplicationStopped. You use it to run startup warm-up work, register cleanup logic, or trigger a graceful shutdown programmatically. It is distinct from the per-request lifetime and is often used together with hosted services.",
+      "tags": [
+        "lifetime",
+        "hosting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-009",
+      "difficulty": "Beginner",
+      "question": "What happened to the Startup class in modern ASP.NET Core?",
+      "answer": "Since .NET 6, the Startup class is optional; its responsibilities were folded into Program.cs using WebApplicationBuilder, where you register services and configure middleware in one place. The old ConfigureServices and Configure methods map to builder.Services and the middleware calls on app. You can still use a Startup class if you prefer, but new templates use top-level statements.",
+      "tags": [
+        "startup",
+        "program-cs"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/startup"
+      ]
+    },
+    {
+      "id": "hosting-010",
+      "difficulty": "Beginner",
+      "question": "What is the minimal Program.cs for an ASP.NET Core app?",
+      "answer": "A minimal web app is just builder creation, app creation, an endpoint mapping, and a run call. The WebApplicationBuilder applies defaults so no extra configuration is required to start serving requests.",
+      "code": "var builder = WebApplication.CreateBuilder(args);\nvar app = builder.Build();\napp.MapGet(\"/\", () => \"Hello World!\");\napp.Run();",
+      "tags": [
+        "program-cs",
+        "minimal-api"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "hosting-011",
+      "difficulty": "Intermediate",
+      "question": "How do you configure Kestrel endpoints and limits?",
+      "answer": "You configure endpoints and limits either in code via builder.WebHost.ConfigureKestrel or through the Kestrel section in appsettings.json. Endpoints define the scheme, host, and port, and limits control things like max request body size, max concurrent connections, and keep-alive timeouts. Tuning limits protects the server from resource exhaustion and is often combined with request timeouts.",
+      "code": "builder.WebHost.ConfigureKestrel(options =>\n{\n    options.Limits.MaxRequestBodySize = 10 * 1024 * 1024;\n    options.Limits.MaxConcurrentConnections = 1000;\n});",
+      "tags": [
+        "kestrel",
+        "limits"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/options"
+      ]
+    },
+    {
+      "id": "hosting-012",
+      "difficulty": "Intermediate",
+      "question": "How does the host perform graceful shutdown?",
+      "answer": "When a shutdown is triggered (SIGTERM, Ctrl+C, or a platform stop), the host signals ApplicationStopping, stops accepting new connections, and gives in-flight requests a configurable grace period to finish. Hosted services' StopAsync methods are called so they can flush and clean up. You can tune the shutdown timeout via HostOptions.ShutdownTimeout to avoid cutting off long-running requests.",
+      "tags": [
+        "shutdown",
+        "lifetime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between WebApplicationBuilder and Host.CreateDefaultBuilder?",
+      "answer": "Host.CreateDefaultBuilder is the older pattern that requires a separate Startup class or a ConfigureWebHost call and returns an IHostBuilder. WebApplicationBuilder is the newer, simplified model that combines host and web configuration and returns a WebApplication directly, applying the same defaults with less ceremony. Functionally they configure the same host, but WebApplicationBuilder is the recommended approach for new apps.",
+      "tags": [
+        "hosting",
+        "generic-host"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-014",
+      "difficulty": "Intermediate",
+      "question": "Which configuration sources does the default builder add, and in what order?",
+      "answer": "The default builder adds appsettings.json, then appsettings.{Environment}.json, then user secrets in Development, then environment variables, and finally command-line arguments. Later sources override earlier ones, so environment variables and command-line arguments win over JSON files. This ordering lets you keep base settings in JSON and override them per environment or deployment without changing code.",
+      "tags": [
+        "configuration",
+        "precedence"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/configuration/"
+      ]
+    },
+    {
+      "id": "hosting-015",
+      "difficulty": "Intermediate",
+      "question": "How do you host an ASP.NET Core app as a Windows Service or Linux daemon?",
+      "answer": "You add the Microsoft.Extensions.Hosting.WindowsServices or Systemd package and call UseWindowsService() or UseSystemd() on the builder's host, which integrates with the OS service manager for start, stop, and logging. For Windows Services you typically publish as self-contained or framework-dependent and register with sc.exe, while on Linux you create a systemd unit. The same app code runs unchanged; only the hosting integration differs.",
+      "tags": [
+        "windows-service",
+        "systemd"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/windows-service"
+      ]
+    },
+    {
+      "id": "hosting-016",
+      "difficulty": "Intermediate",
+      "question": "What is IHostingStartup and when would you use it?",
+      "answer": "IHostingStartup lets an external assembly inject services and configuration into an app during startup without changing the app's code. It is enabled via the ASPNETCORE_HOSTINGSTARTUPASSEMBLIES environment variable or the WebHostDefaults.HostingStartupAssembliesKey setting. This is useful for instrumentation, diagnostics, or platform-provided features that must be added transparently to many apps.",
+      "tags": [
+        "hostingstartup",
+        "extensibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/platform-specific-configuration"
+      ]
+    },
+    {
+      "id": "hosting-017",
+      "difficulty": "Intermediate",
+      "question": "What is the ASP.NET Core Module and how do in-process and out-of-process hosting differ?",
+      "answer": "The ASP.NET Core Module (ANCM) is the native IIS module that hosts and proxies to ASP.NET Core apps on Windows. In in-process mode the app runs inside w3wp and ANCM acts as a native handler, which is faster and the default. In out-of-process mode IIS reverse-proxies to a separate Kestrel process over a loopback port, which is more flexible but adds a hop.",
+      "tags": [
+        "iis",
+        "ancm"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/aspnet-core-module"
+      ]
+    },
+    {
+      "id": "hosting-018",
+      "difficulty": "Intermediate",
+      "question": "How do you configure HTTPS and certificates for Kestrel?",
+      "answer": "You configure Kestrel endpoints with a certificate via builder.WebHost.ConfigureKestrel and UseHttps, or through the Kestrel:Endpoints section in appsettings.json referencing a PFX file and password. In development, the dotnet dev-certs tool creates a trusted local certificate. In production you should supply certificates from a secure store such as the OS certificate store, Azure Key Vault, or the platform's certificate manager.",
+      "code": "builder.WebHost.ConfigureKestrel(o =>\n    o.ConfigureHttpsDefaults(h => h.ServerCertificate = cert));",
+      "tags": [
+        "https",
+        "kestrel",
+        "tls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/endpoints"
+      ]
+    },
+    {
+      "id": "hosting-019",
+      "difficulty": "Intermediate",
+      "question": "What are the content root, web root, and application name?",
+      "answer": "The content root is the base path for the app's configuration and content files, and it defaults to the current directory. The web root is the folder for public static assets, defaulting to wwwroot under the content root, and the application name is used for logging and locating the entry assembly. You can override these via HostDefaults or the WebApplicationOptions when creating the builder.",
+      "tags": [
+        "content-root",
+        "web-root"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-020",
+      "difficulty": "Intermediate",
+      "question": "How do you deploy an ASP.NET Core app to IIS, Docker, and Azure App Service?",
+      "answer": "For IIS you publish and configure the app pool plus the ASP.NET Core Module, ensuring the hosting bundle is installed. For Docker you build a multi-stage image that publishes the app and runs it on the ASP.NET runtime base image, then map ports and set environment variables. For Azure App Service you deploy the code or a container, and the platform sets PORT, environment, and certificates for you.",
+      "tags": [
+        "deployment",
+        "docker"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/",
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/docker/"
+      ]
+    },
+    {
+      "id": "hosting-021",
+      "difficulty": "Advanced",
+      "question": "What is the host startup sequence from CreateBuilder to accepting requests?",
+      "answer": "CreateBuilder constructs the host builder and loads configuration, logging, and DI defaults; service registrations from Program.cs are added to the IServiceCollection. Build() creates the service provider and resolves the server, middleware, and other singletons, then the app pipeline is composed. StartAsync binds the server endpoints and starts the hosted services, and finally the host blocks in Run until shutdown.",
+      "tags": [
+        "startup",
+        "hosting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-022",
+      "difficulty": "Advanced",
+      "question": "How would you customize or replace the IServer implementation?",
+      "answer": "You register a custom IServer in the DI container, typically via builder.WebHost.UseServer, and implement the server interface with StartAsync and StopAsync plus feature support for addresses and lifetime. In practice this is rarely needed because you can configure Kestrel or use TestServer for tests. Custom servers are used for special transports or when integrating a non-standard listener.",
+      "tags": [
+        "iserver",
+        "extensibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/"
+      ]
+    },
+    {
+      "id": "hosting-023",
+      "difficulty": "Advanced",
+      "question": "How do you configure Kestrel for HTTP/2 and HTTP/3?",
+      "answer": "You enable HTTP/2 by setting HttpProtocols.Http2 on an endpoint, and HTTP/3 by setting HttpProtocols.Http3 with a QUIC-capable certificate and the correct TLS settings. HTTP/3 requires the OS and platform to support QUIC, and it only runs over TLS. You can offer multiple protocols on one endpoint with HttpProtocols.Http1AndHttp2 for negotiation.",
+      "code": "builder.WebHost.ConfigureKestrel(o =>\n{\n    o.ListenAnyIP(5001, l => l.Protocols = HttpProtocols.Http1AndHttp2AndHttp3);\n});",
+      "tags": [
+        "http2",
+        "http3",
+        "kestrel"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/http2",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel/http3"
+      ]
+    },
+    {
+      "id": "hosting-024",
+      "difficulty": "Advanced",
+      "question": "How does graceful shutdown interact with hosted services and in-flight requests?",
+      "answer": "On shutdown the host triggers ApplicationStopping, stops the server from accepting new requests, and waits for the configured ShutdownTimeout while in-flight requests complete. Then it calls StopAsync on each IHostedService in reverse registration order, giving them a chance to flush work. If StopAsync exceeds the timeout the process is terminated, so long-running work should be cancellable via the passed CancellationToken.",
+      "tags": [
+        "shutdown",
+        "hosted-services"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/hosted-services",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "hosting-025",
+      "difficulty": "Advanced",
+      "question": "How would you implement per-tenant startup with different services for each tenant?",
+      "answer": "Because the service container is built once, you cannot register tenant-specific services statically; instead you resolve tenant context at request time from the host, path, or claims. You can use keyed services or a factory that returns tenant-specific implementations, or a custom middleware that sets a tenant accessor before endpoints resolve dependencies. For strongly isolated tenants, running separate app instances per tenant is simpler and safer than one shared process.",
+      "tags": [
+        "multi-tenancy",
+        "dependency-injection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host",
+        "https://learn.microsoft.com/dotnet/architecture/multitenant-identity/"
+      ]
+    }
+  ]
+}

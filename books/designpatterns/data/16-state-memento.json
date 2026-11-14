@@ -1,0 +1,211 @@
+{
+  "category": "State & Memento",
+  "slug": "state-memento",
+  "icon": "refresh",
+  "questions": [
+    {
+      "id": "state-memento-001",
+      "difficulty": "Beginner",
+      "question": "What is the State pattern?",
+      "answer": "State allows an object to change its behavior when its internal state changes, making it appear to change its class. Each state is represented by a separate class implementing a common interface. The context delegates behavior to the current state object.",
+      "tags": ["state", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-002",
+      "difficulty": "Beginner",
+      "question": "What is the Memento pattern?",
+      "answer": "Memento captures an object's internal state so it can be restored later without exposing its internals. The originator creates a memento and can restore from it, while a caretaker stores mementos without inspecting them. It is the basis of undo and snapshot features.",
+      "tags": ["memento", "behavioral"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-003",
+      "difficulty": "Beginner",
+      "question": "What problem does the State pattern solve?",
+      "answer": "It removes large switch or if/else statements that branch on a state value by modeling each state as a class. The object's behavior changes based on its current state without conditionals. This makes adding new states easier and keeps each state's logic isolated.",
+      "tags": ["state", "refactoring"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-004",
+      "difficulty": "Beginner",
+      "question": "What are the roles in the Memento pattern?",
+      "answer": "The originator is the object whose state is saved and restored. The memento is an immutable snapshot of that state, often opaque to others. The caretaker holds mementos but does not modify or interpret them.",
+      "tags": ["memento", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-005",
+      "difficulty": "Beginner",
+      "question": "How do states transition in the State pattern?",
+      "answer": "A state can trigger a transition by telling the context to switch to a new state, or the context can decide transitions based on events. Either way the context holds a reference to the current state and updates it. Transitions are usually explicit method calls on the context.",
+      "tags": ["state", "transitions"],
+      "code": "public void Pay(Order o)\n{\n    o.State = new PaidState();\n}",
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-006",
+      "difficulty": "Beginner",
+      "question": "When is the Memento pattern useful?",
+      "answer": "Use it for undo and redo, checkpoints, or transactional rollback where you must restore an object to a previous state. It keeps the saved state private to the originator. It is especially handy when the state is complex and reconstructing it is hard.",
+      "tags": ["memento", "undo"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-007",
+      "difficulty": "Beginner",
+      "question": "How does State differ from Strategy?",
+      "answer": "Strategy swaps an algorithm chosen by the client, and the strategies usually do not know about each other. State models an object's lifecycle where states transition to other states based on events. State changes behavior as a consequence of internal transitions, while Strategy changes it by external selection.",
+      "tags": ["state", "strategy"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-008",
+      "difficulty": "Beginner",
+      "question": "What is an example of the State pattern in everyday software?",
+      "answer": "An order that moves through New, Paid, Shipped, and Delivered states, where each state allows different operations, is a natural fit. A media player with Playing and Paused states is another. Traffic light or workflow engines also use states.",
+      "tags": ["state", "examples"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-009",
+      "difficulty": "Beginner",
+      "question": "How does Memento preserve encapsulation?",
+      "answer": "The memento stores state in a way that only the originator can read or restore, often with private or internal access. The caretaker holds the memento without seeing its contents. This lets state be saved and restored without exposing the originator's internals.",
+      "tags": ["memento", "encapsulation"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-010",
+      "difficulty": "Beginner",
+      "question": "What is the caretaker in the Memento pattern?",
+      "answer": "The caretaker is responsible for storing and retrieving mementos, such as an undo manager keeping a stack. It does not inspect or modify the memento's contents. This separates state storage from the object that owns the state.",
+      "tags": ["memento", "roles"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement State with dependency injection?",
+      "answer": "Register the state classes with the container and have the context resolve the next state, or inject a factory that creates states. States that need services receive them through their constructor. This keeps states testable and free of manual construction.",
+      "tags": ["state", "dependency-injection"],
+      "code": "public sealed class OrderContext(IServiceProvider sp)\n{\n    public IOrderState State { get; set; } = sp.GetRequiredService<PendingState>();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "state-memento-012",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid duplicating transitions across states?",
+      "answer": "Put shared transition logic in an abstract base state or in the context itself, and let concrete states override only what differs. A common approach is a base class with default no-op or error implementations. This reduces repetition and centralizes invariants.",
+      "tags": ["state", "reuse"],
+      "code": "public abstract class OrderState : IOrderState\n{\n    public virtual void Ship(Order o) =>\n        throw new InvalidOperationException(\"Cannot ship now.\");\n}",
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-013",
+      "difficulty": "Intermediate",
+      "question": "How do you implement undo with Memento in a document editor?",
+      "answer": "Before each edit, the originator produces a memento and the caretaker pushes it onto an undo stack. Undo pops the last memento and asks the originator to restore it, optionally pushing the current state to a redo stack. This gives reliable multi-step undo.",
+      "tags": ["memento", "undo"],
+      "code": "var memento = doc.CreateSnapshot();\n_undo.Push(memento);\n// undo: doc.Restore(_undo.Pop());",
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-014",
+      "difficulty": "Intermediate",
+      "question": "What are the memory concerns of storing many mementos?",
+      "answer": "Each memento holds a copy or delta of state, so keeping many can consume significant memory. Use deltas, structural sharing, or limit history depth with a bounded stack. For very large states, persist mementos and keep only references in memory.",
+      "tags": ["memento", "memory"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a State machine?",
+      "answer": "Test each state's behavior in isolation and then test transitions by driving the context through a sequence of events. Assert that invalid operations throw or are ignored as designed. Cover all reachable states and transitions to catch gaps.",
+      "tags": ["state", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/"]
+    },
+    {
+      "id": "state-memento-016",
+      "difficulty": "Intermediate",
+      "question": "Should state objects be shared or created per context instance?",
+      "answer": "If a state holds no per-context data, a single shared instance is efficient and safe. If it stores context-specific data, create a new instance per context to avoid cross-contamination. Prefer stateless states with the data kept in the context.",
+      "tags": ["state", "lifetimes"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-017",
+      "difficulty": "Intermediate",
+      "question": "How does the Memento pattern relate to serialization?",
+      "answer": "A memento can be produced by serializing the originator's state to a snapshot object or a byte array. Deserialization restores it. This is convenient but must handle non-serializable members and version compatibility.",
+      "tags": ["memento", "serialization"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/serialization/system-text-json/overview"]
+    },
+    {
+      "id": "state-memento-018",
+      "difficulty": "Intermediate",
+      "question": "How do you persist state machine progress across restarts?",
+      "answer": "Store the current state name and any necessary data in the database or a durable store, and reconstruct the context on load. Keep the state identifier stable and versioned. This lets long-running workflows resume where they left off.",
+      "tags": ["state", "persistence"],
+      "references": ["https://learn.microsoft.com/dotnet/architecture/microservices/multi-container-microservice-net-applications/"]
+    },
+    {
+      "id": "state-memento-019",
+      "difficulty": "Intermediate",
+      "question": "How do you prevent invalid transitions in the State pattern?",
+      "answer": "Model only valid operations in each state, throwing or ignoring invalid ones with a clear message. Alternatively, centralize allowed transitions in a table and validate against it. Keeping the rules explicit prevents illegal states.",
+      "tags": ["state", "validation"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-020",
+      "difficulty": "Intermediate",
+      "question": "How does Memento differ from simply copying an object?",
+      "answer": "A plain copy exposes all members and may share references, while a memento is an opaque snapshot the caretaker cannot interpret. Memento preserves encapsulation by controlling who can read and restore the state. It also separates storage from the originator.",
+      "tags": ["memento", "encapsulation"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-021",
+      "difficulty": "Advanced",
+      "question": "How do you combine State and Memento for a resumable workflow?",
+      "answer": "Use State to model behavior per step and Memento to snapshot the workflow's data before each transition. On resume, restore the memento and set the current state. This gives both correct behavior and the ability to roll back or restart.",
+      "tags": ["state", "memento"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-022",
+      "difficulty": "Advanced",
+      "question": "How would you implement hierarchical states with the State pattern?",
+      "answer": "Model nested states as a tree where a child inherits behavior from its parent unless overridden. The context checks the current child and falls back to the parent for unhandled operations. This mirrors statechart semantics and reduces duplication.",
+      "tags": ["state", "hierarchy"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    },
+    {
+      "id": "state-memento-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep mementos compact for large object graphs?",
+      "answer": "Record only the differences between snapshots or use persistent data structures that share unchanged nodes. Compress or serialize deltas if needed. This keeps history size proportional to changes rather than full state.",
+      "tags": ["memento", "performance"],
+      "references": ["https://refactoring.guru/design-patterns/memento"]
+    },
+    {
+      "id": "state-memento-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle concurrency when the State pattern is used in a shared service?",
+      "answer": "Protect state transitions with locking or use optimistic concurrency with version checks so concurrent requests do not corrupt the state. Keep transitions atomic and avoid long work while holding a lock. Consider per-entity isolation to reduce contention.",
+      "tags": ["state", "concurrency"],
+      "references": ["https://learn.microsoft.com/dotnet/standard/threading/managed-threading-basics"]
+    },
+    {
+      "id": "state-memento-025",
+      "difficulty": "Advanced",
+      "question": "When should you use a state machine library instead of the State pattern?",
+      "answer": "Use a library when you need declarative transitions, guards, entry and exit actions, and validation of the whole state graph. The pattern is fine for a handful of states with simple transitions. Libraries pay off as the state model grows and correctness becomes critical.",
+      "tags": ["state", "trade-offs"],
+      "references": ["https://refactoring.guru/design-patterns/state"]
+    }
+  ]
+}

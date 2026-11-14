@@ -1,0 +1,340 @@
+{
+  "category": "React Fundamentals",
+  "slug": "fundamentals",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is React and what problems does it solve?",
+      "answer": "React is an open-source JavaScript library for building user interfaces, created at Meta and now maintained by a large community. It lets you describe UI as a function of state using reusable components, and it updates the DOM efficiently when that state changes. It solves the problem of keeping complex, interactive interfaces in sync with data through a declarative model instead of manual DOM manipulation. It focuses on the view layer, so routing, data fetching and global state are chosen separately.",
+      "tags": [
+        "overview",
+        "ui"
+      ],
+      "references": [
+        "https://react.dev/learn",
+        "https://react.dev/"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What is a React component?",
+      "answer": "A component is a reusable, self-contained piece of UI that returns React elements describing what should appear on screen. Components are usually written as JavaScript functions that accept an input object called props and return JSX. They let you split a large interface into small, independently testable units. Components should be pure with respect to their props and state so React can render them predictably.",
+      "tags": [
+        "components",
+        "functions"
+      ],
+      "references": [
+        "https://react.dev/learn/your-first-component"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the virtual DOM and the real DOM?",
+      "answer": "The real DOM is the browser tree of nodes and updating it frequently is relatively expensive. React keeps a lightweight in-memory representation of the UI, often called the virtual DOM, which is just plain JavaScript objects. When state changes React builds a new tree, compares it with the previous one during reconciliation, and applies only the minimal changes to the real DOM. This keeps updates fast without you writing imperative DOM code.",
+      "tags": [
+        "virtual-dom",
+        "reconciliation"
+      ],
+      "references": [
+        "https://react.dev/learn/render-and-commit",
+        "https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What is JSX?",
+      "answer": "JSX is a syntax extension that lets you write HTML-like markup inside JavaScript. Browsers do not understand it directly, so a compiler such as Babel or SWC transforms it into function calls that create React elements. JSX keeps markup and the logic that drives it together in one place, which makes component structure readable. It is optional, but it is the idiomatic way to write React components.",
+      "tags": [
+        "jsx",
+        "syntax"
+      ],
+      "references": [
+        "https://react.dev/learn/writing-markup-with-jsx"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between props and state?",
+      "answer": "Props are read-only inputs passed from a parent component to a child, while state is data a component owns and can change over time. Props flow downward and cannot be modified by the receiving component, whereas state is updated with a setter and triggers a re-render. A component should use props for configuration and state for values it controls itself. This separation keeps data flow predictable and one-directional.",
+      "tags": [
+        "props",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-props-to-a-component",
+        "https://react.dev/learn/state-a-components-memory"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What does it mean that React is declarative?",
+      "answer": "In a declarative model you describe what the UI should look like for a given state, and React figures out how to update the DOM to match. This contrasts with imperative code where you manually create, read and mutate DOM nodes. Declarative rendering makes components easier to reason about because the output is a pure function of the inputs. You also avoid whole classes of bugs caused by forgetting to keep the DOM in sync.",
+      "tags": [
+        "declarative",
+        "mental-model"
+      ],
+      "references": [
+        "https://react.dev/learn/reacting-to-input-with-state"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is a React root and how do you create one?",
+      "answer": "A root is the container React manages; it is created with createRoot from react-dom/client and points at a DOM element. Calling root.render with an element mounts your component tree into that container. In React 18 and later createRoot enables concurrent features that the legacy ReactDOM.render did not support. You normally create the root once in your entry file.",
+      "code": "import { createRoot } from 'react-dom/client';\nimport App from './App';\n\nconst root = createRoot(document.getElementById('root'));\nroot.render(<App />);",
+      "tags": [
+        "root",
+        "dom"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/client/createRoot"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "Why should React components be pure?",
+      "answer": "A pure component returns the same output for the same props and state and does not modify anything that existed before the render. Purity lets React safely skip re-rendering, cache results and run rendering concurrently without surprising side effects. Side effects such as data fetching or subscriptions belong in event handlers or effects, not in the render body. Keeping render pure avoids bugs that appear only under certain update orders.",
+      "tags": [
+        "purity",
+        "rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/keeping-components-pure"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What is one-way data flow in React?",
+      "answer": "Data in React flows from parent to child through props and never directly upward. If a child needs to change shared data, the parent passes down a callback that the child calls with the new value. This makes it easy to trace where a value comes from and who can change it. It also keeps components decoupled, because children do not need to know how the data is stored.",
+      "tags": [
+        "data-flow",
+        "props"
+      ],
+      "references": [
+        "https://react.dev/learn/sharing-state-between-components"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a controlled and an uncontrolled component?",
+      "answer": "In a controlled component form values live in React state and the element value is driven by that state through props. In an uncontrolled component the DOM keeps the value and you read it with a ref when needed. Controlled inputs make validation and conditional logic straightforward because React is the source of truth. Uncontrolled inputs are simpler and can be slightly faster for large forms but give up that central control.",
+      "tags": [
+        "controlled",
+        "uncontrolled"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/components/input"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What is reconciliation and how does the key prop affect it?",
+      "answer": "Reconciliation is the algorithm React uses to compare the previous and next element trees and decide the minimal updates to apply. When rendering lists, React uses the key prop to match elements between renders so it can preserve component state and avoid unnecessary remounts. Stable, unique keys let React reorder or reuse items correctly. Using array indexes as keys can cause state to attach to the wrong item when the list changes.",
+      "tags": [
+        "reconciliation",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists",
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "How does React batch state updates?",
+      "answer": "React groups multiple state updates that happen within the same event handler or tick into a single re-render for performance. In React 18 and later automatic batching also applies inside promises, timeouts and native event handlers, not just React events. This means several setState calls produce one render rather than many. If you need to read the latest value immediately, use the updater function form or flushSync for rare cases.",
+      "code": "setCount((c) => c + 1);\nsetCount((c) => c + 1); // batched into one render, count + 2",
+      "tags": [
+        "batching",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/flushSync"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between an element and a component?",
+      "answer": "A React element is a plain, immutable object describing what to render, such as the result of writing JSX. A component is a function or class that returns elements and can hold state and logic. Elements are cheap descriptors produced on every render, while components are the reusable units you compose. Confusing the two is a common source of questions about why props appear static.",
+      "tags": [
+        "elements",
+        "components"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createElement"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "Why does React use keys and why are indexes often a poor choice?",
+      "answer": "Keys give React a stable identity for each item so it can match elements across renders and preserve their state correctly. Index keys change whenever items are inserted, removed or reordered, which makes React reuse the wrong DOM node and misplace input values or component state. A stable unique id from your data avoids these bugs. Indexes are only safe for static lists that never reorder.",
+      "tags": [
+        "keys",
+        "lists"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What happens when you call a state setter?",
+      "answer": "Calling a setter schedules a re-render with the new value rather than mutating the current state immediately. React then calls your component again with the updated state, and the returned tree is compared with the previous one. The current render keeps using the old value, which is why reading state right after setting it returns the previous value. You can pass an updater function to compute the next value from the latest state.",
+      "tags": [
+        "state",
+        "setstate"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useState"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "How does React handle re-rendering of child components?",
+      "answer": "When a component re-renders, React re-renders its children by default because a new element is created for each child in the returned tree. You can avoid unnecessary work with React.memo, by passing stable props, or by moving state down so fewer components depend on it. React still skips committing DOM changes that are unchanged. Understanding this default helps you target optimization where it actually matters.",
+      "tags": [
+        "rendering",
+        "memo"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of StrictMode?",
+      "answer": "StrictMode is a development-only wrapper that surfaces potential problems by intentionally double-invoking render functions, effects and some lifecycle methods. The double invocation helps you find impure components and missing effect cleanups that would otherwise stay hidden. It has no effect in production builds and renders nothing visible. It is recommended to wrap your app so these issues appear early.",
+      "tags": [
+        "strictmode",
+        "development"
+      ],
+      "references": [
+        "https://react.dev/reference/react/StrictMode"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "Why must you not mutate state directly?",
+      "answer": "React compares state by reference to decide whether something changed, so mutating an object or array in place can leave React unaware that an update occurred. Direct mutation also breaks features that rely on immutable snapshots, such as memoization and time-travel debugging. Instead create new objects or arrays with spread syntax or methods like map and filter. Treating state as immutable keeps rendering predictable.",
+      "tags": [
+        "immutability",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/updating-objects-in-state",
+        "https://react.dev/learn/updating-arrays-in-state"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What does lifting state up mean?",
+      "answer": "Lifting state up means moving shared state to the closest common ancestor of the components that need it. The parent then passes the value down as props and change handlers so children can request updates. This removes duplication and keeps a single source of truth. It is the standard React technique before reaching for context or an external store.",
+      "tags": [
+        "state",
+        "composition"
+      ],
+      "references": [
+        "https://react.dev/learn/sharing-state-between-components"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "How does React decide to reset or preserve component state?",
+      "answer": "React preserves a component state as long as the same component is rendered in the same position in the tree. If the element type changes or its position moves, React unmounts the old component and mounts a new one, resetting state. Giving sibling elements explicit keys lets you control whether React treats them as the same instance. This rule explains why conditional rendering can unexpectedly clear input values.",
+      "tags": [
+        "state",
+        "reconciliation"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "What are the main phases of the React rendering pipeline?",
+      "answer": "React separates rendering into a render phase, where it calls components and builds the element tree, and a commit phase, where it applies changes to the DOM and runs effects. The render phase must be pure and may be interrupted or replayed in concurrent rendering, while the commit phase is synchronous and side-effectful. This split explains why effects run after paint and why render must have no side effects. React 18 concurrent features build on the ability to pause and restart the render phase.",
+      "tags": [
+        "rendering",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/learn/render-and-commit"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between legacy ReactDOM.render and createRoot?",
+      "answer": "createRoot is the React 18 entry point that enables concurrent rendering, automatic batching and the new Suspense and transition behavior. The legacy ReactDOM.render opted out of those features and is deprecated. With createRoot, React can interrupt and prioritize updates so urgent input stays responsive. Migrating is usually just swapping the call and removing patterns that are unsafe under StrictMode.",
+      "tags": [
+        "concurrent",
+        "migration"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/client/createRoot"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "How does the Fiber architecture enable interruptible rendering?",
+      "answer": "Fiber represents each unit of work as a node in a linked tree that React can traverse, pause and resume. This lets the scheduler yield to the browser between units of work so high-priority updates such as typing are not blocked by long renders. The same structure tracks priority, effects and the current versus work-in-progress trees. It underpins concurrent rendering and features like transitions.",
+      "tags": [
+        "fiber",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/blog/2022/03/29/react-v18"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "What is the purpose of the key prop beyond lists?",
+      "answer": "Keys are the way React gives an element a stable identity across renders, which matters anywhere React might reuse a position. You can use a key to deliberately reset a component state when a meaningful input changes, such as swapping between two users. Keys are not passed to the component as props. Using them intentionally turns a subtle rendering rule into a precise tool.",
+      "tags": [
+        "keys",
+        "identity"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "Why is it risky to perform side effects during render?",
+      "answer": "The render phase can run multiple times, be paused or be thrown away in concurrent rendering, so side effects there can fire more often than expected or at the wrong time. Impure renders also break memoization, caching and server rendering where render runs without a browser. Side effects belong in event handlers or in effects that run after commit with proper cleanup. Keeping render pure is a core contract that makes the whole model reliable.",
+      "tags": [
+        "purity",
+        "side-effects"
+      ],
+      "references": [
+        "https://react.dev/learn/keeping-components-pure",
+        "https://react.dev/learn/synchronizing-with-effects"
+      ]
+    }
+  ]
+}

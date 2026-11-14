@@ -1,0 +1,339 @@
+{
+  "category": "Server Components & Client Components",
+  "slug": "server-components",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "server-components-001",
+      "difficulty": "Beginner",
+      "question": "What is a React Server Component?",
+      "answer": "A React Server Component runs only on the server and never sends its JavaScript to the browser. It can be async, fetch data directly, and access backend resources such as databases and secrets. It cannot use state, effects, or event handlers. In the App Router components are Server Components unless marked otherwise.",
+      "tags": [
+        "server-components",
+        "rsc"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components",
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "server-components-002",
+      "difficulty": "Beginner",
+      "question": "What is a Client Component?",
+      "answer": "A Client Component is marked with 'use client' and runs in the browser after an initial server render. It can use hooks, event handlers, and browser APIs like window and localStorage. Its JavaScript is shipped to the client. Use it for interactivity only.",
+      "tags": [
+        "client-components",
+        "use-client"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "server-components-003",
+      "difficulty": "Beginner",
+      "question": "Why are Server Components the default in the App Router?",
+      "answer": "Making them the default reduces the JavaScript sent to the browser, improving load performance. It also lets components fetch data on the server without extra API layers. Developers opt into client behavior only where needed. This is the opposite default from the Pages Router.",
+      "tags": [
+        "server-components",
+        "default"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "server-components-004",
+      "difficulty": "Beginner",
+      "question": "Can a Server Component use useState?",
+      "answer": "No, Server Components cannot use useState, useEffect, or other client hooks because they do not run in the browser. You move the interactive part into a Client Component marked with 'use client'. The server component can still pass data to it as props. This separation is a core App Router concept.",
+      "tags": [
+        "server-components",
+        "hooks"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "server-components-005",
+      "difficulty": "Beginner",
+      "question": "Can a Server Component be async?",
+      "answer": "Yes, Server Components can be async functions and use await directly in the body. This lets you fetch data before rendering without useEffect or a data-fetching library. Next.js streams the result as it resolves. Client Components cannot be async in the same way.",
+      "code": "export default async function Page() {\n  const data = await getData();\n  return <div>{data.title}</div>;\n}",
+      "tags": [
+        "async",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/fetching"
+      ]
+    },
+    {
+      "id": "server-components-006",
+      "difficulty": "Beginner",
+      "question": "How do you mark a component as a Client Component?",
+      "answer": "Add the string 'use client' as the first line of the file, before any imports. This marks the file and its imports as client code. It must appear at the top of the module. You can also add it to a barrel file to make a group of components client-side.",
+      "code": "'use client';\nimport { useState } from 'react';",
+      "tags": [
+        "use-client",
+        "directive"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/directives/use-client"
+      ]
+    },
+    {
+      "id": "server-components-007",
+      "difficulty": "Beginner",
+      "question": "What can a Client Component NOT do that a Server Component can?",
+      "answer": "A Client Component cannot directly access server-only resources like databases, private environment variables, or the filesystem. It also cannot be async or read secrets. Anything it needs from the server must come through props, a Server Action, or an API. Server Components can do all of these safely.",
+      "tags": [
+        "client-components",
+        "server-only"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-008",
+      "difficulty": "Beginner",
+      "question": "What happens to Server Component code in the bundle?",
+      "answer": "Server Component code is rendered on the server and is not included in the client JavaScript bundle. Only the rendered output is sent as part of the HTML or stream. This keeps heavy dependencies and secrets off the client. Client Components in the tree are the only parts shipped.",
+      "tags": [
+        "bundling",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "server-components-009",
+      "difficulty": "Beginner",
+      "question": "How do Server and Client Components compose?",
+      "answer": "A Server Component can render a Client Component and pass serializable props or Server Components as children. A Client Component cannot import a Server Component directly. Data flows from server to client through props. This composition keeps most of the tree server-rendered.",
+      "tags": [
+        "composition",
+        "boundaries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-010",
+      "difficulty": "Beginner",
+      "question": "What is the 'server-only' package used for?",
+      "answer": "The server-only package lets you mark a module so importing it into a Client Component throws a build error. You add import 'server-only' at the top of modules that use secrets or server APIs. This guards against accidentally leaking server code. It is a safety net, not a runtime feature.",
+      "code": "import 'server-only';\nexport const token = process.env.SECRET;",
+      "tags": [
+        "server-only",
+        "safety"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-011",
+      "difficulty": "Intermediate",
+      "question": "How do you decide where to place the 'use client' boundary?",
+      "answer": "Place it as deep in the tree as possible so the smallest subtree becomes client-rendered. Wrap only the interactive leaf, such as a button or form, rather than a whole page. Keep data fetching and layout in Server Components above the boundary. This minimizes client JavaScript.",
+      "tags": [
+        "use-client",
+        "patterns"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-012",
+      "difficulty": "Intermediate",
+      "question": "How can a Client Component render a Server Component?",
+      "answer": "Pass the Server Component as a children prop or another prop from a Server Component parent. The parent renders it on the server and hands the result to the client component. The client component cannot import it directly. This pattern is common for wrapping client interactivity around server content.",
+      "code": "// server parent\n<ClientTabs><ServerList /></ClientTabs>",
+      "tags": [
+        "composition",
+        "children"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-013",
+      "difficulty": "Intermediate",
+      "question": "What data can cross the server-to-client boundary?",
+      "answer": "Only serializable values can be passed as props from Server to Client Components. This includes strings, numbers, booleans, arrays, plain objects, Dates, Maps, Sets, and Promises. Functions are not serializable except Server Actions. Classes and DOM nodes cannot be passed.",
+      "tags": [
+        "serialization",
+        "props"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-014",
+      "difficulty": "Intermediate",
+      "question": "How do you share state between Server and Client Components?",
+      "answer": "The server fetches initial data and passes it as props to a Client Component, which then manages interactive state. For app-wide state, wrap the app in a Client Component provider in the root layout. The server never holds mutable client state. This keeps rendering on the server and interactivity on the client.",
+      "tags": [
+        "state",
+        "composition"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-015",
+      "difficulty": "Intermediate",
+      "question": "Why can't you use browser APIs in a Server Component?",
+      "answer": "Server Components execute in Node.js or the Edge runtime, where browser globals like window, document, and localStorage do not exist. Using them would throw at render time. If you need them, move that logic into a Client Component or a useEffect. This is a consequence of server-only execution.",
+      "tags": [
+        "server-components",
+        "browser-apis"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    },
+    {
+      "id": "server-components-016",
+      "difficulty": "Intermediate",
+      "question": "How does hydration work for Client Components?",
+      "answer": "Next.js sends server-rendered HTML plus the client component JavaScript. React hydrates the HTML by attaching event handlers and state. Mismatches between server HTML and the first client render cause hydration errors. Keeping the initial client render deterministic avoids them.",
+      "tags": [
+        "hydration",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "server-components-017",
+      "difficulty": "Intermediate",
+      "question": "What causes hydration mismatch errors?",
+      "answer": "Hydration mismatches happen when server HTML differs from the first client render. Common causes are using Date.now(), Math.random(), or reading localStorage during render. Browser-only values should be read in useEffect or guarded. The error is a warning that React will recover from by re-rendering the subtree.",
+      "tags": [
+        "hydration",
+        "errors"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/client-components"
+      ]
+    },
+    {
+      "id": "server-components-018",
+      "difficulty": "Intermediate",
+      "question": "How do third-party libraries fit the Server/Client model?",
+      "answer": "Many libraries rely on browser APIs or React context and must be used in Client Components. Import them inside a 'use client' file so they only load on the client. Some libraries support server rendering and can run in Server Components. Check the library's guidance before use.",
+      "tags": [
+        "third-party",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-019",
+      "difficulty": "Intermediate",
+      "question": "Can Server Components read cookies and headers?",
+      "answer": "Yes, Server Components can call the cookies() and headers() functions from next/headers. In Next.js 15 these are async, so you await them. Reading them opts the route into dynamic rendering. This is how you build personalized server-rendered content.",
+      "code": "import { cookies } from 'next/headers';\nconst store = await cookies();",
+      "tags": [
+        "cookies",
+        "headers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/cookies"
+      ]
+    },
+    {
+      "id": "server-components-020",
+      "difficulty": "Intermediate",
+      "question": "What is the cost of making a component a Client Component?",
+      "answer": "Its JavaScript and its imports are shipped to the browser, increasing bundle size. It also loses direct server data access and must hydrate. A high 'use client' boundary can pull large subtrees into the client bundle. Keep the boundary low to limit these costs.",
+      "tags": [
+        "client-components",
+        "bundle"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-021",
+      "difficulty": "Advanced",
+      "question": "How does the server-to-client boundary affect bundling?",
+      "answer": "When a module is marked 'use client', it and everything it imports become part of the client bundle. Server Components above the boundary are not bundled. This means a misplaced directive can drag a large dependency tree to the client. Understanding the boundary is key to bundle control.",
+      "tags": [
+        "bundling",
+        "boundaries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-022",
+      "difficulty": "Advanced",
+      "question": "How do you pass Server Actions to Client Components?",
+      "answer": "Server Actions are functions marked with 'use server' and can be passed as props or imported into Client Components. They are serializable references that call back to the server. This lets a Client Component trigger server mutations, like form submissions. They are the primary server-to-client function channel.",
+      "code": "'use server';\nexport async function save(formData) { /* ... */ }",
+      "tags": [
+        "server-actions",
+        "boundaries"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/data-fetching/server-actions-and-mutations"
+      ]
+    },
+    {
+      "id": "server-components-023",
+      "difficulty": "Advanced",
+      "question": "How do RSC and streaming combine for large pages?",
+      "answer": "Server Components can suspend while awaiting data, and Suspense boundaries let Next.js stream the rest of the page. The shell is sent immediately and slow parts stream in as they resolve. This reduces time to first byte and improves perceived speed. It also lets the browser start loading assets sooner.",
+      "tags": [
+        "streaming",
+        "rsc"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "server-components-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid making an entire page a Client Component?",
+      "answer": "Extract interactive widgets into small Client Components and keep the page a Server Component. Fetch data on the server and pass it down. Use children props to nest server content inside client wrappers. This keeps the page mostly server-rendered with minimal client JavaScript.",
+      "tags": [
+        "patterns",
+        "client-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/composition-patterns"
+      ]
+    },
+    {
+      "id": "server-components-025",
+      "difficulty": "Advanced",
+      "question": "What are the security benefits of Server Components?",
+      "answer": "Server Components keep secrets, API keys, and database queries on the server, out of the client bundle. You can safely use private environment variables and access protected resources. The server-only package prevents accidental client imports. This reduces the attack surface compared with exposing logic to the browser.",
+      "tags": [
+        "security",
+        "server-components"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components"
+      ]
+    }
+  ]
+}

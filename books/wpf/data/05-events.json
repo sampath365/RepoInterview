@@ -1,0 +1,213 @@
+{
+  "category": "Routed Events & Commands",
+  "slug": "events",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "events-001",
+      "difficulty": "Beginner",
+      "question": "What is a routed event?",
+      "answer": "A routed event is a CLR event backed by the WPF event system that can travel through the element tree rather than only firing on the element that raised it. It is registered with EventManager.RegisterRoutedEvent and raised with RaiseEvent. Routing enables a single handler on an ancestor to respond to events from many descendants.",
+      "tags": ["routed-events", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between bubbling and tunneling events?",
+      "answer": "A bubbling event travels upward from the source element to the root, which is the default for events like Click. A tunneling event travels downward from the root to the source and is named with a Preview prefix, such as PreviewMouseDown. Tunneling runs before bubbling.",
+      "tags": ["routing", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-003",
+      "difficulty": "Beginner",
+      "question": "What is a direct routed event?",
+      "answer": "A direct routed event behaves like a normal CLR event and only fires on the element itself, without routing to ancestors. It is still registered through the routed event system so it can use the same infrastructure. Events such as MouseEnter are effectively direct in WPF.",
+      "tags": ["routing", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-004",
+      "difficulty": "Beginner",
+      "question": "How do you attach an event handler in code-behind?",
+      "answer": "Use the += operator with the event and a delegate matching its signature, or use AddHandler for routed events. The handler receives a sender and event arguments. You can remove the handler later with -=.",
+      "code": "myButton.Click += OnButtonClick;\n\nprivate void OnButtonClick(object sender, RoutedEventArgs e) { }",
+      "tags": ["handlers", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-005",
+      "difficulty": "Beginner",
+      "question": "What are RoutedEventArgs?",
+      "answer": "RoutedEventArgs is the base class for arguments passed to routed event handlers. It exposes the Source and OriginalSource elements and the RoutedEvent identifier, and its Handled property controls further routing. Specialized events use subclasses such as MouseButtonEventArgs or KeyEventArgs.",
+      "tags": ["event-args", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-006",
+      "difficulty": "Beginner",
+      "question": "What does the Handled property do in event arguments?",
+      "answer": "Setting Handled to true marks the event as handled so most handlers further along the route are not invoked. It stops bubbling or tunneling for typical listeners. Some handlers can opt to receive handled events by registering with handledEventsToo set to true.",
+      "tags": ["handled", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/marking-routed-events-as-handled-and-class-handling"]
+    },
+    {
+      "id": "events-007",
+      "difficulty": "Beginner",
+      "question": "What is a command in WPF?",
+      "answer": "A command encapsulates an action and its state so that controls can invoke it without knowing the implementation. It implements ICommand and exposes Execute, CanExecute, and CanExecuteChanged. WPF provides RoutedCommand and the ApplicationCommands, EditingCommands, and NavigationCommands libraries.",
+      "tags": ["commands", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "events-008",
+      "difficulty": "Beginner",
+      "question": "What is a command binding?",
+      "answer": "A CommandBinding associates a command with handlers for its Executed and CanExecute events on an element. It is added to an element's CommandBindings collection. When the command is invoked, WPF routes the events to find a matching binding.",
+      "code": "<Window.CommandBindings>\n  <CommandBinding Command=\"ApplicationCommands.Save\"\n                  Executed=\"OnSave\" CanExecute=\"OnCanSave\"/>\n</Window.CommandBindings>",
+      "tags": ["command-binding", "commands"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "events-009",
+      "difficulty": "Beginner",
+      "question": "How do you wire a button to a command in XAML?",
+      "answer": "Set the button's Command property to the command instance, such as ApplicationCommands.Save. The button automatically enables or disables itself based on the command's CanExecute result. You can pass a parameter with CommandParameter.",
+      "code": "<Button Content=\"Save\"\n        Command=\"ApplicationCommands.Save\"\n        CommandParameter=\"{Binding CurrentItem}\"/>",
+      "tags": ["commands", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "events-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an event and a command?",
+      "answer": "An event is a notification that something happened and is handled in code-behind, often tightly coupled to the UI. A command represents an intent to perform an action, carries CanExecute state, and is easier to bind to a view model. Commands suit MVVM because they avoid code-behind handlers.",
+      "tags": ["commands", "comparison"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "events-011",
+      "difficulty": "Intermediate",
+      "question": "How does routing work for a bubbling event?",
+      "answer": "When RaiseEvent is called, the event starts at the source element and propagates up the visual and logical tree toward the root. Each element along the route is offered the event, and handlers run in order unless Handled stops propagation. Class handlers run before instance handlers at each element.",
+      "tags": ["routing", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Source and OriginalSource?",
+      "answer": "OriginalSource is the element that actually raised the event, before any routing adjustments. Source is the element currently reporting the event along the route and may change as the event travels. Both are exposed on RoutedEventArgs.",
+      "tags": ["events", "routing"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-013",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom routed event?",
+      "answer": "Register the event with EventManager.RegisterRoutedEvent, storing the returned RoutedEvent in a static readonly field. Then declare a CLR event with add and remove accessors that call AddHandler and RemoveHandler. Raise it with RaiseEvent on the element.",
+      "code": "public static readonly RoutedEvent SelectedEvent =\n    EventManager.RegisterRoutedEvent(\"Selected\", RoutingStrategy.Bubble,\n        typeof(RoutedEventHandler), typeof(MyControl));",
+      "tags": ["custom-events", "routed-events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/how-to-create-a-custom-routed-event"]
+    },
+    {
+      "id": "events-014",
+      "difficulty": "Intermediate",
+      "question": "What are attached events?",
+      "answer": "Attached events let a handler on one element respond to an event defined by another type, similar to attached properties. They are written as OwnerType.EventName in XAML, for example Grid.Click or Button.Click. They are commonly used to handle events from child elements at a parent level.",
+      "tags": ["attached-events", "routed-events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/attached-events-overview"]
+    },
+    {
+      "id": "events-015",
+      "difficulty": "Intermediate",
+      "question": "How do you receive events that have already been marked handled?",
+      "answer": "Use the AddHandler overload that takes a handledEventsToo parameter and pass true. This is useful when a control handles an event internally but you still need to observe it. In XAML you cannot express this directly, so it must be done in code.",
+      "code": "myTextBox.AddHandler(TextBox.KeyDownEvent,\n    new KeyEventHandler(OnKeyDown), handledEventsToo: true);",
+      "tags": ["handled", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/marking-routed-events-as-handled-and-class-handling"]
+    },
+    {
+      "id": "events-016",
+      "difficulty": "Intermediate",
+      "question": "What is a RoutedCommand?",
+      "answer": "RoutedCommand is an ICommand implementation whose Execute and CanExecute raise routed events that bubble and tunnel through the element tree. WPF finds a CommandBinding along the route to handle it, so the command can be invoked from anywhere in the tree. It carries no built-in implementation, only routing.",
+      "tags": ["routedcommand", "commands"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/how-to-create-a-routedcommand"]
+    },
+    {
+      "id": "events-017",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a custom command source?",
+      "answer": "Implement the ICommandSource interface to let your control invoke commands. The interface requires Command, CommandParameter, and CommandTarget properties. In your input handling, call CanExecute and then Execute on the command and update your control's enabled state.",
+      "tags": ["icommandsource", "commands"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/how-to-implement-icommandsource"]
+    },
+    {
+      "id": "events-018",
+      "difficulty": "Intermediate",
+      "question": "What are the common built-in command libraries?",
+      "answer": "ApplicationCommands covers common application actions like Cut, Copy, Paste, Save, and Close. EditingCommands covers text editing such as bold, italic, and align. NavigationCommands covers navigation like NextPage and Zoom, and MediaCommands covers playback control.",
+      "tags": ["commands", "libraries"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "events-019",
+      "difficulty": "Intermediate",
+      "question": "How does a button know when to enable or disable for a command?",
+      "answer": "The control calls ICommand.CanExecute when it is initialized and whenever the command raises CanExecuteChanged. WPF hooks the CommandManager.RequerySuggested event so CanExecute is re-evaluated after user input and focus changes. You can force a refresh with CommandManager.InvalidateRequerySuggested.",
+      "tags": ["canexecute", "commands"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/commanding-overview"]
+    },
+    {
+      "id": "events-020",
+      "difficulty": "Intermediate",
+      "question": "What is class handling of routed events?",
+      "answer": "Class handling registers a handler for an event on behalf of a type rather than an instance, using RegisterClassHandler or the static constructor. It lets a control intercept events before instance handlers run. It is how controls such as Button provide default behavior and mark events handled.",
+      "tags": ["class-handling", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/marking-routed-events-as-handled-and-class-handling"]
+    },
+    {
+      "id": "events-021",
+      "difficulty": "Advanced",
+      "question": "What is the weak event pattern and why is it used?",
+      "answer": "The weak event pattern lets a listener subscribe to an event without creating a strong reference that keeps the listener alive. This prevents memory leaks when the event source outlives the listener, such as a long-lived static or model object. WPF provides WeakEventManager and IWeakEventListener for this purpose.",
+      "tags": ["weak-events", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/weak-event-patterns"]
+    },
+    {
+      "id": "events-022",
+      "difficulty": "Advanced",
+      "question": "How do property change events differ from routed events?",
+      "answer": "Property change events such as DependencyPropertyChangedEventArgs are raised by the property system when a dependency property value changes. They are not routed through the tree in the same way as routed events. You observe them through metadata callbacks or by registering a PropertyChangedCallback.",
+      "tags": ["property-change", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/property-change-events"]
+    },
+    {
+      "id": "events-023",
+      "difficulty": "Advanced",
+      "question": "How does event routing interact with the visual and logical trees?",
+      "answer": "WPF builds an event route from the source element toward the root using the visual tree for most input events and the logical tree in specific cases. Class and instance handlers along that route are invoked in order. Because templates add visual nodes, the route can include elements you did not declare explicitly.",
+      "tags": ["routing", "trees"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/routed-events-overview"]
+    },
+    {
+      "id": "events-024",
+      "difficulty": "Advanced",
+      "question": "How can you implement a custom ICommand for MVVM?",
+      "answer": "Create a class that implements ICommand with Execute, CanExecute, and CanExecuteChanged, often exposing an Action and a Predicate. Raise CanExecuteChanged to tell WPF to re-query the state, for example by calling CommandManager.InvalidateRequerySuggested. This decouples button clicks from view-model logic.",
+      "code": "public class RelayCommand : ICommand\n{\n    private readonly Action<object> _execute;\n    public RelayCommand(Action<object> execute) => _execute = execute;\n    public bool CanExecute(object p) => true;\n    public void Execute(object p) => _execute(p);\n    public event EventHandler CanExecuteChanged\n    {\n        add => CommandManager.RequerySuggested += value;\n        remove => CommandManager.RequerySuggested -= value;\n    }\n}",
+      "tags": ["icommand", "mvvm"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.input.icommand"]
+    },
+    {
+      "id": "events-025",
+      "difficulty": "Advanced",
+      "question": "What are object lifetime events such as Loaded and Unloaded?",
+      "answer": "Loaded fires after an element is constructed, added to the tree, and about to be rendered, and Initialized fires earlier during construction. Unloaded fires when the element is removed from the tree. These events are useful for starting and stopping resources or animations tied to visibility.",
+      "tags": ["lifetime", "events"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/object-lifetime-events"]
+    }
+  ]
+}

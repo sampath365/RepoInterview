@@ -1,0 +1,387 @@
+{
+  "category": "Internationalization & Accessibility",
+  "slug": "i18n",
+  "icon": "translate",
+  "questions": [
+    {
+      "id": "i18n-001",
+      "difficulty": "Beginner",
+      "question": "What is internationalization and localization?",
+      "answer": "Internationalization (i18n) is designing an application so it can support multiple languages and regions, and localization is adapting it for a specific locale. Angular provides built-in i18n tooling for templates and a runtime library for locale data. Planning for both early avoids costly rework.",
+      "tags": [
+        "i18n",
+        "overview",
+        "localization"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n",
+        "https://angular.dev/guide/i18n/locale-id"
+      ]
+    },
+    {
+      "id": "i18n-002",
+      "difficulty": "Beginner",
+      "question": "How do you mark text for translation in an Angular template?",
+      "answer": "Add the i18n attribute to an element whose text should be translated; Angular's extractor collects it into a translation file. Attributes and interpolations can be marked too, and ICU expressions handle plurals and selects. This declarative approach keeps translations next to the template.",
+      "code": "<h1 i18n>Welcome back</h1>",
+      "tags": [
+        "i18n",
+        "templates",
+        "translation"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/prepare",
+        "https://angular.dev/guide/i18n"
+      ]
+    },
+    {
+      "id": "i18n-003",
+      "difficulty": "Beginner",
+      "question": "How do you extract translatable messages?",
+      "answer": "Run ng extract-i18n, which scans the application and produces a translation source file such as messages.xlf. Translators fill in the target language for each message, and the build then compiles the localized app. This keeps the source strings and translations in sync.",
+      "tags": [
+        "i18n",
+        "extraction",
+        "xlf"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/translation-files",
+        "https://angular.dev/cli/extract-i18n"
+      ]
+    },
+    {
+      "id": "i18n-004",
+      "difficulty": "Beginner",
+      "question": "What are ICU expressions for plurals and selects?",
+      "answer": "ICU expressions such as plural and select handle language-specific rules for counts and categories, for example one item versus many. Angular evaluates them at runtime using the active locale. They avoid hand-rolling logic that breaks in languages with complex plural rules.",
+      "code": "{count, plural, =0 {No items} =1 {One item} other {{{count}} items}}",
+      "tags": [
+        "i18n",
+        "icu",
+        "plural"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/prepare",
+        "https://angular.dev/guide/i18n"
+      ]
+    },
+    {
+      "id": "i18n-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between the compile-time and runtime i18n approaches?",
+      "answer": "Angular's built-in i18n compiles a separate application bundle per locale, producing fully optimized localized builds. Runtime libraries such as Transloco or ngx-translate load translations at runtime, which allows switching languages without a reload but adds runtime cost. The choice depends on whether language switching in-app is required.",
+      "tags": [
+        "i18n",
+        "runtime",
+        "compile-time"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n",
+        "https://angular.dev/guide/i18n/merge"
+      ]
+    },
+    {
+      "id": "i18n-006",
+      "difficulty": "Beginner",
+      "question": "How do you format dates and numbers per locale?",
+      "answer": "Use the DatePipe, DecimalPipe, CurrencyPipe, and PercentPipe with a locale, or rely on the LOCALE_ID for the application default. Angular's locale data handles the correct separators, symbols, and date order. Formatting by locale is essential for readable, correct output.",
+      "code": "{{ value | number:'1.2-2' }}\n{{ today | date:'fullDate' }}",
+      "tags": [
+        "i18n",
+        "pipes",
+        "locale"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/format-data-locale",
+        "https://angular.dev/api/common/DatePipe"
+      ]
+    },
+    {
+      "id": "i18n-007",
+      "difficulty": "Beginner",
+      "question": "How do you set the application locale?",
+      "answer": "Provide a LOCALE_ID in the application configuration to set the default locale, and register the required locale data if it is not the default. This drives all built-in formatting. Setting it correctly avoids subtly wrong dates and numbers.",
+      "code": "providers: [{ provide: LOCALE_ID, useValue: 'de-DE' }]",
+      "tags": [
+        "i18n",
+        "locale",
+        "configuration"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/locale-id",
+        "https://angular.dev/api/core/LOCALE_ID"
+      ]
+    },
+    {
+      "id": "i18n-008",
+      "difficulty": "Beginner",
+      "question": "What does accessibility mean in a web application?",
+      "answer": "Accessibility means building interfaces that people with disabilities can perceive and operate, using semantic HTML, keyboard support, and assistive-technology compatibility. It benefits all users, including those on small screens or with temporary impairments. It is also a legal requirement in many jurisdictions.",
+      "tags": [
+        "accessibility",
+        "overview",
+        "a11y"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+      ]
+    },
+    {
+      "id": "i18n-009",
+      "difficulty": "Beginner",
+      "question": "Why is semantic HTML important for accessibility?",
+      "answer": "Native elements such as button, nav, and label carry built-in roles, keyboard behavior, and states that assistive technology understands. Recreating them with divs requires reimplementing all of that correctly. Preferring semantic elements is the simplest way to gain accessibility.",
+      "tags": [
+        "accessibility",
+        "semantics",
+        "html"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/HTML"
+      ]
+    },
+    {
+      "id": "i18n-010",
+      "difficulty": "Beginner",
+      "question": "How do you add a label to a form control accessibly?",
+      "answer": "Associate a label element with the control using the for and id attributes, or use a wrapping label, and add aria-describedby for hints and errors. A visible label is preferred over a placeholder alone. This ensures screen reader users know what the field is for.",
+      "code": "<label for=\"email\">Email</label>\n<input id=\"email\" type=\"email\" />",
+      "tags": [
+        "accessibility",
+        "forms",
+        "labels"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-label"
+      ]
+    },
+    {
+      "id": "i18n-011",
+      "difficulty": "Intermediate",
+      "question": "How do you translate attributes and interpolations?",
+      "answer": "Use the i18n attribute with the matching i18n-* attribute, such as i18n-title, on the element, and Angular captures the interpolated value as part of the message. Placeholders can be named to keep translations clear. This lets translators reorder values correctly across languages.",
+      "tags": [
+        "i18n",
+        "attributes",
+        "interpolation"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/prepare",
+        "https://angular.dev/guide/i18n"
+      ]
+    },
+    {
+      "id": "i18n-012",
+      "difficulty": "Intermediate",
+      "question": "How do you handle pluralization correctly across languages?",
+      "answer": "Use ICU plural expressions so the runtime selects the correct category, such as one, few, many, and other, based on the locale's rules. Hard-coding English-style singular and plural logic fails in languages with more categories. Keep the count and noun together in one message for correct agreement.",
+      "tags": [
+        "i18n",
+        "plural",
+        "icu"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/prepare",
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules"
+      ]
+    },
+    {
+      "id": "i18n-013",
+      "difficulty": "Intermediate",
+      "question": "How do you manage translation files for multiple locales?",
+      "answer": "Keep one source file per locale generated from the extraction step, and merge updates into existing translations as the application changes. Version control the translation files and give translators context through descriptions. Automating merge and validation in CI prevents missing messages.",
+      "tags": [
+        "i18n",
+        "workflow",
+        "translation"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/merge",
+        "https://angular.dev/guide/i18n/translation-files"
+      ]
+    },
+    {
+      "id": "i18n-014",
+      "difficulty": "Intermediate",
+      "question": "How do you build and serve a localized application?",
+      "answer": "Configure locales in the build, which produces a separate bundle per locale, and serve each from its own path or subdomain with a language switcher or content negotiation. This keeps each locale fully optimized. The server is responsible for routing users to the right bundle.",
+      "tags": [
+        "i18n",
+        "build",
+        "deployment"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/merge",
+        "https://angular.dev/guide/i18n"
+      ]
+    },
+    {
+      "id": "i18n-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle right-to-left languages?",
+      "answer": "Use logical CSS properties such as margin-inline-start and text-align: start, which adapt to the direction, and set the dir attribute on the document or root element. Avoid hard-coded left and right values. Testing with an RTL locale catches mirrored layout issues.",
+      "tags": [
+        "i18n",
+        "rtl",
+        "css"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Guides/Logical_properties_and_values",
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Global_attributes/dir"
+      ]
+    },
+    {
+      "id": "i18n-016",
+      "difficulty": "Intermediate",
+      "question": "How does Angular's a11y tooling help during development?",
+      "answer": "Angular's templates warn about common accessibility mistakes and the framework's built-in linting surfaces issues early. The CDK provides utilities such as live announcers and focus traps for custom components. Automated checks complement but do not replace manual testing.",
+      "tags": [
+        "accessibility",
+        "tooling",
+        "a11y"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://material.angular.dev/cdk/a11y/overview"
+      ]
+    },
+    {
+      "id": "i18n-017",
+      "difficulty": "Intermediate",
+      "question": "How do you make dynamic content announcements accessible?",
+      "answer": "Use an aria-live region or the CDK LiveAnnouncer to announce updates such as validation errors, loaded results, or status changes. Choose polite for non-urgent updates and assertive only for critical ones. Announcing the right things keeps screen reader users informed without being noisy.",
+      "tags": [
+        "accessibility",
+        "aria-live",
+        "cdk"
+      ],
+      "references": [
+        "https://material.angular.dev/cdk/a11y/overview",
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Reference/Attributes/aria-live"
+      ]
+    },
+    {
+      "id": "i18n-018",
+      "difficulty": "Intermediate",
+      "question": "How do you test accessibility in an Angular application?",
+      "answer": "Combine automated audits with keyboard-only testing and manual screen reader checks, because automated tools catch only a portion of issues. Verify focus order, contrast, labels, and error messaging. Include accessibility checks in the definition of done rather than treating them as an afterthought.",
+      "tags": [
+        "accessibility",
+        "testing",
+        "a11y"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://developer.mozilla.org/en-US/docs/Learn_web_development/Core/Accessibility/Accessibility_troubleshooting"
+      ]
+    },
+    {
+      "id": "i18n-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle locale-aware sorting and searching?",
+      "answer": "Use Intl.Collator for locale-aware string comparison and normalize text before searching, since default sorting is by code point and can be wrong for many languages. JavaScript's Intl APIs provide the correct rules. This avoids surprising ordering in non-English locales.",
+      "tags": [
+        "i18n",
+        "sorting",
+        "intl"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/Collator",
+        "https://angular.dev/guide/i18n/format-data-locale"
+      ]
+    },
+    {
+      "id": "i18n-020",
+      "difficulty": "Intermediate",
+      "question": "How do you manage text expansion in localized layouts?",
+      "answer": "Translations are often longer than the source string, so designs should avoid fixed widths and allow wrapping or truncation with accessible full text. Test with a long-text pseudo-locale to find breakage early. Flexible layouts prevent clipped or overlapping text.",
+      "tags": [
+        "i18n",
+        "layout",
+        "design"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n",
+        "https://developer.mozilla.org/en-US/docs/Web/CSS/Reference/Properties/overflow-wrap"
+      ]
+    },
+    {
+      "id": "i18n-021",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs between compile-time and runtime i18n?",
+      "answer": "Compile-time i18n produces one optimized bundle per locale with no runtime library, but switching languages requires a reload and the build grows with each locale. Runtime i18n allows instant language switching and a single bundle but adds payload and a dependency, and can miss some template-level optimizations. The right choice depends on how central language switching is to the product.",
+      "tags": [
+        "i18n",
+        "trade-offs",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n",
+        "https://angular.dev/guide/i18n/merge"
+      ]
+    },
+    {
+      "id": "i18n-022",
+      "difficulty": "Advanced",
+      "question": "How would you design a localization workflow for a large team?",
+      "answer": "Automate extraction and merging in CI, keep translation files in version control, and give translators context through descriptions and screenshots. Validate that no messages are missing before release, and version the files with the code. This keeps many contributors from blocking each other.",
+      "tags": [
+        "i18n",
+        "workflow",
+        "ci"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n/merge",
+        "https://angular.dev/guide/i18n/translation-files"
+      ]
+    },
+    {
+      "id": "i18n-023",
+      "difficulty": "Advanced",
+      "question": "How do you combine SSR with localization?",
+      "answer": "Server-side rendering must know the requested locale to render the correct language and set the dir attribute, usually by serving the right bundle or passing locale information. Hydration must then match, or the client re-renders incorrectly. Handling this at the server boundary keeps the rendered HTML consistent.",
+      "tags": [
+        "i18n",
+        "ssr",
+        "hydration"
+      ],
+      "references": [
+        "https://angular.dev/guide/i18n",
+        "https://angular.dev/guide/ssr"
+      ]
+    },
+    {
+      "id": "i18n-024",
+      "difficulty": "Advanced",
+      "question": "What are the accessibility pitfalls of custom interactive components?",
+      "answer": "Custom widgets often lose keyboard navigation, focus visibility, and correct roles, and they may not announce state changes. Implementing the ARIA authoring pattern faithfully, including focus management and live regions, is required. This is where the CDK primitives save significant effort.",
+      "tags": [
+        "accessibility",
+        "components",
+        "aria"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://material.angular.dev/cdk/a11y/overview"
+      ]
+    },
+    {
+      "id": "i18n-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure and enforce accessibility quality over time?",
+      "answer": "Add automated audits to CI, track a small set of accessibility metrics, and require manual checks for new interactive features. Treat regressions as bugs with the same priority as functional defects. Sustained quality comes from making accessibility part of the normal review process.",
+      "tags": [
+        "accessibility",
+        "ci",
+        "quality"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/a11y",
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility"
+      ]
+    }
+  ]
+}

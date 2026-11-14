@@ -1,0 +1,335 @@
+{
+  "category": "Error Handling",
+  "slug": "error-handling",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "error-handling-001",
+      "difficulty": "Beginner",
+      "question": "How does Fastify handle errors thrown in a handler?",
+      "answer": "Fastify catches errors from synchronous throws, rejected promises, and callback errors, then routes them to the error handler. The default handler sends a 500 with a generic message unless the error has a statusCode. This keeps error handling centralised. You can customise the response with setErrorHandler.",
+      "tags": [
+        "errors",
+        "handlers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "error-handling-002",
+      "difficulty": "Beginner",
+      "question": "How do you set a custom error handler?",
+      "answer": "You call fastify.setErrorHandler with a function receiving the error, request, and reply. It runs for errors in that scope and its children. You decide the status code and body. Registering it at the root covers the whole app.",
+      "tags": [
+        "errors",
+        "seterrorhandler"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#seterrorhandler"
+      ],
+      "code": "fastify.setErrorHandler((error, request, reply) => {\n  request.log.error(error)\n  reply.code(error.statusCode || 500).send({ error: error.message })\n})"
+    },
+    {
+      "id": "error-handling-003",
+      "difficulty": "Beginner",
+      "question": "How do you create an error with a specific status code?",
+      "answer": "You set the statusCode property on an Error instance, and Fastify uses it in the response. This is how you signal 404, 400, and other client errors from handlers. The @fastify/sensible plugin provides helpers for common cases. Always choose an accurate status code.",
+      "tags": [
+        "errors",
+        "status"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ],
+      "code": "const err = new Error('Not found')\nerr.statusCode = 404\nthrow err"
+    },
+    {
+      "id": "error-handling-004",
+      "difficulty": "Beginner",
+      "question": "What does the onError hook do?",
+      "answer": "onError runs when an error occurs, before the error handler finalises the response. It is useful for logging or enriching the error with context. You can add properties to the reply or error. It does not replace the error handler.",
+      "tags": [
+        "errors",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/#onerror"
+      ]
+    },
+    {
+      "id": "error-handling-005",
+      "difficulty": "Beginner",
+      "question": "What happens when a validation error occurs?",
+      "answer": "Fastify returns a 400 with details about the failing field, produced by the validator. You can customise the shape with schemaErrorFormatter or a custom error handler. Validation errors never reach your handler. This ensures consistent input feedback.",
+      "tags": [
+        "errors",
+        "validation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "error-handling-006",
+      "difficulty": "Beginner",
+      "question": "How do you return a 404 for a missing resource?",
+      "answer": "You check for the resource in the handler and, if absent, either throw an error with statusCode 404 or call reply.callNotFound. Both produce a 404. Using the central not-found handling keeps the response consistent. Avoid returning 200 with an error field.",
+      "tags": [
+        "errors",
+        "404"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#callnotfound"
+      ]
+    },
+    {
+      "id": "error-handling-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a client error and a server error?",
+      "answer": "Client errors are 4xx statuses caused by the request, such as 400 for bad input or 401 for missing auth. Server errors are 5xx caused by the server, such as 500 for an unexpected failure. Returning the correct class helps clients react appropriately. Never mask a server bug as a 400.",
+      "tags": [
+        "errors",
+        "http"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status"
+      ]
+    },
+    {
+      "id": "error-handling-008",
+      "difficulty": "Beginner",
+      "question": "How do you log errors in a handler?",
+      "answer": "You use request.log.error(err) to log with the request context, including the id and stack. Logging in the error handler centralises it. Avoid logging and rethrowing in every layer. Structured logs make triage easier.",
+      "tags": [
+        "errors",
+        "logging"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "error-handling-009",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid leaking internal error details to clients?",
+      "answer": "Stack traces and database messages can reveal file paths, queries, and infrastructure details useful to attackers. Return a generic message with a correlation id, and log the detail server-side. This balances debuggability and safety. Expose details only in development.",
+      "tags": [
+        "security",
+        "errors"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "error-handling-010",
+      "difficulty": "Beginner",
+      "question": "How do you handle errors in async handlers?",
+      "answer": "You throw or reject inside the async function, and Fastify catches it. You can also return reply.send with an error status. Because Fastify awaits handlers, rejections are handled automatically. This makes async error handling straightforward.",
+      "tags": [
+        "errors",
+        "async"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "error-handling-011",
+      "difficulty": "Intermediate",
+      "question": "How do you create custom error classes in Fastify?",
+      "answer": "You extend the Error class, set name and statusCode, and add any fields you need. Throwing these instances lets your error handler branch on the class. This is cleaner than string matching on messages. Keep the class hierarchy shallow and documented.",
+      "tags": [
+        "errors",
+        "classes"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ],
+      "code": "class NotFoundError extends Error {\n  constructor(msg) {\n    super(msg)\n    this.statusCode = 404\n  }\n}"
+    },
+    {
+      "id": "error-handling-012",
+      "difficulty": "Intermediate",
+      "question": "How does setErrorHandler interact with encapsulation?",
+      "answer": "An error handler set on a plugin applies to that scope and its children, while one set on the root applies everywhere unless overridden. This lets a feature module customise its error format without affecting others. Fastify picks the handler from the scope where the route lives. Understanding this prevents surprising global behaviour.",
+      "tags": [
+        "errors",
+        "encapsulation"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#seterrorhandler"
+      ]
+    },
+    {
+      "id": "error-handling-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors from plugins during registration?",
+      "answer": "Errors thrown during registration reject the ready or listen promise, preventing the server from starting. You should let them propagate rather than swallowing them, since a misconfigured app should not run. Logging the error helps diagnose. Fix the plugin or configuration before retrying.",
+      "tags": [
+        "errors",
+        "plugins"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Plugins/"
+      ]
+    },
+    {
+      "id": "error-handling-014",
+      "difficulty": "Intermediate",
+      "question": "How do you map database errors to HTTP responses?",
+      "answer": "You catch database errors in a service layer and translate known codes, such as unique violations, into domain errors with the right statusCode. The error handler then formats them. This keeps persistence details out of HTTP responses. It also centralises the mapping logic.",
+      "tags": [
+        "errors",
+        "database"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "error-handling-015",
+      "difficulty": "Intermediate",
+      "question": "How do you add a correlation id to error responses?",
+      "answer": "You include request.id in the error body so a client can report it and you can find the matching log line. Fastify already attaches the id to request.log. Adding it to the payload improves support workflows. Never include sensitive context.",
+      "tags": [
+        "errors",
+        "logging"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Logging/"
+      ]
+    },
+    {
+      "id": "error-handling-016",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the error.serializer or custom error serialization?",
+      "answer": "You can define a response schema for errors or format them in the error handler to produce a consistent shape. This ensures clients always receive the same error structure. Serialization also avoids leaking extra fields. Consistency simplifies client handling.",
+      "tags": [
+        "errors",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "error-handling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle timeouts and aborted requests?",
+      "answer": "Fastify provides requestTimeout and connectionTimeout options to bound slow requests. You can also listen for the request close event to detect aborts and cancel work. Combining both prevents resource leaks. Return a 408 or 503 where appropriate.",
+      "tags": [
+        "errors",
+        "timeouts"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Server/#requesttimeout"
+      ]
+    },
+    {
+      "id": "error-handling-018",
+      "difficulty": "Intermediate",
+      "question": "What happens when a hook throws an error during the request?",
+      "answer": "Errors thrown in request hooks flow to the error handler just like handler errors, and remaining stages are skipped. onError and onResponse still run. Attach a statusCode when the failure is a client issue. This keeps hook failures predictable.",
+      "tags": [
+        "errors",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "error-handling-019",
+      "difficulty": "Intermediate",
+      "question": "How do you return a 503 when a dependency is down?",
+      "answer": "You detect the failure in your service call and throw an error with statusCode 503, optionally adding a Retry-After header. A circuit breaker can avoid hammering a failing dependency. Log the failure with context. This signals clients to retry later.",
+      "tags": [
+        "errors",
+        "reliability"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ]
+    },
+    {
+      "id": "error-handling-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test error handling behaviour?",
+      "answer": "You use fastify.inject to send requests that trigger each error path and assert the status and body. Inject avoids binding a port and runs the full lifecycle. Cover validation errors, not-found, and thrown errors. This locks in the response contract.",
+      "tags": [
+        "errors",
+        "testing"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Guides/Testing/"
+      ]
+    },
+    {
+      "id": "error-handling-021",
+      "difficulty": "Advanced",
+      "question": "How do you design a consistent error taxonomy for an API?",
+      "answer": "You define error types with stable codes, HTTP statuses, and human-readable messages, and map them centrally in the error handler. Clients branch on the code rather than the message text. Document the codes as part of the API contract. A taxonomy keeps responses predictable across teams.",
+      "tags": [
+        "errors",
+        "api-design"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Errors/"
+      ]
+    },
+    {
+      "id": "error-handling-022",
+      "difficulty": "Advanced",
+      "question": "What is the correct order of error-handling hooks and handler?",
+      "answer": "When an error occurs, Fastify runs onError hooks, then the error handler, then onSend, and finally onResponse. This ordering means onError can enrich the error before the handler formats it, and onSend can adjust headers. onResponse always runs once the response is sent. Knowing this avoids double-logging or lost context.",
+      "tags": [
+        "errors",
+        "hooks"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Hooks/"
+      ]
+    },
+    {
+      "id": "error-handling-023",
+      "difficulty": "Advanced",
+      "question": "How do you handle uncaught exceptions and unhandled rejections in production?",
+      "answer": "Fastify and Pino log errors, but uncaught exceptions at the process level should be caught with process handlers that log and then exit, allowing a supervisor to restart the process. Never keep running after an uncaught exception, as state may be corrupt. Combine with health checks and graceful shutdown. This keeps failures contained and observable.",
+      "tags": [
+        "errors",
+        "process"
+      ],
+      "references": [
+        "https://nodejs.org/api/process.html#processuncaughtexception"
+      ]
+    },
+    {
+      "id": "error-handling-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid double-sending a reply when errors occur after a response started?",
+      "answer": "Once a response has started streaming, you cannot change the status, so you must check reply.sent or the raw stream state before sending an error. If the response already began, log the error and destroy the socket instead. Guard handlers that write early with this check. This prevents the confusing double-send error.",
+      "tags": [
+        "errors",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "error-handling-025",
+      "difficulty": "Advanced",
+      "question": "How do you implement retries with backoff for transient errors?",
+      "answer": "You wrap outbound calls in a helper that retries only idempotent operations on transient failures, using exponential backoff with jitter and a cap. Limit attempts and surface a 503 when exhausted. Never retry non-idempotent writes blindly. This improves resilience without amplifying load.",
+      "tags": [
+        "errors",
+        "reliability"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503"
+      ]
+    }
+  ]
+}

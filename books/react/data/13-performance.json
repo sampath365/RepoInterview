@@ -1,0 +1,334 @@
+{
+  "category": "Performance Optimization",
+  "slug": "performance",
+  "icon": "gauge",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "Why does performance matter in React apps?",
+      "answer": "React re-renders components when state or props change, and a large tree can do more work than needed, causing sluggish input and slow screens. Performance matters because responsiveness affects usability and conversion. The goal is not zero renders but rendering only what must change. Measure before optimizing so effort goes where it counts.",
+      "tags": [
+        "performance",
+        "overview"
+      ],
+      "references": [
+        "https://react.dev/learn/render-and-commit"
+      ]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "What tools can you use to profile React?",
+      "answer": "The React DevTools Profiler records which components render, how long they take and why they rendered. The browser Performance panel shows the full picture including scripting and paint. The Profiler component API lets you record programmatically in tests. Start with these before changing code. Profiling tells you whether a change actually helped.",
+      "tags": [
+        "performance",
+        "profiling"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Profiler"
+      ]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "What does React.memo do?",
+      "answer": "React.memo wraps a component and skips re-rendering it when its props are shallowly equal to the previous render. It is useful for components that render often with the same props and are expensive. It adds a comparison cost on every render, so it is not free. It works best with stable prop references.",
+      "code": "const Row = memo(function Row({ item }) {\n  return <li>{item.name}</li>;\n});",
+      "tags": [
+        "performance",
+        "memo"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo"
+      ]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "How does key choice affect performance?",
+      "answer": "Stable keys let React move existing DOM nodes and preserve state during reorders, avoiding expensive unmount and remount cycles. Unstable keys such as indexes cause React to recreate elements, which is slower and can reset state. Keys are one of the simplest performance levers in list rendering. Choose keys that represent identity, not position.",
+      "tags": [
+        "performance",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "Why is code splitting important?",
+      "answer": "A large initial bundle delays the first render, especially on slow networks. Code splitting loads parts of the app on demand so users get a smaller initial download. Route-based splitting is the easiest win because each page loads only when visited. Combine it with Suspense to show a fallback while loading.",
+      "tags": [
+        "performance",
+        "code-splitting"
+      ],
+      "references": [
+        "https://react.dev/reference/react/lazy"
+      ]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "How does useMemo help performance?",
+      "answer": "useMemo caches the result of an expensive calculation so it is not recomputed when dependencies have not changed. It can also stabilize object references passed to memoized children. It adds bookkeeping cost, so it helps only for genuinely expensive work or when reference stability matters. Profile before adding it broadly.",
+      "tags": [
+        "performance",
+        "useMemo"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "What is the cost of creating inline functions in JSX?",
+      "answer": "Creating a function on every render is cheap in isolation and usually not a performance problem. It only matters when the function is passed to a memoized child, because the new reference defeats the memo. In those cases stabilize it with useCallback. Do not wrap every handler by default.",
+      "tags": [
+        "performance",
+        "functions"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useCallback"
+      ]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid unnecessary state?",
+      "answer": "Extra state causes extra re-renders and creates opportunities for the state to fall out of sync. Values that can be derived from props or other state should be computed during render instead of stored. Fewer state variables mean fewer updates and simpler logic. This is one of the easiest performance improvements.",
+      "tags": [
+        "performance",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/you-might-not-need-an-effect"
+      ]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "How do you keep a list render fast?",
+      "answer": "Use stable keys, memoize row components, and virtualize when the list is long so only visible rows are in the DOM. Avoid recomputing derived data on every render. Pass primitive props where possible so memo comparisons are cheap. These steps keep scrolling smooth.",
+      "tags": [
+        "performance",
+        "lists"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "What is the React Profiler component?",
+      "answer": "The Profiler component measures how often a subtree renders and how long it takes, calling an onRender callback with timing data. You can wrap parts of the tree to get focused measurements. It works in development and production builds. Use it to confirm that an optimization reduced render time.",
+      "code": "<Profiler id='list' onRender={logRender}>\n  <List />\n</Profiler>",
+      "tags": [
+        "performance",
+        "profiling"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Profiler"
+      ]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "When does React.memo not help?",
+      "answer": "React.memo does nothing useful when props change on every render, when the component is cheap to render, or when the comparison cost approaches the render cost. It also fails if you pass new objects, arrays or functions each render, because shallow equality sees a change. Fix the prop stability first, then memoize. Measure to confirm the benefit.",
+      "tags": [
+        "performance",
+        "memo"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo"
+      ]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "How does state placement affect performance?",
+      "answer": "State updates re-render the component that owns them and its descendants, so placing state too high causes wide re-renders. Moving state down to the components that need it limits the impact. Splitting a component so fast-changing state lives in a small leaf is a common fix. This often beats memoization for simplicity.",
+      "tags": [
+        "performance",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/learn/managing-state"
+      ]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between debouncing and throttling?",
+      "answer": "Debouncing delays running a function until events stop for a set time, which suits search inputs. Throttling limits how often a function runs during a stream of events, which suits scroll and resize. Both reduce how often expensive work executes. Choose based on whether you want the final value or steady updates.",
+      "tags": [
+        "performance",
+        "events"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/API/Window/scroll_event"
+      ]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize context to avoid re-renders?",
+      "answer": "Memoize the provider value so it only changes when the data changes, and split independent data into separate contexts. Keep providers low in the tree so fewer consumers subscribe. For frequently changing values, use a store with selectors instead. These steps stop unrelated components from re-rendering.",
+      "tags": [
+        "performance",
+        "context"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "What is virtualization and when should you use it?",
+      "answer": "Virtualization renders only the rows currently visible plus a small buffer, keeping the DOM small even for huge lists. It is worth it once a list reaches hundreds or thousands of items. It requires known or measurable item sizes and a scroll container. Libraries like react-window and TanStack Virtual make it straightforward.",
+      "tags": [
+        "performance",
+        "virtualization"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you measure component render time?",
+      "answer": "Use the React DevTools Profiler to record an interaction and inspect each component render duration and count. The flame chart shows which components dominate and why they rendered. The Profiler component API gives the same data programmatically. Compare before and after to confirm the effect of a change.",
+      "tags": [
+        "performance",
+        "profiling"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Profiler"
+      ]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "Why can expensive computations in render be a problem?",
+      "answer": "Render should be fast and pure because it can run many times, including during concurrent rendering where work may be restarted. Heavy computation in render blocks the main thread and hurts responsiveness. Move it out of the component, memoize it, or compute it in a worker. Caching results across renders also helps.",
+      "tags": [
+        "performance",
+        "rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/keeping-components-pure"
+      ]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "How do transitions improve perceived performance?",
+      "answer": "useTransition marks an update as non-urgent so React can keep urgent updates like typing responsive while the expensive update renders in the background. The isPending flag lets you show a subtle loading state. It improves perceived speed without making the work disappear. Use it for large list filtering or tab switches.",
+      "tags": [
+        "performance",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useTransition"
+      ]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize images and assets in React?",
+      "answer": "Lazy-load offscreen images with the loading attribute or an intersection observer, serve appropriately sized and modern formats, and set width and height to avoid layout shifts. Split rarely used components so their assets load on demand. For above-the-fold images consider preloading. Assets are often a bigger bottleneck than component rendering.",
+      "tags": [
+        "performance",
+        "assets"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img"
+      ]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between useMemo and a module-level constant?",
+      "answer": "A module-level constant is computed once when the module loads and is shared across all renders, which is ideal for values that never depend on props or state. useMemo recomputes when dependencies change and is for per-instance, dependency-driven values. Hoisting truly static work out of the component removes it from the render path entirely. Prefer the simplest option that avoids needless work.",
+      "tags": [
+        "performance",
+        "useMemo"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useMemo"
+      ]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How does concurrent rendering improve perceived performance?",
+      "answer": "Concurrent rendering lets React prepare a new version of the UI in the background without blocking the current one, so it can interrupt long renders to handle urgent updates. Features like transitions and deferred values use this to keep input responsive. It does not make individual renders faster; it improves scheduling. The result is a smoother experience under load.",
+      "tags": [
+        "performance",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/blog/2022/03/29/react-v18"
+      ]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "How do you find the source of an unnecessary re-render?",
+      "answer": "Record a profile, select the component, and use the panel that explains why it rendered, such as props or state changing. Check for new object or function props that break memoization, and for context values that change on every render. Tracing the changed prop usually reveals the cause. Fixing the source is better than adding more memoization.",
+      "tags": [
+        "performance",
+        "debugging"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Profiler"
+      ]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of virtualization?",
+      "answer": "Virtualization keeps the DOM small and scrolling fast but adds complexity around dynamic heights, accessibility and search or print behavior. It can break find-in-page and focus management if not handled carefully. For modest lists, pagination is simpler. Use virtualization when the item count truly demands it.",
+      "tags": [
+        "performance",
+        "virtualization"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you balance memoization against code complexity?",
+      "answer": "Memoization adds dependency arrays to maintain and can hide the real data flow, so it should target measured hot spots. Prefer structural fixes such as moving state down or splitting components, which often remove the need for memoization entirely. Keep memoized boundaries few and meaningful. Simplicity is itself a performance feature for maintenance.",
+      "tags": [
+        "performance",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/reference/react/memo"
+      ]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you measure real-world performance, not just render counts?",
+      "answer": "Use field metrics such as Core Web Vitals like Largest Contentful Paint and Interaction to Next Paint collected from real users. Lab tools such as Lighthouse and the Performance panel show detail but not real conditions. Correlate React render times with these user-facing metrics. Optimize for what users experience, not for isolated numbers.",
+      "tags": [
+        "performance",
+        "metrics"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Performance"
+      ]
+    }
+  ]
+}

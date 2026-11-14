@@ -1,0 +1,344 @@
+{
+  "category": "ASP.NET Core Fundamentals",
+  "slug": "fundamentals",
+  "icon": "book",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is ASP.NET Core?",
+      "answer": "ASP.NET Core is a free, open-source, cross-platform framework from Microsoft for building modern web apps and HTTP services. It runs on .NET on Windows, Linux, and macOS and unifies MVC, Web API, Razor Pages, gRPC, Blazor, and SignalR into one programming model. It ships with built-in dependency injection, a lightweight modular request pipeline, and is engineered for high throughput and testability.",
+      "tags": [
+        "overview",
+        "cross-platform"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What is the difference between ASP.NET Core and ASP.NET Framework?",
+      "answer": "ASP.NET Core is cross-platform, open-source, and runs on modern .NET on Windows, Linux, and macOS, while ASP.NET Framework only runs on Windows on the full .NET Framework. ASP.NET Core unifies MVC and Web API into a single model, has dependency injection built in, is side-by-side versionable, and is much faster and more modular. ASP.NET Framework is in maintenance mode and receives only security and reliability fixes, so new projects should target ASP.NET Core.",
+      "tags": [
+        "aspnet-core",
+        "aspnet-framework"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core",
+        "https://learn.microsoft.com/dotnet/standard/choosing-core-framework-server"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "What is Kestrel?",
+      "answer": "Kestrel is the cross-platform, open-source web server that is the default and recommended server for ASP.NET Core. It is built on the ASP.NET Core HTTP server abstractions and is fast and lightweight, so it can serve requests directly or sit behind a reverse proxy such as IIS, Nginx, or YARP. In production, a reverse proxy is commonly placed in front for TLS termination, compression, and additional security filtering.",
+      "tags": [
+        "kestrel",
+        "web-server"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between .NET and ASP.NET Core?",
+      "answer": ".NET is the general-purpose runtime and base class library that hosts languages such as C#, while ASP.NET Core is a web framework built on top of .NET. ASP.NET Core provides the HTTP server, middleware pipeline, routing, and higher-level components like MVC and Razor Pages. You can build console apps, libraries, and services with plain .NET, but ASP.NET Core is specifically for web workloads.",
+      "tags": [
+        "dotnet",
+        "framework"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core",
+        "https://learn.microsoft.com/dotnet/core/introduction"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What app models does ASP.NET Core offer?",
+      "answer": "ASP.NET Core offers several app models: Razor Pages for page-focused apps, MVC for larger apps with controllers and views, Web API (controllers or Minimal APIs) for HTTP services, Blazor for interactive UI written in C#, SignalR for real-time communication, and gRPC for contract-first RPC. You choose based on the UI style, the client types, and how much structure the team wants.",
+      "tags": [
+        "templates",
+        "app-models"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the difference between MVC and Web API in ASP.NET Core?",
+      "answer": "In ASP.NET Core, MVC and Web API are unified: both use controllers and share routing, model binding, and filters, but Web API controllers return data (typically JSON) via IActionResult or the [ApiController] attribute instead of views. MVC adds Razor view rendering, while Web API focuses on HTTP semantics, content negotiation, and status codes. This unification removed the separate System.Web.Http stack that existed in older ASP.NET.",
+      "tags": [
+        "mvc",
+        "web-api"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "What is a Minimal API?",
+      "answer": "Minimal APIs let you define HTTP endpoints with a few lines of lambda-based code in Program.cs, without controllers or the MVC filter pipeline. They are ideal for small services, microservices, and prototypes and support routing, model binding, dependency injection, filters, and OpenAPI. For complex apps that need views, extensive model-validation conventions, or heavy filter use, controllers often remain the better fit.",
+      "tags": [
+        "minimal-api"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What is the role of Program.cs in an ASP.NET Core app?",
+      "answer": "Program.cs is the application entry point in modern ASP.NET Core. It creates the WebApplicationBuilder, registers services with the dependency injection container, builds the app, configures the middleware pipeline, maps endpoints, and calls app.Run(). Top-level statements replaced the old Program and Startup classes, though you can still organize code into extension methods for readability.",
+      "tags": [
+        "program-cs",
+        "entry-point"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "How does ASP.NET Core handle a request at a high level?",
+      "answer": "A request arrives at the server (Kestrel), which surfaces it to the middleware pipeline as an HttpContext. Each middleware can inspect or modify the request, short-circuit the pipeline, or call the next component, and eventually routing selects an endpoint (controller action, Razor Page, or minimal API handler) to execute. The response then flows back out through the middleware in reverse order.",
+      "tags": [
+        "request-pipeline",
+        "httpcontext"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is HttpContext?",
+      "answer": "HttpContext is the per-request object that encapsulates a single HTTP exchange: the HttpRequest, HttpResponse, the authenticated user (ClaimsPrincipal), connection information, and a request-scoped Items dictionary. It is accessed from the current request or injected via IHttpContextAccessor where needed. It must never be captured and used across requests because it is recycled once the response completes.",
+      "tags": [
+        "httpcontext"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/http-context",
+        "https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.httpcontext"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the host and the application in ASP.NET Core?",
+      "answer": "The host handles app startup and lifetime management, including configuration, dependency injection, logging, and the IHostApplicationLifetime callbacks, while the application is the request-processing pipeline and endpoints built on top of the host. WebApplication in .NET 6+ combines both roles, so Program.cs configures services and middleware in one place. IHostApplicationLifetime exposes ApplicationStarted, ApplicationStopping, and ApplicationStopped for graceful startup and shutdown.",
+      "tags": [
+        "hosting",
+        "lifetime"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "How does the ASP.NET Core middleware pipeline differ from the old HttpModule and HttpHandler model?",
+      "answer": "In ASP.NET Framework, requests passed through HttpModules and HttpHandlers configured largely in web.config, which made the pipeline hard to compose and test. ASP.NET Core uses an explicit pipeline built with IApplicationBuilder, where each component is a small class or lambda that wraps the next one. This is more flexible, order-sensitive, and unit-testable, and it is configured in code rather than XML.",
+      "tags": [
+        "pipeline",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "How does ASP.NET Core achieve high throughput compared to ASP.NET Framework?",
+      "answer": "ASP.NET Core uses the Kestrel server, an async and allocation-conscious pipeline, and a single unified stack that avoids the legacy System.Web overhead. It benefits from Span<T>, pooled buffers, and improvements in the CoreCLR JIT, and it is designed around async I/O end to end. Benchmarks such as TechEmpower consistently place ASP.NET Core among the fastest mainstream web frameworks.",
+      "tags": [
+        "performance",
+        "kestrel"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel",
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the hosting environment concept?",
+      "answer": "The environment (Development, Staging, Production) is a string that ASP.NET Core reads from the ASPNETCORE_ENVIRONMENT variable and exposes via IHostEnvironment.EnvironmentName and IWebHostEnvironment. You use it to branch behavior, such as showing the developer exception page in Development and enforcing HSTS and custom error handling in Production, and to load environment-specific files like appsettings.Production.json. Using the well-known names matters because frameworks and tooling check for Development specifically.",
+      "tags": [
+        "environments",
+        "configuration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/environments"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "How do the service container and the middleware pipeline relate to each other?",
+      "answer": "The service container is built once at startup and holds singletons, scoped services, and transients that components depend on, while the middleware pipeline is also configured once but is a per-request execution path. Services are resolved when the pipeline is constructed (for example via UseMiddleware or endpoint delegates), and scoped services are created once per request. This separation keeps configuration static and request state isolated.",
+      "tags": [
+        "dependency-injection",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/dependency-injection",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "How would you structure a large ASP.NET Core solution?",
+      "answer": "Large solutions typically split into a web project, one or more class libraries for domain and data access, and one or more test projects, often following a clean or layered architecture. Program.cs stays thin by delegating to extension methods such as AddApplicationServices and UseCustomMiddleware defined in those libraries. Controllers, Razor Pages, or minimal API endpoint groups stay small and call into services, keeping the web layer thin and the domain logic testable.",
+      "tags": [
+        "architecture",
+        "project-structure"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/introduction-to-aspnet-core",
+        "https://learn.microsoft.com/dotnet/architecture/modern-web-apps-azure/common-web-application-architectures"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the Generic Host and the older Web Host?",
+      "answer": "ASP.NET Core 3.0 and later use the Generic Host (WebApplication.CreateBuilder or Host.CreateDefaultBuilder), which is shared with worker services and console apps, while the earlier Web Host (WebHost.CreateDefaultBuilder) was web-specific. The Generic Host provides unified configuration, logging, dependency injection, and lifetime management, making it easy to host web and background workloads together. New apps should use the Generic Host through WebApplicationBuilder.",
+      "tags": [
+        "generic-host",
+        "hosting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "Why is asynchronous programming important in ASP.NET Core?",
+      "answer": "ASP.NET Core is async-first: action methods, middleware, and I/O APIs return Task and use async/await so threads are released while waiting on network, database, or file I/O. This improves scalability because the thread pool is not blocked, letting the server handle more concurrent requests with fewer threads. Blocking calls such as .Result or Task.Wait() should be avoided in request paths because they can cause thread-pool starvation and deadlocks.",
+      "tags": [
+        "async",
+        "scalability"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write",
+        "https://learn.microsoft.com/dotnet/csharp/asynchronous-programming/async-scenarios"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What is a RequestDelegate and how does it relate to middleware?",
+      "answer": "A RequestDelegate is a function that takes an HttpContext and returns a Task, representing one step in the request pipeline. Middleware is essentially a component that wraps a RequestDelegate and may call it to pass control to the next component. Terminal middleware does not call the next delegate and ends the request, which is how static files or endpoints produce a response.",
+      "tags": [
+        "requestdelegate",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/",
+        "https://learn.microsoft.com/dotnet/api/microsoft.aspnetcore.http.requestdelegate"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "How do you set response headers and status codes in ASP.NET Core?",
+      "answer": "You use HttpContext.Response.Headers to read or write headers and Response.StatusCode to set the status code, or you return typed results such as Results.Ok() and ObjectResult in controllers. Headers must be set before the response body starts; once writing begins they become read-only and further changes throw. Helpers like TypedResults and IActionResult encapsulate common status codes and content types cleanly.",
+      "tags": [
+        "http",
+        "response"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/action-return-types"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "How are the hosting layer, Kestrel, and the middleware pipeline composed at startup?",
+      "answer": "WebApplication.CreateBuilder builds a Generic Host, registers Kestrel as the IServer, and wires up configuration, logging, dependency injection, and lifetime services. During startup the host builds the service provider, then Kestrel binds its endpoints and starts accepting connections, forwarding each connection's requests into the pipeline through the application's request delegate. On shutdown, IHostApplicationLifetime signals stopping so in-flight requests can drain gracefully.",
+      "tags": [
+        "hosting",
+        "kestrel",
+        "architecture"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/host/generic-host"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between the in-process and out-of-process hosting models with IIS?",
+      "answer": "With in-process hosting, the app runs inside the IIS worker process (w3wp) using the ASP.NET Core Module v2 as a native handler, avoiding an extra reverse-proxy hop and improving performance. With out-of-process hosting, Kestrel runs as a separate process and IIS proxies to it over a loopback port. In-process is the default and recommended option on IIS, while out-of-process is useful when the app must run under a different identity or when hosting on a non-IIS server.",
+      "tags": [
+        "iis",
+        "hosting"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/aspnet-core-module"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "How would you make an ASP.NET Core app resilient and observable across the request pipeline?",
+      "answer": "You would add layered middleware for exception handling (IExceptionHandler), request logging, correlation IDs, and health checks, and use Polly-based resilience handlers for outbound HTTP calls. Distributed tracing with OpenTelemetry and structured logging with scopes provide end-to-end visibility. Cross-cutting concerns belong in middleware or a DelegatingHandler rather than being duplicated in every action.",
+      "tags": [
+        "observability",
+        "resilience"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling",
+        "https://learn.microsoft.com/dotnet/core/diagnostics/observability-with-otel"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "What trade-offs exist between Minimal APIs and MVC controllers in a large codebase?",
+      "answer": "Minimal APIs start faster, have lower overhead, and are excellent for microservices, but historically lacked some MVC features such as full model-validation filters and view rendering, which are now partly addressed through endpoint filters and endpoint groups. Controllers offer conventions, filters, customizable model binding, and a familiar structure that scales across large teams. Many teams use Minimal APIs for new HTTP services and controllers for complex, view-heavy, or convention-driven areas.",
+      "tags": [
+        "minimal-api",
+        "mvc",
+        "trade-offs"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis",
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "How does hosting behind a reverse proxy change request handling compared to running Kestrel directly?",
+      "answer": "When Kestrel sits behind a reverse proxy such as IIS, Nginx, Apache, or YARP, you must forward headers using the ForwardedHeaders middleware so the app sees the original scheme, host, and client IP; otherwise redirects, HTTPS detection, and rate limiting break. The proxy usually handles TLS termination, static caching, and compression, while Kestrel focuses on request processing. Running Kestrel directly is simpler but you must configure TLS, connection limits, and DoS protections yourself.",
+      "tags": [
+        "kestrel",
+        "reverse-proxy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/host-and-deploy/proxy-load-balancer",
+        "https://learn.microsoft.com/aspnet/core/fundamentals/servers/kestrel"
+      ]
+    }
+  ]
+}

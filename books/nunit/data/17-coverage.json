@@ -1,0 +1,361 @@
+{
+  "category": "Code Coverage & Analysis",
+  "slug": "coverage",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "coverage-001",
+      "difficulty": "Beginner",
+      "question": "What is code coverage?",
+      "answer": "Code coverage measures how much of your code is exercised by the tests, typically as a percentage of lines, branches or statements. It is a diagnostic signal, not a goal in itself. High coverage with weak assertions can still miss defects.",
+      "tags": [
+        "coverage",
+        "concepts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "coverage-002",
+      "difficulty": "Beginner",
+      "question": "How do you collect code coverage with dotnet test?",
+      "answer": "Pass --collect \"XPlat Code Coverage\" to dotnet test, which uses the Coverlet collector to emit a coverage report. The results are written under the TestResults directory. This works for NUnit projects like any other .NET test project.",
+      "code": "dotnet test --collect:\"XPlat Code Coverage\"",
+      "tags": [
+        "coverage",
+        "dotnet"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://github.com/coverlet-coverage/coverlet"
+      ]
+    },
+    {
+      "id": "coverage-003",
+      "difficulty": "Beginner",
+      "question": "What is Coverlet?",
+      "answer": "Coverlet is the open-source cross-platform coverage tool that integrates with the .NET test platform and MSBuild. It produces reports in formats such as Cobertura, lcov and opencover. It is the default collector when you use XPlat Code Coverage.",
+      "tags": [
+        "coverage",
+        "coverlet"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-004",
+      "difficulty": "Beginner",
+      "question": "What is ReportGenerator used for?",
+      "answer": "ReportGenerator converts the coverage files produced by Coverlet and other tools into human-readable HTML and other formats, and can merge several reports. It is commonly used in CI to publish a browsable coverage report. It also supports thresholds that can fail a build.",
+      "tags": [
+        "coverage",
+        "reporting"
+      ],
+      "references": [
+        "https://github.com/danielpalme/ReportGenerator",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between line coverage and branch coverage?",
+      "answer": "Line coverage counts how many lines of code were executed, while branch coverage counts how many decision outcomes, such as both sides of an if, were taken. Branch coverage is stricter and reveals untested paths that line coverage hides. Many teams track branch coverage for critical code.",
+      "tags": [
+        "coverage",
+        "metrics"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "coverage-006",
+      "difficulty": "Beginner",
+      "question": "Why is 100 percent coverage not a meaningful goal?",
+      "answer": "Coverage only says code was executed, not that the behaviour was verified, so you can reach 100 percent with no assertions or with assertions on the wrong things. Chasing the number encourages tests that execute code without checking it. Use coverage to find untested areas, not as a target.",
+      "tags": [
+        "coverage",
+        "bestpractices"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-007",
+      "difficulty": "Beginner",
+      "question": "How do you view a coverage report locally?",
+      "answer": "Run dotnet test with the collector, then run ReportGenerator against the produced coverage file to generate HTML, and open the index page. The report highlights covered and uncovered lines. This is the standard local workflow.",
+      "code": "reportgenerator -reports:coverage.cobertura.xml -targetdir:coveragereport",
+      "tags": [
+        "coverage",
+        "workflow"
+      ],
+      "references": [
+        "https://github.com/danielpalme/ReportGenerator",
+        "https://github.com/coverlet-coverage/coverlet"
+      ]
+    },
+    {
+      "id": "coverage-008",
+      "difficulty": "Beginner",
+      "question": "What does an uncovered line mean?",
+      "answer": "An uncovered line is code that no test executed, so its behaviour is unverified. It may be dead code, a rare error path, or simply a gap in the tests. Reviewing uncovered lines often reveals both missing tests and code that should be removed.",
+      "tags": [
+        "coverage",
+        "concepts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "coverage-009",
+      "difficulty": "Beginner",
+      "question": "Does coverage include the test code itself?",
+      "answer": "Coverage tools measure the code under test, but if the test project is not excluded the report can include test classes and inflate the numbers. Exclude test assemblies and generated code from the measurement. A clean scope makes the metric meaningful.",
+      "tags": [
+        "coverage",
+        "configuration"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-010",
+      "difficulty": "Beginner",
+      "question": "How do you exclude a class or method from coverage?",
+      "answer": "Use the ExcludeFromCodeCoverage attribute on the type or member, or configure the coverage tool to exclude by namespace or file pattern. This is appropriate for generated code, glue and code that cannot be meaningfully tested. Exclusions should be justified, not a way to hide gaps.",
+      "code": "[ExcludeFromCodeCoverage]\npublic class GeneratedMapper { }",
+      "tags": [
+        "coverage",
+        "exclusions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://github.com/coverlet-coverage/coverlet"
+      ]
+    },
+    {
+      "id": "coverage-011",
+      "difficulty": "Intermediate",
+      "question": "How do you merge coverage results from several test projects?",
+      "answer": "Collect a coverage file from each test project and pass all of them to ReportGenerator, which merges them into one report. This gives a whole-solution view. Merging avoids optimising one project while another is untested.",
+      "tags": [
+        "coverage",
+        "reporting"
+      ],
+      "references": [
+        "https://github.com/danielpalme/ReportGenerator",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-012",
+      "difficulty": "Intermediate",
+      "question": "How do you enforce a coverage threshold in CI?",
+      "answer": "Configure a minimum in the coverage tool or use ReportGenerator's threshold settings, and fail the build when the value drops below it. A threshold guards against regressions rather than driving coverage up. Keep the threshold realistic so it is not routinely bypassed.",
+      "tags": [
+        "coverage",
+        "ci"
+      ],
+      "references": [
+        "https://github.com/danielpalme/ReportGenerator",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-013",
+      "difficulty": "Intermediate",
+      "question": "How do you publish coverage results in Azure Pipelines?",
+      "answer": "Use the PublishCodeCoverageResults task with the Cobertura file produced by Coverlet, and optionally a coverage gate with a minimum threshold. This surfaces coverage in the build summary. It integrates with the .NET build tasks.",
+      "tags": [
+        "coverage",
+        "azuredevops"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-014",
+      "difficulty": "Intermediate",
+      "question": "What is mutation testing and how does it relate to coverage?",
+      "answer": "Mutation testing deliberately introduces small faults into the code and checks whether the tests fail, which measures assertion strength rather than mere execution. It finds the gaps that high coverage can hide. Tools such as Stryker.NET implement it for .NET.",
+      "tags": [
+        "coverage",
+        "mutation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "coverage-015",
+      "difficulty": "Intermediate",
+      "question": "Why might a covered branch still be untested behaviourally?",
+      "answer": "A branch can be executed without any assertion verifying the outcome, so the line is green but the behaviour is unchecked. Coverage counts execution, not verification. This is why coverage must be read alongside the quality of the assertions.",
+      "tags": [
+        "coverage",
+        "concepts"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-016",
+      "difficulty": "Intermediate",
+      "question": "How do you measure coverage for a library referenced by a test project?",
+      "answer": "Coverlet instruments the assemblies under test, so ensure the library is included in the coverage scope and the test project references it normally. Adjust Include and Exclude filters so the library is measured and the test project is not. Then collect as usual.",
+      "tags": [
+        "coverage",
+        "configuration"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-017",
+      "difficulty": "Intermediate",
+      "question": "How do you set a coverage threshold per project in .NET?",
+      "answer": "Add a coverlet.msbuild package reference and set Threshold and ThresholdType properties in the project file, for example a line threshold of 80 percent. The build fails if the value is not met. This gives a per-project gate in addition to any CI-wide one.",
+      "code": "<PropertyGroup>\n  <Threshold>80</Threshold>\n  <ThresholdType>line</ThresholdType>\n</PropertyGroup>",
+      "tags": [
+        "coverage",
+        "configuration"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-018",
+      "difficulty": "Intermediate",
+      "question": "What formats can coverage reports be produced in?",
+      "answer": "Coverlet can emit cobertura, lcov, opencover and json, among others, and ReportGenerator can read and convert between them. The right choice depends on the CI system and the report viewer. Cobertura is the most widely accepted by pipelines.",
+      "tags": [
+        "coverage",
+        "formats"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://github.com/danielpalme/ReportGenerator"
+      ]
+    },
+    {
+      "id": "coverage-019",
+      "difficulty": "Intermediate",
+      "question": "How do you find untested error paths?",
+      "answer": "Sort the coverage report by uncovered branches, focusing on catch blocks, guard clauses and other error handling. These are exactly the paths that rarely execute in production until something goes wrong. Testing them improves resilience.",
+      "tags": [
+        "coverage",
+        "analysis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices"
+      ]
+    },
+    {
+      "id": "coverage-020",
+      "difficulty": "Intermediate",
+      "question": "How does parallel test execution affect coverage collection?",
+      "answer": "Coverage collectors handle parallel tests by aggregating hits across threads, so the totals remain correct, but the report may be less deterministic in ordering. Ensure the collector is configured for the test platform you use. Parallelism does not change the coverage percentage.",
+      "tags": [
+        "coverage",
+        "parallel"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html"
+      ]
+    },
+    {
+      "id": "coverage-021",
+      "difficulty": "Advanced",
+      "question": "What are the limitations of coverage as a quality metric?",
+      "answer": "Coverage cannot tell whether assertions are meaningful, whether edge cases are covered, or whether the tests would fail if the code were wrong. It is blind to specification gaps and to untested inputs. Treat it as one signal among many, alongside mutation testing and review.",
+      "tags": [
+        "coverage",
+        "metrics"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-022",
+      "difficulty": "Advanced",
+      "question": "How do you set up coverlet.msbuild thresholds together with CI gates?",
+      "answer": "Use the msbuild threshold properties for a fast per-build gate and a CI-level aggregate gate from merged reports for the solution as a whole. Keep both values aligned so they do not contradict each other. Document the intent so the numbers are not changed arbitrarily.",
+      "tags": [
+        "coverage",
+        "ci"
+      ],
+      "references": [
+        "https://github.com/coverlet-coverage/coverlet",
+        "https://learn.microsoft.com/en-us/azure/devops/pipelines/ecosystems/dotnet-core"
+      ]
+    },
+    {
+      "id": "coverage-023",
+      "difficulty": "Advanced",
+      "question": "How does branch coverage interact with async state machines?",
+      "answer": "The compiler generates a state machine for async methods, which can add branches that are hard to cover completely, so a method may show partial branch coverage even with good tests. Focus on covering the meaningful outcomes rather than the generated plumbing. Excluding generated state-machine code is a reasonable option.",
+      "tags": [
+        "coverage",
+        "async"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "coverage-024",
+      "difficulty": "Advanced",
+      "question": "How would you use coverage to drive a legacy code improvement effort?",
+      "answer": "Measure the current coverage, identify the modules with the highest risk and lowest coverage, and add characterisation tests around them before refactoring. Track coverage for the changed code rather than the whole codebase so improvements are attributable. This makes the metric a tool for targeted improvement.",
+      "tags": [
+        "coverage",
+        "legacy"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    },
+    {
+      "id": "coverage-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of enforcing a high global coverage threshold?",
+      "answer": "A high global threshold pushes teams to write tests, but it also encourages low-value tests written only to satisfy the number, and can block unrelated work when a single uncovered line appears. A per-changed-code or per-critical-module threshold is usually more effective. The goal is meaningful coverage of risky code, not a uniform number.",
+      "tags": [
+        "coverage",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-best-practices",
+        "https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage"
+      ]
+    }
+  ]
+}

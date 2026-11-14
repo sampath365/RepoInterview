@@ -1,0 +1,219 @@
+{
+  "category": "Dependency Injection & Services",
+  "slug": "dependency-injection",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "dependency-injection-001",
+      "difficulty": "Beginner",
+      "question": "What is dependency injection in .NET MAUI?",
+      "answer": "Dependency injection is a technique where a class receives the objects it depends on instead of creating them itself. In MAUI you register services and view models in MauiProgram using the built-in container, and the framework supplies them through constructors. This decouples classes, improves testability, and centralizes configuration. MAUI uses the same Microsoft.Extensions.DependencyInjection container as ASP.NET Core.",
+      "tags": ["di", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-002",
+      "difficulty": "Beginner",
+      "question": "Where do you register services in a .NET MAUI app?",
+      "answer": "You register services in the CreateMauiApp method of MauiProgram, on the builder.Services collection. Registrations happen before the app is built, so the container knows how to construct each type. You can also register with extension methods such as AddSingleton, AddTransient, and AddScoped. Grouping related registrations in an extension method keeps MauiProgram readable.",
+      "tags": ["di", "mauiprogram"],
+      "code": "public static MauiApp CreateMauiApp()\n{\n    var builder = MauiApp.CreateBuilder();\n    builder.UseMauiApp<App>();\n    builder.Services.AddSingleton<IApiService, ApiService>();\n    builder.Services.AddTransient<MainPage>();\n    return builder.Build();\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-003",
+      "difficulty": "Beginner",
+      "question": "What does AddSingleton do?",
+      "answer": "AddSingleton registers a type so the container creates one instance the first time it is requested and reuses it for the lifetime of the app. It is appropriate for stateless or shared services such as settings, an HTTP client wrapper, or a cache. Because the instance is shared, it must be thread-safe. Never store per-user or per-page state in a singleton.",
+      "tags": ["di", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-004",
+      "difficulty": "Beginner",
+      "question": "What does AddTransient do?",
+      "answer": "AddTransient registers a type so the container creates a new instance every time it is requested. This is the right lifetime for lightweight, stateless services and for pages and view models that should not be shared. Transient objects are cheap to create but you should avoid registering heavy resources this way. It is the default choice when you are unsure and the object holds no shared state.",
+      "tags": ["di", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-005",
+      "difficulty": "Beginner",
+      "question": "What does AddScoped do and how does scoping work in MAUI?",
+      "answer": "AddScoped registers a type that is created once per scope and shared within that scope. Unlike ASP.NET Core, MAUI does not create a scope per request, so a scoped service behaves like a singleton unless you create scopes manually with IServiceProvider.CreateScope. For this reason MAUI apps usually rely on singleton and transient. Use scoped only when you deliberately manage scopes yourself.",
+      "tags": ["di", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-006",
+      "difficulty": "Beginner",
+      "question": "How does constructor injection work for a MAUI page?",
+      "answer": "Register the page and its dependencies, then declare constructor parameters for the services the page needs. When the container creates the page it resolves those parameters automatically and passes them in. The page stores the dependencies in fields for later use. This keeps the page from reaching into static state or constructing its own services.",
+      "tags": ["di", "constructor-injection"],
+      "code": "public partial class MainPage : ContentPage\n{\n    private readonly IApiService _api;\n\n    public MainPage(IApiService api)\n    {\n        InitializeComponent();\n        _api = api;\n    }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-007",
+      "difficulty": "Beginner",
+      "question": "What is the IServiceProvider and when do you use it?",
+      "answer": "IServiceProvider is the container interface whose GetService and GetRequiredService methods resolve registered types. You normally do not call it directly because constructor injection is preferred. It is useful in factory scenarios, such as creating a page or view model on demand by type. Resolving from the provider inside constructors is a code smell that hides dependencies.",
+      "tags": ["di", "iserviceprovider"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-008",
+      "difficulty": "Beginner",
+      "question": "How do you register a view model in MAUI?",
+      "answer": "Register the view model in MauiProgram with AddTransient or AddSingleton depending on whether it should be shared. Then register its page so the container can inject the view model through the page constructor. The page sets its BindingContext to the injected view model. Registering both keeps the wiring in one place and lets the container resolve the graph.",
+      "tags": ["di", "mvvm"],
+      "code": "builder.Services.AddTransient<MainViewModel>();\nbuilder.Services.AddTransient<MainPage>();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-009",
+      "difficulty": "Beginner",
+      "question": "Why is dependency injection useful for testing?",
+      "answer": "Because a class receives its dependencies, a test can pass a fake or stub implementation instead of the real service. This lets you test logic without hitting a database, network, or device hardware. It also forces you to depend on interfaces rather than concrete types. The result is fast, deterministic unit tests for view models and services.",
+      "tags": ["di", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between AddSingleton, AddTransient, and AddScoped?",
+      "answer": "AddSingleton creates one instance for the whole app lifetime, AddTransient creates a new instance on every request, and AddScoped creates one instance per scope. Choosing the wrong lifetime can leak state or waste memory. Singletons must be thread-safe and stateless, transients are safe for per-use objects, and scoped only matters when you manage scopes. In MAUI, singleton and transient cover most needs.",
+      "tags": ["di", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-011",
+      "difficulty": "Intermediate",
+      "question": "How do you resolve a service manually from the container?",
+      "answer": "Store the IServiceProvider from the built MauiApp and call GetRequiredService or GetService on it to resolve a type by its interface. This is useful in a factory or when you must create an object after startup. Prefer constructor injection where possible because manual resolution hides dependencies and makes testing harder. If you inject IServiceProvider into a class, treat it as a design smell.",
+      "tags": ["di", "iserviceprovider"],
+      "code": "var services = MauiApp.CreateBuilder()...Build().Services;\nvar api = services.GetRequiredService<IApiService>();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-012",
+      "difficulty": "Intermediate",
+      "question": "How does Shell resolve pages registered with dependency injection?",
+      "answer": "When Shell navigates by route, it asks the service provider to create the target page if it is registered, which triggers constructor injection. If the page is not registered, Shell falls back to creating it with its parameterless constructor. For this reason you should register pages that need injected dependencies. Shell route registration happens through Routing.RegisterRoute or the ShellContent template.",
+      "tags": ["di", "shell"],
+      "code": "Routing.RegisterRoute(nameof(DetailsPage), typeof(DetailsPage));\nbuilder.Services.AddTransient<DetailsPage>();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-013",
+      "difficulty": "Intermediate",
+      "question": "How do you inject dependencies into a view model that is created by a DataTemplate?",
+      "answer": "Items created by a DataTemplate are instantiated by the binding engine, not the container, so their constructors are not injected automatically. Options include exposing the dependency through the parent view model, using a factory that resolves from the container, or binding to a shared service exposed as a property. A common approach is to give the item view model a reference to a singleton service passed by the collection owner. Avoid service locator calls inside the item itself.",
+      "tags": ["di", "templates"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-014",
+      "difficulty": "Intermediate",
+      "question": "How do you register a service that depends on another service?",
+      "answer": "Register both services and declare the dependency in the constructor of the dependent one. The container resolves the graph recursively, creating and passing the dependency automatically. Order of registration does not matter because resolution happens at build time. As long as every constructor dependency is registered, the container can build the whole graph.",
+      "tags": ["di", "constructor-injection"],
+      "code": "builder.Services.AddSingleton<IHttpClientFactory, MyFactory>();\nbuilder.Services.AddSingleton<IApiService, ApiService>();\n// ApiService(IHttpClientFactory factory)",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-015",
+      "difficulty": "Intermediate",
+      "question": "How do you use HttpClient with dependency injection in MAUI?",
+      "answer": "Register HttpClient through AddHttpClient, optionally with a named or typed client, so it is pooled and configured in one place. A typed client wraps the HttpClient with your own methods, which keeps URLs and serialization out of view models. Injecting IHttpClientFactory or a typed client avoids socket exhaustion and centralizes handlers. This pattern also makes the API layer easy to fake in tests.",
+      "tags": ["di", "httpclient"],
+      "code": "builder.Services.AddHttpClient<IApiService, ApiService>(c =>\n    c.BaseAddress = new Uri(\"https://api.example.com\"));",
+      "references": ["https://learn.microsoft.com/dotnet/maui/data-cloud/rest"]
+    },
+    {
+      "id": "dependency-injection-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a service locator and dependency injection?",
+      "answer": "Dependency injection passes dependencies in through constructors, so a class declares what it needs explicitly. A service locator resolves dependencies from a global container inside the class, hiding them and coupling the class to the container. Injection is preferred because it makes dependencies visible and tests easy. Service locator is sometimes unavoidable in framework-created objects, but keep it to the edges.",
+      "tags": ["di", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-017",
+      "difficulty": "Intermediate",
+      "question": "How do you register a platform-specific implementation with DI?",
+      "answer": "Define an interface in shared code and implement it per platform under the Platforms folder or with multi-targeted files. Then register the interface to the correct implementation in MauiProgram using conditional compilation. This keeps platform details behind an abstraction the rest of the app can use. It avoids scattering #if directives throughout the codebase.",
+      "tags": ["di", "platform"],
+      "code": "#if ANDROID\nbuilder.Services.AddSingleton<IToast, AndroidToast>();\n#elif IOS\nbuilder.Services.AddSingleton<IToast, IosToast>();\n#endif",
+      "references": ["https://learn.microsoft.com/dotnet/maui/platform-integration/invoke-platform-code"]
+    },
+    {
+      "id": "dependency-injection-018",
+      "difficulty": "Intermediate",
+      "question": "How do you pass runtime data to a view model that is resolved by DI?",
+      "answer": "The container can only supply registered dependencies, not runtime values such as an id, so you pass those after resolution. Common patterns include an Initialize method, a query property on the view model set during navigation, or a factory that accepts the value and constructs the object. Shell query parameters are a natural fit for navigation-supplied data. Avoid constructor parameters for values the container cannot resolve.",
+      "tags": ["di", "navigation"],
+      "code": "[QueryProperty(nameof(ItemId), \"id\")]\npublic partial class DetailsViewModel : ObservableObject\n{\n    public int ItemId { get; set; }\n}",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "dependency-injection-019",
+      "difficulty": "Intermediate",
+      "question": "What happens if a constructor dependency is not registered?",
+      "answer": "The container throws an InvalidOperationException at the point of resolution because it cannot build the object graph. The message usually names the type that could not be resolved, which points you to the missing registration. This often appears at startup when the App or the first page is resolved. Registering the missing service in MauiProgram fixes it.",
+      "tags": ["di", "troubleshooting"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-020",
+      "difficulty": "Intermediate",
+      "question": "How do you register multiple implementations of the same interface?",
+      "answer": "Register the same interface several times with different implementations, then resolve IEnumerable<IInterface> to receive all of them. This is useful for plug-ins, validation rules, or handlers that process a request in sequence. The order of resolution follows registration order. Use this sparingly, because it makes the dependency graph less obvious.",
+      "tags": ["di", "collections"],
+      "code": "builder.Services.AddSingleton<IValidator, NameValidator>();\nbuilder.Services.AddSingleton<IValidator, EmailValidator>();\n// inject IEnumerable<IValidator>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-021",
+      "difficulty": "Advanced",
+      "question": "What are the risks of a captive dependency and how do you avoid it?",
+      "answer": "A captive dependency occurs when a longer-lived service captures a shorter-lived one, such as a singleton holding a scoped or transient service, freezing that instance for the app's lifetime. This can leak resources or keep stale state alive. In MAUI the risk is mainly a singleton capturing a transient that was meant to be fresh. To avoid it, keep singletons stateless or inject a factory instead of a concrete transient instance.",
+      "tags": ["di", "lifetimes"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement the factory pattern with a DI container?",
+      "answer": "Register a factory delegate or a small factory class that receives IServiceProvider and creates instances on demand. The factory hides the container from consumers while still allowing per-call construction with runtime arguments. This is the recommended way to create objects that need data the container cannot supply. It keeps the object graph explicit at the call site.",
+      "tags": ["di", "factory"],
+      "code": "builder.Services.AddTransient<IDetailsViewModel>(sp =>\n    new DetailsViewModel(sp.GetRequiredService<IApiService>()));",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-023",
+      "difficulty": "Advanced",
+      "question": "How does the MAUI container handle disposal of services?",
+      "answer": "The container disposes services it created that implement IDisposable, but only singletons and scoped instances it owns, and only when the provider is disposed. Transient disposables are tracked until the provider is disposed, which can hold memory longer than expected. If you create an object yourself, you are responsible for disposing it. Keep long-lived disposables as singletons so their lifetime is clear.",
+      "tags": ["di", "disposal"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-024",
+      "difficulty": "Advanced",
+      "question": "How do you avoid memory leaks from event subscriptions in DI-managed objects?",
+      "answer": "Singletons that subscribe to events raised by shorter-lived objects keep those objects alive through the event reference. To prevent leaks, unsubscribe in a matching teardown method, use weak event patterns, or avoid long-lived subscriptions altogether. MessagingCenter-style pub/sub and static events are common culprits. Reviewing who owns the subscription is the key to avoiding leaks.",
+      "tags": ["di", "memory"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/profiling"]
+    },
+    {
+      "id": "dependency-injection-025",
+      "difficulty": "Advanced",
+      "question": "How do you organize a large MAUI app's DI registrations?",
+      "answer": "Split registrations into extension methods per feature area, such as AddDataServices and AddViewModels, and call them from MauiProgram. Group by lifetime and keep interface-to-implementation pairs together for readability. Consider a small module abstraction that each feature implements. This keeps the startup code short and makes dependencies easy to audit as the app grows.",
+      "tags": ["di", "architecture"],
+      "code": "builder.Services\n    .AddDataServices()\n    .AddViewModels()\n    .AddPlatformServices();",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    }
+  ]
+}

@@ -1,0 +1,342 @@
+{
+  "category": "Filters & Middleware",
+  "slug": "filters",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "filters-001",
+      "difficulty": "Beginner",
+      "question": "What is middleware in ASP.NET Core?",
+      "answer": "Middleware is software assembled into a pipeline that processes HTTP requests and responses, each component deciding whether to call the next one. Components are registered with Use methods in a specific order in Program.cs. Middleware is the foundation for cross-cutting concerns such as authentication, routing, and error handling.",
+      "tags": [
+        "middleware",
+        "pipeline"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"
+      ]
+    },
+    {
+      "id": "filters-002",
+      "difficulty": "Beginner",
+      "question": "What is a filter in MVC?",
+      "answer": "A filter is an attribute or class that runs code before or after specific stages of action execution, such as authorization, model binding, action invocation, or result execution. Filters are more targeted than middleware because they can access action context and run only for MVC endpoints. Common kinds are authorization, resource, action, exception, and result filters.",
+      "tags": [
+        "filters",
+        "mvc"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ]
+    },
+    {
+      "id": "filters-003",
+      "difficulty": "Beginner",
+      "question": "What is the difference between middleware and filters?",
+      "answer": "Middleware runs for every request in a global pipeline and has no knowledge of MVC actions, while filters run within MVC and have rich context such as action arguments and model state. Middleware is best for protocol-level concerns like compression, and filters for action-level concerns like validation or caching. Some concerns can be implemented either way.",
+      "tags": [
+        "middleware",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/"
+      ]
+    },
+    {
+      "id": "filters-004",
+      "difficulty": "Beginner",
+      "question": "What is an action filter?",
+      "answer": "An action filter implements IActionFilter with OnActionExecuting and OnActionExecuted methods, running around action invocation. It can inspect or replace action arguments and results, and can short-circuit by setting Result. Action filters are commonly used for validation, logging, and result shaping.",
+      "tags": [
+        "filters",
+        "action-filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ],
+      "code": "public void OnActionExecuting(ActionExecutingContext ctx)\n{\n    // inspect ctx.ActionArguments\n}"
+    },
+    {
+      "id": "filters-005",
+      "difficulty": "Beginner",
+      "question": "What is an exception filter?",
+      "answer": "An exception filter implements IExceptionFilter and runs when an unhandled exception escapes an action, letting you replace it with a specific result. It does not catch exceptions from other filters or from the pipeline outside MVC. In modern APIs, centralized exception handling middleware is often preferred.",
+      "tags": [
+        "filters",
+        "exceptions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters#exception-filters"
+      ]
+    },
+    {
+      "id": "filters-006",
+      "difficulty": "Beginner",
+      "question": "What is a result filter?",
+      "answer": "A result filter implements IResultFilter and runs before and after the action result is executed, allowing you to modify or replace the response. It is useful for wrapping or transforming output. It runs even when the action was short-circuited by another filter.",
+      "tags": [
+        "filters",
+        "result-filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ]
+    },
+    {
+      "id": "filters-007",
+      "difficulty": "Beginner",
+      "question": "What is an authorization filter?",
+      "answer": "An authorization filter runs first in the filter pipeline and decides whether the request may proceed to the action. [Authorize] and [AllowAnonymous] are implemented as authorization filters. Short-circuiting here avoids unnecessary work in later stages.",
+      "tags": [
+        "filters",
+        "authorization"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ]
+    },
+    {
+      "id": "filters-008",
+      "difficulty": "Beginner",
+      "question": "In what order do filters run?",
+      "answer": "Authorization filters run first, then resource filters, then model binding, then action filters, then the action, then action filters again in reverse, then result filters, and finally resource filters unwind. Exception filters can run at several points. The ordering determines how cross-cutting behavior composes.",
+      "tags": [
+        "filters",
+        "ordering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters#filter-order"
+      ]
+    },
+    {
+      "id": "filters-009",
+      "difficulty": "Beginner",
+      "question": "How do you register a filter globally?",
+      "answer": "Add it to MvcOptions.Filters in AddControllers, for example options.Filters.Add<MyFilter>(), which applies it to every action. Filters can also be applied at the controller or action level with attributes. Global filters are resolved from dependency injection when registered by type.",
+      "tags": [
+        "filters",
+        "registration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ],
+      "code": "builder.Services.AddControllers(o => o.Filters.Add<LoggingFilter>());"
+    },
+    {
+      "id": "filters-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between an attribute filter and a DI-based filter?",
+      "answer": "An attribute filter is applied declaratively on controllers or actions and can only receive dependencies through constructor injection if it implements IFilterFactory or is resolved from DI. A filter registered in MvcOptions or via [ServiceFilter] can take arbitrary dependencies. Use ServiceFilter or TypeFilter to combine attributes with dependency injection.",
+      "tags": [
+        "filters",
+        "dependency-injection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ],
+      "code": "[ServiceFilter(typeof(AuditFilter))]"
+    },
+    {
+      "id": "filters-011",
+      "difficulty": "Intermediate",
+      "question": "What is the middleware order and why does it matter?",
+      "answer": "The order in which you call Use methods determines how requests and responses flow, so exception handling must be outermost, then HTTPS redirection, static files, routing, CORS, authentication, authorization, and finally endpoints. Misordering causes subtle bugs, such as authorization running before authentication. ASP.NET Core warns about some common mistakes.",
+      "tags": [
+        "middleware",
+        "ordering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"
+      ],
+      "code": "app.UseExceptionHandler();\napp.UseAuthentication();\napp.UseAuthorization();\napp.MapControllers();"
+    },
+    {
+      "id": "filters-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write custom middleware?",
+      "answer": "Create a class with an InvokeAsync method taking HttpContext and a RequestDelegate, then register it with UseMiddleware<T> or a Use extension method. Call next to continue the pipeline, or do not call it to short-circuit. Prefer convention-based middleware classes for anything with dependencies.",
+      "tags": [
+        "middleware",
+        "custom"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"
+      ],
+      "code": "public sealed class TimingMiddleware(RequestDelegate next)\n{\n    public async Task InvokeAsync(HttpContext ctx)\n    {\n        await next(ctx);\n    }\n}"
+    },
+    {
+      "id": "filters-013",
+      "difficulty": "Intermediate",
+      "question": "When should you use middleware versus an action filter?",
+      "answer": "Use middleware for concerns that apply to all requests and need to wrap the whole pipeline, such as compression, correlation IDs, or global error handling. Use filters for MVC-specific concerns that need action context, such as validation or result transformation. If you need action arguments, choose a filter.",
+      "tags": [
+        "middleware",
+        "filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ]
+    },
+    {
+      "id": "filters-014",
+      "difficulty": "Intermediate",
+      "question": "How do you pass dependencies to convention-based middleware?",
+      "answer": "Inject services through the constructor for singleton-safe dependencies, and resolve scoped services from the request in InvokeAsync using context.RequestServices. Constructor injection of a scoped service into singleton middleware is a captive dependency bug. This separation keeps middleware correct and efficient.",
+      "tags": [
+        "middleware",
+        "dependency-injection"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"
+      ],
+      "code": "public async Task InvokeAsync(HttpContext ctx, IMyScoped svc)\n{\n    await next(ctx);\n}"
+    },
+    {
+      "id": "filters-015",
+      "difficulty": "Intermediate",
+      "question": "What are resource filters used for?",
+      "answer": "Resource filters implement IResourceFilter or IAsyncResourceFilter and run around the rest of the filter pipeline including model binding. They are used for caching entire responses or short-circuiting before expensive work. Because they wrap model binding they can prevent unnecessary processing.",
+      "tags": [
+        "filters",
+        "resource-filters"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ]
+    },
+    {
+      "id": "filters-016",
+      "difficulty": "Intermediate",
+      "question": "How do you short-circuit a request in a filter?",
+      "answer": "Set the Result property on the context in an action filter, or write the response directly in middleware and skip calling next. Setting Result stops action execution and proceeds to result filters. This is how validation or caching filters avoid running the action.",
+      "tags": [
+        "filters",
+        "short-circuit"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ],
+      "code": "context.Result = new BadRequestObjectResult(\"invalid\");"
+    },
+    {
+      "id": "filters-017",
+      "difficulty": "Intermediate",
+      "question": "How do you implement an async filter?",
+      "answer": "Implement the async interface, such as IAsyncActionFilter, and await next() to continue, doing work before and after. Async filters avoid blocking threads during I/O. Only one filter interface per kind should be implemented to avoid ambiguity.",
+      "tags": [
+        "filters",
+        "async"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters"
+      ],
+      "code": "public async Task OnActionExecutionAsync(\n    ActionExecutingContext c, ActionExecutionDelegate next)\n{\n    var result = await next();\n}"
+    },
+    {
+      "id": "filters-018",
+      "difficulty": "Intermediate",
+      "question": "How does the endpoint filter pipeline relate to MVC filters?",
+      "answer": "Endpoint filters wrap minimal API handlers and are analogous to action filters but operate on EndpointFilterInvocationContext. MVC filters run inside the MVC action invoker, while endpoint filters run in the endpoint middleware. They are separate mechanisms that both add cross-cutting behavior.",
+      "tags": [
+        "filters",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis/min-api-filters"
+      ]
+    },
+    {
+      "id": "filters-019",
+      "difficulty": "Intermediate",
+      "question": "How do you order custom filters relative to built-ins?",
+      "answer": "Set the Order property on the filter or implement IOrderedFilter, where lower values run earlier for the entering phase. Built-in filters have defined orders that you can coordinate with. Ordering is essential when one filter depends on another's effect.",
+      "tags": [
+        "filters",
+        "ordering"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/mvc/controllers/filters#filter-order"
+      ]
+    },
+    {
+      "id": "filters-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle exceptions globally in a Web API?",
+      "answer": "Use exception handling middleware with UseExceptionHandler and IExceptionHandler, which centralizes mapping exceptions to ProblemDetails responses. Exception filters only cover MVC actions, so middleware is preferred for APIs. Return consistent error shapes and avoid leaking stack traces in production.",
+      "tags": [
+        "error-handling",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/error-handling"
+      ],
+      "code": "app.UseExceptionHandler();\nbuilder.Services.AddExceptionHandler<GlobalExceptionHandler>();"
+    },
+    {
+      "id": "filters-021",
+      "difficulty": "Advanced",
+      "question": "How do filters and middleware interact for the same concern?",
+      "answer": "Middleware runs around the whole endpoint execution, so it can time and observe everything including routing, while filters run within MVC and see action-specific data. Combining them, for example a middleware for correlation IDs and a filter for audit logging, gives layered control. Avoid duplicating the same concern in both.",
+      "tags": [
+        "filters",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"
+      ]
+    },
+    {
+      "id": "filters-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a caching filter with per-route invalidation?",
+      "answer": "Store responses keyed by the request path and relevant headers, and add an endpoint-specific key or tag so a write endpoint can evict related entries. A resource filter can short-circuit on a hit and store on a miss. For distributed scenarios, back the cache with a shared store such as Redis.",
+      "tags": [
+        "filters",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/overview"
+      ]
+    },
+    {
+      "id": "filters-023",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of ordering authorization and authentication?",
+      "answer": "Authentication must run before authorization so that the user identity is populated; otherwise authorization always fails or runs against an anonymous principal. In endpoint routing, UseAuthentication and UseAuthorization must be placed before endpoint execution. The framework throws when it detects UseAuthorization before UseAuthentication.",
+      "tags": [
+        "middleware",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/#middleware-order"
+      ]
+    },
+    {
+      "id": "filters-024",
+      "difficulty": "Advanced",
+      "question": "How do you write middleware that buffers and rewrites the response?",
+      "answer": "Replace the response body stream with a MemoryStream, call next, then read and transform the buffered content before copying it to the original stream. This is useful for rewriting headers or bodies but adds memory cost. Prefer built-in middleware such as response compression when it suffices.",
+      "tags": [
+        "middleware",
+        "advanced"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/middleware/write"
+      ],
+      "code": "var original = ctx.Response.Body;\nusing var buffer = new MemoryStream();\nctx.Response.Body = buffer;\nawait next(ctx);"
+    },
+    {
+      "id": "filters-025",
+      "difficulty": "Advanced",
+      "question": "How do you test middleware and filters in isolation?",
+      "answer": "Test middleware with TestServer or WebApplicationFactory by composing a minimal pipeline, and test filters by constructing the relevant context objects directly. Assert both the short-circuit and pass-through paths. Keeping logic in small, injectable components makes this practical.",
+      "tags": [
+        "testing",
+        "middleware"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/middleware"
+      ]
+    }
+  ]
+}

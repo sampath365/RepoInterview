@@ -1,0 +1,221 @@
+{
+  "category": "Advanced Data Binding & Converters",
+  "slug": "binding-advanced",
+  "icon": "filter",
+  "questions": [
+    {
+      "id": "binding-advanced-001",
+      "difficulty": "Beginner",
+      "question": "What is a value converter in WPF binding?",
+      "answer": "A value converter transforms a value as it moves between the source and target of a binding. It implements IValueConverter with Convert and ConvertBack methods. Converters are commonly used to change types, formats, or visibility based on a value.",
+      "tags": ["converter", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-convert-bound-data"]
+    },
+    {
+      "id": "binding-advanced-002",
+      "difficulty": "Beginner",
+      "question": "How do you use a value converter in XAML?",
+      "answer": "Declare the converter as a resource, then reference it in the binding with the Converter property. WPF calls Convert when reading the value and ConvertBack when writing it in two-way bindings. You can pass extra data with ConverterParameter.",
+      "code": "<Window.Resources>\n  <local:BoolToVisibilityConverter x:Key=\"BoolToVis\"/>\n</Window.Resources>\n<TextBlock Visibility=\"{Binding IsBusy, Converter={StaticResource BoolToVis}}\"/>",
+      "tags": ["converter", "xaml"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-convert-bound-data"]
+    },
+    {
+      "id": "binding-advanced-003",
+      "difficulty": "Beginner",
+      "question": "What does the IValueConverter interface require?",
+      "answer": "IValueConverter requires a Convert method that transforms the source value for the target and a ConvertBack method that transforms the target value back for the source. Convert receives the value, target type, parameter, and culture. ConvertBack is used only for two-way bindings.",
+      "tags": ["ivalueconverter", "converter"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.data.ivalueconverter"]
+    },
+    {
+      "id": "binding-advanced-004",
+      "difficulty": "Beginner",
+      "question": "What is a MultiBinding?",
+      "answer": "A MultiBinding combines several bindings into a single target value using an IMultiValueConverter. It is useful when a display depends on more than one source, such as combining first and last name. Each child binding contributes an element to the values array passed to the converter.",
+      "code": "<TextBlock>\n  <TextBlock.Text>\n    <MultiBinding Converter=\"{StaticResource NameConv}\">\n      <Binding Path=\"First\"/>\n      <Binding Path=\"Last\"/>\n    </MultiBinding>\n  </TextBlock.Text>\n</TextBlock>",
+      "tags": ["multibinding", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.data.multibinding"]
+    },
+    {
+      "id": "binding-advanced-005",
+      "difficulty": "Beginner",
+      "question": "What is a PriorityBinding?",
+      "answer": "PriorityBinding tries several bindings in order and uses the first one that produces a value. It is often used to show fast local data first and replace it when slower data arrives. Higher-priority bindings are listed first, and a fallback binding can be the last entry.",
+      "tags": ["prioritybinding", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-prioritybinding"]
+    },
+    {
+      "id": "binding-advanced-006",
+      "difficulty": "Beginner",
+      "question": "What is a CollectionView?",
+      "answer": "A CollectionView is a view over a data collection that adds sorting, filtering, grouping, and a current item. Each ItemsControl uses a default view unless you provide one. The view sits between the source collection and the control so the underlying data is not reordered or modified.",
+      "tags": ["collectionview", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.data.collectionview"]
+    },
+    {
+      "id": "binding-advanced-007",
+      "difficulty": "Beginner",
+      "question": "What is the default view of a collection?",
+      "answer": "WPF creates a single default view per collection instance, which is shared by every control bound to that collection. You can obtain it with CollectionViewSource.GetDefaultView. Because it is shared, sorting or filtering it affects all controls bound to the same collection.",
+      "code": "var view = CollectionViewSource.GetDefaultView(People);\nview.SortDescriptions.Add(new SortDescription(\"Name\",\n    ListSortDirection.Ascending));",
+      "tags": ["collectionview", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-get-the-default-view-of-a-data-collection"]
+    },
+    {
+      "id": "binding-advanced-008",
+      "difficulty": "Beginner",
+      "question": "How do you sort data in a view?",
+      "answer": "Add SortDescription entries to the view's SortDescriptions collection, either in code or through CollectionViewSource in XAML. The control displays items in that order without changing the source. Clear the collection to remove sorting.",
+      "code": "view.SortDescriptions.Add(\n    new SortDescription(\"LastName\", ListSortDirection.Ascending));",
+      "tags": ["sorting", "collectionview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-sort-data-in-a-view"]
+    },
+    {
+      "id": "binding-advanced-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Convert and ConvertBack?",
+      "answer": "Convert maps a source value to the target representation, such as a bool to a Visibility. ConvertBack maps the target value back to the source type and is used only when the binding updates the source. You can throw or return Binding.DoNothing in ConvertBack to reject a change.",
+      "tags": ["converter", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.data.ivalueconverter"]
+    },
+    {
+      "id": "binding-advanced-010",
+      "difficulty": "Beginner",
+      "question": "How do you format a bound value as currency or a date?",
+      "answer": "Use the StringFormat property on the binding to apply a standard or custom .NET format string. For example, {Binding Price, StringFormat=C} formats as currency. StringFormat works for one-way display but is ignored when the binding is two-way unless you combine it with a converter.",
+      "code": "<TextBlock Text=\"{Binding Price, StringFormat={}{0:C}}\"/>\n<TextBlock Text=\"{Binding OrderDate, StringFormat=d}\"/>",
+      "tags": ["stringformat", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/binding-declarations-overview"]
+    },
+    {
+      "id": "binding-advanced-011",
+      "difficulty": "Intermediate",
+      "question": "How do you filter data in a CollectionView?",
+      "answer": "Set the view's Filter property to a Predicate that returns true for items to keep. The view raises a refresh and the control shows only matching items. Call view.Refresh when the filter criteria change.",
+      "code": "view.Filter = o => ((Person)o).Age >= 18;\nview.Refresh();",
+      "tags": ["filtering", "collectionview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-filter-data-in-a-view"]
+    },
+    {
+      "id": "binding-advanced-012",
+      "difficulty": "Intermediate",
+      "question": "How do you group data using a view?",
+      "answer": "Add GroupDescription entries to the view or use CollectionViewSource with a PropertyGroupDescription in XAML. The control then renders group headers based on the GroupStyle. Grouping works together with sorting and filtering on the same view.",
+      "code": "view.GroupDescriptions.Add(new PropertyGroupDescription(\"Department\"));",
+      "tags": ["grouping", "collectionview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-sort-and-group-data-using-a-view-in-xaml"]
+    },
+    {
+      "id": "binding-advanced-013",
+      "difficulty": "Intermediate",
+      "question": "How does the current item work in a CollectionView?",
+      "answer": "The view tracks a CurrentItem and CurrentPosition as the user navigates. Controls with selection update the view's current item, and you can move with MoveCurrentToNext or MoveCurrentToFirst. Binding to the current item lets a detail form follow a list selection.",
+      "code": "view.MoveCurrentToFirst();\nvar current = view.CurrentItem;",
+      "tags": ["collectionview", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-navigate-through-the-objects-in-a-data-collectionview"]
+    },
+    {
+      "id": "binding-advanced-014",
+      "difficulty": "Intermediate",
+      "question": "What is a CompositeCollection?",
+      "answer": "CompositeCollection merges multiple collections and individual items into one logical collection for binding. It is useful for combining static items with dynamic data, such as a fixed header plus a list. Items can be specified inline or reference other collections.",
+      "tags": ["compositecollection", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-a-compositecollection"]
+    },
+    {
+      "id": "binding-advanced-015",
+      "difficulty": "Intermediate",
+      "question": "How do you bind to a method or a computed value?",
+      "answer": "You cannot bind directly to a method, but you can bind to a property that returns the result, or use ObjectDataProvider with a MethodName to call a method. For frequently changing values, expose a property and raise PropertyChanged. Computed properties are the most common and testable approach.",
+      "tags": ["binding", "methods"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-bind-to-a-method"]
+    },
+    {
+      "id": "binding-advanced-016",
+      "difficulty": "Intermediate",
+      "question": "How do you bind to an enumeration value?",
+      "answer": "You can bind to an enum property directly, and WPF displays the enum name unless a converter formats it. To populate a control with all enum values, use ObjectDataProvider with the Enum.GetValues method or expose the values from the view model. A converter can map enum values to friendly text.",
+      "tags": ["binding", "enum"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-bind-to-an-enumeration"]
+    },
+    {
+      "id": "binding-advanced-017",
+      "difficulty": "Intermediate",
+      "question": "What is an IMultiValueConverter?",
+      "answer": "IMultiValueConverter is the converter interface used with MultiBinding. Its Convert method receives an array of values from all child bindings plus the target type and parameter. ConvertBack returns an array of values to push back to each binding.",
+      "code": "public object Convert(object[] values, Type t, object p, CultureInfo c)\n    => string.Join(\" \", values);",
+      "tags": ["imultivalueconverter", "converter"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.data.imultivalueconverter"]
+    },
+    {
+      "id": "binding-advanced-018",
+      "difficulty": "Intermediate",
+      "question": "How do you bind to XML data?",
+      "answer": "Use XmlDataProvider or bind directly to an XDocument or XElement and query it with XPath. WPF exposes XML elements as bindable objects, and you can use XPath in a binding path. This is useful when the data source is XML rather than CLR objects.",
+      "code": "<XmlDataProvider x:Key=\"doc\" Source=\"data.xml\"/>\n<TextBlock Text=\"{Binding Source={StaticResource doc}, XPath=/book/title}\"/>",
+      "tags": ["xml", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/wpf-data-binding-with-linq-to-xml-overview"]
+    },
+    {
+      "id": "binding-advanced-019",
+      "difficulty": "Intermediate",
+      "question": "How do you perform master-detail binding?",
+      "answer": "Bind a list to the master control and set the detail control's DataContext to the list's selected item or to the view's current item. The detail form then updates as the selection changes. Using the collection view's current item keeps both controls in sync automatically.",
+      "code": "<ListBox ItemsSource=\"{Binding People}\" IsSynchronizedWithCurrentItem=\"True\"/>\n<ContentControl Content=\"{Binding /People}\"/>",
+      "tags": ["master-detail", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-bind-to-a-collection-and-display-information-based-on-selection"]
+    },
+    {
+      "id": "binding-advanced-020",
+      "difficulty": "Intermediate",
+      "question": "What is IsSynchronizedWithCurrentItem used for?",
+      "answer": "IsSynchronizedWithCurrentItem keeps a selector's SelectedItem in sync with the collection view's current item. When true, changing the selection updates the current item and vice versa. This is what allows multiple controls bound to the same collection to stay coordinated.",
+      "tags": ["binding", "selection"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-navigate-through-the-objects-in-a-data-collectionview"]
+    },
+    {
+      "id": "binding-advanced-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement a converter that supports two-way binding?",
+      "answer": "Implement both Convert and ConvertBack with logic that is exactly inverse so round-tripping is stable. Return Binding.DoNothing to skip a change or DependencyProperty.UnsetValue to fall back to the default. Always handle null and type mismatches to avoid runtime exceptions.",
+      "code": "public object ConvertBack(object v, Type t, object p, CultureInfo c)\n    => v is Visibility.Visible;",
+      "tags": ["converter", "two-way"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-convert-bound-data"]
+    },
+    {
+      "id": "binding-advanced-022",
+      "difficulty": "Advanced",
+      "question": "How do you update the source explicitly in a binding?",
+      "answer": "Set UpdateSourceTrigger to Explicit and call UpdateSource on the BindingExpression when you want to commit the value. This gives you control over when validation and source updates happen, such as on a Save button. You can also call UpdateTarget to refresh the UI from the source.",
+      "code": "BindingOperations.GetBindingExpression(myBox,\n    TextBox.TextProperty)?.UpdateSource();",
+      "tags": ["binding", "updatesource"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-control-when-the-textbox-text-updates-the-source"]
+    },
+    {
+      "id": "binding-advanced-023",
+      "difficulty": "Advanced",
+      "question": "What is INotifyDataErrorInfo and how does it improve validation?",
+      "answer": "INotifyDataErrorInfo allows asynchronous and per-property validation with multiple errors per property. It exposes HasErrors, GetErrors, and the ErrorsChanged event. WPF listens to ErrorsChanged and updates the validation state, which suits server-side or asynchronous validation better than IDataErrorInfo.",
+      "tags": ["validation", "inotifydataerrorinfo"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-implement-validation-logic-on-custom-objects"]
+    },
+    {
+      "id": "binding-advanced-024",
+      "difficulty": "Advanced",
+      "question": "How do you bind to the current item of a collection view in XAML?",
+      "answer": "Use the slash syntax in a path, such as {Binding /}, to refer to the current item of the bound collection, or {Binding Path=/People/Name} to navigate. This relies on the collection view's current item and works well with master-detail layouts. It requires that the source is a collection view.",
+      "code": "<ContentControl Content=\"{Binding /}\"/>",
+      "tags": ["binding", "current-item"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/data/how-to-navigate-through-the-objects-in-a-data-collectionview"]
+    },
+    {
+      "id": "binding-advanced-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance considerations for complex bindings?",
+      "answer": "Each binding creates a BindingExpression with listeners, so thousands of bindings add overhead. Prefer OneTime bindings for values that never change and avoid deep paths that traverse many objects. Reusing frozen brushes and templates and virtualizing large lists keeps binding-heavy UIs responsive.",
+      "tags": ["performance", "binding"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/optimizing-performance-data-binding"]
+    }
+  ]
+}

@@ -1,0 +1,214 @@
+{
+  "category": "Performance & Benchmarking",
+  "slug": "performance",
+  "icon": "speed",
+  "questions": [
+    {
+      "id": "performance-001",
+      "difficulty": "Beginner",
+      "question": "What is BenchmarkDotNet?",
+      "answer": "BenchmarkDotNet is a library that turns a plain method into a rigorous microbenchmark by running it many times, isolating it in a separate process, and reporting statistics such as mean time and allocations. It handles warm-up, iteration counts, and statistical analysis so the numbers are trustworthy. It is the de facto standard for measuring .NET performance.",
+      "tags": ["benchmarkdotnet", "tooling"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-002",
+      "difficulty": "Beginner",
+      "question": "Why not use a Stopwatch in a unit test to measure performance?",
+      "answer": "A single Stopwatch measurement is dominated by noise from the JIT, garbage collection, and other processes on the machine, so the result is not reproducible. BenchmarkDotNet addresses this with warm-up, many iterations, and statistical reporting. Use it whenever the number matters, and keep unit tests for correctness only.",
+      "tags": ["stopwatch", "pitfalls"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-003",
+      "difficulty": "Beginner",
+      "question": "How do you write a benchmark with BenchmarkDotNet?",
+      "answer": "Create a class with a public method marked [Benchmark], decorate the class with [MemoryDiagnoser] if you want allocations, and run it from a console app using BenchmarkRunner.Run<T>(). The framework generates and executes a project that runs the benchmark many times. The output includes mean time, error, and allocation statistics.",
+      "code": "[MemoryDiagnoser]\npublic class Parsing\n{\n    private readonly string _json = \"{\\\"a\\\":1}\";\n\n    [Benchmark]\n    public object Parse() => JsonSerializer.Deserialize<JsonElement>(_json);\n}\n\nBenchmarkRunner.Run<Parsing>();",
+      "tags": ["benchmarkdotnet", "setup"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a benchmark and a load test?",
+      "answer": "A benchmark measures the cost of a specific operation in a controlled micro setting, such as the time to serialize an object. A load test measures how a whole system behaves under concurrent user load, reporting throughput and latency percentiles. Benchmarks guide micro-optimisations, while load tests validate capacity and scalability.",
+      "tags": ["benchmark", "load-test"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-005",
+      "difficulty": "Beginner",
+      "question": "Why is measuring allocations important?",
+      "answer": "Allocations drive garbage collection, and excessive GC pauses hurt latency and throughput, so reducing allocations often improves performance more than micro-optimising instructions. BenchmarkDotNet's memory diagnoser reports bytes and collection counts per operation. A change that lowers allocations is usually a safe, meaningful win.",
+      "tags": ["allocations", "gc"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-006",
+      "difficulty": "Beginner",
+      "question": "How do you keep performance tests out of the normal test run?",
+      "answer": "Put benchmarks in their own console project rather than the test project, or mark them with a trait and exclude that category from the default dotnet test run. Benchmarks are slow and environment-sensitive, so they should not run on every build. Run them on demand or in a dedicated CI stage.",
+      "tags": ["isolation", "ci"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/selective-unit-tests"]
+    },
+    {
+      "id": "performance-007",
+      "difficulty": "Beginner",
+      "question": "What is a microbenchmark?",
+      "answer": "A microbenchmark measures a very small unit of work, such as a single method or algorithm, in isolation. It is precise but can be misleading if the real workload behaves differently, for example due to caching or batching. Use microbenchmarks to compare implementations and confirm improvements, then validate with a realistic workload.",
+      "tags": ["microbenchmark", "measurement"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-008",
+      "difficulty": "Beginner",
+      "question": "How do you test that code does not allocate?",
+      "answer": "Use BenchmarkDotNet's memory diagnoser to assert zero allocations across many runs, or use a test helper that measures GC.GetAllocatedBytesForCurrentThread around the call. Zero-allocation assertions are valuable for hot paths such as parsers and serializers. Guard against the JIT optimising the call away by consuming the result.",
+      "code": "var before = GC.GetAllocatedBytesForCurrentThread();\nRun();\nvar delta = GC.GetAllocatedBytesForCurrentThread() - before;\nAssert.Equal(0, delta);",
+      "tags": ["allocations", "hot-path"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-009",
+      "difficulty": "Beginner",
+      "question": "Why do benchmarks need a warm-up?",
+      "answer": "The JIT compiles methods on first use and may re-optimise them later, so the first invocations are much slower than steady state. Warm-up runs let the JIT settle before measurement begins. BenchmarkDotNet performs warm-up automatically for this reason.",
+      "tags": ["jit", "warm-up"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-010",
+      "difficulty": "Beginner",
+      "question": "How do you compare two implementations fairly?",
+      "answer": "Put both implementations in the same benchmark class, run them in the same process, and use the baseline feature to express the difference as a ratio. Running them together controls for machine and runtime conditions. BenchmarkDotNet reports the baseline ratio so you can see whether the change is significant.",
+      "code": "[Benchmark(Baseline = true)]\npublic string Concat() => a + b;\n\n[Benchmark]\npublic string Format() => $\"{a}{b}\";",
+      "tags": ["baseline", "comparison"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-011",
+      "difficulty": "Intermediate",
+      "question": "How do you benchmark different input sizes?",
+      "answer": "Use [Params] on a field or parameter so BenchmarkDotNet runs the benchmark once for each value, and the report shows how the cost scales. This reveals algorithmic complexity and threshold effects that a single size would hide. For very different sizes consider separate benchmarks if the code paths diverge.",
+      "code": "[Params(10, 100, 1000)]\npublic int N;\n\n[Benchmark]\npublic void Work() => DoWork(N);",
+      "tags": ["params", "scaling"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-012",
+      "difficulty": "Intermediate",
+      "question": "What is a global setup in BenchmarkDotNet?",
+      "answer": "A method marked [GlobalSetup] runs once before all benchmark iterations and is where you prepare shared input data, so the setup cost is not included in the measurement. Use [GlobalCleanup] to release resources afterwards. This keeps each measured operation focused on the code under test.",
+      "code": "[GlobalSetup]\npublic void Setup() => _data = BuildLargePayload();",
+      "tags": ["global-setup", "setup"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-013",
+      "difficulty": "Intermediate",
+      "question": "How do you benchmark asynchronous code?",
+      "answer": "Mark the benchmark method as async and return Task, and BenchmarkDotNet will await it correctly, measuring the full asynchronous operation. This lets you compare async implementations or the cost of different await patterns. Be careful that the work actually happens, because an unawaited task would measure nothing.",
+      "code": "[Benchmark]\npublic async Task<string> FetchAsync()\n    => await _client.GetStringAsync(_url);",
+      "tags": ["async", "benchmark"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-014",
+      "difficulty": "Intermediate",
+      "question": "What is the memory diagnoser?",
+      "answer": "The memory diagnoser is a BenchmarkDotNet diagnoser enabled with [MemoryDiagnoser] that reports allocated bytes per operation and the number of garbage collections. It answers whether your change reduced allocations, which often correlates with improved throughput. It adds a small overhead but is well worth enabling for hot paths.",
+      "tags": ["memory-diagnoser", "allocations"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-015",
+      "difficulty": "Intermediate",
+      "question": "How do you set a performance regression gate in CI?",
+      "answer": "Run the benchmarks on a dedicated, consistent runner, compare the results against a stored baseline, and fail or warn when the ratio exceeds a tolerance. Because CI machines are noisy, use relative comparisons and a generous threshold rather than absolute times. Some teams run the comparison as a non-blocking report to avoid flaky failures.",
+      "tags": ["ci", "regression"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-016",
+      "difficulty": "Intermediate",
+      "question": "How do you benchmark database access?",
+      "answer": "Measure the whole operation including the round trip, using a real database with a realistic dataset, and report allocations and time. Microbenchmarking a query in isolation can mislead because network and query plan costs dominate. Report the query count as well to catch N+1 problems.",
+      "tags": ["database", "benchmark"],
+      "references": ["https://learn.microsoft.com/ef/core/logging-events-diagnostics/"]
+    },
+    {
+      "id": "performance-017",
+      "difficulty": "Intermediate",
+      "question": "How do you profile a test suite that is too slow?",
+      "answer": "Use the test runner's report to find the slowest tests, then look for expensive fixtures, redundant setup, and sleeps. Often the biggest win is sharing expensive infrastructure with a collection fixture or moving slow integration tests out of the unit stage. Profile before optimising so you fix the real bottleneck.",
+      "tags": ["profiling", "test-speed"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "performance-018",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between latency and throughput?",
+      "answer": "Latency is how long a single operation takes, while throughput is how many operations complete per unit of time. They can move in opposite directions, for example when batching increases throughput but also increases the latency of each request. Decide which one the requirement cares about and measure accordingly.",
+      "tags": ["latency", "throughput"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-019",
+      "difficulty": "Intermediate",
+      "question": "How do you benchmark a library that is consumed by many callers?",
+      "answer": "Benchmark the public API surface with representative inputs, since internal micro-optimisations that do not show up through the public API do not help consumers. Include the allocation profile because callers on hot paths care about GC pressure. Publish the benchmarks in the repository so contributors can run and compare them.",
+      "tags": ["library", "api"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-020",
+      "difficulty": "Intermediate",
+      "question": "Why do benchmark results vary between machines?",
+      "answer": "CPU model, core count, turbo behaviour, thermal throttling, and background processes all affect timings, and the .NET runtime version and JIT settings add further variation. This is why absolute numbers are only meaningful on a consistent runner and why comparisons should be made within the same environment. Always report the machine and runtime with the results.",
+      "tags": ["variance", "environment"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-021",
+      "difficulty": "Advanced",
+      "question": "How do you avoid the dead-code elimination problem in benchmarks?",
+      "answer": "The JIT can remove a computation whose result is unused, which would make the benchmark measure nothing. BenchmarkDotNet consumes the return value automatically, and you can also use the Consumer class to force a value to be observed. Always return or consume the result of the operation you intend to measure.",
+      "code": "[Benchmark]\npublic int Sum()\n{\n    var total = 0;\n    for (var i = 0; i < _data.Length; i++) total += _data[i];\n    return total; // returned so the JIT cannot remove the loop\n}",
+      "tags": ["dead-code", "jit"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-022",
+      "difficulty": "Advanced",
+      "question": "How do you benchmark code that depends on I/O?",
+      "answer": "Separate the CPU-bound logic from the I/O so you can benchmark the logic deterministically and test the I/O path separately with integration tests. If you must measure I/O, use a local server or an in-memory transport and accept higher variance, reporting percentiles rather than a single mean. For real-world latency, use a load test with realistic concurrency.",
+      "tags": ["io", "benchmark"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-023",
+      "difficulty": "Advanced",
+      "question": "How do you decide whether a performance optimisation is worth it?",
+      "answer": "First confirm with a benchmark that the code is actually on a hot path and that the change produces a measurable, statistically significant improvement. Then weigh the gain against the added complexity and the risk of subtle bugs, since optimised code is often harder to maintain. If the gain is small or the code is cold, keep the simpler version.",
+      "tags": ["trade-offs", "optimisation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-024",
+      "difficulty": "Advanced",
+      "question": "How do you benchmark with realistic data distributions?",
+      "answer": "Generate input that matches the production distribution, including the common cases and the outliers that stress the algorithm, rather than using uniformly random or tiny data. Use a fixed seed so the data is reproducible across runs. Unrealistic inputs are a common reason a benchmark's results do not predict production behaviour.",
+      "tags": ["data", "realism"],
+      "references": ["https://learn.microsoft.com/dotnet/core/diagnostics/"]
+    },
+    {
+      "id": "performance-025",
+      "difficulty": "Advanced",
+      "question": "How do you correlate test-suite runtime with developer productivity?",
+      "answer": "Track the suite duration and the time to first meaningful test result over time, and treat increases as a signal to investigate. A suite that takes minutes to run discourages running tests locally and slows the feedback loop. Keep a fast unit stage that runs in seconds and push slower tests to a separate stage so the inner loop stays quick.",
+      "tags": ["feedback", "test-speed"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

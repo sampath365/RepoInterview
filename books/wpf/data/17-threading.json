@@ -1,0 +1,219 @@
+{
+  "category": "Threading, Dispatcher & Async",
+  "slug": "threading",
+  "icon": "cpu",
+  "questions": [
+    {
+      "id": "threading-001",
+      "difficulty": "Beginner",
+      "question": "Why does WPF have a single UI thread?",
+      "answer": "WPF objects have thread affinity, meaning only the thread that created them can access them. The UI thread owns the message queue and runs layout, input, and rendering coordination. This model avoids complex locking and keeps UI code simple.",
+      "tags": ["threading", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-002",
+      "difficulty": "Beginner",
+      "question": "What is the Dispatcher?",
+      "answer": "The Dispatcher manages a thread's work queue and executes delegates on that thread. Every WPF element has a Dispatcher inherited from DispatcherObject. You use it to run code on the UI thread from background threads.",
+      "tags": ["dispatcher", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcher"]
+    },
+    {
+      "id": "threading-003",
+      "difficulty": "Beginner",
+      "question": "How do you update the UI from a background thread?",
+      "answer": "Use Dispatcher.Invoke or InvokeAsync to marshal the update to the UI thread, or capture the synchronization context and use await. Directly touching UI elements from a background thread throws an InvalidOperationException. Prefer InvokeAsync or async and await to avoid blocking.",
+      "code": "await Dispatcher.InvokeAsync(() =>\n{\n    StatusText.Text = \"Complete\";\n});",
+      "tags": ["dispatcher", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-004",
+      "difficulty": "Beginner",
+      "question": "What happens if you touch a UI element from a background thread?",
+      "answer": "WPF throws an InvalidOperationException stating that the calling thread cannot access this object because a different thread owns it. This is enforced by DispatcherObject.VerifyAccess. You must marshal the call to the owning thread.",
+      "tags": ["threading", "errors"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcherobject"]
+    },
+    {
+      "id": "threading-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Dispatcher.Invoke and InvokeAsync?",
+      "answer": "Invoke runs the delegate synchronously and blocks the calling thread until it completes. InvokeAsync queues the work and returns immediately with a DispatcherOperation you can await. InvokeAsync is preferred because it avoids deadlocks and keeps the UI responsive.",
+      "code": "await Dispatcher.InvokeAsync(() => Refresh());",
+      "tags": ["dispatcher", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcher.invokeasync"]
+    },
+    {
+      "id": "threading-006",
+      "difficulty": "Beginner",
+      "question": "What is CheckAccess used for?",
+      "answer": "CheckAccess returns true when the calling thread is the one that owns the DispatcherObject. It lets you decide whether to marshal a call. VerifyAccess throws if the thread is wrong, and CheckAccess is the non-throwing alternative.",
+      "code": "if (Dispatcher.CheckAccess())\n    UpdateUi();\nelse\n    Dispatcher.Invoke(UpdateUi);",
+      "tags": ["dispatcher", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcher.checkaccess"]
+    },
+    {
+      "id": "threading-007",
+      "difficulty": "Beginner",
+      "question": "What is async and await used for in WPF?",
+      "answer": "async and await let you write asynchronous code that looks synchronous, freeing the UI thread while waiting for I/O. When you await in a UI event handler, the continuation resumes on the UI thread automatically. This keeps the UI responsive without manual threading.",
+      "code": "private async void OnLoad(object sender, RoutedEventArgs e)\n{\n    var data = await _service.GetAsync();\n    Items = data; // back on the UI thread\n}",
+      "tags": ["async", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-008",
+      "difficulty": "Beginner",
+      "question": "What is a background thread in WPF?",
+      "answer": "A background thread is a thread that does not keep the process alive, such as one created with IsBackground true or by the thread pool. WPF UI work must run on the UI thread, but heavy computation can run on a background thread. Use Task.Run to offload CPU-bound work.",
+      "tags": ["threading", "background"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-009",
+      "difficulty": "Beginner",
+      "question": "Why should long-running work not run on the UI thread?",
+      "answer": "The UI thread processes input, layout, and rendering, so blocking it freezes the application and it appears unresponsive. The window does not repaint and the user cannot interact. Offload the work to a background thread or use async operations.",
+      "tags": ["threading", "performance"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-010",
+      "difficulty": "Beginner",
+      "question": "What is the SynchronizationContext in WPF?",
+      "answer": "WPF installs a DispatcherSynchronizationContext on the UI thread. When you await a task, the continuation is posted back to that context, so it runs on the UI thread. This is why you can update bound properties after an await without extra marshaling.",
+      "tags": ["synchronizationcontext", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-011",
+      "difficulty": "Intermediate",
+      "question": "What is a DispatcherPriority?",
+      "answer": "DispatcherPriority sets the order in which queued work runs relative to input, rendering, and other operations. Priorities include Background, Input, Loaded, Render, and Send. Choosing the right priority prevents starvation of input or rendering.",
+      "code": "Dispatcher.InvokeAsync(() => Update(), DispatcherPriority.Background);",
+      "tags": ["dispatcher", "priority"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcherpriority"]
+    },
+    {
+      "id": "threading-012",
+      "difficulty": "Intermediate",
+      "question": "How do you run a task and report progress to the UI?",
+      "answer": "Use Task.Run for the work and IProgress to report progress, which marshals callbacks to the captured synchronization context. Await the task in the UI code and update the UI when it completes. This pattern avoids manual dispatcher calls.",
+      "code": "var progress = new Progress<int>(p => ProgressBar.Value = p);\nawait Task.Run(() => Work(progress));",
+      "tags": ["async", "progress"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.progress-1"]
+    },
+    {
+      "id": "threading-013",
+      "difficulty": "Intermediate",
+      "question": "How do you cancel an asynchronous operation?",
+      "answer": "Pass a CancellationToken from a CancellationTokenSource to the async method and check it cooperatively. Handle OperationCanceledException to detect cancellation. This lets the user abort long operations cleanly.",
+      "code": "var cts = new CancellationTokenSource();\nawait Task.Run(() => Work(cts.Token), cts.Token);\ncts.Cancel();",
+      "tags": ["async", "cancellation"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.cancellationtoken"]
+    },
+    {
+      "id": "threading-014",
+      "difficulty": "Intermediate",
+      "question": "How can you create multiple UI threads in WPF?",
+      "answer": "Create a new thread, call Dispatcher.Run in it, and create UI objects on that thread; those objects form a separate visual tree hosted in their own window. This isolates heavy UI work but complicates coordination. Multiple UI threads are rarely needed and add complexity.",
+      "code": "var t = new Thread(() =>\n{\n    var w = new Window();\n    w.Show();\n    Dispatcher.Run();\n});\nt.SetApartmentState(ApartmentState.STA);\nt.Start();",
+      "tags": ["threading", "dispatcher"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Task.Run and Task.Factory.StartNew?",
+      "answer": "Task.Run is a simpler wrapper that queues work on the thread pool and is the recommended choice for CPU-bound work. StartNew offers more options such as a scheduler and creation options but is easier to misuse. Prefer Task.Run unless you need advanced control.",
+      "tags": ["tasks", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.run"]
+    },
+    {
+      "id": "threading-016",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid deadlocks when mixing sync and async code?",
+      "answer": "Do not block on async code with Wait or Result on the UI thread, because the continuation needs that thread to resume, causing a deadlock. Use async all the way down or ConfigureAwait(false) in library code. Event handlers should be async void only at the top level.",
+      "tags": ["async", "deadlock"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-017",
+      "difficulty": "Intermediate",
+      "question": "What does ConfigureAwait(false) do?",
+      "answer": "ConfigureAwait(false) tells the awaiter not to marshal the continuation back to the original synchronization context. In library code this avoids unnecessary UI thread hops and reduces deadlock risk. In UI code that updates controls, do not use it when you need the UI thread.",
+      "code": "var data = await httpClient.GetStringAsync(url).ConfigureAwait(false);",
+      "tags": ["async", "configureawait"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task.configureawait"]
+    },
+    {
+      "id": "threading-018",
+      "difficulty": "Intermediate",
+      "question": "What is a DispatcherOperation and how is it used?",
+      "answer": "DispatcherOperation is returned by BeginInvoke and InvokeAsync and represents queued work. It exposes Status, Result, and a Completed event, and can be awaited. It also supports Abort to cancel the operation before it runs.",
+      "code": "var op = Dispatcher.InvokeAsync(() => Compute());\nvar result = await op.Task;",
+      "tags": ["dispatcher", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcheroperation"]
+    },
+    {
+      "id": "threading-019",
+      "difficulty": "Intermediate",
+      "question": "How do you marshal data between threads safely?",
+      "answer": "Pass immutable data or copies between threads, and use Freezable objects frozen before sharing. Avoid sharing mutable UI objects across threads. For collections, use thread-safe types or marshal updates to the UI thread.",
+      "tags": ["threading", "data"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/freezable-objects-overview"]
+    },
+    {
+      "id": "threading-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Dispatcher and Thread?",
+      "answer": "A Thread is an operating-system execution context, while a Dispatcher is the message loop that services a thread's work queue. WPF UI runs on a thread that has a Dispatcher running its loop. The Dispatcher is what allows work to be marshaled onto that thread.",
+      "tags": ["dispatcher", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcher"]
+    },
+    {
+      "id": "threading-021",
+      "difficulty": "Advanced",
+      "question": "How do you handle unhandled exceptions on background threads?",
+      "answer": "Subscribe to DispatcherUnhandledException for UI thread exceptions, TaskScheduler.UnobservedTaskException for tasks, and AppDomain.UnhandledException as a last resort. Wrap background work in try/catch and marshal error reporting to the UI. Unhandled exceptions on the UI thread terminate the application unless handled.",
+      "code": "DispatcherUnhandledException += (s, e) =>\n{\n    Log(e.Exception);\n    e.Handled = true;\n};",
+      "tags": ["exceptions", "threading"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/app-development/application-management-overview"]
+    },
+    {
+      "id": "threading-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a producer-consumer pattern with the UI?",
+      "answer": "Use a thread-safe queue such as BlockingCollection and have a background producer add items while a UI consumer drains them on a timer or via dispatcher callbacks. Marshal batch updates to the UI thread to reduce overhead. This is common for streaming data into a view.",
+      "code": "var queue = new BlockingCollection<Item>();\nDispatcherTimer t = new(DispatcherPriority.Background);",
+      "tags": ["threading", "patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    },
+    {
+      "id": "threading-023",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of async void methods?",
+      "answer": "Exceptions thrown from async void cannot be caught by the caller and crash the application, and the caller cannot await completion. async void is acceptable only for event handlers, where it is the required signature. Elsewhere use async Task so errors and completion can be observed.",
+      "tags": ["async", "best-practices"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.threading.tasks.task"]
+    },
+    {
+      "id": "threading-024",
+      "difficulty": "Advanced",
+      "question": "How does the dispatcher interact with input and rendering priorities?",
+      "answer": "Input is queued at a higher priority than background work so the UI stays responsive, and rendering runs at the Render priority. Long-running background work at low priority yields to input and rendering. Understanding priorities helps avoid starving the UI during heavy operations.",
+      "tags": ["dispatcher", "priority"],
+      "references": ["https://learn.microsoft.com/dotnet/api/system.windows.threading.dispatcherpriority"]
+    },
+    {
+      "id": "threading-025",
+      "difficulty": "Advanced",
+      "question": "How do you test asynchronous WPF code that updates the UI?",
+      "answer": "Use an STA test host with a Dispatcher, or design ViewModels so the logic does not require the UI thread. Extract testable services and marshal UI updates at the boundary. This keeps most asynchronous logic unit-testable without a running application.",
+      "tags": ["testing", "async"],
+      "references": ["https://learn.microsoft.com/dotnet/desktop/wpf/advanced/threading-model"]
+    }
+  ]
+}

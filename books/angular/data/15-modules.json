@@ -1,0 +1,376 @@
+{
+  "category": "Modules, Standalone Components & Lazy Loading",
+  "slug": "modules",
+  "icon": "package",
+  "questions": [
+    {
+      "id": "modules-001",
+      "difficulty": "Beginner",
+      "question": "What is an NgModule?",
+      "answer": "An NgModule is a class decorated with @NgModule that groups components, directives, pipes, and providers into a cohesive block. Its imports pull in other modules, declarations register components, and exports make them available to importers. Modules were the original way to organize Angular applications.",
+      "tags": [
+        "ngmodule",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules",
+        "https://angular.dev/guide/ngmodules/overview"
+      ]
+    },
+    {
+      "id": "modules-002",
+      "difficulty": "Beginner",
+      "question": "What does it mean for a component to be standalone?",
+      "answer": "A standalone component declares its own dependencies in its imports array instead of relying on an NgModule, and standalone is the default for components in modern Angular. It can be used directly in routes, other components, or bootstrapApplication. This reduces indirection and improves tree-shaking.",
+      "code": "@Component({\n  selector: 'app-user',\n  imports: [DatePipe, UserCardComponent],\n  template: '...',\n})\nexport class UserComponent {}",
+      "tags": [
+        "standalone",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/guide/ngmodules/overview"
+      ]
+    },
+    {
+      "id": "modules-003",
+      "difficulty": "Beginner",
+      "question": "How do you bootstrap a standalone application?",
+      "answer": "Call bootstrapApplication with the root component and a providers array that configures the router, HTTP, and other services. This replaces the older platformBrowserDynamic bootstrap with an NgModule. The main entry file wires this up with the application config.",
+      "code": "bootstrapApplication(AppComponent, {\n  providers: [provideRouter(routes), provideHttpClient()],\n});",
+      "tags": [
+        "bootstrap",
+        "standalone"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules",
+        "https://angular.dev/api/platform-browser/bootstrapApplication"
+      ]
+    },
+    {
+      "id": "modules-004",
+      "difficulty": "Beginner",
+      "question": "What is lazy loading and why is it used?",
+      "answer": "Lazy loading defers the download of a feature's code until the user navigates to it, which shrinks the initial bundle and speeds up startup. In modern Angular it is done with loadComponent for a single component or loadChildren for a set of routes. This keeps the critical path small while still supporting large applications.",
+      "code": "{\n  path: 'reports',\n  loadChildren: () => import('./reports/routes').then((m) => m.routes),\n}",
+      "tags": [
+        "lazy-loading",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/lazy-loading",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "modules-005",
+      "difficulty": "Beginner",
+      "question": "What is the difference between declarations, imports, and exports in an NgModule?",
+      "answer": "declarations register the components, directives, and pipes that belong to the module, imports bring in other modules whose exports this module needs, and exports make this module's declarables available to importers. A declarable can belong to exactly one module. Getting these relationships right is essential to avoid template errors.",
+      "tags": [
+        "ngmodule",
+        "declarations",
+        "exports"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/overview",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "modules-006",
+      "difficulty": "Beginner",
+      "question": "What is a shared module and is it still needed?",
+      "answer": "A shared module re-exports common directives, pipes, and components so feature modules import one module instead of many. With standalone components, the equivalent is simply importing the needed items directly into each component, which is more explicit. Shared modules remain common in NgModule-based codebases.",
+      "tags": [
+        "shared-module",
+        "ngmodule"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/overview",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "modules-007",
+      "difficulty": "Beginner",
+      "question": "What is a feature module?",
+      "answer": "A feature module organizes the code for one area of the application, such as billing or administration, keeping its components and services together. It can be eagerly loaded or lazy loaded through the router. Feature boundaries make large applications easier to navigate and reason about.",
+      "tags": [
+        "feature-module",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/overview",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "modules-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between a module and a component?",
+      "answer": "A module is a compilation and organization unit that groups declarables, while a component is a view with a template and its own lifecycle. Modules do not render anything themselves; they make components available. Standalone components remove the module wrapper for most cases.",
+      "tags": [
+        "ngmodule",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/overview",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "modules-009",
+      "difficulty": "Beginner",
+      "question": "How do you make a component standalone?",
+      "answer": "Declare it with @Component and list its dependencies in the imports array; standalone is the default so no flag is required in modern Angular. It can then be imported directly wherever it is used. Legacy code sets standalone: true explicitly.",
+      "tags": [
+        "standalone",
+        "components"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/reference/migrations/standalone"
+      ]
+    },
+    {
+      "id": "modules-010",
+      "difficulty": "Beginner",
+      "question": "What does the imports array of a standalone component contain?",
+      "answer": "It contains the other standalone components, directives, pipes, and modules that the component's template uses. Each entry is the class or module reference itself, not a string. Keeping it accurate lets the compiler resolve every symbol in the template.",
+      "tags": [
+        "standalone",
+        "imports"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "modules-011",
+      "difficulty": "Intermediate",
+      "question": "How does lazy loading with loadChildren differ from loadComponent?",
+      "answer": "loadChildren loads a set of child routes, often defined in a separate file, and is used for a whole feature area, while loadComponent loads a single standalone component for one route. Both are dynamic imports that the bundler turns into separate chunks. Use loadChildren for multi-route features and loadComponent for simple, single-view routes.",
+      "tags": [
+        "lazy-loading",
+        "loadchildren",
+        "loadcomponent"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/define-routes",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "modules-012",
+      "difficulty": "Intermediate",
+      "question": "How does preloading improve the experience of lazy-loaded routes?",
+      "answer": "Preloading downloads lazy chunks in the background after the initial application renders, so subsequent navigation is faster. Strategies such as PreloadAllModules preload everything, while custom strategies can target specific routes. This balances fast startup against fast later navigation.",
+      "tags": [
+        "preloading",
+        "lazy-loading",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/loading-strategies",
+        "https://angular.dev/api/router/withPreloading"
+      ]
+    },
+    {
+      "id": "modules-013",
+      "difficulty": "Intermediate",
+      "question": "How do you migrate an NgModule application to standalone components?",
+      "answer": "Angular provides a migration that converts declarations into standalone components and replaces module imports with per-component imports, after which modules can often be removed entirely. Do it incrementally, keeping modules where they still add value, such as for third-party libraries. Testing each step keeps the migration safe.",
+      "tags": [
+        "migration",
+        "standalone",
+        "ngmodule"
+      ],
+      "references": [
+        "https://angular.dev/reference/migrations/standalone",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "modules-014",
+      "difficulty": "Intermediate",
+      "question": "What is a forRoot/forChild pattern in modules?",
+      "answer": "forRoot registers providers that should exist once at the application level, while forChild registers the routing or declarables for a feature without duplicating providers. This prevents accidental multiple instances of singleton services. RouterModule was the classic example of the pattern.",
+      "tags": [
+        "forroot",
+        "forchild",
+        "ngmodule"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/overview",
+        "https://angular.dev/guide/ngmodules/providers"
+      ]
+    },
+    {
+      "id": "modules-015",
+      "difficulty": "Intermediate",
+      "question": "How do you provide services in a lazy-loaded feature?",
+      "answer": "Add the service to the feature's route providers so it is created when the feature loads and destroyed with its injector. This scopes the service to the feature and avoids polluting the root injector. It is especially useful for state that should not persist after leaving the feature.",
+      "tags": [
+        "lazy-loading",
+        "providers",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "modules-016",
+      "difficulty": "Intermediate",
+      "question": "What are the benefits of standalone components over NgModules?",
+      "answer": "Standalone components make dependencies explicit at the point of use, improve tree-shaking, and remove the need to maintain module plumbing. They also simplify lazy loading because a single component can be loaded without a module. NgModules are still supported and remain useful for organizing some legacy or third-party code.",
+      "tags": [
+        "standalone",
+        "ngmodule",
+        "benefits"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/guide/ngmodules/overview"
+      ]
+    },
+    {
+      "id": "modules-017",
+      "difficulty": "Intermediate",
+      "question": "How do you share code between features without a shared module?",
+      "answer": "Export reusable pieces as standalone components, directives, and pipes from a library or a shared folder, then import the specific items each consumer needs. This keeps dependencies explicit and avoids the broad coupling that a catch-all shared module creates. Bundlers can then drop unused pieces.",
+      "tags": [
+        "standalone",
+        "shared-code",
+        "architecture"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/tools/libraries/creating-libraries"
+      ]
+    },
+    {
+      "id": "modules-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the application config?",
+      "answer": "The application config is the set of providers passed to bootstrapApplication, often assembled with helper functions such as provideRouter, provideHttpClient, and provideZoneChangeDetection. It replaces the provider lists that used to live in AppModule. Keeping it in a dedicated file makes the bootstrap readable.",
+      "tags": [
+        "bootstrap",
+        "providers",
+        "configuration"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules",
+        "https://angular.dev/api/platform-browser/bootstrapApplication"
+      ]
+    },
+    {
+      "id": "modules-019",
+      "difficulty": "Intermediate",
+      "question": "How do you lazily load a component without a route?",
+      "answer": "You can dynamically import a component and create it with a ViewContainerRef, or use the defer block to load and render it based on a trigger. Both defer the JavaScript until it is needed. The defer block is the more declarative option for template-driven cases.",
+      "tags": [
+        "dynamic-import",
+        "defer",
+        "lazy-loading"
+      ],
+      "references": [
+        "https://angular.dev/guide/templates/defer",
+        "https://angular.dev/guide/components/programmatic-rendering"
+      ]
+    },
+    {
+      "id": "modules-020",
+      "difficulty": "Intermediate",
+      "question": "What are the common mistakes when setting up lazy loading?",
+      "answer": "Forgetting that a lazy route needs its own providers or accidentally importing a feature eagerly from the root, so the chunk is bundled anyway, are frequent mistakes. Also ensure route order and that the lazy chunk is served after deployments, or navigation fails. Verifying chunk output in the build report catches these issues early.",
+      "tags": [
+        "lazy-loading",
+        "mistakes",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/ngmodules/lazy-loading",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "modules-021",
+      "difficulty": "Advanced",
+      "question": "How does Angular decide what goes into the initial bundle?",
+      "answer": "The bundler includes everything reachable from the bootstrap path, and each dynamic import creates a separate chunk that is loaded on demand. Tree-shaking removes code that is never referenced, which is why explicit standalone imports help. Analyzing the build output shows exactly what landed in the initial bundle.",
+      "tags": [
+        "bundling",
+        "tree-shaking",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/tools/cli/build",
+        "https://angular.dev/guide/components/importing"
+      ]
+    },
+    {
+      "id": "modules-022",
+      "difficulty": "Advanced",
+      "question": "How do route-level providers and lazy loading interact with singleton services?",
+      "answer": "A service provided at the root is a singleton for the application lifetime, while a service provided on a lazy route is created with that route's injector and can be recreated on each visit. Mixing the two expectations causes bugs where state unexpectedly resets or persists. Decide the intended lifetime and provide the service at the matching level.",
+      "tags": [
+        "di",
+        "lazy-loading",
+        "singleton"
+      ],
+      "references": [
+        "https://angular.dev/guide/di/hierarchical-dependency-injection",
+        "https://angular.dev/guide/ngmodules/lazy-loading"
+      ]
+    },
+    {
+      "id": "modules-023",
+      "difficulty": "Advanced",
+      "question": "How do you structure a large application with standalone components?",
+      "answer": "Organize by feature with each feature exposing its routes and standalone components, keep a small shared set of primitives, and load features lazily through the router. Explicit imports at each component keep dependencies visible and tree-shakeable. This structure scales without the indirection of a module graph.",
+      "tags": [
+        "architecture",
+        "standalone",
+        "lazy-loading"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/guide/routing/define-routes"
+      ]
+    },
+    {
+      "id": "modules-024",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of deep module nesting versus flat standalone structure?",
+      "answer": "Deep module nesting groups related code but can hide dependencies and produce large shared modules that pull in unused code. A flat standalone structure makes dependencies explicit and improves tree-shaking, at the cost of listing more imports per component. Most teams move toward flatter structures as the tooling has matured.",
+      "tags": [
+        "architecture",
+        "standalone",
+        "trade-offs"
+      ],
+      "references": [
+        "https://angular.dev/guide/components/importing",
+        "https://angular.dev/guide/ngmodules/overview"
+      ]
+    },
+    {
+      "id": "modules-025",
+      "difficulty": "Advanced",
+      "question": "How do you ensure lazy chunks stay fresh across deployments?",
+      "answer": "Because chunk filenames are hashed, a client with an old index file can request a chunk that no longer exists after a deploy. Handle navigation errors by reloading the application, and serve the index with no-cache headers so clients pick up new manifests. This avoids the confusing blank screen that missing chunks cause.",
+      "tags": [
+        "deployment",
+        "lazy-loading",
+        "caching"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/lifecycle-and-events",
+        "https://angular.dev/tools/cli/build"
+      ]
+    }
+  ]
+}

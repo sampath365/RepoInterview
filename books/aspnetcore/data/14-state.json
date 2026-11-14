@@ -1,0 +1,218 @@
+{
+  "category": "State Management & Sessions",
+  "slug": "state",
+  "icon": "memory",
+  "questions": [
+    {
+      "id": "state-001",
+      "difficulty": "Beginner",
+      "question": "Why is state management different in ASP.NET Core compared to classic ASP.NET?",
+      "answer": "ASP.NET Core is stateless by design and has no built-in ViewState, so state must be managed explicitly through cookies, session, cache, or a database. This makes apps scale across servers without sticky sessions. You choose a store based on size, sensitivity, and whether it must be shared.",
+      "tags": ["state", "stateless"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-002",
+      "difficulty": "Beginner",
+      "question": "What is session state in ASP.NET Core?",
+      "answer": "Session stores per-user data on the server between requests, identified by a session cookie, and is accessed through ISession via HttpContext.Session. The default implementation is in-memory and not shared across servers, so a distributed store such as Redis is needed for scaled deployments. Session requires a session cookie and is generally used for small values.",
+      "code": "builder.Services.AddDistributedMemoryCache();\nbuilder.Services.AddSession();\napp.UseSession();",
+      "tags": ["session", "state"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-003",
+      "difficulty": "Beginner",
+      "question": "How do you store and retrieve values in session?",
+      "answer": "You use ISession extension methods such as SetString and GetString, or Set with byte arrays and JSON serialization for objects. Session values are scoped to the current user session and cleared when the session expires. Remember that session is not suitable for large data or sensitive secrets.",
+      "code": "HttpContext.Session.SetString(\"CartId\", id);\nvar cartId = HttpContext.Session.GetString(\"CartId\");",
+      "tags": ["session", "storage"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between session and cookies?",
+      "answer": "Cookies store data on the client and are sent with every request, while session stores data on the server and keeps only a small session identifier in a cookie. Cookies are limited in size and visible to the user unless encrypted, while session is larger and hidden but requires a store. Sensitive data should live server-side, not in cookies.",
+      "tags": ["cookies", "session"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-005",
+      "difficulty": "Beginner",
+      "question": "What is TempData?",
+      "answer": "TempData stores data for the duration of a single request-to-request redirect, which makes it ideal for passing status messages after a POST-redirect-GET. It is read once by default, though Peek and Keep let you control that. It is backed by cookies or session depending on configuration.",
+      "code": "TempData[\"Message\"] = \"Saved\";\nreturn RedirectToAction(\"Index\");",
+      "tags": ["tempdata", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state#tempdata"]
+    },
+    {
+      "id": "state-006",
+      "difficulty": "Beginner",
+      "question": "What is ViewData used for?",
+      "answer": "ViewData is a weakly typed dictionary available in MVC controllers and views for passing data from a controller to its view within the same request. It exists only for that request and is not persisted. For anything structured, a strongly typed view model is preferred.",
+      "code": "ViewData[\"Title\"] = \"Orders\";\n// in view: <h1>@ViewData[\"Title\"]</h1>",
+      "tags": ["viewdata", "mvc"],
+      "references": ["https://learn.microsoft.com/aspnet/core/mvc/views/overview"]
+    },
+    {
+      "id": "state-007",
+      "difficulty": "Beginner",
+      "question": "What is query string state?",
+      "answer": "Query string state passes values in the URL, making it shareable and bookmarkable but visible and limited in size. It is appropriate for filters, paging, and search criteria rather than sensitive data. Because it is client-controlled, values must always be validated.",
+      "tags": ["query-string", "state"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-008",
+      "difficulty": "Beginner",
+      "question": "How do you configure a session cookie?",
+      "answer": "You set SessionOptions such as Cookie.Name, Cookie.HttpOnly, Cookie.IsEssential, IdleTimeout, and Cookie.SecurePolicy when calling AddSession. HttpOnly prevents JavaScript access and Secure requires HTTPS. IdleTimeout controls how long the session stays alive without activity.",
+      "code": "builder.Services.AddSession(o =>\n{\n    o.IdleTimeout = TimeSpan.FromMinutes(20);\n    o.Cookie.HttpOnly = true;\n    o.Cookie.IsEssential = true;\n});",
+      "tags": ["session-cookie", "configuration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-009",
+      "difficulty": "Beginner",
+      "question": "What is the difference between transient and persistent state?",
+      "answer": "Transient state lives only for a request or session, such as TempData or session values, while persistent state is stored in a durable store like a database or distributed cache and survives restarts. Choosing the right duration prevents data loss and stale reads. Persistent state should have a clear owner and lifetime.",
+      "tags": ["state", "lifetime"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-010",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid storing large objects in session?",
+      "answer": "Large session objects increase memory usage or network traffic to the distributed store and slow down every request that loads the session. They also complicate serialization and versioning. Keep session entries small and store large data in a database or cache keyed by an id.",
+      "tags": ["session", "performance"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-011",
+      "difficulty": "Intermediate",
+      "question": "How do you use a distributed cache for session?",
+      "answer": "You register a distributed cache such as Redis with AddStackExchangeRedisCache before calling AddSession, and the session middleware stores entries there using the session id from the cookie. This makes sessions shared across instances. Serialization and network latency should be considered, and the cache should be resilient to outages.",
+      "code": "builder.Services.AddStackExchangeRedisCache(o =>\n    o.Configuration = cfg.GetConnectionString(\"Redis\"));\nbuilder.Services.AddSession();",
+      "tags": ["redis", "session"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/distributed"]
+    },
+    {
+      "id": "state-012",
+      "difficulty": "Intermediate",
+      "question": "How does TempData persistence work?",
+      "answer": "TempData is backed by a provider, either cookie-based by default or session-based, and entries are marked to be removed after being read. You can inspect with Peek and retain with Keep. The cookie provider stores data in the cookie, which is convenient but size-limited and visible unless protected.",
+      "tags": ["tempdata", "persistence"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state#tempdata"]
+    },
+    {
+      "id": "state-013",
+      "difficulty": "Intermediate",
+      "question": "What is cookie consent and the IsEssential flag?",
+      "answer": "The cookie policy middleware can require user consent before non-essential cookies are written, and marking a cookie IsEssential lets it be set without consent because it is required for functionality. This supports privacy regulations such as GDPR. You should classify cookies carefully and document their purpose.",
+      "code": "builder.Services.Configure<CookiePolicyOptions>(o =>\n{\n    o.CheckConsentNeeded = ctx => true;\n    o.MinimumSameSitePolicy = SameSiteMode.None;\n});",
+      "tags": ["cookies", "privacy"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/gdpr"]
+    },
+    {
+      "id": "state-014",
+      "difficulty": "Intermediate",
+      "question": "How do you implement a shopping cart without sticky sessions?",
+      "answer": "You store the cart in a distributed cache or database keyed by a cart identifier kept in a cookie, so any server can handle any request. The cart data is authoritative in the shared store, and the cookie only carries the key. This scales horizontally and survives restarts.",
+      "tags": ["scalability", "state"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state", "https://learn.microsoft.com/aspnet/core/performance/caching/distributed"]
+    },
+    {
+      "id": "state-015",
+      "difficulty": "Intermediate",
+      "question": "How do you protect session and cookie data from tampering?",
+      "answer": "Session data lives server-side so clients cannot modify it, and cookie data is protected by data protection if you use the cookie-based TempData or authentication cookies. For custom cookies you can encrypt values with IDataProtector. Always validate any client-supplied state before use.",
+      "code": "var protector = _provider.CreateProtector(\"cart\");\nvar token = protector.Protect(id);",
+      "tags": ["data-protection", "security"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/data-protection/introduction"]
+    },
+    {
+      "id": "state-016",
+      "difficulty": "Intermediate",
+      "question": "What is the data protection system and why does it matter for state?",
+      "answer": "Data protection provides APIs to encrypt and sign data, and it is used by authentication cookies, antiforgery tokens, and TempData. Keys are generated per app and must be shared across instances in a scaled deployment, otherwise cookies from one server are rejected by another. You configure key storage with a shared location such as Redis or Azure Blob.",
+      "code": "builder.Services.AddDataProtection()\n    .PersistKeysToStackExchangeRedis(redis, \"keys\");",
+      "tags": ["data-protection", "keys"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/data-protection/configuration/overview"]
+    },
+    {
+      "id": "state-017",
+      "difficulty": "Intermediate",
+      "question": "How do you pass state between middleware components?",
+      "answer": "You store values in HttpContext.Items, which is a per-request dictionary available to all middleware and the endpoint for that request. This is the recommended way to share request-scoped data without using session or globals. Items are cleared when the request completes.",
+      "code": "context.Items[\"Tenant\"] = tenant;\n// later\nvar tenant = context.Items[\"Tenant\"];",
+      "tags": ["httpcontext", "state"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-018",
+      "difficulty": "Intermediate",
+      "question": "How do you manage user-specific state for an API without cookies?",
+      "answer": "You pass identity in a bearer token and store any server-side state in a cache keyed by the user id from the token claims. This keeps the API stateless while still supporting per-user data. Avoid relying on server sessions for APIs consumed by native clients.",
+      "tags": ["api", "state"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle session expiration gracefully?",
+      "answer": "You check whether the expected session value exists and redirect or prompt when it is missing, rather than assuming the session is present. Setting a reasonable idle timeout and refreshing on activity reduces surprise expirations. Important data should be persisted to a durable store so session loss is recoverable.",
+      "tags": ["session", "expiration"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between cache, session, and TempData for state?",
+      "answer": "Cache is application-wide and shared by all users, session is per user and lasts across requests until timeout, and TempData lasts one redirect and is read once. Choosing the wrong one leads to data leaking between users or disappearing unexpectedly. Match the scope and lifetime to the requirement.",
+      "tags": ["state", "trade-offs"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-021",
+      "difficulty": "Advanced",
+      "question": "How does the session middleware load and commit data per request?",
+      "answer": "The session middleware reads the session id from the cookie, loads the feature from the distributed cache when the session is accessed, and commits changes at the end of the request. Lazy loading avoids fetching the session when it is not used. This means an untouched session costs no store round trip.",
+      "tags": ["internals", "session"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-022",
+      "difficulty": "Advanced",
+      "question": "How would you scale session state across regions and instances?",
+      "answer": "You use a geo-distributed or replicated store for session data, or a database with low latency in each region, and keep the session id in a cookie scoped to the app. Because cross-region latency is significant, apps often avoid server session entirely and use tokens plus a shared cache. Consistency and failover behavior of the store must be planned.",
+      "tags": ["scalability", "session"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/distributed", "https://learn.microsoft.com/aspnet/core/fundamentals/app-state"]
+    },
+    {
+      "id": "state-023",
+      "difficulty": "Advanced",
+      "question": "How does data protection key management affect multi-instance deployments?",
+      "answer": "Each instance generates keys by default, so authentication cookies and antiforgery tokens from one instance fail on another. You persist keys to a shared location such as a file share, Redis, or Azure Blob Storage, and protect them at rest. Key rotation and expiry must also be handled consistently across instances.",
+      "code": "builder.Services.AddDataProtection()\n    .PersistKeysToAzureBlobStorage(blobUri)\n    .ProtectKeysWithAzureKeyVault(keyId);",
+      "tags": ["data-protection", "scaling"],
+      "references": ["https://learn.microsoft.com/aspnet/core/security/data-protection/configuration/overview"]
+    },
+    {
+      "id": "state-024",
+      "difficulty": "Advanced",
+      "question": "What are the security concerns with client-side state?",
+      "answer": "Client-side state such as cookies or hidden fields can be read or modified by the user, so it must never hold secrets or be trusted for authorization decisions. Values should be encrypted and signed with data protection, and any client-provided identifier must be validated server-side. Server-side storage is safer for anything sensitive.",
+      "tags": ["security", "state"],
+      "references": ["https://learn.microsoft.com/aspnet/core/fundamentals/app-state", "https://learn.microsoft.com/aspnet/core/security/data-protection/introduction"]
+    },
+    {
+      "id": "state-025",
+      "difficulty": "Advanced",
+      "question": "How would you migrate an app that relied on InProc session to a scaled-out deployment?",
+      "answer": "You replace the in-memory session store with a distributed cache such as Redis, configure data protection keys in a shared location, and ensure any session-stored objects are serializable and versioned. You also review code that assumes sticky sessions and remove that assumption. Testing with multiple instances and rolling restarts verifies the migration.",
+      "tags": ["migration", "session"],
+      "references": ["https://learn.microsoft.com/aspnet/core/performance/caching/distributed", "https://learn.microsoft.com/aspnet/core/security/data-protection/configuration/overview"]
+    }
+  ]
+}

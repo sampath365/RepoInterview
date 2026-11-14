@@ -1,0 +1,221 @@
+{
+  "category": "Dependency Injection in Tests",
+  "slug": "dependency-injection",
+  "icon": "cube",
+  "questions": [
+    {
+      "id": "dependency-injection-001",
+      "difficulty": "Beginner",
+      "question": "Why does dependency injection make code easier to test?",
+      "answer": "Dependency injection lets a class receive its collaborators instead of constructing them, so a test can supply lightweight doubles or controlled implementations. It also removes hidden dependencies on static state and global configuration that are hard to control. The result is tests that are fast, deterministic, and focused on the class's behaviour.",
+      "tags": ["dependency-injection", "testability"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-002",
+      "difficulty": "Beginner",
+      "question": "What is a DI container and why use one in tests?",
+      "answer": "A DI container maps abstractions to implementations and resolves object graphs on demand. In tests a container is useful when the object under test has several dependencies, because you register a small set of fakes once and resolve the subject without manual wiring. Overusing a container in unit tests can hide what is being tested, so keep the registrations minimal and explicit.",
+      "tags": ["container", "servicecollection"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-003",
+      "difficulty": "Beginner",
+      "question": "How do you build a service provider in a test?",
+      "answer": "Create a ServiceCollection, register the services you need including your fakes, and call BuildServiceProvider. Remember to dispose the provider when the test finishes so singletons are released. Keep the container setup in a fixture or helper when several tests share it.",
+      "code": "var services = new ServiceCollection();\nservices.AddSingleton<IClock, FakeClock>();\nservices.AddTransient<OrderService>();\nusing var provider = services.BuildServiceProvider();\nvar sut = provider.GetRequiredService<OrderService>();",
+      "tags": ["servicecollection", "setup"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-004",
+      "difficulty": "Beginner",
+      "question": "What is the difference between constructor injection and property injection?",
+      "answer": "Constructor injection passes dependencies as constructor parameters, which makes them required, explicit, and immutable, and is the recommended default. Property injection sets dependencies after construction and is used only for optional dependencies in some frameworks. Constructor injection is strongly preferred in test code because it guarantees the object is fully initialised.",
+      "tags": ["constructor-injection", "patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-005",
+      "difficulty": "Beginner",
+      "question": "How do you register a fake implementation in a test container?",
+      "answer": "Call the appropriate Add method with the abstraction and an instance or factory that returns your fake, such as AddSingleton<IEmailSender>(fake). Registering an instance keeps the same fake available to every consumer in the test. This lets you inspect the fake after the act phase to assert on interactions.",
+      "code": "var sender = new FakeEmailSender();\nservices.AddSingleton<IEmailSender>(sender);",
+      "tags": ["fakes", "registration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-006",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid service locator in tests and production code?",
+      "answer": "The service locator pattern hides a class's dependencies inside calls to a global resolver, so the constructor no longer reveals what the class needs and tests cannot easily substitute them. It also makes it hard to detect missing registrations until runtime. Constructor injection keeps dependencies visible and lets the container validate them at startup.",
+      "tags": ["service-locator", "anti-patterns"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between AddTransient, AddScoped, and AddSingleton?",
+      "answer": "AddTransient creates a new instance for every resolution, AddScoped creates one instance per scope such as an HTTP request, and AddSingleton creates one instance for the lifetime of the provider. The lifetimes matter in tests because a singleton fake is shared across the whole test, while a transient fake is recreated. Registering a dependency with a lifetime longer than its consumers can capture stale state, so match the production lifetimes.",
+      "tags": ["lifetimes", "registration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-008",
+      "difficulty": "Beginner",
+      "question": "How do you resolve a service with a specific lifetime in a test?",
+      "answer": "Use provider.GetRequiredService<T>() for the root scope, or create a scope with provider.CreateScope() and resolve from scope.ServiceProvider when the service is scoped. Always dispose the scope at the end of the test. This mirrors how the application resolves scoped services per request.",
+      "code": "using var scope = provider.CreateScope();\nvar db = scope.ServiceProvider.GetRequiredService<AppDbContext>();",
+      "tags": ["scopes", "resolution"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-009",
+      "difficulty": "Beginner",
+      "question": "How does dependency injection help you test ASP.NET Core controllers?",
+      "answer": "Controllers receive their services through constructor injection, so in a WebApplicationFactory test you can replace registrations with fakes using ConfigureTestServices, and the controller resolves them automatically. This lets you test the full pipeline while substituting only the dependency you care about. Without DI you would have to instantiate the controller manually with all its dependencies.",
+      "tags": ["aspnetcore", "controllers"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "dependency-injection-010",
+      "difficulty": "Beginner",
+      "question": "What is a fake ILogger and how do you use it?",
+      "answer": "A fake logger implements ILogger<T> and records log entries in memory so a test can assert that a message was written. You register it in the container so the class under test receives it instead of the real logger. Assert only on important, stable messages, because over-asserting on logging couples tests to text.",
+      "code": "public sealed class CapturingLogger<T> : ILogger<T>\n{\n    public List<string> Messages { get; } = new();\n    public IDisposable? BeginScope<TState>(TState state) => null;\n    public bool IsEnabled(LogLevel level) => true;\n    public void Log<TState>(LogLevel l, EventId e, TState s,\n        Exception? ex, Func<TState, Exception?, string> f)\n        => Messages.Add(f(s, ex));\n}",
+      "tags": ["logging", "fakes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/logging"]
+    },
+    {
+      "id": "dependency-injection-011",
+      "difficulty": "Intermediate",
+      "question": "How do you replace a registration in an ASP.NET Core integration test?",
+      "answer": "Override ConfigureWebHost on your WebApplicationFactory and call builder.ConfigureTestServices, removing the production registration if needed and adding your fake. ConfigureTestServices runs after the application's own configuration, so your replacement wins. This lets you swap a real payment gateway for a fake without changing production code.",
+      "code": "protected override void ConfigureWebHost(IWebHostBuilder builder)\n{\n    builder.ConfigureTestServices(services =>\n    {\n        services.RemoveAll<IPaymentGateway>();\n        services.AddSingleton<IPaymentGateway, FakeGateway>();\n    });\n}",
+      "tags": ["configuretestservices", "aspnetcore"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "dependency-injection-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between ConfigureServices and ConfigureTestServices?",
+      "answer": "ConfigureServices runs during host building and is where the application normally registers its services, while ConfigureTestServices is a testing extension that runs afterwards specifically to override those registrations. Because it runs last, a fake added in ConfigureTestServices replaces the real implementation. Use ConfigureTestServices in tests to avoid modifying production startup code.",
+      "tags": ["configuretestservices", "hosting"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "dependency-injection-013",
+      "difficulty": "Intermediate",
+      "question": "How do you verify that a service is registered correctly?",
+      "answer": "Resolve it from a built provider in a test, or enable container validation which checks that all dependencies of a resolved service can be satisfied. Resolving the top-level service in a smoke test catches missing registrations early. In ASP.NET Core you can also validate scopes and validate on build to detect lifetime mistakes.",
+      "code": "services.AddSingleton<IOrderService, OrderService>();\nusing var provider = services.BuildServiceProvider(\n    new ServiceProviderOptions { ValidateOnBuild = true });\nprovider.GetRequiredService<IOrderService>();",
+      "tags": ["validation", "registration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-014",
+      "difficulty": "Intermediate",
+      "question": "How do you inject a mock into a class that uses IOptions?",
+      "answer": "Register a configured options instance with services.Configure<T>(config) or services.AddSingleton(Options.Create(myOptions)) so the class receives the settings you want. For validation scenarios register a misconfigured instance and assert that the options validation fails. This lets you test behaviour under different configuration values without touching appsettings files.",
+      "code": "services.AddSingleton(Options.Create(\n    new OrderOptions { MaxItems = 5 }));",
+      "tags": ["ioptions", "configuration"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/configuration"]
+    },
+    {
+      "id": "dependency-injection-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a class with many dependencies without a container?",
+      "answer": "Construct the class manually, passing each dependency as a constructor argument, which keeps the test explicit about what is real and what is faked. Manual construction is often clearer than a container for a single subject with a handful of dependencies. When the list grows unwieldy it is a design signal that the class has too many responsibilities.",
+      "code": "var sut = new OrderService(\n    new FakeOrders(),\n    new FakeClock(),\n    NullLogger<OrderService>.Instance);",
+      "tags": ["manual-wiring", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "dependency-injection-016",
+      "difficulty": "Intermediate",
+      "question": "How do you use a fake time provider with dependency injection?",
+      "answer": "Register TimeProvider as a singleton, using TimeProvider.System in production and a FakeTimeProvider in tests, and inject it into the classes that need the current time. The fake lets you set the start time and advance it deterministically. This is the modern replacement for custom clock interfaces.",
+      "code": "var time = new FakeTimeProvider();\ntime.SetUtcNow(new DateTimeOffset(2025, 1, 1, 0, 0, 0, TimeSpan.Zero));\nservices.AddSingleton<TimeProvider>(time);",
+      "tags": ["timeprovider", "fakes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    },
+    {
+      "id": "dependency-injection-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test a hosted service?",
+      "answer": "Resolve IHostedService from the provider, call StartAsync with a token, and assert on the effect, then call StopAsync to shut it down cleanly. Using a real host with WebApplicationFactory or HostBuilder exercises the actual startup path. For a unit test of the service logic, call its internal work method directly.",
+      "code": "var host = await new HostBuilder()\n    .ConfigureServices(s => s.AddHostedService<Worker>())\n    .StartAsync();\nawait host.StopAsync();",
+      "tags": ["hosted-service", "hosting"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-018",
+      "difficulty": "Intermediate",
+      "question": "How do you replace the database context in an integration test?",
+      "answer": "In ConfigureTestServices remove the production DbContext registration and add one that uses an in-memory or SQLite provider with a unique database name. Using a real relational provider such as SQLite in-memory preserves relational query translation, whereas the in-memory provider does not enforce relational constraints. Dispose the database at the end of the test to release resources.",
+      "code": "services.RemoveAll<DbContextOptions<AppDbContext>>();\nservices.AddDbContext<AppDbContext>(o =>\n    o.UseSqlite(new SqliteConnection(\"Filename=:memory:\")));",
+      "tags": ["efcore", "integration"],
+      "references": ["https://learn.microsoft.com/ef/core/testing/testing-without-the-database"]
+    },
+    {
+      "id": "dependency-injection-019",
+      "difficulty": "Intermediate",
+      "question": "What is a test double for IHttpClientFactory?",
+      "answer": "Register a stub IHttpClientFactory that returns an HttpClient built on a fake HttpMessageHandler, or use the built-in AddHttpClient test helpers to configure a named client with a handler. This keeps the code under test unchanged while controlling the outgoing HTTP behaviour. Assert on the requests recorded by the fake handler to verify the contract.",
+      "tags": ["httpclientfactory", "fakes"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/httpclient-factory"]
+    },
+    {
+      "id": "dependency-injection-020",
+      "difficulty": "Intermediate",
+      "question": "How do you keep DI configuration consistent between production and tests?",
+      "answer": "Share the production extension methods that register services, and only override the specific registrations a test needs rather than rebuilding the whole graph. This ensures tests exercise the real wiring, which is where configuration bugs usually hide. Keep test-only overrides in a clearly named ConfigureTestServices method so they are easy to find.",
+      "tags": ["configuration", "consistency"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "dependency-injection-021",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of using the same service provider across many tests?",
+      "answer": "A shared provider keeps singletons alive across tests, so state mutated by one test leaks into another and creates order-dependent failures. It also prevents tests from running in parallel safely. Build a fresh provider per test or per class fixture, and dispose it when the scope ends.",
+      "tags": ["lifetime", "isolation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-022",
+      "difficulty": "Advanced",
+      "question": "How do you detect captive dependencies in tests?",
+      "answer": "Enable scope validation with ServiceProviderOptions.ValidateScopes and validate on build, which makes the provider throw when a singleton or scoped service captures a dependency of a shorter lifetime. You can also assert lifetimes by resolving a scoped service twice in different scopes and checking the instances differ. Catching captive dependencies in tests prevents subtle production bugs.",
+      "code": "using var provider = services.BuildServiceProvider(\n    new ServiceProviderOptions { ValidateScopes = true });",
+      "tags": ["lifetimes", "validation"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-023",
+      "difficulty": "Advanced",
+      "question": "How do you test a decorator that wraps another service?",
+      "answer": "Register the inner implementation and the decorator, with the decorator taking the inner abstraction as a constructor parameter, then resolve the outermost interface. In tests you can substitute the inner service with a fake to isolate the decorator's cross-cutting behaviour. Assert both that the decorator adds its behaviour and that it delegates to the inner service.",
+      "code": "services.AddSingleton<IOrders, Orders>();\nservices.AddSingleton<IOrders, CachedOrders>(); // decorator wraps IOrders\nservices.Decorate<IOrders, LoggingOrders>();     // Scrutor-style",
+      "tags": ["decorator", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/core/extensions/dependency-injection"]
+    },
+    {
+      "id": "dependency-injection-024",
+      "difficulty": "Advanced",
+      "question": "How do you test that the application starts with a valid DI configuration?",
+      "answer": "Add a smoke test that builds the real host, for example with WebApplicationFactory or a HostBuilder that calls the production registration methods, and resolves the top-level services. This catches missing registrations, invalid lifetimes, and misconfigured options before they reach production. Enabling ValidateOnBuild makes the check even stronger.",
+      "code": "public class StartupTests(WebApplicationFactory<Program> factory)\n    : IClassFixture<WebApplicationFactory<Program>>\n{\n    [Fact]\n    public void Container_is_valid() =>\n        Assert.NotNull(factory.Services.GetService<IOrderService>());\n}",
+      "tags": ["smoke-test", "validation"],
+      "references": ["https://learn.microsoft.com/aspnet/core/test/integration-tests"]
+    },
+    {
+      "id": "dependency-injection-025",
+      "difficulty": "Advanced",
+      "question": "When is dependency injection in tests overkill?",
+      "answer": "For a small class with one or two dependencies, manual construction is clearer and faster than building a container, and it keeps the test self-contained. A container adds value when the object graph is deep, when you want to reuse production registrations, or when testing the composition itself. The guiding principle is to make the test express the setup that matters, not to mirror production architecture for its own sake.",
+      "tags": ["pragmatism", "design"],
+      "references": ["https://learn.microsoft.com/dotnet/core/testing/unit-testing-best-practices"]
+    }
+  ]
+}

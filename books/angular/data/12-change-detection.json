@@ -1,0 +1,378 @@
+{
+  "category": "Change Detection & Zone.js",
+  "slug": "change-detection",
+  "icon": "sync",
+  "questions": [
+    {
+      "id": "change-detection-001",
+      "difficulty": "Beginner",
+      "question": "What is change detection in Angular?",
+      "answer": "Change detection is the process by which Angular checks component data and updates the DOM to reflect changes. It walks the component tree, comparing current values with previous ones and applying differences. Understanding it explains when the view updates and how to optimize rendering.",
+      "tags": [
+        "change-detection",
+        "overview"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "change-detection-002",
+      "difficulty": "Beginner",
+      "question": "What is zone.js and what does it do for Angular?",
+      "answer": "Zone.js patches asynchronous APIs such as setTimeout, promises, and event listeners so Angular knows when async work finishes and a change detection pass may be needed. This is why the view updates automatically after an HTTP response or a timeout. Modern Angular can run without zone.js in zoneless mode.",
+      "tags": [
+        "zonejs",
+        "change-detection",
+        "async"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "change-detection-003",
+      "difficulty": "Beginner",
+      "question": "What are the default and OnPush change detection strategies?",
+      "answer": "The Default strategy checks a component on every change detection run. OnPush checks the component only when an input changes by reference, an event originates from the component or its children, a signal it reads changes, or it is explicitly marked for check. OnPush dramatically reduces work in large trees.",
+      "tags": [
+        "onpush",
+        "strategy",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/api/core/ChangeDetectionStrategy"
+      ]
+    },
+    {
+      "id": "change-detection-004",
+      "difficulty": "Beginner",
+      "question": "Why does mutating an object not always update the view with OnPush?",
+      "answer": "OnPush compares inputs by reference, so mutating an existing object or array leaves the reference unchanged and Angular does not detect the change. You must produce a new reference with spread or an immutable update. Signals avoid this problem because the framework tracks the exact value that changed.",
+      "code": "this.items = [...this.items, newItem]; // new reference",
+      "tags": [
+        "onpush",
+        "immutability",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "change-detection-005",
+      "difficulty": "Beginner",
+      "question": "What is markForCheck used for?",
+      "answer": "markForCheck marks a component and its ancestors so they are checked in the next change detection run, which is needed when an OnPush component's data changes outside the triggers Angular knows about. It is common after async work that bypasses the usual event or input flow. Signals often make markForCheck unnecessary.",
+      "tags": [
+        "markforcheck",
+        "onpush",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/api/core/ChangeDetectorRef",
+        "https://angular.dev/best-practices/skipping-subtrees"
+      ]
+    },
+    {
+      "id": "change-detection-006",
+      "difficulty": "Beginner",
+      "question": "What does detectChanges do?",
+      "answer": "detectChanges on a ChangeDetectorRef runs change detection for that view and its children immediately, rather than waiting for the next application-wide pass. It is useful for updating a dynamically created or detached view on demand. Overusing it can hide architectural problems and add work.",
+      "tags": [
+        "detectchanges",
+        "changedetectorref"
+      ],
+      "references": [
+        "https://angular.dev/api/core/ChangeDetectorRef",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "change-detection-007",
+      "difficulty": "Beginner",
+      "question": "What is zoneless change detection?",
+      "answer": "Zoneless change detection removes the dependency on zone.js and instead relies on signals and explicit notifications to schedule updates. Angular runs change detection when a signal used in a view changes or when you call the appropriate notification APIs. This reduces overhead and makes performance more predictable.",
+      "tags": [
+        "zoneless",
+        "change-detection",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "change-detection-008",
+      "difficulty": "Beginner",
+      "question": "How do signals reduce change detection work?",
+      "answer": "Signals record exactly which views and computed values depend on them, so a change marks only those consumers as dirty instead of checking the whole tree. This is fine-grained and does not require walking every binding. It is the foundation of efficient zoneless rendering.",
+      "tags": [
+        "signals",
+        "change-detection",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/zoneless"
+      ]
+    },
+    {
+      "id": "change-detection-009",
+      "difficulty": "Beginner",
+      "question": "What triggers change detection in a Default-strategy application?",
+      "answer": "Zone.js triggers a pass after most asynchronous operations such as events, timers, and HTTP responses, and Angular then checks the whole component tree from the root. Inputs and events also schedule checks. This automatic behavior is convenient but can do more work than necessary.",
+      "tags": [
+        "zonejs",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/components"
+      ]
+    },
+    {
+      "id": "change-detection-010",
+      "difficulty": "Beginner",
+      "question": "What is ChangeDetectorRef and when do you inject it?",
+      "answer": "ChangeDetectorRef is an injectable that gives programmatic control over a view's change detection, exposing methods such as detectChanges, markForCheck, and detach. You inject it when you need to trigger or postpone checks manually, for example with OnPush or detached views. Signals and OnPush reduce how often it is needed.",
+      "tags": [
+        "changedetectorref",
+        "onpush"
+      ],
+      "references": [
+        "https://angular.dev/api/core/ChangeDetectorRef",
+        "https://angular.dev/best-practices/skipping-subtrees"
+      ]
+    },
+    {
+      "id": "change-detection-011",
+      "difficulty": "Intermediate",
+      "question": "How does the tree-based change detection model work?",
+      "answer": "Angular walks the component tree from the root, checking each component's bindings in order and updating the DOM where values differ. The first pass establishes values, and a development-mode second pass verifies that nothing changed unexpectedly. Each component is a node, and OnPush lets Angular skip whole subtrees.",
+      "tags": [
+        "change-detection",
+        "tree",
+        "rendering"
+      ],
+      "references": [
+        "https://angular.dev/guide/components",
+        "https://angular.dev/best-practices/skipping-subtrees"
+      ]
+    },
+    {
+      "id": "change-detection-012",
+      "difficulty": "Intermediate",
+      "question": "What are the triggers for an OnPush component to be checked?",
+      "answer": "An OnPush component is checked when an input reference changes, when an event handler bound in its template runs, when a signal it reads changes, when a child emits an event it handles, or when markForCheck is called. Any of these marks the component dirty for the next pass. Missing one of these triggers is why the view may appear stale.",
+      "tags": [
+        "onpush",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/api/core/ChangeDetectionStrategy"
+      ]
+    },
+    {
+      "id": "change-detection-013",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between markForCheck and detectChanges?",
+      "answer": "markForCheck flags the component to be checked in the next change detection pass and marks its ancestors too, while detectChanges runs detection for that view immediately and synchronously. markForCheck is the lighter, more idiomatic choice inside OnPush components. detectChanges is for cases that truly need immediate rendering.",
+      "tags": [
+        "markforcheck",
+        "detectchanges",
+        "changedetectorref"
+      ],
+      "references": [
+        "https://angular.dev/api/core/ChangeDetectorRef",
+        "https://angular.dev/best-practices/skipping-subtrees"
+      ]
+    },
+    {
+      "id": "change-detection-014",
+      "difficulty": "Intermediate",
+      "question": "How do async operations update the view in a zoneless application?",
+      "answer": "In zoneless mode, updates are driven by signals and explicit notifications rather than zone.js. If you write async code that updates state, updating a signal or calling the scheduler ensures the view refreshes. Angular provides a scheduler service for cases where you must notify manually.",
+      "tags": [
+        "zoneless",
+        "async",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/api/core/ApplicationRef"
+      ]
+    },
+    {
+      "id": "change-detection-015",
+      "difficulty": "Intermediate",
+      "question": "What is detach and when would you use it?",
+      "answer": "detach removes a view from change detection so Angular stops checking it until you reattach or call detectChanges manually. It is used for performance-critical, self-managed views such as rapidly updating visualizations. Because it bypasses Angular's normal updates, it must be handled carefully.",
+      "tags": [
+        "detach",
+        "changedetectorref",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/api/core/ChangeDetectorRef",
+        "https://angular.dev/best-practices/runtime-performance"
+      ]
+    },
+    {
+      "id": "change-detection-016",
+      "difficulty": "Intermediate",
+      "question": "Why does OnPush often require immutable data?",
+      "answer": "OnPush relies on reference comparison for inputs, so immutable updates create a new reference that Angular can detect. In-place mutation keeps the same reference and is invisible to OnPush. Immutability also makes state changes easier to reason about and test.",
+      "tags": [
+        "onpush",
+        "immutability",
+        "inputs"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/components/inputs"
+      ]
+    },
+    {
+      "id": "change-detection-017",
+      "difficulty": "Intermediate",
+      "question": "How do effects fit into change detection?",
+      "answer": "Effects are scheduled to run as part of change detection after the view is updated, and they re-run when their dependencies change. They are for side effects, not for producing rendered values. Because they are asynchronous relative to writes, they should not be used to keep state in sync that could instead be derived.",
+      "tags": [
+        "effect",
+        "change-detection",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals/effect",
+        "https://angular.dev/guide/zoneless"
+      ]
+    },
+    {
+      "id": "change-detection-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the ChangeDetectionStrategy.OnPush default in modern apps?",
+      "answer": "Setting OnPush as the default strategy for new components is a common best practice because it makes updates explicit and keeps large trees fast. It pairs naturally with signals and immutable inputs, which provide the triggers OnPush expects. The main cost is that developers must understand when a component will be checked.",
+      "tags": [
+        "onpush",
+        "best-practices",
+        "performance"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/api/core/ChangeDetectionStrategy"
+      ]
+    },
+    {
+      "id": "change-detection-019",
+      "difficulty": "Intermediate",
+      "question": "How do you debug why a view is not updating?",
+      "answer": "Check whether the component uses OnPush and whether the changed data was mutated in place, since that is the most common cause. Verify that async updates touch a signal or trigger a check, and confirm that the relevant binding reads the value you think it does. Temporarily switching to Default can confirm the diagnosis.",
+      "tags": [
+        "debugging",
+        "onpush",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/components/lifecycle"
+      ]
+    },
+    {
+      "id": "change-detection-020",
+      "difficulty": "Intermediate",
+      "question": "How do signals and zone.js coexist during migration?",
+      "answer": "Angular lets you use signals while zone.js is still enabled, and signal changes will schedule updates even in that mode. This makes incremental migration practical: adopt signals where they help and keep zone.js until the app is ready for zoneless. You can switch a bootstrapped app to zoneless once all triggers are covered by signals or explicit notifications.",
+      "tags": [
+        "zoneless",
+        "migration",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "change-detection-021",
+      "difficulty": "Advanced",
+      "question": "How does OnPush propagate checks to ancestors and descendants?",
+      "answer": "When a component is marked dirty, Angular must check it and any dirty descendants, and it also re-checks ancestors to keep the tree consistent. This propagation is why markForCheck exists and why keeping changes at the right level matters. Understanding it prevents both stale views and unnecessary full-tree checks.",
+      "tags": [
+        "onpush",
+        "change-detection",
+        "propagation"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/api/core/ChangeDetectorRef"
+      ]
+    },
+    {
+      "id": "change-detection-022",
+      "difficulty": "Advanced",
+      "question": "What is the difference between a full application check and targeted view updates?",
+      "answer": "A full application check walks the whole component tree from the root, which is simple but scales with the size of the app. Targeted updates use signals or OnPush to check only the views that depend on changed state. Modern Angular favors targeted updates for predictable performance in large applications.",
+      "tags": [
+        "performance",
+        "change-detection",
+        "signals"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/zoneless"
+      ]
+    },
+    {
+      "id": "change-detection-023",
+      "difficulty": "Advanced",
+      "question": "How do you migrate an application from zone.js to zoneless change detection?",
+      "answer": "Start by adopting signals for state and removing reliance on zone.js-only triggers such as manual promise callbacks that mutate properties. Provide zoneless change detection in the bootstrap configuration and test for views that fail to update, then fix them with signals or explicit notifications. Running both modes during the transition keeps the migration incremental.",
+      "tags": [
+        "zoneless",
+        "migration",
+        "bootstrap"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/api/core/provideZonelessChangeDetection"
+      ]
+    },
+    {
+      "id": "change-detection-024",
+      "difficulty": "Advanced",
+      "question": "How does OnPush interact with inputs that are objects passed down the tree?",
+      "answer": "If a parent passes an object by reference and mutates it, OnPush children never see a change; if the parent passes a new object each time, every child re-checks. This makes the shape of the data and the update strategy a performance decision. Immutable updates plus signals give precise control over which children update.",
+      "tags": [
+        "onpush",
+        "inputs",
+        "immutability"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/components/inputs"
+      ]
+    },
+    {
+      "id": "change-detection-025",
+      "difficulty": "Advanced",
+      "question": "What are the performance implications of running code in the template?",
+      "answer": "Template expressions, including function calls, run on every change detection pass for the views that are checked, so expensive calls multiply across the tree. Moving logic into computed signals or pure pipes caches results and avoids recomputation. This is one of the highest-impact changes for rendering performance.",
+      "tags": [
+        "performance",
+        "change-detection",
+        "templates"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/runtime-performance",
+        "https://angular.dev/guide/signals"
+      ]
+    }
+  ]
+}

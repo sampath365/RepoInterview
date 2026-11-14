@@ -1,0 +1,338 @@
+{
+  "category": "Lists, Keys & Conditional Rendering",
+  "slug": "lists",
+  "icon": "list",
+  "questions": [
+    {
+      "id": "lists-001",
+      "difficulty": "Beginner",
+      "question": "How do you render a list in React?",
+      "answer": "You use the map method to transform an array of data into an array of elements and place that array inside JSX. React renders each element in order. Every element in the array needs a unique key so React can track it. You can chain filter before map to render a subset.",
+      "code": "items.map((item) => <li key={item.id}>{item.name}</li>)",
+      "tags": [
+        "lists",
+        "map"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-002",
+      "difficulty": "Beginner",
+      "question": "Why does React need keys in lists?",
+      "answer": "Keys give each element a stable identity so React can match elements between renders and reuse or reorder them correctly. Without keys React falls back to position, which can move state to the wrong item. Keys must be unique among siblings and stable over time. They are not passed to your component as props.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-003",
+      "difficulty": "Beginner",
+      "question": "Why are array indexes a poor key choice?",
+      "answer": "Indexes change when items are inserted, removed or reordered, so React reuses the wrong element and can misplace input values or component state. They are only safe for static lists that never change order. Use a stable id from your data instead. This is one of the most common list bugs.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-004",
+      "difficulty": "Beginner",
+      "question": "How do you filter a list before rendering?",
+      "answer": "You call filter on the array to produce a new array of the items you want, then map that result to elements. Combining both keeps the render expression concise. Because filter returns a new array, it respects immutability. Avoid mutating the source array during render.",
+      "code": "items.filter((i) => i.active).map((i) => <li key={i.id}>{i.name}</li>)",
+      "tags": [
+        "lists",
+        "filter"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-005",
+      "difficulty": "Beginner",
+      "question": "How do you conditionally render list items?",
+      "answer": "You can filter the data so only matching items are mapped, or return null from the map callback for items that should not render. Filtering is usually clearer and avoids empty array entries. For per-item conditions inside the callback, use a ternary or logical operator. Keep conditions readable by extracting a small component if needed.",
+      "tags": [
+        "lists",
+        "conditional-rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "lists-006",
+      "difficulty": "Beginner",
+      "question": "What does the && operator do in JSX rendering?",
+      "answer": "The logical AND operator renders the right side only when the left side is truthy. This is a compact way to show or hide content, such as count > 0 && <span>{count}</span>. Be careful when the left side can be 0, because 0 renders on screen as a character. Use a boolean check to avoid that pitfall.",
+      "code": "{count > 0 && <span>{count} items</span>}",
+      "tags": [
+        "lists",
+        "conditional-rendering"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "lists-007",
+      "difficulty": "Beginner",
+      "question": "How do you render an empty state?",
+      "answer": "You check whether the list is empty and render a placeholder message instead of an empty container. This improves the user experience by explaining why nothing is shown. Keep the check next to the list rendering for clarity. Consider distinguishing loading, empty and error states.",
+      "code": "{items.length === 0 ? <p>No results</p> : <ul>...</ul>}",
+      "tags": [
+        "lists",
+        "ux"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "lists-008",
+      "difficulty": "Beginner",
+      "question": "What happens if two siblings share the same key?",
+      "answer": "React warns about duplicate keys and may behave unpredictably because identity is ambiguous. Items can be reused incorrectly, leading to misplaced state or content. Ensure keys are unique among siblings, for example by combining a category and an id. Duplicate keys often indicate a data modeling problem.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-009",
+      "difficulty": "Beginner",
+      "question": "How do you render a list of components rather than elements?",
+      "answer": "You map the data to component elements, passing the item as a prop, and give each component element a key. The key goes on the element returned by the map, not inside the component. The component can then render its own markup. This keeps list items encapsulated and testable.",
+      "code": "{items.map((i) => <Row key={i.id} item={i} />)}",
+      "tags": [
+        "lists",
+        "components"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-010",
+      "difficulty": "Beginner",
+      "question": "Why does returning an array from a component need keys?",
+      "answer": "When a component returns multiple elements as an array, React treats them like a list and needs keys to track identity across renders. Without keys React warns and may reuse the wrong element. Wrapping them in a fragment with a key is a common fix. The rule is the same as for map output.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Fragment"
+      ]
+    },
+    {
+      "id": "lists-011",
+      "difficulty": "Intermediate",
+      "question": "How do you render a nested or grouped list?",
+      "answer": "You map the outer groups and, inside each, map the inner items, giving keys at both levels. The keys only need to be unique among siblings, so inner ids can repeat across groups. Extracting a Group component keeps the nesting readable. Consider flattening the data if the structure becomes deep.",
+      "tags": [
+        "lists",
+        "nested"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-012",
+      "difficulty": "Intermediate",
+      "question": "How do keys affect component state when the list changes?",
+      "answer": "React matches elements by key, so a stable key preserves a component state as the list reorders, while a changed key unmounts and remounts it, resetting state. This is why keying by a stable id keeps input values with the right row. Deliberately changing a key is also how you force a reset. Understanding this prevents subtle state bugs.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "lists-013",
+      "difficulty": "Intermediate",
+      "question": "How do you handle large lists efficiently?",
+      "answer": "Rendering thousands of DOM nodes is slow, so you virtualize the list to render only the visible rows. Libraries like react-window or TanStack Virtual do this while preserving scrolling. Virtualization requires fixed or measurable row heights. For medium lists, pagination or incremental loading is often simpler.",
+      "tags": [
+        "lists",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a key and an id prop?",
+      "answer": "A key is a special React attribute used only for reconciliation and is not passed to the component. An id prop is an ordinary prop your component receives and can use however it wants, such as for attributes or lookups. If you need the identifier inside the component, pass it as a normal prop in addition to the key. Do not rely on reading the key.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-015",
+      "difficulty": "Intermediate",
+      "question": "How do you render a table from data?",
+      "answer": "You map rows to tr elements and, inside each row, map the cells to td elements, giving keys to both. Use fragments with keys when you need multiple elements per row. Keep the header separate from the body for accessibility. Tables benefit from semantic markup such as thead and tbody.",
+      "code": "{rows.map((r) => (\n  <tr key={r.id}>\n    <td>{r.name}</td>\n  </tr>\n))}",
+      "tags": [
+        "lists",
+        "tables"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-016",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid rendering a list when data is loading?",
+      "answer": "Track a loading state and render a skeleton or spinner until the data arrives, then render the list. This prevents flashing an empty state that looks like an error. Distinguish loading, empty and error cases so the UI is honest. Data libraries expose these states for you.",
+      "tags": [
+        "lists",
+        "async"
+      ],
+      "references": [
+        "https://react.dev/learn/conditional-rendering"
+      ]
+    },
+    {
+      "id": "lists-017",
+      "difficulty": "Intermediate",
+      "question": "How do you make list items interactive?",
+      "answer": "Attach event handlers to each item or to a parent using event delegation, and pass the item identifier to the handler. Handlers on the parent reduce the number of listeners. Use data attributes or closures to know which item was acted on. Keep the item component focused on rendering and let the parent own the actions.",
+      "tags": [
+        "lists",
+        "events"
+      ],
+      "references": [
+        "https://react.dev/learn/responding-to-events"
+      ]
+    },
+    {
+      "id": "lists-018",
+      "difficulty": "Intermediate",
+      "question": "How do you preserve list state during reorder?",
+      "answer": "Give each item a stable key derived from its identity, not its position, so React moves the existing DOM node and preserves its state. If the key changes, React treats it as a new item and resets state. Sorting or filtering with stable keys keeps inputs and animations attached to the right row. This is the primary reason to avoid index keys.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "lists-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle duplicate data that lacks unique ids?",
+      "answer": "If the data has no natural id, generate a stable one when the data is created rather than during render, because generating a new id each render defeats the purpose of keys. Libraries like uuid can help, or you can combine stable fields. Avoid using random values as keys. Fixing the data model is the most durable solution.",
+      "tags": [
+        "lists",
+        "keys"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-020",
+      "difficulty": "Intermediate",
+      "question": "What is a keyed fragment used for?",
+      "answer": "A keyed fragment lets you return multiple sibling elements from a map while still providing a key for React to track identity. You use the explicit React.Fragment form with a key because the shorthand syntax cannot take one. This is common for definition lists and table rows with multiple cells. It avoids adding a wrapper element just to hold a key.",
+      "tags": [
+        "lists",
+        "fragments"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Fragment"
+      ]
+    },
+    {
+      "id": "lists-021",
+      "difficulty": "Advanced",
+      "question": "How does reconciliation handle insertions and deletions in lists?",
+      "answer": "React compares the new list with the previous one by key to decide which elements to keep, move, insert or remove. Stable keys let it move existing DOM nodes instead of recreating them, which preserves state and is faster. When keys are missing or unstable, React may unmount and remount items unnecessarily. This is why key choice directly affects correctness and performance.",
+      "tags": [
+        "lists",
+        "reconciliation"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-022",
+      "difficulty": "Advanced",
+      "question": "How do you animate list reordering?",
+      "answer": "You render the list with stable keys and let an animation library measure positions before and after the update to compute transitions. The key keeps React from recreating the nodes, so the library can animate them. Libraries such as Framer Motion or react-flip-toolkit handle this. The stable key is the prerequisite for smooth movement.",
+      "tags": [
+        "lists",
+        "animation"
+      ],
+      "references": [
+        "https://react.dev/learn/preserving-and-resetting-state"
+      ]
+    },
+    {
+      "id": "lists-023",
+      "difficulty": "Advanced",
+      "question": "What are the accessibility considerations for lists?",
+      "answer": "Use semantic list elements such as ul, ol and li so assistive technology announces the structure and item count. For interactive lists use proper roles and keyboard support, and consider a listbox or grid pattern when selection is involved. Announce dynamic changes with aria-live when needed. Semantic markup is the simplest way to get accessibility right.",
+      "tags": [
+        "lists",
+        "accessibility"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/Accessibility/ARIA/Roles/list_role"
+      ]
+    },
+    {
+      "id": "lists-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle very large data sets in React?",
+      "answer": "Virtualize the list, paginate the data and fetch incrementally as the user scrolls. Avoid keeping derived copies of the full data set in state. Memoize row components so scrolling does not re-render everything. Combine virtualization with stable keys to keep performance predictable.",
+      "tags": [
+        "lists",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/learn/rendering-lists"
+      ]
+    },
+    {
+      "id": "lists-025",
+      "difficulty": "Advanced",
+      "question": "How do you test list rendering and key behavior?",
+      "answer": "Render the list with test data and assert that the correct number of items appears with the expected content. Then update the data, such as reordering or removing an item, and verify that state stays with the right row. React Testing Library queries by role and text to mimic user perception. These tests catch the classic index-key bugs.",
+      "tags": [
+        "lists",
+        "testing"
+      ],
+      "references": [
+        "https://testing-library.com/docs/queries/about/"
+      ]
+    }
+  ]
+}

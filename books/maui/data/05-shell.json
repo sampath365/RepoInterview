@@ -1,0 +1,216 @@
+{
+  "category": "Shell & Routing",
+  "slug": "shell",
+  "icon": "compass",
+  "questions": [
+    {
+      "id": "shell-001",
+      "difficulty": "Beginner",
+      "question": "What is .NET MAUI Shell?",
+      "answer": "Shell is a container that simplifies app structure by providing a single place to define a flyout, tabs, and navigation. It uses URI-based routing instead of an imperative navigation stack. Shell reduces boilerplate and gives a consistent navigation experience across platforms.",
+      "tags": ["shell", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/"]
+    },
+    {
+      "id": "shell-002",
+      "difficulty": "Beginner",
+      "question": "How do you define a flyout item in Shell?",
+      "answer": "Add FlyoutItem elements inside the Shell, each containing a ShellContent with a ContentTemplate or route. The flyout lists them automatically and you can group them with a FlyoutItem or MenuItem. Set FlyoutBehavior to control whether the flyout is always, never, or swipe-accessible.",
+      "tags": ["shell", "flyout"],
+      "code": "<Shell>\n  <FlyoutItem Title=\"Home\">\n    <ShellContent ContentTemplate=\"{DataTemplate local:HomePage}\" />\n  </FlyoutItem>\n</Shell>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/flyout"]
+    },
+    {
+      "id": "shell-003",
+      "difficulty": "Beginner",
+      "question": "How do you add tabs in Shell?",
+      "answer": "Use a TabBar element containing Tab elements, each with a ShellContent. Tabs appear at the bottom or top depending on platform. You can also nest tabs under a FlyoutItem so each flyout entry has its own tabs.",
+      "tags": ["shell", "tabs"],
+      "code": "<TabBar>\n  <Tab Title=\"Home\" Icon=\"home.png\">\n    <ShellContent ContentTemplate=\"{DataTemplate local:HomePage}\" />\n  </Tab>\n</TabBar>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/tabs"]
+    },
+    {
+      "id": "shell-004",
+      "difficulty": "Beginner",
+      "question": "What is a Shell route?",
+      "answer": "A route is a string that identifies a page or section in the Shell hierarchy for navigation. ShellContent elements have routes inferred from their type or set explicitly with the Route property. Detail pages registered with Routing.RegisterRoute get their own routes.",
+      "tags": ["shell", "routing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-005",
+      "difficulty": "Beginner",
+      "question": "How do you navigate with Shell?",
+      "answer": "Call Shell.Current.GoToAsync with a route, such as \"details\" for a relative push or \"//main\" for an absolute reset. Relative routes push onto the current stack, while absolute routes beginning with // reset the hierarchy. Navigation is asynchronous and can carry query parameters.",
+      "tags": ["shell", "navigation"],
+      "code": "await Shell.Current.GoToAsync(\"details\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-006",
+      "difficulty": "Beginner",
+      "question": "How do you register a route for a page not in the Shell hierarchy?",
+      "answer": "Call Routing.RegisterRoute with a route name and page type, typically in the Shell constructor or MauiProgram. The page is then navigable with GoToAsync and is pushed onto the current stack. Registered routes support query parameters just like ShellContent routes.",
+      "tags": ["shell", "routing"],
+      "code": "Routing.RegisterRoute(\"details\", typeof(DetailsPage));",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-007",
+      "difficulty": "Beginner",
+      "question": "What is ShellContent?",
+      "answer": "ShellContent is the leaf of the Shell hierarchy that represents a single page. It holds a ContentTemplate that creates the page when needed, or a Content that is an already-created page. Each ShellContent has an implicit or explicit route used for navigation.",
+      "tags": ["shell", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/pages"]
+    },
+    {
+      "id": "shell-008",
+      "difficulty": "Beginner",
+      "question": "How do you add search to a Shell page?",
+      "answer": "Set Shell.SearchHandler on the page to a SearchHandler subclass and define its ItemsSource and ItemTemplate. The search bar appears in the Shell navigation area when that page is active. Handle the query or selection through overrides or commands on the handler.",
+      "tags": ["shell", "search"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/search"]
+    },
+    {
+      "id": "shell-009",
+      "difficulty": "Beginner",
+      "question": "How do you hide the navigation bar in Shell?",
+      "answer": "Set the Shell.NavBarIsVisible attached property to false on the page. This hides the Shell navigation bar while keeping navigation functional. You can also customize or hide the tab bar and flyout independently.",
+      "tags": ["shell", "navigation"],
+      "code": "<ContentPage ... Shell.NavBarIsVisible=\"False\">",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/pages"]
+    },
+    {
+      "id": "shell-010",
+      "difficulty": "Beginner",
+      "question": "How do you set the title of a Shell page?",
+      "answer": "Set the Title property on the ShellContent, Tab, or page, and Shell uses the nearest applicable value. The title shows in the navigation bar and in the flyout or tab label. You can also set a custom TitleView for richer content.",
+      "tags": ["shell", "pages"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/pages"]
+    },
+    {
+      "id": "shell-011",
+      "difficulty": "Intermediate",
+      "question": "How do you pass query parameters with Shell navigation?",
+      "answer": "Append a query string to the route, for example details?id=42, and receive it in the target with QueryProperty attributes or IQueryAttributable. The values arrive URL-decoded in the dictionary. For objects, pass an identifier and look the object up in a service.",
+      "tags": ["shell", "query-parameters"],
+      "code": "await Shell.Current.GoToAsync($\"details?id={item.Id}\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-012",
+      "difficulty": "Intermediate",
+      "question": "How does dependency injection work with Shell navigation?",
+      "answer": "Shell resolves pages and view models from the service container when it creates them for a route. Register the page and view model in MauiProgram, then let constructors take dependencies. This avoids manual service location in pages.",
+      "tags": ["shell", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-013",
+      "difficulty": "Intermediate",
+      "question": "How do you navigate backwards in Shell?",
+      "answer": "Call Shell.Current.GoToAsync(\"..\") to pop the current page, or use \"../..\" to pop further. Navigating to a ShellContent route pops the stack back to that section. The hardware or on-screen back button performs the same operation automatically.",
+      "tags": ["shell", "navigation"],
+      "code": "await Shell.Current.GoToAsync(\"..\");",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-014",
+      "difficulty": "Intermediate",
+      "question": "How do you customize the flyout header in Shell?",
+      "answer": "Set Shell.FlyoutHeader to a view or template shown at the top of the flyout. You can also set FlyoutHeaderBehavior to control whether it scrolls or stays fixed. Footer content is added with Shell.FlyoutFooter.",
+      "tags": ["shell", "flyout"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/flyout"]
+    },
+    {
+      "id": "shell-015",
+      "difficulty": "Intermediate",
+      "question": "How do you handle Shell navigation events?",
+      "answer": "Shell raises Navigating and Navigated events with event args describing the source and target routes. Subscribe to them in the Shell subclass or a page to log, guard, or react to navigation. Pages can also override OnNavigatedTo and OnNavigatedFrom.",
+      "tags": ["shell", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-016",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a FlyoutItem and a MenuItem in Shell?",
+      "answer": "A FlyoutItem is a primary navigation entry that appears at the top of the flyout and participates in the Shell hierarchy. A MenuItem is a secondary item that triggers an action or navigation, often placed under a MenuItemGroup at the bottom. FlyoutItems switch sections, while MenuItems usually perform commands.",
+      "tags": ["shell", "flyout"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/flyout"]
+    },
+    {
+      "id": "shell-017",
+      "difficulty": "Intermediate",
+      "question": "How do you show or hide the flyout programmatically?",
+      "answer": "Set Shell.Current.FlyoutIsPresented to true or false to open or close the flyout. FlyoutBehavior controls whether the flyout is available at all. You can also bind FlyoutIsPresented to a view model property.",
+      "tags": ["shell", "flyout"],
+      "code": "Shell.Current.FlyoutIsPresented = true;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/flyout"]
+    },
+    {
+      "id": "shell-018",
+      "difficulty": "Intermediate",
+      "question": "How do you add a toolbar item in a Shell page?",
+      "answer": "Add ToolbarItem elements to the page's ToolbarItems collection; Shell renders them in the navigation bar. You can place them on the primary or secondary area with Order. Commands or Clicked handlers drive their behavior.",
+      "tags": ["shell", "toolbar"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/toolbaritem", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/pages"]
+    },
+    {
+      "id": "shell-019",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom Shell renderer or handler?",
+      "answer": "Shell supports custom handlers that you register in MauiProgram to override platform behavior such as the flyout or navigation bar. For deep customization you can also use platform-specific Shell classes in the Platforms folder. Most appearance needs are met by Shell properties before reaching for handlers.",
+      "tags": ["shell", "handlers"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/custom-handlers"]
+    },
+    {
+      "id": "shell-020",
+      "difficulty": "Intermediate",
+      "question": "How do you register routes for pages that need constructor injection?",
+      "answer": "Register the page type and its dependencies in the service collection, then register the route with Routing.RegisterRoute. Shell resolves the page through the container so constructor injection works. Avoid new-ing pages directly when they have dependencies.",
+      "tags": ["shell", "dependency-injection"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-021",
+      "difficulty": "Advanced",
+      "question": "How does Shell implement URI-based navigation internally?",
+      "answer": "Shell parses the target route into segments and walks the Shell hierarchy, creating pages from ShellContent templates or registered routes as needed. It maintains a navigation stack per ShellSection and syncs the visible page with the route. Absolute routes reset the hierarchy while relative routes push or pop within the current section.",
+      "tags": ["shell", "routing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement a modal page with Shell?",
+      "answer": "Register a route for the modal page and navigate to it with GoToAsync using the route, then set Shell.PresentationMode to Modal or ModalAnimated on the target page. This displays the page modally with platform styling. You dismiss it by navigating back with \"..\".",
+      "tags": ["shell", "modal"],
+      "code": "await Shell.Current.GoToAsync(\"login\");\n// target page sets Shell.PresentationMode=\"ModalAnimated\"",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-023",
+      "difficulty": "Advanced",
+      "question": "How do you pass complex objects between Shell pages?",
+      "answer": "Shell query parameters are strings, so pass a key and resolve the object from a shared service or cache on the target. Alternatively implement IQueryAttributable and use the dictionary with a keyed lookup. This avoids serializing large objects into the URI.",
+      "tags": ["shell", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation", "https://learn.microsoft.com/dotnet/maui/fundamentals/dependency-injection"]
+    },
+    {
+      "id": "shell-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle deep links into a Shell app on each platform?",
+      "answer": "Configure the platform to accept external URIs, such as Android app links and iOS associated domains or custom schemes. When the app opens with a URI, map it to a Shell route and call GoToAsync. This lets links from the web or other apps land on the correct page.",
+      "tags": ["shell", "deep-linking"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/android/app-links", "https://learn.microsoft.com/dotnet/maui/fundamentals/shell/navigation"]
+    },
+    {
+      "id": "shell-025",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of using Shell versus manual navigation?",
+      "answer": "Shell centralizes navigation structure, supports routing, deep links, and DI out of the box, reducing boilerplate. Manual NavigationPage and TabbedPage give more control over the exact stack and transitions but require more code and care. Shell is the recommended default unless you need behavior it does not expose.",
+      "tags": ["shell", "navigation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/shell/", "https://learn.microsoft.com/dotnet/maui/user-interface/pages/navigationpage"]
+    }
+  ]
+}

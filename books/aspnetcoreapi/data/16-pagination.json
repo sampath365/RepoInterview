@@ -1,0 +1,339 @@
+{
+  "category": "Pagination, Filtering & Sorting",
+  "slug": "pagination",
+  "icon": "search",
+  "questions": [
+    {
+      "id": "pagination-001",
+      "difficulty": "Beginner",
+      "question": "Why paginate API results?",
+      "answer": "Pagination bounds response size and database work, protecting the server from large result sets and giving clients predictable performance. It also lets clients fetch incrementally. Returning unbounded collections risks timeouts, memory pressure, and a poor experience.",
+      "tags": [
+        "pagination",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-002",
+      "difficulty": "Beginner",
+      "question": "What is offset pagination?",
+      "answer": "Offset pagination uses page and pageSize, or skip and take, to slice a result set, for example ?page=2&pageSize=20. It is simple to implement and lets clients jump to any page. The trade-off is that deep offsets are slow and results shift when data changes.",
+      "tags": [
+        "pagination",
+        "offset"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "var items = await query.Skip((page - 1) * size).Take(size).ToListAsync();"
+    },
+    {
+      "id": "pagination-003",
+      "difficulty": "Beginner",
+      "question": "What is cursor or keyset pagination?",
+      "answer": "Cursor pagination returns a continuation token or the last item's key and the client asks for the next page after that key, for example ?after=1234. It is stable under inserts and efficient because it uses an index seek. The trade-off is that clients cannot jump to an arbitrary page.",
+      "tags": [
+        "pagination",
+        "cursor"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-004",
+      "difficulty": "Beginner",
+      "question": "How do you return paging metadata?",
+      "answer": "Include total count, page, pageSize, and total pages in the response, or emit RFC 8288 Link headers with next and previous URLs. Metadata helps clients render controls and decide when to stop. Keep the shape consistent across endpoints.",
+      "tags": [
+        "pagination",
+        "metadata"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "return Ok(new { items, page, pageSize, totalCount });"
+    },
+    {
+      "id": "pagination-005",
+      "difficulty": "Beginner",
+      "question": "How do you filter a collection endpoint?",
+      "answer": "Accept filter parameters as query string values and apply them to the query, for example ?status=active&category=books. Filtering narrows the result set before pagination. Document the supported fields and validate unknown values.",
+      "tags": [
+        "filtering",
+        "query-string"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "GET /api/products?category=books&minPrice=10"
+    },
+    {
+      "id": "pagination-006",
+      "difficulty": "Beginner",
+      "question": "How do you sort a collection endpoint?",
+      "answer": "Accept a sort parameter such as ?sort=name or ?sort=-price, where a leading minus means descending. Map the allowed field names to expressions to avoid injection. Always apply a deterministic tiebreaker for stable paging.",
+      "tags": [
+        "sorting",
+        "query-string"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "GET /api/products?sort=-createdAt,name"
+    },
+    {
+      "id": "pagination-007",
+      "difficulty": "Beginner",
+      "question": "Why must you limit the maximum page size?",
+      "answer": "Without a cap, a client can request thousands of rows and overwhelm the database and the server's memory. Enforce a maximum, default the size when omitted, and return 400 for out-of-range values. This protects availability for all clients.",
+      "tags": [
+        "pagination",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-008",
+      "difficulty": "Beginner",
+      "question": "How do you combine filtering, sorting, and paging?",
+      "answer": "Apply filters first to reduce the set, then sort, then page, so the database does the least work. Compose them into a query object and pass it to the data layer. Keep the order consistent to avoid surprising results.",
+      "tags": [
+        "pagination",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-009",
+      "difficulty": "Beginner",
+      "question": "Should total count always be returned?",
+      "answer": "Counting can be expensive on large tables, so make it optional or estimate it when the client does not need exact totals. For cursor pagination you often omit the total and return only a next cursor. Let the endpoint's needs drive the decision.",
+      "tags": [
+        "pagination",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-010",
+      "difficulty": "Beginner",
+      "question": "How do you represent an empty page?",
+      "answer": "Return 200 with an empty items array and the usual metadata rather than 404, because the collection exists but has no matching items on that page. A 404 is reserved for a missing resource. Clients then handle emptiness uniformly.",
+      "tags": [
+        "pagination",
+        "status-codes"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement cursor pagination over a database?",
+      "answer": "Order by a unique, indexed key and fetch rows where the key is greater than the cursor, taking size plus one to detect whether more exist. Encode the last key as an opaque token so clients treat it as opaque. This is efficient and stable under concurrent inserts.",
+      "tags": [
+        "pagination",
+        "cursor"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "var rows = await db.Products\n    .Where(p => p.Id > after).OrderBy(p => p.Id)\n    .Take(size + 1).ToListAsync();"
+    },
+    {
+      "id": "pagination-012",
+      "difficulty": "Intermediate",
+      "question": "What are the drawbacks of offset pagination?",
+      "answer": "Deep offsets force the database to scan and discard many rows, and concurrent inserts or deletes can shift rows between pages causing duplicates or omissions. It is still fine for small, mostly static datasets. Use keyset pagination when the data changes often or is large.",
+      "tags": [
+        "pagination",
+        "offset"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-013",
+      "difficulty": "Intermediate",
+      "question": "How do you build dynamic filters safely?",
+      "answer": "Map a small set of allowed field names to typed expressions or use a query builder library, rather than concatenating user input into a query string. Validate operators and values against a whitelist. This prevents injection and keeps queries index-friendly.",
+      "tags": [
+        "filtering",
+        "security"
+      ],
+      "references": [
+        "https://learn.microsoft.com/ef/core/querying/filters"
+      ]
+    },
+    {
+      "id": "pagination-014",
+      "difficulty": "Intermediate",
+      "question": "How do you handle filtering on multiple values?",
+      "answer": "Accept repeated query keys such as ?status=active&status=pending or a comma-separated list, and translate them to an IN clause. Bound the number of values to keep the query and URL size reasonable. Document the accepted syntax.",
+      "tags": [
+        "filtering",
+        "query-string"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-015",
+      "difficulty": "Intermediate",
+      "question": "How do you implement full-text or partial search?",
+      "answer": "Use a LIKE query with care because leading wildcards defeat indexes, or use your database's full-text search capabilities for larger datasets. Consider a dedicated search engine such as Elasticsearch for complex relevance ranking. Keep search endpoints separate from exact filtering.",
+      "tags": [
+        "search",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-016",
+      "difficulty": "Intermediate",
+      "question": "How do you sort by a computed or related field?",
+      "answer": "Join or project the related value into the query and order by that projected value, ensuring an index supports it. Avoid sorting in memory after fetching because it breaks paging. If sorting is expensive, denormalize the sort key.",
+      "tags": [
+        "sorting",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-017",
+      "difficulty": "Intermediate",
+      "question": "How do you expose pagination links?",
+      "answer": "Emit Link headers with rel=\"next\" and rel=\"prev\" pointing to the corresponding URLs, per RFC 8288, so clients do not build URLs themselves. This keeps pagination logic server-side. Also include the metadata in the body if clients prefer it.",
+      "tags": [
+        "pagination",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "Response.Headers.Append(\"Link\",\n    $\"<{nextUrl}>; rel=\\\"next\\\"\");"
+    },
+    {
+      "id": "pagination-018",
+      "difficulty": "Intermediate",
+      "question": "How do you paginate a projection efficiently?",
+      "answer": "Project only the fields the client needs before paging, and apply OrderBy, Skip, and Take in the database so only one page is materialized. Avoid loading full entities and mapping in memory. This reduces both I/O and serialization cost.",
+      "tags": [
+        "pagination",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-019",
+      "difficulty": "Intermediate",
+      "question": "How do you keep pagination results stable when data changes?",
+      "answer": "Use keyset pagination on an immutable, unique key, or include a snapshot or version parameter for consistency. Offset pagination over mutable data inevitably shifts. Choose the approach based on how dynamic the data is.",
+      "tags": [
+        "pagination",
+        "consistency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-020",
+      "difficulty": "Intermediate",
+      "question": "How do you validate paging parameters?",
+      "answer": "Reject non-positive pages and sizes, cap the maximum size, and return 400 with a ProblemDetails that explains the valid range. Treat out-of-range values as client errors rather than silently clamping. Clear validation prevents confusing results.",
+      "tags": [
+        "pagination",
+        "validation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement keyset pagination with a composite key?",
+      "answer": "Order by a composite key such as created_at and id, and express the cursor as the tuple of the last row, filtering with a lexicographic comparison. The database can then use a composite index for an efficient seek. This remains stable when timestamps collide.",
+      "tags": [
+        "pagination",
+        "cursor"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ],
+      "code": "WHERE (created_at, id) > (@ts, @id)\nORDER BY created_at, id\nLIMIT @size"
+    },
+    {
+      "id": "pagination-022",
+      "difficulty": "Advanced",
+      "question": "How do you paginate across a sharded or distributed dataset?",
+      "answer": "Query each shard with the same cursor, merge results in order, and return the smallest next cursor that is safe across shards. Total counts become approximate or are omitted. This adds complexity, so prefer to avoid cross-shard ordering where possible.",
+      "tags": [
+        "pagination",
+        "distributed"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-023",
+      "difficulty": "Advanced",
+      "question": "How do you optimize count queries?",
+      "answer": "Avoid exact counts on large tables, or maintain a counter or a materialized summary that is updated on writes. Some databases can return an approximate count from statistics. Cache counts for short periods when the UI can tolerate slight staleness.",
+      "tags": [
+        "pagination",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/ef/core/performance/"
+      ]
+    },
+    {
+      "id": "pagination-024",
+      "difficulty": "Advanced",
+      "question": "How do you design a filter grammar that stays evolvable?",
+      "answer": "Define a small, documented set of operators and fields, version the grammar, and reject unknown fields explicitly so clients learn the limits. A constrained grammar is easier to secure and to optimize than free-form expressions. Consider OData only when clients truly need rich querying.",
+      "tags": [
+        "filtering",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/"
+      ]
+    },
+    {
+      "id": "pagination-025",
+      "difficulty": "Advanced",
+      "question": "How do you prevent expensive queries from degrading the API?",
+      "answer": "Require selective filters on large collections, cap page size, add indexes for common filters and sort keys, and use query timeouts and cancellation tokens. Monitor slow queries and add safeguards such as maximum ranges on date filters. Performance protection belongs in the design, not only in tuning.",
+      "tags": [
+        "pagination",
+        "performance"
+      ],
+      "references": [
+        "https://learn.microsoft.com/ef/core/performance/"
+      ]
+    }
+  ]
+}

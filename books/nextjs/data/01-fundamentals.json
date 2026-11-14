@@ -1,0 +1,337 @@
+{
+  "category": "Next.js Fundamentals & Architecture",
+  "slug": "fundamentals",
+  "icon": "compass",
+  "questions": [
+    {
+      "id": "fundamentals-001",
+      "difficulty": "Beginner",
+      "question": "What is Next.js?",
+      "answer": "Next.js is a React framework for building full-stack web applications. It adds file-based routing, server-side rendering, static generation, data fetching, and API handling on top of React. It also provides tooling like the Turbopack bundler, image and font optimization, and a build pipeline. You use it to ship production React apps without assembling many separate libraries.",
+      "tags": [
+        "nextjs",
+        "react"
+      ],
+      "references": [
+        "https://nextjs.org/docs"
+      ]
+    },
+    {
+      "id": "fundamentals-002",
+      "difficulty": "Beginner",
+      "question": "What is the App Router in Next.js?",
+      "answer": "The App Router is the modern routing system built on top of the app/ directory, introduced in Next.js 13 and stable since 13.4. It supports React Server Components, nested layouts, streaming, and Server Actions. It lives alongside the older Pages Router so you can migrate gradually. New projects should use the App Router.",
+      "tags": [
+        "app-router",
+        "routing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app"
+      ]
+    },
+    {
+      "id": "fundamentals-003",
+      "difficulty": "Beginner",
+      "question": "How is Next.js different from a plain React app?",
+      "answer": "A plain React app is a client-side library where you choose your own routing, bundling, and rendering setup. Next.js ships with conventions for routing, rendering, data fetching, and optimization out of the box. It can render on the server, which improves initial load and SEO. React itself only handles the view layer.",
+      "tags": [
+        "react",
+        "framework"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app",
+        "https://react.dev"
+      ]
+    },
+    {
+      "id": "fundamentals-004",
+      "difficulty": "Beginner",
+      "question": "What does the app/ directory contain?",
+      "answer": "The app/ directory holds your routes, where each folder maps to a URL segment. Special files such as page.tsx, layout.tsx, loading.tsx, error.tsx, and route.ts define behavior for that segment. Components in app/ are React Server Components by default. Only files with reserved names become routable.",
+      "tags": [
+        "app-router",
+        "file-conventions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ]
+    },
+    {
+      "id": "fundamentals-005",
+      "difficulty": "Beginner",
+      "question": "What is a page in the App Router?",
+      "answer": "A page is a React component exported from a page.tsx file inside a route folder. It is the unique UI rendered for that URL and receives params and searchParams as props. A route cannot have two page files at the same segment. The page is wrapped by the nearest layout.",
+      "tags": [
+        "page",
+        "routing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/page"
+      ]
+    },
+    {
+      "id": "fundamentals-006",
+      "difficulty": "Beginner",
+      "question": "What is the purpose of layout.tsx?",
+      "answer": "A layout.tsx file defines shared UI that wraps pages and child layouts in its segment. It receives children as a prop and preserves state, keeps scroll position, and stays interactive across navigation. The root layout is required and must render the html and body tags. Layouts are Server Components by default.",
+      "tags": [
+        "layout",
+        "routing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/layout"
+      ]
+    },
+    {
+      "id": "fundamentals-007",
+      "difficulty": "Beginner",
+      "question": "How do you create a new Next.js project?",
+      "answer": "You scaffold a project with create-next-app, for example npx create-next-app@latest my-app. The CLI asks about TypeScript, ESLint, Tailwind, the src/ directory, and the App Router. It installs dependencies and generates a working starter with scripts in package.json. You then run npm run dev to start the dev server.",
+      "code": "npx create-next-app@latest my-app --typescript --app",
+      "tags": [
+        "create-next-app",
+        "setup"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/cli/create-next-app"
+      ]
+    },
+    {
+      "id": "fundamentals-008",
+      "difficulty": "Beginner",
+      "question": "What is file-based routing?",
+      "answer": "In file-based routing the folder structure under app/ defines the URL structure. A folder such as app/blog creates the /blog path, and a page.tsx inside it makes that path render. Nested folders create nested routes. This removes the need for a separate route configuration file.",
+      "tags": [
+        "routing",
+        "file-conventions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing"
+      ]
+    },
+    {
+      "id": "fundamentals-009",
+      "difficulty": "Beginner",
+      "question": "What is the public folder used for?",
+      "answer": "Files placed in the public/ directory are served from the site root and can be referenced by URL. For example public/logo.png is available at /logo.png. Static assets that do not need processing, such as favicons, robots.txt, and images, go there. Files in public/ are served before dynamic routes.",
+      "tags": [
+        "static-assets",
+        "public"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/static-assets"
+      ]
+    },
+    {
+      "id": "fundamentals-010",
+      "difficulty": "Beginner",
+      "question": "What is next.config.js?",
+      "answer": "next.config.js (or .mjs, or next.config.ts in Next.js 15) is the configuration file for a Next.js project. It controls settings like redirects, rewrites, headers, image domains, experimental features, and environment handling. You export a config object, or a function that receives the current phase. The file is evaluated at build time on the server.",
+      "tags": [
+        "configuration",
+        "next-config"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js"
+      ]
+    },
+    {
+      "id": "fundamentals-011",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between the app and pages directories?",
+      "answer": "The pages/ directory uses the older Pages Router with files like pages/about.js and data fetching via getServerSideProps and getStaticProps. The app/ directory uses the App Router with layouts, Server Components, and async data fetching in components. The two can coexist during migration but each route belongs to only one router. The App Router is recommended for new code.",
+      "tags": [
+        "app-router",
+        "pages-router"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing"
+      ]
+    },
+    {
+      "id": "fundamentals-012",
+      "difficulty": "Intermediate",
+      "question": "What are React Server Components?",
+      "answer": "React Server Components (RSC) render only on the server and never ship their JavaScript to the browser. They can read data directly, access secrets, and use async/await in the component body. They cannot use state or browser APIs, which requires a Client Component. In the App Router all components are Server Components unless marked with 'use client'.",
+      "tags": [
+        "server-components",
+        "rsc"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/server-components",
+        "https://react.dev/reference/rsc/server-components"
+      ]
+    },
+    {
+      "id": "fundamentals-013",
+      "difficulty": "Intermediate",
+      "question": "What is a route group and why use one?",
+      "answer": "A route group is a folder wrapped in parentheses, like (marketing), that organizes routes without adding a URL segment. It lets you apply a different layout or code organization to a subset of routes. For example (shop) and (marketing) can each have their own layout while sharing the root layout. Route groups do not affect the final URL.",
+      "tags": [
+        "route-groups",
+        "layouts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-groups"
+      ]
+    },
+    {
+      "id": "fundamentals-014",
+      "difficulty": "Intermediate",
+      "question": "What does the Next.js compiler (SWC) do?",
+      "answer": "Next.js uses SWC, a Rust-based compiler, to transform and minify JavaScript and TypeScript much faster than Babel. It handles JSX, TypeScript stripping, and React Fast Refresh during development. It also powers styled-jsx and automatic polyfilling. You rarely configure it directly but can extend it in next.config.js.",
+      "tags": [
+        "swc",
+        "build"
+      ],
+      "references": [
+        "https://nextjs.org/docs/architecture/nextjs-compiler"
+      ]
+    },
+    {
+      "id": "fundamentals-015",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between next dev and next build?",
+      "answer": "next dev starts the development server with hot reloading and unminified output for fast iteration. next build creates an optimized production build, pre-rendering static pages and analyzing bundles. next start then serves that production build. Development output is not representative of production performance or caching.",
+      "tags": [
+        "cli",
+        "build"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/cli/next"
+      ]
+    },
+    {
+      "id": "fundamentals-016",
+      "difficulty": "Intermediate",
+      "question": "How does Next.js split JavaScript per route?",
+      "answer": "Next.js automatically code-splits by route, so each page only loads the JavaScript it needs. Shared code is extracted into common chunks that are cached across navigations. You can further split with dynamic imports via next/dynamic or React.lazy. This reduces the initial bundle size.",
+      "tags": [
+        "code-splitting",
+        "performance"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/optimizing/lazy-loading"
+      ]
+    },
+    {
+      "id": "fundamentals-017",
+      "difficulty": "Intermediate",
+      "question": "What is the purpose of the loading.tsx file?",
+      "answer": "loading.tsx defines a loading UI that Next.js shows instantly while the segment's content streams in. It is built on React Suspense and automatically wraps the page and its children. This gives users immediate feedback during server data fetching. You can also use Suspense boundaries manually for finer control.",
+      "tags": [
+        "loading",
+        "suspense"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/loading"
+      ]
+    },
+    {
+      "id": "fundamentals-018",
+      "difficulty": "Intermediate",
+      "question": "How does Next.js 15 change from Next.js 14?",
+      "answer": "Next.js 15 makes request APIs like cookies, headers, params, and searchParams asynchronous, so you await them. It changes fetch and GET route handlers to be uncached by default, and the client Router Cache no longer serves stale data by default. It supports React 19 and stabilizes Turbopack for development. These changes favor correctness over implicit caching.",
+      "tags": [
+        "version",
+        "upgrade"
+      ],
+      "references": [
+        "https://nextjs.org/blog/next-15"
+      ]
+    },
+    {
+      "id": "fundamentals-019",
+      "difficulty": "Intermediate",
+      "question": "What is the src/ directory convention?",
+      "answer": "Next.js supports placing the app/ or pages/ directory inside a src/ folder to separate application code from project-level config. Either structure works; src/ is common in larger projects. Only one of app or pages should live in src/, and config files stay at the project root. It is purely an organizational choice.",
+      "tags": [
+        "project-structure",
+        "src"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/getting-started/project-structure"
+      ]
+    },
+    {
+      "id": "fundamentals-020",
+      "difficulty": "Intermediate",
+      "question": "How does Next.js handle TypeScript out of the box?",
+      "answer": "Next.js detects TypeScript automatically and generates a tsconfig.json plus a next-env.d.ts file on first run. It type-checks during next build and provides typed helpers like NextRequest and Metadata. You install the types with @types/react and @types/node. Type errors fail the production build unless disabled in config.",
+      "tags": [
+        "typescript",
+        "build"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/configuring/typescript"
+      ]
+    },
+    {
+      "id": "fundamentals-021",
+      "difficulty": "Advanced",
+      "question": "What is Partial Prerendering (PPR)?",
+      "answer": "Partial Prerendering combines a static shell with dynamic, streamed holes in a single route. Next.js serves the prerendered shell immediately and streams dynamic content as it resolves inside Suspense boundaries. It removes the old all-or-nothing choice between static and dynamic rendering. PPR is an experimental feature enabled via config.",
+      "tags": [
+        "ppr",
+        "rendering"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/config/next-config-js/ppr"
+      ]
+    },
+    {
+      "id": "fundamentals-022",
+      "difficulty": "Advanced",
+      "question": "How does streaming rendering work in Next.js?",
+      "answer": "Streaming sends HTML to the browser in chunks as the server renders, instead of waiting for the whole page. Next.js uses React Suspense boundaries to decide what can stream later, so the shell appears fast. Slow data fetches suspend and resolve independently. This improves perceived performance and time to first byte.",
+      "tags": [
+        "streaming",
+        "suspense"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/loading-ui-and-streaming"
+      ]
+    },
+    {
+      "id": "fundamentals-023",
+      "difficulty": "Advanced",
+      "question": "What is the difference between the Node.js and Edge runtimes?",
+      "answer": "The Node.js runtime has full Node APIs and is the default for routes and Server Components. The Edge runtime is a lighter, V8-based environment closer to the browser with Web standard APIs and no filesystem, useful for low-latency middleware and streaming. You select it with export const runtime = 'edge'. Choose Edge only when you need global low latency and can avoid Node-only APIs.",
+      "code": "export const runtime = 'edge';",
+      "tags": [
+        "runtime",
+        "edge"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes"
+      ]
+    },
+    {
+      "id": "fundamentals-024",
+      "difficulty": "Advanced",
+      "question": "How does Next.js optimize the production build?",
+      "answer": "The build step prerenders eligible routes, splits bundles per route, and minifies with SWC. It removes server-only code from client bundles and tree-shakes unused modules. It also generates a route manifest that lets the server and CDN serve static output efficiently. These optimizations are why production behavior differs from dev.",
+      "tags": [
+        "build",
+        "optimization"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/deploying/production-checklist"
+      ]
+    },
+    {
+      "id": "fundamentals-025",
+      "difficulty": "Advanced",
+      "question": "What role does React 19 play in Next.js 15?",
+      "answer": "Next.js 15 uses React 19, which brings Server Actions, the use() hook, and improved hydration error messages. React 19 also changes how refs and forms work, and the App Router relies on these features. The framework tracks React canary releases to adopt new primitives early. Staying on a supported React version is required for the App Router.",
+      "tags": [
+        "react-19",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/blog/next-15",
+        "https://react.dev/blog/2024/12/05/react-19"
+      ]
+    }
+  ]
+}

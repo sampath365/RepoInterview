@@ -1,0 +1,213 @@
+{
+  "category": "Accessibility & Localization",
+  "slug": "accessibility",
+  "icon": "text",
+  "questions": [
+    {
+      "id": "accessibility-001",
+      "difficulty": "Beginner",
+      "question": "What is accessibility in a mobile app?",
+      "answer": "Accessibility is the practice of designing apps so people with disabilities can use them, including those with visual, hearing, motor, or cognitive impairments. It covers screen reader support, sufficient contrast, large touch targets, and captions. Building it in benefits all users and is often a legal requirement. MAUI provides semantic properties to expose information to assistive technologies.",
+      "tags": ["accessibility", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-002",
+      "difficulty": "Beginner",
+      "question": "How do you provide a screen reader description for a control?",
+      "answer": "Use SemanticProperties.Description to give a control a text description that screen readers announce, and SemanticProperties.Hint for additional guidance. These replace or supplement the visible text for assistive technologies. Set them on meaningful controls and hide purely decorative elements. This is the primary way to make custom UI understandable.",
+      "tags": ["accessibility", "semantics"],
+      "code": "<Image Source=\"cart.png\"\n       SemanticProperties.Description=\"Shopping cart\" />\n<Button Text=\"Buy\"\n        SemanticProperties.Hint=\"Purchases the selected item\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-003",
+      "difficulty": "Beginner",
+      "question": "What is the SemanticProperties.HeadingLevel property used for?",
+      "answer": "SemanticProperties.HeadingLevel marks a label as a heading at a given level, such as Level1 or Level2, so screen readers can navigate the page by headings. This improves navigation in content-heavy pages. Apply it to section titles rather than every label. It maps to platform heading semantics.",
+      "tags": ["accessibility", "semantics"],
+      "code": "<Label Text=\"Settings\"\n       SemanticProperties.HeadingLevel=\"Level1\" />",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-004",
+      "difficulty": "Beginner",
+      "question": "How do you hide a decorative element from screen readers?",
+      "answer": "Set SemanticProperties.Description to an empty string or use the appropriate platform exclusion so decorative elements are skipped. This avoids confusing announcements for images or shapes that carry no meaning. Only hide elements that truly add no information. Meaningful images should have a description instead.",
+      "tags": ["accessibility", "semantics"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-005",
+      "difficulty": "Beginner",
+      "question": "Why is color contrast important for accessibility?",
+      "answer": "Sufficient contrast between text and background makes content readable for users with low vision or color blindness, and in bright environments. Guidelines such as WCAG specify minimum contrast ratios for normal and large text. Test your color palette against these ratios, including in dark mode. Do not rely on color alone to convey meaning.",
+      "tags": ["accessibility", "contrast"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-006",
+      "difficulty": "Beginner",
+      "question": "Why should touch targets be a minimum size?",
+      "answer": "Small targets are hard to hit for users with limited dexterity or large fingers, so platforms recommend a minimum touch area, often around 44 to 48 device-independent units. Pad small controls with margin or padding to enlarge the hit area without changing the visual. Consistent sizing improves usability for everyone. This is a common accessibility failure in dense layouts.",
+      "tags": ["accessibility", "usability"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-007",
+      "difficulty": "Beginner",
+      "question": "What is localization?",
+      "answer": "Localization is adapting an app for a specific language or region, including translating text, formatting dates and numbers, and respecting cultural conventions. It builds on globalization, which is writing code that can be adapted. In .NET you use RESX resource files per culture and set the current culture. Good localization makes the app feel native to each audience.",
+      "tags": ["localization", "overview"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-008",
+      "difficulty": "Beginner",
+      "question": "What is the difference between globalization and localization?",
+      "answer": "Globalization is designing code so it works across cultures, for example by not hard-coding date or number formats and by externalizing strings. Localization is the actual adaptation to a specific culture, such as translating strings and adjusting formats. Globalization happens during development and localization during or after it. Both are needed for a truly international app.",
+      "tags": ["localization", "globalization"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-009",
+      "difficulty": "Beginner",
+      "question": "Why should you avoid hard-coding user-facing strings?",
+      "answer": "Hard-coded strings cannot be translated, so they block localization and often cause layout issues in other languages. Move all user-visible text into resource files and reference it through a wrapper. This also centralizes wording changes and reduces typos. It is the first step to supporting multiple languages.",
+      "tags": ["localization", "strings"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-010",
+      "difficulty": "Beginner",
+      "question": "What are accessibility settings on a device?",
+      "answer": "Platforms provide accessibility settings such as larger text, bold text, reduced motion, high contrast, and screen readers that apps should respect. Reading these settings lets your app adapt automatically. For example, you can honor reduced motion by shortening or disabling animations. Respecting system preferences shows you care about inclusive design.",
+      "tags": ["accessibility", "settings"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement localization with RESX files in MAUI?",
+      "answer": "Create a default RESX file plus one per culture, such as AppResources.fr.resx, and read values through a generated ResourceManager or a wrapper class. The runtime selects the resource file matching the current UI culture. Bind UI text to the wrapper so it can be updated when the culture changes. Set the culture early in startup so the first page loads correctly.",
+      "tags": ["localization", "resx"],
+      "code": "var culture = CultureInfo.CurrentUICulture;\nAppResources.Culture = culture;\nstring title = AppResources.HomeTitle;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-012",
+      "difficulty": "Intermediate",
+      "question": "How do you change the app language at runtime?",
+      "answer": "Set CultureInfo.DefaultThreadCurrentUICulture and CurrentCulture, then refresh the UI so bound strings and formatted values update. Because resources are resolved by culture, you may need to reapply them to controls or use a markup extension that reacts to culture changes. Persist the chosen culture in Preferences so it survives restarts. Restarting the app is a simple fallback if live updates are complex.",
+      "tags": ["localization", "culture"],
+      "code": "var culture = new CultureInfo(\"fr-FR\");\nCultureInfo.DefaultThreadCurrentUICulture = culture;\nCultureInfo.DefaultThreadCurrentCulture = culture;",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test an app with a screen reader?",
+      "answer": "Enable VoiceOver on iOS or TalkBack on Android and navigate your app using only the screen reader, checking that every control is announced clearly and in a logical order. Look for missing descriptions, unclear labels, and focus traps. Verify that custom drawn content exposes meaningful semantics. This testing is essential because it reveals issues automated checks miss.",
+      "tags": ["accessibility", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-014",
+      "difficulty": "Intermediate",
+      "question": "How do you support dynamic type or large text?",
+      "answer": "Respect the user's text size settings by avoiding fixed font sizes that ignore accessibility scaling and by testing your layout at large text sizes. Let labels wrap and use layouts that grow rather than clip. On Apple platforms you can observe the preferred content size category. Ensuring text scales prevents content from being unreadable for low-vision users.",
+      "tags": ["accessibility", "text"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-015",
+      "difficulty": "Intermediate",
+      "question": "How do you respect reduced motion preferences?",
+      "answer": "Check the platform's reduced motion setting and, when enabled, replace large motion animations with simple fades or no animation. This helps users who experience discomfort from movement. Provide an in-app setting as well for finer control. Always keep essential state changes visible even without motion.",
+      "tags": ["accessibility", "animation"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/user-interface/animation/basic"]
+    },
+    {
+      "id": "accessibility-016",
+      "difficulty": "Intermediate",
+      "question": "How do you localize images and other assets?",
+      "answer": "Use culture-specific folders or resource naming so the runtime picks the right asset for the current culture, or swap assets programmatically based on culture. Keep text out of images because it cannot be translated. For right-to-left languages, provide mirrored or direction-agnostic assets. This keeps visuals appropriate for each locale.",
+      "tags": ["localization", "assets"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-017",
+      "difficulty": "Intermediate",
+      "question": "How do you handle right-to-left languages?",
+      "answer": "Use FlowDirection on the app or page and let layouts mirror automatically, and avoid hard-coded left and right values where possible. Use start and end instead of left and right for alignment and margins. Test with an RTL culture such as Arabic or Hebrew. Proper mirroring makes the app feel native to RTL users.",
+      "tags": ["localization", "rtl"],
+      "code": "<ContentPage FlowDirection=\"RightToLeft\">\n  <Label HorizontalOptions=\"Start\" Text=\"مرحبا\" />\n</ContentPage>",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-018",
+      "difficulty": "Intermediate",
+      "question": "What are accessibility best practices for forms?",
+      "answer": "Label every input clearly, associate labels with fields, provide descriptive hints, and announce validation errors through semantic properties so screen readers report them. Keep tab order logical and group related fields. Use appropriate keyboard types and return keys. Accessible forms are easier for everyone to complete.",
+      "tags": ["accessibility", "forms"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-019",
+      "difficulty": "Intermediate",
+      "question": "How do you make custom drawn controls accessible?",
+      "answer": "Expose semantic properties on the containing view so the drawing has a text description and, where relevant, a value and hint. Group related drawn content into one accessible element rather than many. Update the semantics when the underlying data changes. Without this, screen readers cannot describe your custom visuals.",
+      "tags": ["accessibility", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-020",
+      "difficulty": "Intermediate",
+      "question": "How do you format dates, numbers, and currencies for different cultures?",
+      "answer": "Use CultureInfo-aware formatting methods such as ToString with the current culture or String.Format with the culture, instead of hard-coded patterns. This ensures dates appear in the expected order and currencies use the right symbol and separators. Avoid concatenating formatted numbers into sentences because ordering varies by language. Let the culture drive the format.",
+      "tags": ["localization", "formatting"],
+      "code": "var text = price.ToString(\"C\", CultureInfo.CurrentCulture);\nvar date = when.ToString(\"d\", CultureInfo.CurrentCulture);",
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-021",
+      "difficulty": "Advanced",
+      "question": "How do you implement accessibility for a complex custom control?",
+      "answer": "Break the control into logical accessible elements, expose semantic descriptions, values, and hints, and manage focus order so assistive technology can navigate it predictably. Update semantics when state changes, for example a selected item. Test with a screen reader on each platform because semantics are mapped differently. Complex controls often need platform-specific accessibility work.",
+      "tags": ["accessibility", "custom-controls"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-022",
+      "difficulty": "Advanced",
+      "question": "How do you build a localization workflow for a team?",
+      "answer": "Keep all strings in resource files, use a consistent key naming scheme, and integrate translation management so translators work on the resource files without touching code. Add pseudo-localization during development to surface layout issues from longer or differently shaped text. Automate checks that every culture file has the same keys. This keeps localization from drifting as the app evolves.",
+      "tags": ["localization", "workflow"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of embedding translations versus using a remote translation service?",
+      "answer": "Embedded translations ship with the app, work offline, and load instantly but require a store release to update wording. A remote service lets you update text without releasing, supports experimentation and immediate fixes, but adds network dependency, caching complexity, and can expose content if not secured. Many apps embed the core UI and use remote content for flexible, non-critical text. Choose based on how often wording changes and whether offline support is required.",
+      "tags": ["localization", "architecture"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/localization"]
+    },
+    {
+      "id": "accessibility-024",
+      "difficulty": "Advanced",
+      "question": "How do you audit an app for accessibility issues at scale?",
+      "answer": "Combine automated checks such as platform accessibility inspectors with manual screen reader testing on real devices. Create a checklist covering contrast, touch targets, semantics, focus order, and dynamic text. Test with users who rely on assistive technology for the most meaningful feedback. Track and fix issues as part of the normal development cycle rather than as a one-off.",
+      "tags": ["accessibility", "testing"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    },
+    {
+      "id": "accessibility-025",
+      "difficulty": "Advanced",
+      "question": "How do localization and accessibility concerns intersect?",
+      "answer": "Both aim to make the app usable by more people, and they share techniques: externalized text with clear semantics, layouts that tolerate longer content, and respect for user preferences. Translated strings are often longer, which stresses accessibility features such as large text and screen reader navigation, so test combinations such as RTL plus large text plus a screen reader. Designing for one generally improves the other. Treat them as part of the same inclusive-design practice.",
+      "tags": ["accessibility", "localization"],
+      "references": ["https://learn.microsoft.com/dotnet/maui/fundamentals/accessibility"]
+    }
+  ]
+}

@@ -1,0 +1,343 @@
+{
+  "category": "API Routes & Route Handlers",
+  "slug": "api-routes",
+  "icon": "api",
+  "questions": [
+    {
+      "id": "api-routes-001",
+      "difficulty": "Beginner",
+      "question": "What is a Route Handler?",
+      "answer": "A Route Handler is a route.ts file in the app directory that exports functions named after HTTP methods. It handles requests to that path and returns a Response. It replaces the API Routes of the Pages Router. You use it for endpoints your client or external services call.",
+      "code": "// app/api/hello/route.ts\nexport async function GET() {\n  return Response.json({ message: 'hi' });\n}",
+      "tags": [
+        "route-handlers",
+        "api"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-002",
+      "difficulty": "Beginner",
+      "question": "Which HTTP methods can a Route Handler export?",
+      "answer": "A Route Handler can export GET, POST, PUT, PATCH, DELETE, HEAD, and OPTIONS. Each named export handles that method. Unsupported methods return a 405 response. This mirrors HTTP semantics directly.",
+      "tags": [
+        "route-handlers",
+        "http"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-003",
+      "difficulty": "Beginner",
+      "question": "How do you read the request body in a Route Handler?",
+      "answer": "The handler receives a Request object, and you read the body with await request.json() or await request.text() or request.formData(). You should validate the parsed data before use. Return a Response with an appropriate status. This is standard Web API behavior.",
+      "code": "export async function POST(req) {\n  const body = await req.json();\n  return Response.json({ ok: true }, { status: 201 });\n}",
+      "tags": [
+        "route-handlers",
+        "request"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-004",
+      "difficulty": "Beginner",
+      "question": "How do you read query parameters in a Route Handler?",
+      "answer": "Use the request.nextUrl.searchParams or new URL(request.url).searchParams to read query values. These are the same URLSearchParams API from the web. Remember to validate and coerce types. Query strings are always strings.",
+      "code": "const { searchParams } = new URL(req.url);\nconst q = searchParams.get('q');",
+      "tags": [
+        "route-handlers",
+        "query"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-005",
+      "difficulty": "Beginner",
+      "question": "How do you return JSON from a Route Handler?",
+      "answer": "Use the static Response.json helper or new Response(JSON.stringify(data)) with a content-type header. Response.json sets the header for you. You can pass a status and headers as the second argument. This returns a proper JSON response.",
+      "code": "return Response.json({ id: 1 }, { status: 200 });",
+      "tags": [
+        "route-handlers",
+        "json"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-006",
+      "difficulty": "Beginner",
+      "question": "How do dynamic segments work in Route Handlers?",
+      "answer": "Route Handlers receive a params prop for dynamic segments, similar to pages. In Next.js 15 params is a promise you await. For example app/api/posts/[id]/route.ts gives you params.id. Use it to look up the resource.",
+      "code": "export async function GET(req, { params }) {\n  const { id } = await params;\n}",
+      "tags": [
+        "route-handlers",
+        "dynamic-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between Route Handlers and API Routes?",
+      "answer": "Route Handlers use the app directory and the Web Request and Response APIs. API Routes use the pages/api directory and NextApiRequest and NextApiResponse with helpers like res.json. Route Handlers are the modern approach and support streaming. You migrate by moving the file and adapting the signature.",
+      "tags": [
+        "route-handlers",
+        "api-routes"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-008",
+      "difficulty": "Beginner",
+      "question": "Can a page and a Route Handler share the same route?",
+      "answer": "No, a folder cannot contain both page.tsx and route.ts. You must choose one for a given path. If you need both a page and an API at the same path, use a different segment for the API. Next.js errors at build time if both exist.",
+      "tags": [
+        "route-handlers",
+        "conflicts"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-009",
+      "difficulty": "Beginner",
+      "question": "How do you set a status code in a Route Handler?",
+      "answer": "Pass the status in the Response init object, for example Response.json(data, { status: 404 }). For errors return the appropriate 4xx or 5xx code. You can also use the Response constructor with a status. Consistent status codes make APIs predictable.",
+      "tags": [
+        "route-handlers",
+        "status"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-010",
+      "difficulty": "Beginner",
+      "question": "How do you handle CORS in a Route Handler?",
+      "answer": "Set the Access-Control-Allow-Origin and related headers on the response, or handle OPTIONS requests. You can also configure headers in next.config.js for all routes. CORS headers must be present on the actual response. Preflight requests are OPTIONS requests.",
+      "code": "return Response.json(data, {\n  headers: { 'Access-Control-Allow-Origin': '*' },\n});",
+      "tags": [
+        "cors",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-011",
+      "difficulty": "Intermediate",
+      "question": "How do you stream a response from a Route Handler?",
+      "answer": "Return a ReadableStream or use the Web Streams API to send chunks over time. This works for AI token streaming, server-sent events, or large files. You can also return a Response wrapping a stream. Streaming keeps the connection open and sends data as it is produced.",
+      "tags": [
+        "streaming",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-012",
+      "difficulty": "Intermediate",
+      "question": "How do you read cookies in a Route Handler?",
+      "answer": "Use the cookies() function from next/headers, which is async in Next.js 15, or read the Cookie header from the request. cookies() gives a typed store with get and set. Setting cookies from a Route Handler requires returning them on the response. This is common for session handling.",
+      "code": "import { cookies } from 'next/headers';\nconst store = await cookies();\nconst token = store.get('token');",
+      "tags": [
+        "cookies",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/functions/cookies"
+      ]
+    },
+    {
+      "id": "api-routes-013",
+      "difficulty": "Intermediate",
+      "question": "How do you cache a GET Route Handler?",
+      "answer": "In Next.js 15 GET handlers are uncached by default. To cache, export a route segment config such as dynamic = 'force-static' or use caching primitives in the handler. You can also set Cache-Control headers for CDN caching. Choose based on whether the response is shared across users.",
+      "tags": [
+        "caching",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/api-reference/file-conventions/route-segment-config"
+      ]
+    },
+    {
+      "id": "api-routes-014",
+      "difficulty": "Intermediate",
+      "question": "How do you validate input in a Route Handler?",
+      "answer": "Parse the body or query, then validate with a schema library such as Zod. Return a 400 response with details when validation fails. Never trust client input, especially for database queries. Validation at the boundary prevents many bugs and injection issues.",
+      "code": "const schema = z.object({ email: z.string().email() });\nconst data = schema.parse(await req.json());",
+      "tags": [
+        "validation",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-015",
+      "difficulty": "Intermediate",
+      "question": "How do you authenticate requests to a Route Handler?",
+      "answer": "Read the session cookie or Authorization header, verify it on the server, and return 401 when invalid. Reuse a shared auth helper across handlers. Check authorization, not just authentication, for the specific resource. Never rely on client-provided user ids.",
+      "tags": [
+        "auth",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/authentication"
+      ]
+    },
+    {
+      "id": "api-routes-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle errors in a Route Handler?",
+      "answer": "Wrap logic in try/catch and return a JSON error with an appropriate status code. Avoid leaking internal error details to clients. Log errors server-side for debugging. Return a consistent error shape so clients can handle it.",
+      "code": "try {\n  // ...\n} catch (e) {\n  return Response.json({ error: 'Bad request' }, { status: 400 });\n}",
+      "tags": [
+        "errors",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-017",
+      "difficulty": "Intermediate",
+      "question": "When should you use a Route Handler versus a Server Action?",
+      "answer": "Use a Server Action for mutations triggered from your own forms and components, since it avoids an API layer. Use a Route Handler when you need a public HTTP endpoint, webhooks, third-party access, or non-form clients. Route Handlers also fit streaming responses. Both run on the server; choose based on the caller.",
+      "tags": [
+        "route-handlers",
+        "server-actions"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-018",
+      "difficulty": "Intermediate",
+      "question": "How do you run a Route Handler on the Edge runtime?",
+      "answer": "Export const runtime = 'edge' from the route file. This runs the handler in a V8-based environment with Web APIs, useful for low-latency global responses. Node-only APIs are unavailable there. Choose Edge only when your dependencies support it.",
+      "code": "export const runtime = 'edge';\nexport async function GET() { /* ... */ }",
+      "tags": [
+        "edge",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/rendering/edge-and-nodejs-runtimes"
+      ]
+    },
+    {
+      "id": "api-routes-019",
+      "difficulty": "Intermediate",
+      "question": "How do you return different response types from a handler?",
+      "answer": "Return a Response with the correct content-type header, such as application/json, text/plain, or image/png. You can return a Blob or stream for binary content. Setting the right header lets clients parse the body. Response.json is a shortcut for JSON.",
+      "tags": [
+        "route-handlers",
+        "response"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-020",
+      "difficulty": "Intermediate",
+      "question": "How do you structure a Route Handler for a REST resource?",
+      "answer": "Put the collection handler at app/api/posts/route.ts for GET and POST, and the item handler at app/api/posts/[id]/route.ts for GET, PUT, and DELETE. Share validation and auth helpers. Return consistent status codes and error shapes. This mirrors REST conventions cleanly.",
+      "tags": [
+        "rest",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-021",
+      "difficulty": "Advanced",
+      "question": "How does request memoization apply to Route Handlers?",
+      "answer": "Fetch deduplication applies within a handler's execution for identical requests, but Route Handlers do not participate in the Full Route Cache unless configured static. Each incoming request runs the handler. This means caching must be explicit. Understand this to avoid assuming handlers are cached.",
+      "tags": [
+        "caching",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/caching"
+      ]
+    },
+    {
+      "id": "api-routes-022",
+      "difficulty": "Advanced",
+      "question": "How do you implement webhook verification in a Route Handler?",
+      "answer": "Read the raw body, then verify the signature header using your provider's secret and a constant-time comparison. Only process the event after verification succeeds. Return 2xx quickly and process heavy work asynchronously. Never trust an unverified webhook.",
+      "tags": [
+        "webhooks",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-023",
+      "difficulty": "Advanced",
+      "question": "How do you stream server-sent events from a Route Handler?",
+      "answer": "Return a ReadableStream with the text/event-stream content type and write formatted event chunks. Keep the stream open and flush messages as they occur. Handle client disconnects by cancelling the stream. SSE is simpler than WebSockets for one-way updates.",
+      "code": "const stream = new ReadableStream({ start(c) {\n  c.enqueue(new TextEncoder().encode('data: hi\\n\\n'));\n} });",
+      "tags": [
+        "streaming",
+        "sse"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle large file uploads in a Route Handler?",
+      "answer": "Read the incoming FormData and stream the file to storage rather than buffering it in memory. Validate content type and size before accepting. Use signed URLs or direct-to-storage uploads for very large files. This avoids memory pressure and timeouts.",
+      "tags": [
+        "uploads",
+        "route-handlers"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    },
+    {
+      "id": "api-routes-025",
+      "difficulty": "Advanced",
+      "question": "How do you version and secure a public API built with Route Handlers?",
+      "answer": "Namespace versions in the path such as /api/v1, document the contract, and deprecate old versions deliberately. Add authentication, rate limiting, and input validation. Return consistent errors and log usage. Treat it as a public product surface, not just internal code.",
+      "tags": [
+        "api-design",
+        "security"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/routing/route-handlers"
+      ]
+    }
+  ]
+}

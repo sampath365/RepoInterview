@@ -1,0 +1,368 @@
+{
+  "category": "Testing Async Code",
+  "slug": "async",
+  "icon": "sparkles",
+  "questions": [
+    {
+      "id": "async-001",
+      "difficulty": "Beginner",
+      "question": "How do you write an async NUnit test?",
+      "answer": "Declare the test method as async and return Task, then await the operation under test, for example public async Task Saves_Async(). NUnit awaits the returned Task and fails the test if it faults. Never use async void for a test because the runner cannot observe the completion.",
+      "code": "[Test]\npublic async Task Loads_Order_Async()\n{\n    var order = await service.LoadAsync(42);\n    Assert.That(order.Id, Is.EqualTo(42));\n}",
+      "tags": [
+        "async",
+        "test"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-002",
+      "difficulty": "Beginner",
+      "question": "Why should an async test return Task instead of void?",
+      "answer": "Returning Task lets NUnit await the test so that assertions running after an await are observed and any exception is attributed to the test. An async void method returns immediately and its exceptions are unobservable, which can let a failing test pass. Always return Task from async tests.",
+      "tags": [
+        "async",
+        "pitfalls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-003",
+      "difficulty": "Beginner",
+      "question": "How do you assert that an async method throws an exception?",
+      "answer": "Use Assert.ThrowsAsync<TException> with an async lambda, for example await Assert.ThrowsAsync<InvalidOperationException>(() => service.RunAsync()). It awaits the delegate and returns the exception so you can assert on it. Do not wrap the call in Assert.Throws, which does not understand async delegates.",
+      "code": "var ex = await Assert.ThrowsAsync<InvalidOperationException>(\n    () => service.RunAsync());\nAssert.That(ex.Message, Does.Contain(\"closed\"));",
+      "tags": [
+        "async",
+        "exceptions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.ThrowsAsync.html",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-004",
+      "difficulty": "Beginner",
+      "question": "Can [SetUp] and [TearDown] methods be async?",
+      "answer": "Yes, NUnit supports setup and teardown methods that return Task and awaits them before continuing. This lets you open connections or start servers asynchronously in setup. The same applies to [OneTimeSetUp] and [OneTimeTearDown].",
+      "code": "[SetUp]\npublic async Task SetUpAsync() => _server = await TestServer.StartAsync();",
+      "tags": [
+        "async",
+        "setup"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/setup.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/onetimesetup.html"
+      ]
+    },
+    {
+      "id": "async-005",
+      "difficulty": "Beginner",
+      "question": "What is the danger of calling Task.Result or Wait() in a test?",
+      "answer": "Blocking on an async operation with Result or Wait can deadlock, especially when a synchronization context is captured, and it hides the asynchronous nature of the code. It also wraps exceptions in AggregateException, making failures harder to read. Await the task instead.",
+      "tags": [
+        "async",
+        "pitfalls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-006",
+      "difficulty": "Beginner",
+      "question": "How do you await a Task that returns no value?",
+      "answer": "Simply await the Task; there is no result to read, for example await repository.SaveAsync(order). For asserting on exceptions from such a task, use Assert.ThrowsAsync. Returning Task is still required from the test method so NUnit can await it.",
+      "code": "[Test]\npublic async Task Saves_Async()\n{\n    await repository.SaveAsync(new Order());\n}",
+      "tags": [
+        "async",
+        "task"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-007",
+      "difficulty": "Beginner",
+      "question": "How do you assert on the result of a Task<T>?",
+      "answer": "Await the task to obtain the value and then assert on it with a normal constraint, for example var total = await service.GetTotalAsync(); Assert.That(total, Is.EqualTo(90)). This keeps the assertion synchronous after the await. Any exception from the task surfaces at the await.",
+      "code": "var total = await service.GetTotalAsync();\nAssert.That(total, Is.EqualTo(90));",
+      "tags": [
+        "async",
+        "assertions"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-008",
+      "difficulty": "Beginner",
+      "question": "What is Task.Delay used for in async tests?",
+      "answer": "Task.Delay introduces a delay without blocking a thread and is useful when a test must wait for a condition. However, fixed delays make tests slow and flaky, so prefer polling for the expected condition or using a test hook. Use Task.Delay sparingly and keep the duration short.",
+      "code": "await Task.Delay(50);\nAssert.That(queue.Count, Is.EqualTo(1));",
+      "tags": [
+        "async",
+        "timing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay",
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html"
+      ]
+    },
+    {
+      "id": "async-009",
+      "difficulty": "Beginner",
+      "question": "Can an NUnit test return a ValueTask?",
+      "answer": "NUnit supports async test methods returning Task; returning ValueTask is not the supported pattern, so convert with AsTask or make the method async Task. Keeping the test signature as Task avoids ambiguity. The awaited code itself can return ValueTask without issue.",
+      "tags": [
+        "async",
+        "valuetask"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-010",
+      "difficulty": "Beginner",
+      "question": "How do you test a method that uses Task.Run internally?",
+      "answer": "Await the method so its internal task completes before you assert, then assert on the observable result. Avoid asserting on thread identity because Task.Run may run on any pool thread. If the method is fire-and-forget, expose a completion signal you can await in the test.",
+      "tags": [
+        "async",
+        "taskrun"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.run",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-011",
+      "difficulty": "Intermediate",
+      "question": "How do you test that an async method completes within a time limit?",
+      "answer": "Await the task with a timeout using Task.WhenAny and Task.Delay, or use the [Timeout] attribute, then fail if the timeout won. This catches operations that hang. Be generous with the limit so slow CI agents do not cause false failures.",
+      "code": "var completed = await Task.WhenAny(task, Task.Delay(TimeSpan.FromSeconds(2)));\nAssert.That(completed, Is.SameAs(task), \"operation timed out\");",
+      "tags": [
+        "async",
+        "timeout"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/timeout.html",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay"
+      ]
+    },
+    {
+      "id": "async-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test code that uses cancellation tokens?",
+      "answer": "Pass a CancellationTokenSource, cancel it, and assert that the operation throws OperationCanceledException. You can also pass an already-cancelled token to check that the operation observes it. This verifies that cancellation is honoured promptly.",
+      "code": "using var cts = new CancellationTokenSource();\ncts.Cancel();\nawait Assert.ThrowsAsync<OperationCanceledException>(\n    () => service.RunAsync(cts.Token));",
+      "tags": [
+        "async",
+        "cancellation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/cancelafter.html"
+      ]
+    },
+    {
+      "id": "async-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test concurrent async operations?",
+      "answer": "Start the operations without awaiting, collect their tasks, and then await them together with Task.WhenAll so they run concurrently and all complete before assertions. Assert on the combined result or on each task. This exercises thread-safety of the code under test.",
+      "code": "var tasks = Enumerable.Range(0, 10).Select(i => service.AddAsync(i));\nawait Task.WhenAll(tasks);\nAssert.That(service.Count, Is.EqualTo(10));",
+      "tags": [
+        "async",
+        "concurrency"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between Assert.Throws and Assert.ThrowsAsync?",
+      "answer": "Assert.Throws takes a synchronous delegate and is used for code that throws before returning. Assert.ThrowsAsync takes a delegate returning a Task and awaits it, so it can observe exceptions thrown asynchronously. Using the wrong one for async code either does not compile or misses the exception.",
+      "tags": [
+        "async",
+        "exceptions"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.ThrowsAsync.html",
+        "https://docs.nunit.org/articles/nunit/writing-tests/assertions/classic-assertions/Assert.Throws.html"
+      ]
+    },
+    {
+      "id": "async-015",
+      "difficulty": "Intermediate",
+      "question": "How do you avoid flaky timing in async tests?",
+      "answer": "Avoid arbitrary sleeps; instead poll for the expected condition with a bounded retry loop or await a completion signal exposed by the code. Use TaskCompletionSource or an event to synchronise rather than guessing at durations. Deterministic synchronisation is the key to stable async tests.",
+      "code": "var tcs = new TaskCompletionSource();\nservice.Completed += (_, _) => tcs.TrySetResult();\nawait service.StartAsync();\nawait tcs.Task;",
+      "tags": [
+        "async",
+        "flaky"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/flaky-and-slow-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-016",
+      "difficulty": "Intermediate",
+      "question": "How does NUnit report an unobserved task exception?",
+      "answer": "If an async test returns a Task that faults and the test does not await it, NUnit cannot observe the exception and the test may pass incorrectly. When the test awaits the task, the exception propagates and the test fails with that exception. Always await every task whose failure matters.",
+      "tags": [
+        "async",
+        "pitfalls"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test an async void event handler?",
+      "answer": "Async void cannot be awaited directly, so raise the event and then wait for an observable side effect or a TaskCompletionSource that the handler completes. This is one reason to keep async void only at event boundaries and to expose a testable async Task method behind it. Assert on the side effect once the signal fires.",
+      "tags": [
+        "async",
+        "events"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/standard/events/",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use TaskCompletionSource in tests?",
+      "answer": "TaskCompletionSource gives you a Task you can complete manually, which lets a test control when an awaited operation finishes. You can return its Task from a mock or hand it to the code under test and complete it at the right moment. It is a precise tool for testing ordering and cancellation.",
+      "code": "var gate = new TaskCompletionSource();\nclient.Setup(c => c.GetAsync()).Returns(gate.Task);\nvar run = sut.FetchAsync();\ngate.SetResult();\nawait run;",
+      "tags": [
+        "async",
+        "taskcompletionsource"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test that an operation did not complete before a timeout?",
+      "answer": "Await Task.WhenAny between the operation and a short Task.Delay and assert that the delay won, indicating the operation is still running. This verifies that an operation waits as intended. Keep the delay small to keep the test fast.",
+      "tags": [
+        "async",
+        "timing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task.delay",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-020",
+      "difficulty": "Intermediate",
+      "question": "How do async tests interact with parallel execution?",
+      "answer": "Async tests can run in parallel like synchronous ones, and their continuations resume on thread pool threads rather than a dedicated thread. That makes shared mutable state even more hazardous, so isolate per-test state. Awaiting properly ensures the test does not finish before the work does.",
+      "tags": [
+        "async",
+        "parallel"
+      ],
+      "references": [
+        "https://docs.nunit.org/articles/nunit/writing-tests/parallel-tests.html",
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/"
+      ]
+    },
+    {
+      "id": "async-021",
+      "difficulty": "Advanced",
+      "question": "How do you test code that uses ConfigureAwait(false)?",
+      "answer": "ConfigureAwait(false) affects which context continuations resume on, not the result of the operation, so a test that awaits the method still observes the outcome correctly. You generally do not assert on thread identity because that is an implementation detail. Test behaviour, not context switching.",
+      "tags": [
+        "async",
+        "configureawait"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-022",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of using a synchronization context in async tests?",
+      "answer": "If a test runs under a single-threaded synchronization context and blocks on an async call with Result or Wait, the continuation cannot run and the test deadlocks. NUnit does not install a UI synchronization context by default, which reduces but does not remove the risk. Never block on async code in tests.",
+      "tags": [
+        "async",
+        "deadlock"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-023",
+      "difficulty": "Advanced",
+      "question": "How do you test a long-running background service in an async test?",
+      "answer": "Start the service, synchronise on an observable signal such as a log entry or a TaskCompletionSource, assert the effect, then cancel the service and await its shutdown. This avoids arbitrary sleeps and verifies the lifecycle. Always await shutdown so resources are released before the test ends.",
+      "tags": [
+        "async",
+        "backgroundservice"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://learn.microsoft.com/en-us/dotnet/api/system.threading.tasks.task"
+      ]
+    },
+    {
+      "id": "async-024",
+      "difficulty": "Advanced",
+      "question": "How do you decide between testing async code with mocks versus a test host?",
+      "answer": "For pure async logic, mocks or fakes of the dependencies keep the test fast and focused. When the async behaviour is the integration itself, such as HTTP handling or middleware, a test host that exercises the real pipeline is more valuable. Choose based on whether the async plumbing is the thing under test.",
+      "tags": [
+        "async",
+        "design"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/aspnet/core/test/integration-tests",
+        "https://github.com/devlooped/moq"
+      ]
+    },
+    {
+      "id": "async-025",
+      "difficulty": "Advanced",
+      "question": "How does the async test method signature affect test discovery and reporting?",
+      "answer": "NUnit discovers async Task methods just like synchronous ones because discovery is metadata-based, and it awaits the Task at execution time so failures are attributed correctly. A method returning void or async void loses that guarantee and may be reported as passed before the work finishes. Keep async tests as async Task.",
+      "tags": [
+        "async",
+        "discovery"
+      ],
+      "references": [
+        "https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/",
+        "https://docs.nunit.org/articles/nunit/writing-tests/attributes/test.html"
+      ]
+    }
+  ]
+}

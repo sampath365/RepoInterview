@@ -1,0 +1,337 @@
+{
+  "category": "Serialization & Performance",
+  "slug": "serialization",
+  "icon": "bolt",
+  "questions": [
+    {
+      "id": "serialization-001",
+      "difficulty": "Beginner",
+      "question": "What is response serialization in Fastify?",
+      "answer": "Serialization is the process of turning your handler's return value into the bytes sent to the client. Fastify serialises objects to JSON, using a compiled serializer when a response schema is present. It also sets the Content-Type automatically. Good serialization improves speed and controls output.",
+      "tags": [
+        "serialization",
+        "basics"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-002",
+      "difficulty": "Beginner",
+      "question": "What is fast-json-stringify and why does Fastify use it?",
+      "answer": "fast-json-stringify generates a specialised serialization function from a JSON Schema. Because the function knows the exact shape, it avoids the generic reflection of JSON.stringify and can be much faster. Fastify uses it whenever a response schema is defined. The schema also filters out undeclared fields.",
+      "tags": [
+        "serialization",
+        "performance"
+      ],
+      "references": [
+        "https://github.com/fastify/fast-json-stringify",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-003",
+      "difficulty": "Beginner",
+      "question": "What happens to properties not listed in a response schema?",
+      "answer": "They are omitted from the output, because the schema acts as an allow-list for serialization. This prevents leaking internal fields and reduces payload size. If you need a property in the response, you must declare it. This behaviour is a key security benefit.",
+      "tags": [
+        "serialization",
+        "security"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-004",
+      "difficulty": "Beginner",
+      "question": "How do you return a JSON string without double encoding?",
+      "answer": "If you set the content type to application/json and send a string, Fastify treats it as already serialised. Returning a string without a JSON content type sends it as text. Using reply.send with a pre-serialised string avoids re-encoding. Be careful to keep the content type consistent with the payload.",
+      "tags": [
+        "serialization",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "serialization-005",
+      "difficulty": "Beginner",
+      "question": "What content type does Fastify use by default for objects?",
+      "answer": "Returning an object results in application/json. Returning a string defaults to text/plain unless the content type was set. Buffers are sent as application/octet-stream. Knowing these defaults helps you avoid unexpected content types.",
+      "tags": [
+        "serialization",
+        "content-type"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "serialization-006",
+      "difficulty": "Beginner",
+      "question": "How do you serialise a Date in a response?",
+      "answer": "By default JSON.stringify converts a Date to an ISO string, and fast-json-stringify can output dates as strings or timestamps depending on the schema type. Declaring the property as type string with format date-time yields an ISO string. This keeps timestamps consistent across clients.",
+      "tags": [
+        "serialization",
+        "dates"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-007",
+      "difficulty": "Beginner",
+      "question": "Why is setting a Content-Type important?",
+      "answer": "The Content-Type header tells clients how to interpret the response body. Fastify sets it based on the payload type and any reply.type call. Sending the wrong type can break clients that parse strictly. Always set it explicitly for non-JSON responses.",
+      "tags": [
+        "serialization",
+        "content-type"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Type"
+      ]
+    },
+    {
+      "id": "serialization-008",
+      "difficulty": "Beginner",
+      "question": "Can you send a Buffer response?",
+      "answer": "Yes, sending a Buffer sets the content type to application/octet-stream by default, and Fastify does not serialise it. This is how you serve binary data such as images. Set a more specific type when you know it. Buffers bypass JSON serialization entirely.",
+      "tags": [
+        "serialization",
+        "buffers"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "serialization-009",
+      "difficulty": "Beginner",
+      "question": "How do you pretty-print JSON in development?",
+      "answer": "Fastify does not pretty-print responses by default because it costs performance. You can install a plugin or set a serializer that adds indentation only when an environment flag is set. Never pretty-print in production. This keeps dev output readable without slowing real traffic.",
+      "tags": [
+        "serialization",
+        "development"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-010",
+      "difficulty": "Beginner",
+      "question": "What is the difference between reply.send and returning a value?",
+      "answer": "Returning a value from an async handler is shorthand for sending that value. Calling reply.send explicitly gives more control, such as sending from a callback or a hook. You should not do both for the same reply. Mixing them can cause a double-send error.",
+      "tags": [
+        "serialization",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "serialization-011",
+      "difficulty": "Intermediate",
+      "question": "How does fast-json-stringify handle nested objects and arrays?",
+      "answer": "It recursively generates serialization code for nested object properties and array items based on the schema. Arrays need an items schema to serialize their elements efficiently. Deeply nested schemas produce more generated code, so keep shapes reasonable. The generated function walks the exact structure, which is why it is fast.",
+      "tags": [
+        "serialization",
+        "schemas"
+      ],
+      "references": [
+        "https://github.com/fastify/fast-json-stringify"
+      ]
+    },
+    {
+      "id": "serialization-012",
+      "difficulty": "Intermediate",
+      "question": "How do you stream a large JSON response efficiently?",
+      "answer": "You can build the response as a stream and return it, or use a library that emits JSON incrementally for large collections. Streaming avoids holding the entire payload in memory. For very large arrays, an incremental JSON serializer is more efficient than stringifying an object. Set the content type to application/json explicitly.",
+      "tags": [
+        "serialization",
+        "streaming"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#streams"
+      ]
+    },
+    {
+      "id": "serialization-013",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of using a response schema?",
+      "answer": "A response schema improves speed and enforces an output contract, but it adds maintenance overhead and can silently drop fields you forget to declare. It also cannot express every transformation, so some cases need a custom serializer. For public or sensitive APIs the safety usually outweighs the cost. Skip it only for trivial internal endpoints.",
+      "tags": [
+        "serialization",
+        "schemas"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-014",
+      "difficulty": "Intermediate",
+      "question": "How do you use a custom serializer for a route?",
+      "answer": "You set the serializer option on the route to a function that takes the payload and returns a string. Fastify then uses it instead of fast-json-stringify. This is useful for non-JSON formats or bespoke output. You are responsible for setting the content type correctly.",
+      "tags": [
+        "serialization",
+        "custom"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Routes/#custom-serializer"
+      ],
+      "code": "fastify.get('/csv', {\n  serializer: (data) => data.map(r => r.join(',')).join('\\n')\n}, handler)"
+    },
+    {
+      "id": "serialization-015",
+      "difficulty": "Intermediate",
+      "question": "How does Fastify serialise responses without a schema?",
+      "answer": "Without a response schema Fastify falls back to JSON.stringify for objects. This is simpler but slower and does not filter fields. It also cannot produce a compiled function, so every request pays the generic cost. Adding a schema is a common performance win.",
+      "tags": [
+        "serialization",
+        "performance"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-016",
+      "difficulty": "Intermediate",
+      "question": "How do you serialise BigInt values in responses?",
+      "answer": "JSON.stringify throws on BigInt, so you declare the property as a string in the response schema or convert it before returning. fast-json-stringify can output BigInt as a number or string depending on the schema type. Converting to string avoids precision loss for large IDs. Be consistent across endpoints.",
+      "tags": [
+        "serialization",
+        "bigint"
+      ],
+      "references": [
+        "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/BigInt"
+      ]
+    },
+    {
+      "id": "serialization-017",
+      "difficulty": "Intermediate",
+      "question": "What is the role of the reply.serializer method?",
+      "answer": "reply.serializer sets the serialization function for the current response, overriding the route default. It is handy when a handler needs to produce a different format conditionally. The function receives the payload and returns the serialised body. Remember to align the content type with the chosen serializer.",
+      "tags": [
+        "serialization",
+        "reply"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Reply/#serializer"
+      ]
+    },
+    {
+      "id": "serialization-018",
+      "difficulty": "Intermediate",
+      "question": "How does schema-based serialization help with performance benchmarks?",
+      "answer": "Because the serializer is compiled and skips generic reflection, throughput rises and CPU per request drops, which shows up clearly in benchmarks. Filtering fields also reduces payload size and network time. Combined with validation, this is a major reason Fastify ranks well. The gain grows with request volume.",
+      "tags": [
+        "serialization",
+        "performance"
+      ],
+      "references": [
+        "https://fastify.dev/benchmarks/",
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-019",
+      "difficulty": "Intermediate",
+      "question": "How do you serialise an array of objects efficiently?",
+      "answer": "Declare the response schema as an array with an items schema describing the element shape. fast-json-stringify then generates an efficient loop for the items. This is much faster than stringifying a loosely typed array. Always provide items when the response is a list.",
+      "tags": [
+        "serialization",
+        "arrays"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ],
+      "code": "schema: {\n  response: {\n    200: {\n      type: 'array',\n      items: { type: 'object', properties: { id: { type: 'string' } } }\n    }\n  }\n}"
+    },
+    {
+      "id": "serialization-020",
+      "difficulty": "Intermediate",
+      "question": "How do you handle serialization of nullable fields?",
+      "answer": "In JSON Schema you express nullability with type arrays like ['string', 'null'] or anyOf. fast-json-stringify respects this and emits null when appropriate. Declaring it prevents null values from being dropped unexpectedly. Be explicit about which fields can be null.",
+      "tags": [
+        "serialization",
+        "json-schema"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-021",
+      "difficulty": "Advanced",
+      "question": "How does fast-json-stringify differ from JSON.stringify internally?",
+      "answer": "fast-json-stringify generates JavaScript source tailored to the schema, so serialization becomes straight-line property access and string concatenation rather than dynamic enumeration. JSON.stringify must inspect each object at runtime, which is slower for known shapes. The generated code also enforces the schema, dropping unknown fields. The trade-off is that a schema change requires regeneration.",
+      "tags": [
+        "serialization",
+        "internals"
+      ],
+      "references": [
+        "https://github.com/fastify/fast-json-stringify"
+      ]
+    },
+    {
+      "id": "serialization-022",
+      "difficulty": "Advanced",
+      "question": "What are the risks of omitting response schemas in a large API?",
+      "answer": "Without schemas you lose the allow-list guarantee, so internal fields can leak and payloads grow. You also give up the performance of compiled serialization. Over time, contracts become implicit and easy to break. Defining response schemas is a low-cost safeguard for both security and speed.",
+      "tags": [
+        "serialization",
+        "security"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-023",
+      "difficulty": "Advanced",
+      "question": "How would you implement a custom content type with its own serializer?",
+      "answer": "Register a content type parser for input and use reply.type plus a serializer for output, or a custom serializer function on the route. For structured formats you can write a function that converts the payload to the target format. Always set the matching Content-Type header. This keeps negotiation explicit and predictable.",
+      "tags": [
+        "serialization",
+        "content-type"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/ContentTypeParser/",
+        "https://fastify.dev/docs/latest/Reference/Reply/"
+      ]
+    },
+    {
+      "id": "serialization-024",
+      "difficulty": "Advanced",
+      "question": "How do response schemas interact with status codes and default responses?",
+      "answer": "The response schema is keyed by status code, and Fastify picks the entry matching the reply status. You can add a default key for statuses without a specific schema. If none match, serialization falls back to JSON.stringify. Defining 2xx and error codes explicitly avoids surprises.",
+      "tags": [
+        "serialization",
+        "status"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    },
+    {
+      "id": "serialization-025",
+      "difficulty": "Advanced",
+      "question": "What performance pitfalls exist with serializing very large objects?",
+      "answer": "Serializing large objects costs CPU and memory and can block the event loop, so streaming or pagination is preferable. Declaring a response schema keeps output minimal by dropping unneeded fields. Avoid building huge in-memory arrays before responding. Measure with realistic payload sizes.",
+      "tags": [
+        "performance",
+        "serialization"
+      ],
+      "references": [
+        "https://fastify.dev/docs/latest/Reference/Validation-and-Serialization/"
+      ]
+    }
+  ]
+}

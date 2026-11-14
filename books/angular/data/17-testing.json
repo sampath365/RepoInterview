@@ -1,0 +1,380 @@
+{
+  "category": "Testing with Jasmine & Karma",
+  "slug": "testing",
+  "icon": "beaker",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What testing tools does Angular provide by default?",
+      "answer": "Angular projects are set up with a test runner, historically Karma and Jasmine, and modern setups can use the Vitest builder or other runners. TestBed is the core utility for configuring a testing module and creating components and services. Together they cover unit, component, and integration tests.",
+      "tags": [
+        "testing",
+        "karma",
+        "jasmine"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "What is TestBed?",
+      "answer": "TestBed creates an isolated Angular testing environment where you configure providers, imports, and declarations, then create components or services to test. It gives you dependency injection and change detection control in tests. TestBed.resetTestingModule runs automatically between tests when configured.",
+      "tags": [
+        "testbed",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/components-basics",
+        "https://angular.dev/api/core/testing/TestBed"
+      ]
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "How do you create and test a component with TestBed?",
+      "answer": "Configure TestBed with the component's imports, create the fixture with createComponent, run detectChanges to render it, and assert on the DOM or the instance. The fixture exposes the component instance and the root element. This pattern is the basis of most component tests.",
+      "code": "const fixture = TestBed.createComponent(UserComponent);\nfixture.detectChanges();\nexpect(fixture.nativeElement.textContent).toContain('Hello');",
+      "tags": [
+        "component-testing",
+        "testbed"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/components-basics",
+        "https://angular.dev/guide/testing/components-scenarios"
+      ]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "How do you test a service?",
+      "answer": "Configure TestBed with the service's dependencies, inject the service, and call its methods, asserting on the results. Services without dependencies can often be instantiated directly with new. Providing test doubles for the service's dependencies keeps the test focused.",
+      "tags": [
+        "service-testing",
+        "testbed"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/services",
+        "https://angular.dev/api/core/testing/TestBed"
+      ]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "What is a spy in Jasmine and how is it used?",
+      "answer": "A spy wraps a function to record calls and control its return value, created with jasmine.createSpy or spyOn. Spies let a test assert that a collaborator was called with specific arguments. They are the standard way to verify interactions and replace behavior.",
+      "code": "const spy = jasmine.createSpy('save').and.returnValue(of(true));\nexpect(spy).toHaveBeenCalledWith(user);",
+      "tags": [
+        "spies",
+        "jasmine",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/guide/testing/services"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "How do you test HTTP requests?",
+      "answer": "Provide provideHttpClientTesting, inject HttpTestingController, and assert with expectOne and flush to simulate responses. This avoids real network calls and gives full control over the response. Always call verify to confirm no unexpected requests remain.",
+      "code": "const ctrl = TestBed.inject(HttpTestingController);\nservice.getUsers().subscribe();\nctrl.expectOne('/api/users').flush([{ id: 1 }]);\nctrl.verify();",
+      "tags": [
+        "http-testing",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/http/testing",
+        "https://angular.dev/api/common/http/testing/HttpTestingController"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "What is the difference between unit and integration tests?",
+      "answer": "A unit test exercises a small piece of code in isolation, while an integration test exercises several parts together, such as a component with its real dependencies and template. Integration tests catch wiring problems that unit tests miss. A healthy suite uses both.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/guide/testing/components-scenarios"
+      ]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "How do you query the DOM in a component test?",
+      "answer": "Use the fixture's debugElement with By.css or By.directive queries, and read nativeElement for plain DOM access. The debug element provides a consistent API across platforms. Querying by a stable attribute or directive is more robust than depending on styling classes.",
+      "code": "const btn = fixture.debugElement.query(By.css('button'));\nbtn.triggerEventHandler('click');",
+      "tags": [
+        "debug-element",
+        "testing",
+        "dom"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/components-basics",
+        "https://angular.dev/api/core/testing/ComponentFixture"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "How do you test asynchronous code in Angular tests?",
+      "answer": "Use the async and await pattern with whenStable, or the fakeAsync and tick utilities for timers and microtasks. These helpers ensure the test waits for asynchronous work to settle before asserting. Mixing real and fake async incorrectly causes flaky tests.",
+      "tags": [
+        "async-testing",
+        "fakeasync",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/components-scenarios",
+        "https://angular.dev/api/core/testing/fakeAsync"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "Why should tests avoid relying on implementation details?",
+      "answer": "Tests that assert on private fields or internal method calls break when the implementation changes even though behavior is unchanged. Testing through the public API and rendered output makes tests resilient and meaningful. This is a key reason to prefer DOM assertions for components.",
+      "tags": [
+        "testing",
+        "best-practices"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you test a component with inputs and outputs?",
+      "answer": "Set inputs by assigning to the component instance or by using a host component, then call detectChanges and assert the rendered output. For outputs, subscribe to the output or use a spy and trigger the action that emits. Testing through a host component exercises the real binding flow.",
+      "tags": [
+        "inputs",
+        "outputs",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/components-scenarios",
+        "https://angular.dev/guide/components/outputs"
+      ]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you write a test that clicks a button and checks the result?",
+      "answer": "Query the button's debug element, call triggerEventHandler with the event name, then detectChanges and assert the updated DOM or state. This exercises the real event binding and change detection. Prefer this over calling the handler directly, which skips the template wiring.",
+      "code": "fixture.debugElement.query(By.css('button')).triggerEventHandler('click');\nfixture.detectChanges();\nexpect(fixture.nativeElement.textContent).toContain('Saved');",
+      "tags": [
+        "events",
+        "testing",
+        "dom"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/components-scenarios",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "How do you test a component with a service dependency?",
+      "answer": "Provide a test double through TestBed, either with useValue for a simple stub or a spy object, and assert the component's behavior with controlled data. This keeps the test deterministic and fast. Testing with the real service is an integration concern.",
+      "tags": [
+        "test-doubles",
+        "testing",
+        "di"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing/services",
+        "https://angular.dev/api/core/testing/TestBed"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "What is fakeAsync and when do you use it?",
+      "answer": "fakeAsync runs the test body in a fake time zone where you control timers and microtasks with tick and flush. It makes tests that depend on setTimeout or intervals deterministic and fast. Real async work such as HTTP must be mocked in this mode.",
+      "tags": [
+        "fakeasync",
+        "timers",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/api/core/testing/fakeAsync",
+        "https://angular.dev/guide/testing/components-scenarios"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a route guard or resolver?",
+      "answer": "Because guards and resolvers are plain functions in modern Angular, you can call them directly with a stub ActivatedRoute and stub services, then assert the returned boolean, UrlTree, or data. No rendering is required. This makes them some of the easiest things to test thoroughly.",
+      "tags": [
+        "guards",
+        "testing",
+        "routing"
+      ],
+      "references": [
+        "https://angular.dev/guide/routing/route-guards",
+        "https://angular.dev/guide/testing"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "What are component harnesses and why are they useful?",
+      "answer": "Component harnesses provide a supported, stable API for interacting with components in tests, hiding DOM structure so tests do not break when markup changes. Angular Material ships harnesses for its components, and the CDK supports writing your own. They make tests readable and resilient.",
+      "tags": [
+        "harnesses",
+        "testing",
+        "cdk"
+      ],
+      "references": [
+        "https://material.angular.dev/guide/using-component-harnesses",
+        "https://material.angular.dev/cdk/categories"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test pipes and directives?",
+      "answer": "A pure pipe can be instantiated directly and its transform method called with sample inputs, making tests trivial. A directive is tested through a host component so its behavior on an element is exercised. Both approaches avoid unnecessary TestBed setup where possible.",
+      "tags": [
+        "pipes",
+        "directives",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/guide/pipes"
+      ]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you isolate tests from each other?",
+      "answer": "Reset TestBed between tests, avoid shared mutable state, and create fresh instances in each test. The test framework's beforeEach hook configures the module, and each test gets a clean fixture. Isolation prevents order-dependent failures that are painful to debug.",
+      "tags": [
+        "testbed",
+        "isolation",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/api/core/testing/TestBed",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you handle timers and intervals in tests?",
+      "answer": "Use fakeAsync with tick to advance the fake clock, or jasmine's clock utilities to install and control timers. This avoids real waits and makes interval-based logic deterministic. Remember to uninstall or restore the clock so other tests are unaffected.",
+      "tags": [
+        "timers",
+        "fakeasync",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/api/core/testing/fakeAsync",
+        "https://angular.dev/guide/testing/components-scenarios"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you test components that use signals?",
+      "answer": "Set the signal or provide the input signal value, then call detectChanges and assert the rendered output. Because signals update synchronously, tests are simpler than with subscription-based state. Reading the signal directly in the test also verifies derived values.",
+      "tags": [
+        "signals",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/guide/signals",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "What is the difference between the karma and vitest test builders?",
+      "answer": "The Karma builder runs tests in a real browser and has long been the default, while the Vitest builder runs a faster, Vite-based pipeline with browser or node environments. Both can drive Angular's TestBed and component tests. Teams migrating often cite speed and a simpler configuration as the main motivations.",
+      "tags": [
+        "testing",
+        "vitest",
+        "karma"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/tools/cli/build-system-migration"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "How do you test a component that uses OnPush and signals correctly?",
+      "answer": "Trigger the same things Angular does in production, such as setting a signal input or updating a signal the template reads, then call detectChanges. Because signals mark the view dirty, no manual markForCheck is needed in the test. Testing this way catches mistakes that would otherwise only appear at runtime.",
+      "tags": [
+        "onpush",
+        "signals",
+        "testing"
+      ],
+      "references": [
+        "https://angular.dev/best-practices/skipping-subtrees",
+        "https://angular.dev/guide/signals"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you keep an end-to-end and unit testing strategy balanced?",
+      "answer": "Unit and component tests are fast and pinpoint failures, while end-to-end tests cover critical user journeys across the whole stack. The classic guidance is many unit tests, fewer integration tests, and a small set of end-to-end tests. This pyramid keeps the suite fast while still protecting the most important flows.",
+      "tags": [
+        "testing",
+        "strategy",
+        "e2e"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/tools/cli/end-to-end"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "What are the pitfalls of over-mocking in Angular tests?",
+      "answer": "Replacing so many collaborators that the test only verifies the mocks gives false confidence and breaks whenever a signature changes. Mock only what is slow, nondeterministic, or external, and test the real integration where it matters. A good signal is a test that would still pass if the feature were broken.",
+      "tags": [
+        "mocking",
+        "testing",
+        "best-practices"
+      ],
+      "references": [
+        "https://angular.dev/guide/testing",
+        "https://angular.dev/guide/testing/services"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "How do you test zoneless components and change detection?",
+      "answer": "Provide zoneless change detection in the TestBed configuration and rely on signals and the fixture's detectChanges to drive updates. Tests must not assume that arbitrary asynchronous callbacks trigger rendering, because that is exactly what zoneless removes. Writing tests this way documents the real update triggers of the component.",
+      "tags": [
+        "zoneless",
+        "testing",
+        "change-detection"
+      ],
+      "references": [
+        "https://angular.dev/guide/zoneless",
+        "https://angular.dev/guide/testing/components-basics"
+      ]
+    }
+  ]
+}

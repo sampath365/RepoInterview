@@ -1,0 +1,338 @@
+{
+  "category": "API Versioning",
+  "slug": "versioning",
+  "icon": "layers",
+  "questions": [
+    {
+      "id": "versioning-001",
+      "difficulty": "Beginner",
+      "question": "Why version a Web API?",
+      "answer": "Versioning lets you evolve the contract without breaking existing clients, because you can introduce incompatible changes under a new version while the old one keeps working. It buys time for consumers to migrate. Without versioning, any breaking change risks breaking every client at once.",
+      "tags": [
+        "versioning"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-002",
+      "difficulty": "Beginner",
+      "question": "What are the common API versioning strategies?",
+      "answer": "The main strategies are URI path versioning such as /api/v1/products, query string versioning such as ?api-version=1.0, header versioning with a custom header, and media type versioning through the Accept header. Each trades visibility against URL stability. Path versioning is the most common and cache-friendly.",
+      "tags": [
+        "versioning",
+        "strategies"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-003",
+      "difficulty": "Beginner",
+      "question": "What is URI path versioning?",
+      "answer": "URI path versioning puts the version in the path, for example /api/v2/orders. It is explicit, easy to route, and works with any client, including browsers and caches. The downside is that the version becomes part of the resource identity.",
+      "tags": [
+        "versioning",
+        "uri"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "app.MapGroup(\"/api/v1/orders\");"
+    },
+    {
+      "id": "versioning-004",
+      "difficulty": "Beginner",
+      "question": "What is query string versioning?",
+      "answer": "Query string versioning passes the version as a parameter, for example /api/orders?api-version=2.0. The path stays stable and the default can be implicit when omitted. It is less visible than path versioning and some caches may ignore the parameter.",
+      "tags": [
+        "versioning",
+        "query-string"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-005",
+      "difficulty": "Beginner",
+      "question": "What is header versioning?",
+      "answer": "Header versioning carries the version in a request header such as api-version or X-Api-Version. It keeps the URL clean and stable but is less discoverable and harder to test in a browser. Documentation must clearly state the header.",
+      "tags": [
+        "versioning",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-006",
+      "difficulty": "Beginner",
+      "question": "What is media type versioning?",
+      "answer": "Media type versioning encodes the version in the Accept header as a vendor media type, such as application/vnd.contoso.v2+json. It aligns with HTTP content negotiation but is more complex to implement and consume. It suits APIs that already negotiate representations.",
+      "tags": [
+        "versioning",
+        "content-negotiation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/custom-formatters"
+      ]
+    },
+    {
+      "id": "versioning-007",
+      "difficulty": "Beginner",
+      "question": "What is the Microsoft.AspNetCore.Mvc.Versioning package?",
+      "answer": "The Asp.Versioning.Mvc package adds versioning support to controllers, including version readers, versioned routes, and a version-aware API explorer. It configures how versions are read and which are assumed by default. A matching package adds support for minimal APIs.",
+      "tags": [
+        "versioning",
+        "packages"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "builder.Services.AddApiVersioning(o => o.DefaultApiVersion = new(1, 0));"
+    },
+    {
+      "id": "versioning-008",
+      "difficulty": "Beginner",
+      "question": "What does the api-supported-versions response header do?",
+      "answer": "The api-supported-versions header lists the versions an endpoint supports, helping clients discover valid values. Related headers report deprecated versions and their sunset. These headers make versioning self-describing.",
+      "tags": [
+        "versioning",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-009",
+      "difficulty": "Beginner",
+      "question": "What is a default API version?",
+      "answer": "The default version is used when a request does not specify one and AssumeDefaultVersionWhenUnspecified is enabled. This keeps existing clients working when versioning is introduced. Choose the default deliberately so clients are not silently pinned to an old contract.",
+      "tags": [
+        "versioning",
+        "defaults"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-010",
+      "difficulty": "Beginner",
+      "question": "When should you create a new version?",
+      "answer": "Create a new version only for breaking changes such as removing or renaming a field, changing a type or meaning, or altering required behavior. Additive changes such as new optional fields do not require a new version. Over-versioning fragments the API and multiplies maintenance.",
+      "tags": [
+        "versioning",
+        "compatibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-011",
+      "difficulty": "Intermediate",
+      "question": "How do you implement path versioning in ASP.NET Core?",
+      "answer": "Add the versioning services, apply the ApiVersion attribute or the version route segment, and configure the version reader. With minimal APIs use versioned route groups and MapToApiVersion equivalents. The version then appears as a path segment such as v1.",
+      "tags": [
+        "versioning",
+        "implementation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "[ApiVersion(\"2.0\")]\n[Route(\"api/v{version:apiVersion}/orders\")]"
+    },
+    {
+      "id": "versioning-012",
+      "difficulty": "Intermediate",
+      "question": "How do you support multiple versions from one controller?",
+      "answer": "Apply the ApiVersion attribute more than once to the controller or action and use MapToApiVersion to bind specific actions to specific versions. This lets shared logic serve several versions. Where behavior diverges, split actions or controllers per version.",
+      "tags": [
+        "versioning",
+        "controllers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "[ApiVersion(\"1.0\")]\n[ApiVersion(\"2.0\")]\npublic class OrdersController : ControllerBase { }"
+    },
+    {
+      "id": "versioning-013",
+      "difficulty": "Intermediate",
+      "question": "How do you deprecate an API version?",
+      "answer": "Mark it deprecated with ApiVersion.Deprecated or a Deprecated attribute so the response advertises deprecation, and announce a sunset date using the Sunset header. Keep the version running until the announced date. Communicate the migration path clearly to consumers.",
+      "tags": [
+        "versioning",
+        "deprecation"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "[ApiVersion(\"1.0\", Deprecated = true)]"
+    },
+    {
+      "id": "versioning-014",
+      "difficulty": "Intermediate",
+      "question": "How do you version minimal APIs?",
+      "answer": "Use the Asp.Versioning.Http package with versioned route groups, for example app.NewVersionedApi() and MapGroup with HasApiVersion. This applies the same reader configuration as controllers. Versioned groups keep endpoints organized per version.",
+      "tags": [
+        "versioning",
+        "minimal-apis"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/minimal-apis"
+      ],
+      "code": "var v1 = app.NewVersionedApi(\"orders\")\n    .MapGroup(\"/api/orders\").HasApiVersion(1, 0);"
+    },
+    {
+      "id": "versioning-015",
+      "difficulty": "Intermediate",
+      "question": "How do you report supported versions to clients?",
+      "answer": "Enable ReportApiVersions so responses include api-supported-versions and api-deprecated-versions headers. This lets clients discover what is available without external documentation. It also nudges clients to migrate off deprecated versions.",
+      "tags": [
+        "versioning",
+        "headers"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ],
+      "code": "o.ReportApiVersions = true;"
+    },
+    {
+      "id": "versioning-016",
+      "difficulty": "Intermediate",
+      "question": "How do you return 400 for an unsupported version?",
+      "answer": "When a request specifies a version the endpoint does not support, the versioning middleware returns 400 Bad Request by default. You can customize this to 404 or another shape for consistency with your error contract. A clear error tells the client which versions are valid.",
+      "tags": [
+        "versioning",
+        "errors"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-017",
+      "difficulty": "Intermediate",
+      "question": "How do you share models across versions?",
+      "answer": "Reuse DTOs when the shape is identical and introduce version-specific DTOs only where fields differ, mapping between them in the application layer. This avoids duplicating logic while keeping each contract explicit. Namespaces per version can help organize divergent models.",
+      "tags": [
+        "versioning",
+        "models"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-018",
+      "difficulty": "Intermediate",
+      "question": "What are the trade-offs of media type versioning?",
+      "answer": "Media type versioning is the most HTTP-idiomatic and keeps URLs stable, but it is harder for clients to use and to test, and it complicates caching and content negotiation. It also makes documentation more complex. Choose it only when URL stability is a hard requirement.",
+      "tags": [
+        "versioning",
+        "trade-offs"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/web-api/advanced/custom-formatters"
+      ]
+    },
+    {
+      "id": "versioning-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test that a specific version is routed correctly?",
+      "answer": "Send requests with the version encoded in the chosen location and assert the response comes from the intended action, including a check that an unsupported version is rejected. Cover each reader you enabled, such as path and header. This catches configuration mistakes where a version reader silently accepts the wrong input.",
+      "tags": [
+        "versioning",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-020",
+      "difficulty": "Intermediate",
+      "question": "How do you keep OpenAPI documents per version?",
+      "answer": "Configure the API explorer to produce a document per version and serve each at a versioned path, so Swagger UI can switch between them. This keeps documentation accurate for every supported contract. Automating the documents in CI keeps them from drifting.",
+      "tags": [
+        "versioning",
+        "openapi"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-021",
+      "difficulty": "Advanced",
+      "question": "How do you migrate clients from v1 to v2 with minimal disruption?",
+      "answer": "Keep v1 available and stable while adding v2, publish a migration guide and deprecation timeline, instrument v1 usage to see who is still calling, and reach out to heavy consumers. Provide adapters or compatibility shims where feasible. Retire v1 only after usage drops and the sunset date passes.",
+      "tags": [
+        "versioning",
+        "migration"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    },
+    {
+      "id": "versioning-022",
+      "difficulty": "Advanced",
+      "question": "How do you version an event-driven or message-based contract?",
+      "answer": "Treat messages as contracts and version them with schema registries and backward-compatible evolution, such as adding optional fields and using explicit event type versions. Consumers must tolerate unknown fields. This mirrors API versioning principles in asynchronous systems.",
+      "tags": [
+        "versioning",
+        "messaging"
+      ],
+      "references": [
+        "https://learn.microsoft.com/dotnet/architecture/microservices/"
+      ]
+    },
+    {
+      "id": "versioning-023",
+      "difficulty": "Advanced",
+      "question": "How do you combine versioning with caching?",
+      "answer": "Include the version in the cache key and vary by any version header, and be careful that media type versioning interacts with the Vary header. Path versioning makes cache keys naturally distinct. Getting this wrong can serve the wrong representation to a client.",
+      "tags": [
+        "versioning",
+        "caching"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/performance/caching/response"
+      ]
+    },
+    {
+      "id": "versioning-024",
+      "difficulty": "Advanced",
+      "question": "How do you test multiple API versions?",
+      "answer": "Parameterize integration tests by version, asserting that each version returns its documented contract and that deprecated versions still work until removal. Contract tests catch accidental cross-version leakage. Automate this so every change is validated against all supported versions.",
+      "tags": [
+        "versioning",
+        "testing"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/test/integration-tests"
+      ]
+    },
+    {
+      "id": "versioning-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide between versioning and backward-compatible evolution?",
+      "answer": "Prefer backward-compatible, additive changes and tolerate unknown fields so most evolution needs no new version. Reserve versioning for genuinely breaking changes that cannot be expressed compatibly. This keeps the API surface small and reduces maintenance across versions.",
+      "tags": [
+        "versioning",
+        "compatibility"
+      ],
+      "references": [
+        "https://learn.microsoft.com/aspnet/core/fundamentals/openapi/aspnetcore-openapi"
+      ]
+    }
+  ]
+}

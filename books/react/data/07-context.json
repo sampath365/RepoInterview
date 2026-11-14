@@ -1,0 +1,336 @@
+{
+  "category": "Context API",
+  "slug": "context",
+  "icon": "share",
+  "questions": [
+    {
+      "id": "context-001",
+      "difficulty": "Beginner",
+      "question": "What is the React context API?",
+      "answer": "Context provides a way to pass data through the component tree without manually threading props at every level. You create a context, wrap part of the tree in a provider, and any descendant can read the value with useContext. It is designed for values that many components need, such as theme, locale or the current user. It complements, rather than replaces, props and state.",
+      "tags": [
+        "context",
+        "overview"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-002",
+      "difficulty": "Beginner",
+      "question": "How do you create and use a context?",
+      "answer": "You call createContext with a default value, wrap children in its Provider and pass the current value, then read it with useContext in a descendant. The default is only used when there is no matching provider above. Values change when the provider value changes, re-rendering consumers. Keep the provider as close as possible to the consumers that need it.",
+      "code": "const Theme = createContext('light');\nfunction Btn() {\n  const theme = useContext(Theme);\n  return <button className={theme}>Go</button>;\n}",
+      "tags": [
+        "context",
+        "api"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-003",
+      "difficulty": "Beginner",
+      "question": "What problem does context solve?",
+      "answer": "Context solves prop drilling, where data must be passed through intermediate components that do not use it. Instead, the data is provided once and read directly by the components that need it. This reduces noise in the component signatures and makes refactoring easier. It is especially useful for cross-cutting concerns like theming and localization.",
+      "tags": [
+        "context",
+        "prop-drilling"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-004",
+      "difficulty": "Beginner",
+      "question": "What is the default value of a context used for?",
+      "answer": "The default value passed to createContext is used when a component reads the context but has no matching provider above it. It is a fallback, not a way to set the initial value at runtime. Choose a sensible default so components still work in isolation, such as in tests or a storybook. The real value comes from the nearest provider.",
+      "tags": [
+        "context",
+        "defaults"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createContext"
+      ]
+    },
+    {
+      "id": "context-005",
+      "difficulty": "Beginner",
+      "question": "How does useContext differ from props?",
+      "answer": "Props are explicit and local, passed from a specific parent to a specific child. Context is implicit and global to a subtree, read by any descendant that asks for it. Props make data flow obvious, while context reduces repetition for widely shared values. Prefer props when the data only travels a level or two.",
+      "tags": [
+        "context",
+        "props"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-006",
+      "difficulty": "Beginner",
+      "question": "What kinds of data belong in context?",
+      "answer": "Context suits data that many components across the tree need and that changes relatively rarely, such as theme, current user, locale or feature flags. It is not ideal for high-frequency state that changes on every keystroke, because all consumers re-render. For such cases use local state or a dedicated store. Match the tool to how widely and how often the data is used.",
+      "tags": [
+        "context",
+        "usage"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-007",
+      "difficulty": "Beginner",
+      "question": "How do you update a context value?",
+      "answer": "You change the value you pass to the provider, usually by keeping it in state in the provider component. Consumers re-render when the provided value changes. If consumers also need to update it, pass setter functions or callbacks through the same context or a separate one. Keeping state in the provider gives you a single source of truth.",
+      "code": "function ThemeProvider({ children }) {\n  const [theme, setTheme] = useState('light');\n  return (\n    <Theme.Provider value={{ theme, setTheme }}>{children}</Theme.Provider>\n  );\n}",
+      "tags": [
+        "context",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-008",
+      "difficulty": "Beginner",
+      "question": "Can a component read multiple contexts?",
+      "answer": "Yes, a component can call useContext for as many contexts as it needs. Each call reads the nearest provider of that specific context. This lets you combine concerns, such as reading both theme and locale in one component. Keep the number small so the component dependencies stay clear.",
+      "tags": [
+        "context",
+        "useContext"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-009",
+      "difficulty": "Beginner",
+      "question": "What happens if there is no provider above a consumer?",
+      "answer": "The consumer receives the default value passed to createContext instead of throwing an error. This can hide a missing provider because the component still renders with the fallback. To catch mistakes, some teams use a default of null and throw a descriptive error when the value is null. That makes missing providers obvious during development.",
+      "tags": [
+        "context",
+        "errors"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createContext"
+      ]
+    },
+    {
+      "id": "context-010",
+      "difficulty": "Beginner",
+      "question": "What is the role of the Provider component?",
+      "answer": "The Provider makes a context value available to all descendants in its subtree. Any consumer below it, no matter how deep, reads that value. Providers can be nested, and the nearest one wins. Placing the provider low in the tree limits how many components re-render when the value changes.",
+      "tags": [
+        "context",
+        "provider"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createContext"
+      ]
+    },
+    {
+      "id": "context-011",
+      "difficulty": "Intermediate",
+      "question": "Why do all consumers re-render when the context value changes?",
+      "answer": "When the value passed to a provider changes by reference, every component that reads that context re-renders, even if it only uses part of the value. This is because context propagates the whole value. Wrapping the value in useMemo or splitting into multiple contexts limits the impact. Avoid providing a new object literal on every render.",
+      "code": "const value = useMemo(() => ({ user, setUser }), [user]);",
+      "tags": [
+        "context",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-012",
+      "difficulty": "Intermediate",
+      "question": "How do you optimize context performance?",
+      "answer": "Memoize the provider value so it only changes when the underlying data changes, and split unrelated data into separate contexts. Keep fast-changing values out of broad contexts. Move providers as low in the tree as possible so fewer components subscribe. These steps reduce unnecessary re-renders across the tree.",
+      "tags": [
+        "context",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-013",
+      "difficulty": "Intermediate",
+      "question": "How do you provide both a value and its updater through context?",
+      "answer": "You keep the state in the provider component and pass an object containing the value and setter functions as the context value. Memoize that object so it only changes when the state does. Consumers then read and update through the same context. For frequently updated state, split read and write into different contexts so writers do not re-render readers.",
+      "tags": [
+        "context",
+        "state"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-014",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between context and Redux?",
+      "answer": "Context is a transport mechanism for passing values down the tree, while Redux is a state container with a store, reducers, actions and middleware. Context alone has no built-in way to optimize updates or track changes over time. Redux adds predictable updates, devtools and selectors that limit re-renders. You can combine them, using context to provide the store.",
+      "tags": [
+        "context",
+        "redux"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test a component that uses context?",
+      "answer": "Render the component inside a provider with the value you want to test, so the hook returns your controlled data. You can wrap the render helper in your test setup to avoid repeating the provider. For error cases, render without a provider to verify the fallback behavior. This keeps tests focused on the component logic.",
+      "tags": [
+        "context",
+        "testing"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/intro/"
+      ]
+    },
+    {
+      "id": "context-016",
+      "difficulty": "Intermediate",
+      "question": "How do you create a custom hook that wraps useContext?",
+      "answer": "Write a hook that calls useContext and throws a clear error if the value is missing, then export it as the public API. Components import the hook rather than the context object itself, which hides the implementation and improves error messages. This pattern is common for theme, auth and store contexts. It also gives you a single place to add derived values.",
+      "code": "export function useAuth() {\n  const ctx = useContext(AuthContext);\n  if (!ctx) throw new Error('useAuth must be inside AuthProvider');\n  return ctx;\n}",
+      "tags": [
+        "context",
+        "custom-hooks"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-017",
+      "difficulty": "Intermediate",
+      "question": "How does context interact with server rendering?",
+      "answer": "During server rendering, context values are available to the components rendered within a provider on the server. The client must render with the same values on hydration to avoid mismatches. For per-request data you set up a fresh provider for each request. Careless defaults can cause hydration warnings if server and client values differ.",
+      "tags": [
+        "context",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/server"
+      ]
+    },
+    {
+      "id": "context-018",
+      "difficulty": "Intermediate",
+      "question": "Can you use context to avoid passing callbacks deeply?",
+      "answer": "Yes, you can provide callback functions through context so deeply nested components can trigger updates without a long prop chain. Keep the callbacks stable with useCallback so the context value does not change unnecessarily. This works well for things like opening a global modal or triggering a toast. For component-specific actions, props are still clearer.",
+      "tags": [
+        "context",
+        "callbacks"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-019",
+      "difficulty": "Intermediate",
+      "question": "What are common mistakes when using context?",
+      "answer": "Common mistakes include putting fast-changing state in a broad context, creating a new provider value object on every render, and using context when props would be simpler. Another is forgetting to memoize the value, which re-renders all consumers. Using a custom hook with a clear error also prevents silent fallback bugs.",
+      "tags": [
+        "context",
+        "pitfalls"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-020",
+      "difficulty": "Intermediate",
+      "question": "How do nested providers behave?",
+      "answer": "When providers for the same context are nested, the innermost provider wins for the components inside it. This lets you override a value for a subtree, such as a dark theme section inside a light app. Components outside the inner provider keep reading the outer value. Nesting is a clean way to scope overrides.",
+      "tags": [
+        "context",
+        "provider"
+      ],
+      "references": [
+        "https://react.dev/reference/react/createContext"
+      ]
+    },
+    {
+      "id": "context-021",
+      "difficulty": "Advanced",
+      "question": "Why can providing a new object literal each render be a problem?",
+      "answer": "Each render creates a new object reference, so React treats the context value as changed and re-renders every consumer even when the data is identical. This defeats the purpose of selective updates and can hurt performance in large trees. Wrap the value in useMemo or split the context so only truly changed parts update. The same reasoning applies to arrays and functions in the value.",
+      "tags": [
+        "context",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-022",
+      "difficulty": "Advanced",
+      "question": "How do you split a context into read and write parts?",
+      "answer": "Create two contexts, one for the state value and one for the update functions, and provide both from the same component. Components that only dispatch updates subscribe to the write context and do not re-render when the value changes. This separation is a common optimization for frequently updated stores. Keep the two in sync through the provider.",
+      "tags": [
+        "context",
+        "performance"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-023",
+      "difficulty": "Advanced",
+      "question": "When is a state management library a better choice than context?",
+      "answer": "When state updates are frequent, when many components select small slices of a large store, or when you need middleware, devtools and persistence, a library such as Redux or Zustand is a better fit. Context re-renders all consumers on any change and offers no selectors or time-travel. Libraries add selective subscriptions and predictable update patterns. Use context for low-frequency, widely shared values.",
+      "tags": [
+        "context",
+        "state-management"
+      ],
+      "references": [
+        "https://react.dev/learn/passing-data-deeply-with-context"
+      ]
+    },
+    {
+      "id": "context-024",
+      "difficulty": "Advanced",
+      "question": "How does context behave under concurrent rendering?",
+      "answer": "Context reads are consistent within a render, and React ensures that a consumer sees the value from the render it is part of. Because renders can be interrupted, you should not rely on context values changing mid-render. Keeping provider values stable and memoized avoids tearing-like surprises. Treat context as a snapshot for the duration of a render.",
+      "tags": [
+        "context",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    },
+    {
+      "id": "context-025",
+      "difficulty": "Advanced",
+      "question": "What is the trade-off between context granularity and complexity?",
+      "answer": "Finer-grained contexts limit which components re-render but increase the number of providers and hooks to manage. A single broad context is simpler to write but causes more re-renders as the app grows. The right balance depends on how often each piece of data changes and how many consumers it has. Start simple and split only where profiling shows a problem.",
+      "tags": [
+        "context",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/reference/react/useContext"
+      ]
+    }
+  ]
+}

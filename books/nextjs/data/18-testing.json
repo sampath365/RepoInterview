@@ -1,0 +1,336 @@
+{
+  "category": "Testing Next.js Apps",
+  "slug": "testing",
+  "icon": "check",
+  "questions": [
+    {
+      "id": "testing-001",
+      "difficulty": "Beginner",
+      "question": "What tools are commonly used to test Next.js apps?",
+      "answer": "Jest or Vitest for unit and integration tests, React Testing Library for component behavior, and Playwright or Cypress for end-to-end tests. Each layer covers different risks. Use a mix rather than relying on one. Next.js documents setup for the popular tools.",
+      "tags": [
+        "testing",
+        "tooling"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-002",
+      "difficulty": "Beginner",
+      "question": "How do you test a React component?",
+      "answer": "Render it with React Testing Library and assert on user-visible output using queries like getByRole. Simulate interactions with user-event. Avoid testing implementation details. This keeps tests resilient to refactors.",
+      "code": "render(<Button label=\"Save\" />);\nexpect(screen.getByRole('button')).toHaveTextContent('Save');",
+      "tags": [
+        "testing",
+        "react-testing-library"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing/jest"
+      ]
+    },
+    {
+      "id": "testing-003",
+      "difficulty": "Beginner",
+      "question": "What is an end-to-end test?",
+      "answer": "An end-to-end test drives the real app in a browser, from navigation to data and UI, to verify a full user flow. Playwright and Cypress are common tools. They catch integration issues unit tests miss but are slower. Keep a focused set of critical flows.",
+      "tags": [
+        "e2e",
+        "playwright"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing/playwright"
+      ]
+    },
+    {
+      "id": "testing-004",
+      "difficulty": "Beginner",
+      "question": "Why is testing async Server Components challenging?",
+      "answer": "Async Server Components do not render in typical unit test environments like jsdom because they need the server runtime. You test them with end-to-end tests or by extracting logic into testable functions. Testing the data function separately is often easiest. This keeps most logic covered without a server.",
+      "tags": [
+        "server-components",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-005",
+      "difficulty": "Beginner",
+      "question": "How do you test a Server Action?",
+      "answer": "Test the underlying logic by extracting it into a pure function, or call the action in an integration test with the required context. Mock external services. Assert on the database or returned value. This covers the mutation logic.",
+      "tags": [
+        "server-actions",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-006",
+      "difficulty": "Beginner",
+      "question": "How do you test a Route Handler?",
+      "answer": "Import the exported method and call it with a Request object, then assert on the Response. This tests the handler without a running server. Mock dependencies like the database. It is fast and focused.",
+      "code": "const res = await GET(new Request('http://test/api'));\nexpect(res.status).toBe(200);",
+      "tags": [
+        "route-handlers",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-007",
+      "difficulty": "Beginner",
+      "question": "What is the testing pyramid?",
+      "answer": "The testing pyramid suggests many fast unit tests, fewer integration tests, and a small number of end-to-end tests. This balances speed and confidence. Too many e2e tests slow the suite and become flaky. Follow the shape loosely based on risk.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-008",
+      "difficulty": "Beginner",
+      "question": "How do you test a form submission?",
+      "answer": "Render the form, fill inputs with user-event, submit, and assert that the action or handler was called and the UI updated. Mock the server action or provide a test handler. Assert on visible feedback like errors or success. This tests the user flow.",
+      "tags": [
+        "forms",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-009",
+      "difficulty": "Beginner",
+      "question": "How do you mock fetch in tests?",
+      "answer": "Replace global fetch with a mock that returns controlled responses, or use a library like MSW to intercept requests at the network level. MSW keeps tests closer to real behavior. Always reset mocks between tests. This isolates tests from the network.",
+      "tags": [
+        "mocking",
+        "fetch"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-010",
+      "difficulty": "Beginner",
+      "question": "Why avoid testing implementation details?",
+      "answer": "Tests tied to internal structure break on refactors that do not change behavior, causing false failures. Test the observable behavior through public interfaces. This keeps tests meaningful and maintainable. It also documents intended behavior.",
+      "tags": [
+        "testing",
+        "best-practices"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-011",
+      "difficulty": "Intermediate",
+      "question": "How do you test components that use next/navigation hooks?",
+      "answer": "Mock next/navigation functions like useRouter and usePathname in your test setup so components can render. Provide the values each test needs. This isolates the component from the router. It avoids needing a real Next.js server.",
+      "code": "jest.mock('next/navigation', () => ({ useRouter: () => ({ push: jest.fn() }) }));",
+      "tags": [
+        "testing",
+        "navigation"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing/jest"
+      ]
+    },
+    {
+      "id": "testing-012",
+      "difficulty": "Intermediate",
+      "question": "How do you test a page with data fetching?",
+      "answer": "Test the data-fetching function separately, and test the component by passing data as props. For full flows use an e2e test against a test server. Avoid hitting real external APIs. This separates data correctness from rendering.",
+      "tags": [
+        "testing",
+        "data-fetching"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-013",
+      "difficulty": "Intermediate",
+      "question": "What should you cover with end-to-end tests?",
+      "answer": "Cover critical user journeys like sign-up, checkout, and core navigation. Keep the suite small and stable. Run it against a production-like build. E2E tests give the most confidence but cost the most to maintain.",
+      "tags": [
+        "e2e",
+        "strategy"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing/playwright"
+      ]
+    },
+    {
+      "id": "testing-014",
+      "difficulty": "Intermediate",
+      "question": "How do you make tests deterministic?",
+      "answer": "Control time with fake timers, seed random data, and mock network calls. Reset state between tests. Avoid relying on ordering or real clocks. Determinism prevents flaky tests.",
+      "tags": [
+        "testing",
+        "determinism"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-015",
+      "difficulty": "Intermediate",
+      "question": "How do you test middleware?",
+      "answer": "Extract the logic into a testable function that takes a request-like object and returns a response, then unit test it. Or run an e2e test asserting the redirect behavior. Avoid depending on the edge runtime in unit tests. This covers the branching logic.",
+      "tags": [
+        "middleware",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-016",
+      "difficulty": "Intermediate",
+      "question": "How do you test error boundaries and loading states?",
+      "answer": "Trigger the error path and assert the fallback UI renders, and render the loading component directly to assert its output. For streaming, e2e tests can assert the final content. This covers resilience paths that happy-path tests miss.",
+      "tags": [
+        "error-handling",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-017",
+      "difficulty": "Intermediate",
+      "question": "How do you test metadata?",
+      "answer": "Call generateMetadata with the expected props and assert on the returned object. For static metadata, import and check it. This verifies SEO output without rendering the head. It is fast and precise.",
+      "code": "const md = await generateMetadata({ params: Promise.resolve({ slug: 'a' }) });",
+      "tags": [
+        "metadata",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-018",
+      "difficulty": "Intermediate",
+      "question": "How do you use MSW in Next.js tests?",
+      "answer": "Define handlers for the API endpoints your app calls and start the server in your test setup. MSW intercepts fetch and returns the handlers' responses. Override handlers per test as needed. This keeps tests fast and realistic.",
+      "tags": [
+        "msw",
+        "mocking"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test authentication flows?",
+      "answer": "For unit tests, mock the session helper to return a user or null. For e2e, drive the real login and assert on protected pages. Test both authenticated and unauthenticated paths. Include authorization failures.",
+      "tags": [
+        "auth",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-020",
+      "difficulty": "Intermediate",
+      "question": "How do you set up a test database?",
+      "answer": "Use a separate database or container for tests, seed it with known data, and reset between tests. Run migrations before the suite. Never point tests at production. This makes integration tests reliable.",
+      "tags": [
+        "database",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-021",
+      "difficulty": "Advanced",
+      "question": "How do you test streaming and Suspense behavior?",
+      "answer": "End-to-end tests can assert that the shell appears before slow content resolves by observing the DOM over time. Unit tests can render the fallback directly. Testing timing precisely is hard, so focus on final correctness and visible progress. Use network throttling to expose ordering.",
+      "tags": [
+        "streaming",
+        "e2e"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing/playwright"
+      ]
+    },
+    {
+      "id": "testing-022",
+      "difficulty": "Advanced",
+      "question": "How do you keep e2e tests fast and reliable in CI?",
+      "answer": "Run them against a production build, parallelize where safe, and use test ids or roles for stable selectors. Retry only for known flakiness. Cache dependencies. Keep the critical path small. This balances coverage and speed.",
+      "tags": [
+        "ci",
+        "e2e"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing/playwright"
+      ]
+    },
+    {
+      "id": "testing-023",
+      "difficulty": "Advanced",
+      "question": "How do you test Server Actions end to end?",
+      "answer": "Exercise the real form in an e2e test against a test database, asserting both the mutation and the revalidated UI. This covers the full round trip including serialization. Keep the dataset isolated. It is the highest-confidence test for mutations.",
+      "tags": [
+        "server-actions",
+        "e2e"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-024",
+      "difficulty": "Advanced",
+      "question": "How do you measure test coverage meaningfully?",
+      "answer": "Track coverage but focus on critical paths rather than a high percentage. Use branch coverage to find untested logic. Review gaps rather than chasing a number. Coverage is a signal, not a goal.",
+      "tags": [
+        "coverage",
+        "testing"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    },
+    {
+      "id": "testing-025",
+      "difficulty": "Advanced",
+      "question": "How do you decide the right test for a given change?",
+      "answer": "Unit test pure logic, integration test components and handlers with mocked boundaries, and e2e test critical user flows. Choose the lowest level that gives confidence. Avoid duplicating the same assertion across layers. This keeps the suite fast and useful.",
+      "tags": [
+        "testing",
+        "strategy"
+      ],
+      "references": [
+        "https://nextjs.org/docs/app/building-your-application/testing"
+      ]
+    }
+  ]
+}

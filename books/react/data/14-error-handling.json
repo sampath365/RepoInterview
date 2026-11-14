@@ -1,0 +1,337 @@
+{
+  "category": "Error Boundaries & Suspense",
+  "slug": "error-handling",
+  "icon": "alert",
+  "questions": [
+    {
+      "id": "error-handling-001",
+      "difficulty": "Beginner",
+      "question": "What is an error boundary?",
+      "answer": "An error boundary is a component that catches JavaScript errors thrown during rendering, in lifecycle methods and in constructors of its child tree, then shows a fallback UI instead of a blank screen. It is implemented as a class with static getDerivedStateFromError and componentDidCatch. It does not catch errors in event handlers, async code or itself. Error boundaries keep one broken part of the UI from taking down the whole app.",
+      "tags": [
+        "error-boundaries",
+        "errors"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component#catching-rendering-errors-with-an-error-boundary"
+      ]
+    },
+    {
+      "id": "error-handling-002",
+      "difficulty": "Beginner",
+      "question": "What errors do error boundaries not catch?",
+      "answer": "Error boundaries do not catch errors in event handlers, asynchronous callbacks such as setTimeout, server-side rendering, or errors thrown in the boundary itself. Event handler errors should be handled with try and catch or state. For async work you handle the promise rejection. Knowing the gaps prevents the false assumption that everything is covered.",
+      "tags": [
+        "error-boundaries",
+        "errors"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-003",
+      "difficulty": "Beginner",
+      "question": "How do you create an error boundary?",
+      "answer": "You define a class component with a static getDerivedStateFromError method that returns state to render a fallback, and optionally componentDidCatch for logging. You then wrap the parts of the tree you want to protect. There is no built-in hook equivalent, though libraries provide one. Keep boundaries around meaningful regions rather than the entire app.",
+      "code": "class Boundary extends React.Component {\n  state = { hasError: false };\n  static getDerivedStateFromError() {\n    return { hasError: true };\n  }\n  render() {\n    return this.state.hasError ? <Fallback /> : this.props.children;\n  }\n}",
+      "tags": [
+        "error-boundaries",
+        "implementation"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-004",
+      "difficulty": "Beginner",
+      "question": "What is a fallback UI?",
+      "answer": "A fallback UI is what the error boundary renders instead of the failed subtree, such as an error message with a retry button. It should be clear, non-technical and offer a way forward. A good fallback prevents the whole page from appearing broken. You can also log the error to a monitoring service while showing the fallback.",
+      "tags": [
+        "error-boundaries",
+        "ux"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-005",
+      "difficulty": "Beginner",
+      "question": "What is Suspense?",
+      "answer": "Suspense is a component that shows a fallback while its children are waiting for something asynchronous, such as lazily loaded code or data. It lets you declare loading states without manual loading flags in every component. You wrap the part of the tree that may suspend. Nested Suspense boundaries let different regions show their own fallbacks.",
+      "code": "<Suspense fallback={<Spinner />}>\n  <Profile />\n</Suspense>",
+      "tags": [
+        "suspense",
+        "loading"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-006",
+      "difficulty": "Beginner",
+      "question": "How do you lazily load a component?",
+      "answer": "You use React.lazy with a dynamic import to load a component only when it is first rendered, and wrap it in Suspense with a fallback. This reduces the initial bundle by deferring code that is not needed immediately. Route-level lazy loading is the most common use. The fallback appears while the chunk downloads.",
+      "code": "const Chart = lazy(() => import('./Chart'));",
+      "tags": [
+        "lazy",
+        "suspense"
+      ],
+      "references": [
+        "https://react.dev/reference/react/lazy"
+      ]
+    },
+    {
+      "id": "error-handling-007",
+      "difficulty": "Beginner",
+      "question": "Why is a blank screen a bad error experience?",
+      "answer": "If an error is uncaught, React unmounts the tree and the user sees nothing, with no hint of what happened. A blank screen looks like the app is broken and offers no recovery. Error boundaries turn that into a helpful message. Good error UI also gives users a way to retry or navigate away.",
+      "tags": [
+        "errors",
+        "ux"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-008",
+      "difficulty": "Beginner",
+      "question": "What is componentDidCatch used for?",
+      "answer": "componentDidCatch is a lifecycle method called when a descendant throws, and it is used for side effects such as logging the error and its component stack to a monitoring service. It does not render the fallback itself; getDerivedStateFromError sets the state that does. Using both gives you both reporting and a fallback. Keep the logging resilient so it does not throw.",
+      "tags": [
+        "error-boundaries",
+        "logging"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-009",
+      "difficulty": "Beginner",
+      "question": "How do you handle errors in event handlers?",
+      "answer": "Error boundaries do not catch them, so you wrap the logic in try and catch and set an error state to show feedback. Alternatively, throw inside a state updater during render so a boundary can catch it, but that is rarely needed. Most handler errors should surface as a message or a toast. Always log the error for diagnosis.",
+      "tags": [
+        "errors",
+        "events"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-010",
+      "difficulty": "Beginner",
+      "question": "What happens when a component throws during render?",
+      "answer": "React unwinds the tree until it finds an error boundary, which renders its fallback instead of the failed subtree. If no boundary exists, the whole root unmounts and the screen goes blank. In development you also see an overlay with the error and component stack. This is why placing boundaries around major regions is recommended.",
+      "tags": [
+        "errors",
+        "rendering"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-011",
+      "difficulty": "Intermediate",
+      "question": "How do you reset an error boundary?",
+      "answer": "Because the boundary holds hasError in state, you can reset it by changing a key on the boundary or the wrapped content, or by exposing a reset handler that sets hasError back to false. A retry button that resets and refetches is a common pattern. Changing the key remounts the subtree and clears the error. Choose whichever fits the recovery flow.",
+      "code": "<ErrorBoundary key={routeKey}>\n  <Page />\n</ErrorBoundary>",
+      "tags": [
+        "error-boundaries",
+        "recovery"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-012",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between error boundaries and try/catch?",
+      "answer": "try and catch handles synchronous errors in the code where it runs, such as in event handlers. Error boundaries handle errors thrown during rendering of a subtree and provide a UI fallback. They are complementary: use try and catch for imperative logic and boundaries for render-time failures. Neither catches async errors without additional handling.",
+      "tags": [
+        "errors",
+        "boundaries"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-013",
+      "difficulty": "Intermediate",
+      "question": "How does Suspense work with lazy components?",
+      "answer": "When a lazy component has not loaded yet, rendering it suspends, and the nearest Suspense boundary shows its fallback until the chunk arrives. Once loaded, the real component renders in place. Multiple lazy components under one boundary share the same fallback. Placing boundaries thoughtfully avoids replacing too much of the screen.",
+      "tags": [
+        "suspense",
+        "lazy"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-014",
+      "difficulty": "Intermediate",
+      "question": "How do you show a fallback only after a delay?",
+      "answer": "A fallback that appears instantly can flash for fast loads, so you can delay showing it with a short timer or use a library that waits before displaying a spinner. When the content arrives first, the spinner never appears. This reduces flicker and perceived jank. Keep the delay short, often around a few hundred milliseconds.",
+      "tags": [
+        "suspense",
+        "ux"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-015",
+      "difficulty": "Intermediate",
+      "question": "What is a suspense-enabled data source?",
+      "answer": "A data source is suspense-enabled when it throws a promise while data is loading and returns the data when ready, allowing Suspense to show a fallback. Libraries like React Query and Relay support this mode. It lets components read data as if it were already available. The trade-off is that you must adopt the library conventions.",
+      "tags": [
+        "suspense",
+        "data-fetching"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-016",
+      "difficulty": "Intermediate",
+      "question": "How do you handle async errors in components?",
+      "answer": "Wrap the async operation in try and catch and store an error state, or use a library that exposes an error flag. Suspense handles loading but not errors by itself, so combine it with an error boundary that renders a fallback when a fetch fails. This pairing covers both loading and failure. Always show a retry path.",
+      "tags": [
+        "errors",
+        "async"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-017",
+      "difficulty": "Intermediate",
+      "question": "How do you log errors to a monitoring service?",
+      "answer": "You log from componentDidCatch or a global window error handler and send the message, stack and component stack to a service such as Sentry. Include context like the route and user id where appropriate, while respecting privacy. De-duplicate noisy errors so alerts stay meaningful. Monitoring turns silent failures into actionable reports.",
+      "tags": [
+        "errors",
+        "monitoring"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-018",
+      "difficulty": "Intermediate",
+      "question": "What is the role of error boundaries in routing?",
+      "answer": "Placing an error boundary around each route or layout keeps a failure in one page from breaking navigation and the rest of the app shell. A route-level boundary can show a page-specific error with a link back. Data routers also support an errorElement per route. This granularity is key to a resilient app.",
+      "tags": [
+        "error-boundaries",
+        "routing"
+      ],
+      "references": [
+        "https://reactrouter.com/start/framework/route-module"
+      ]
+    },
+    {
+      "id": "error-handling-019",
+      "difficulty": "Intermediate",
+      "question": "How do you test error boundaries?",
+      "answer": "Render a child that throws and assert that the fallback appears and that the error was logged. You can spy on console.error or your logging function to verify reporting. Also test that resetting recovers the UI. These tests protect the failure paths that are easy to break.",
+      "tags": [
+        "error-boundaries",
+        "testing"
+      ],
+      "references": [
+        "https://testing-library.com/docs/react-testing-library/intro/"
+      ]
+    },
+    {
+      "id": "error-handling-020",
+      "difficulty": "Intermediate",
+      "question": "What is the difference between a loading state and a suspense fallback?",
+      "answer": "A manual loading state uses a boolean and conditional rendering inside the component, which spreads loading logic around. Suspense declares a fallback at the boundary and lets React coordinate the waiting. Suspense also supports transitions that keep the previous UI visible while loading. Manual states are still fine for simple cases.",
+      "tags": [
+        "suspense",
+        "loading"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-021",
+      "difficulty": "Advanced",
+      "question": "Why can error boundaries not catch errors in themselves?",
+      "answer": "An error boundary cannot catch an error thrown in its own render or fallback, because React has no boundary above it to handle that failure in the same pass. To cover that case you nest another boundary above it. This is why critical infrastructure sometimes has a top-level boundary and inner ones. Layering boundaries gives defense in depth.",
+      "tags": [
+        "error-boundaries",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-022",
+      "difficulty": "Advanced",
+      "question": "How does Suspense interact with concurrent rendering and transitions?",
+      "answer": "With concurrent rendering, React can keep showing the existing UI while a suspended update prepares in the background when it is wrapped in a transition, avoiding an immediate fallback. This prevents the jarring replacement of content with a spinner for fast updates. The behavior depends on whether the update is urgent. Understanding this helps you choose where to place boundaries.",
+      "tags": [
+        "suspense",
+        "concurrent"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Suspense"
+      ]
+    },
+    {
+      "id": "error-handling-023",
+      "difficulty": "Advanced",
+      "question": "What are the trade-offs of granular versus coarse error boundaries?",
+      "answer": "Many small boundaries contain failures to a small region but add nesting and make error reporting noisier. A single top-level boundary is simple but turns any error into a full-page failure. A common strategy is a top-level boundary plus route-level boundaries and a few around risky widgets. Match granularity to how independently each region can fail.",
+      "tags": [
+        "error-boundaries",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component"
+      ]
+    },
+    {
+      "id": "error-handling-024",
+      "difficulty": "Advanced",
+      "question": "How do you handle errors during hydration?",
+      "answer": "Errors thrown during hydration can cause React to fall back to client rendering or, with a boundary, show a fallback. Log hydration mismatches because they often indicate markup that differs between server and client. Provide error boundaries on the client so a hydration failure degrades gracefully. Keeping server and client output consistent prevents most issues.",
+      "tags": [
+        "errors",
+        "ssr"
+      ],
+      "references": [
+        "https://react.dev/reference/react-dom/client/hydrateRoot"
+      ]
+    },
+    {
+      "id": "error-handling-025",
+      "difficulty": "Advanced",
+      "question": "How do you design a resilient UI strategy?",
+      "answer": "Layer error boundaries at the app, route and widget levels so failures are contained and recovery is possible. Pair them with Suspense for loading and clear retry actions for users. Log errors centrally with enough context to fix them. Design the failure paths as deliberately as the happy paths so the app stays usable when things go wrong.",
+      "tags": [
+        "error-handling",
+        "architecture"
+      ],
+      "references": [
+        "https://react.dev/reference/react/Component",
+        "https://react.dev/reference/react/Suspense"
+      ]
+    }
+  ]
+}
